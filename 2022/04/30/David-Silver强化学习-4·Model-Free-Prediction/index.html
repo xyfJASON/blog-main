@@ -1,0 +1,929 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Model-Free Prediction">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[David Silver强化学习]4·Model-Free Prediction">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/04/30/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-4%C2%B7Model-Free-Prediction/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Model-Free Prediction">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+<meta property="article:published_time" content="2022-04-30T13:30:22.000Z">
+<meta property="article:modified_time" content="2023-09-09T00:35:07.386Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="reinforcement learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+  
+  
+  
+  <title>[David Silver强化学习]4·Model-Free Prediction - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_chess.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[David Silver强化学习]4·Model-Free Prediction"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-04-30 21:30" pubdate>
+          2022年4月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          50 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[David Silver强化学习]4·Model-Free Prediction</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\calA}{\mathcal A}
+\newcommand{\calP}{\mathcal P}
+\newcommand{\calR}{\mathcal R}
+\newcommand{\calS}{\mathcal S}
+\newcommand{\E}{\mathbb E}
+\]</span></p>
+<h2 id="introduction">1 Introduction</h2>
+<p>上节课我们学习了使用动态规划求解一个已知的 MDP. 我们学习了 iterative policy evaluation 来评价某个给定策略（prediction 问题），以及 policy iteration 和 value iteration 来寻找最优策略（control 问题）。</p>
+<p>这两节课我们将探讨 model-free 方法。我们不再已知整个 <span class="math inline">\(\calP\)</span> 矩阵和 <span class="math inline">\(\calR\)</span> 向量，也即是说我们面对的是一个未知的 MDP，通过与环境直接交互来解决 prediction / control 问题。这节课讲 model-free prediction，下节课讲 model-free control.</p>
+<p>我们将学习 3 种 model-free prediction 方法：Monte-Carlo Learning，Temporal-Difference Learning 和 <span class="math inline">\(\text{TD}(\lambda)\)</span>.</p>
+<h2 id="monte-carlo-learning">2 Monte-Carlo Learning</h2>
+<p>MC 直接从采样出的 episodes 进行学习，这里要求 episode 最后到达终止状态。</p>
+<blockquote>
+<p>回顾：</p>
+<ul>
+<li><p>Return 是未来的总奖励加权和： <span class="math display">\[
+G_t=R_{t+1}+\gamma R_{t+2}+\cdots+\gamma^{T-1-t}R_T
+\]</span></p></li>
+<li><p>Value function 是 return 的条件期望： <span class="math display">\[
+v_\pi(s)=\E[G_t\mid S_t=s]
+\]</span></p></li>
+</ul>
+</blockquote>
+<p>给定策略 <span class="math inline">\(\pi\)</span>，我们可以说采样的 episode 服从 <span class="math inline">\(\pi\)</span>，记作： <span class="math display">\[
+S_1,A_1,R_2,\ldots,S_k\sim \pi
+\]</span> MC 方法的目标是学习 <span class="math inline">\(v_\pi\)</span>，思想很简单：用经验均值来近似期望。也就是说，对于某个状态 <span class="math inline">\(s\)</span>，我们想从它开始采样，通过计算样本 episodes 的 return 来近似 <span class="math inline">\(v_\pi(s)\)</span>.</p>
+<h3 id="first-visit-monte-carlo-policy-evaluation">2.1 First-Visit Monte-Carlo Policy Evaluation</h3>
+<p>一个 episode 可能会反复回到同一个状态，First-Visit MC Policy Evaluation 只考虑<strong>第一次</strong>访问那个状态的时候，它未来的 return 是怎样的。具体而言，为了估计状态 <span class="math inline">\(s\)</span> 的 value function，我们</p>
+<ol type="1">
+<li>采样一条 episode，找到第一次访问状态 <span class="math inline">\(s\)</span> 的时刻 <span class="math inline">\(t\)</span></li>
+<li><span class="math inline">\(N(s)\gets N(s)+1,\,S(s)\gets S(s)+G_t\)</span></li>
+<li>重复上述过程若干次</li>
+<li>计算 <span class="math inline">\(V(s)=S(s)/N(s)\)</span>，根据大数定律，当 <span class="math inline">\(N(s)\to\infty\)</span> 时，<span class="math inline">\(V(s)\to v_\pi(s)\)</span></li>
+</ol>
+<blockquote>
+<p>由于第 2 步涉及到了 <span class="math inline">\(G_t\)</span>，是未来整个过程的加权奖励，因此我们必须要求 episode 最后终止，因为我们在终止之后才能计算出 <span class="math inline">\(G_t\)</span>.</p>
+</blockquote>
+<h3 id="every-visit-monte-carlo-policy-evaluation">2.2 Every-Visit Monte-Carlo Policy Evaluation</h3>
+<p>顾名思义，Every-Visit 把某个状态的<strong>每一次</strong>访问都纳入考量，具体来说，</p>
+<ol type="1">
+<li>采样一条 episode</li>
+<li>对于该 episode 中每次访问状态 <span class="math inline">\(s\)</span> 的时刻 <span class="math inline">\(t\)</span>，<span class="math inline">\(N(s)\gets N(s)+1,\,S(s)\gets S(s)+G_t\)</span></li>
+<li>重复上述过程若干次</li>
+<li>计算 <span class="math inline">\(V(s)=S(s)/N(s)\)</span>，当 <span class="math inline">\(N(s)\to\infty\)</span> 时，<span class="math inline">\(V(S)\to v_\pi(s)\)</span></li>
+</ol>
+<h3 id="incremental-monte-carlo">2.3 Incremental Monte-Carlo</h3>
+<p>在计算平均值的时候，不必每次都把所有数加起来，再除以个数，用一个简单的递推即可做到 <span class="math inline">\(O(1)\)</span> 的<strong>在线</strong>更新： <span class="math display">\[
+\begin{align}
+\mu_k&amp;=\frac{1}{k}\sum_{j=1}^kx_j\\
+&amp;=\frac{1}{k}\left(x_k+\sum_{j=1}^{k-1}x_j\right)\\
+&amp;=\frac{1}{k}(x_k+(k-1)\mu_{k-1})\\
+&amp;=\mu_{k-1}+\frac{1}{k}(x_k-\mu_{k-1})
+\end{align}
+\]</span> 这个递推式可以解释为：新的均值是原来的均值加上一个误差项 <span class="math inline">\(\frac{1}{k}(x_k-\mu_{k-1})\)</span>.</p>
+<p>将其用在 MC 方法中，我们称作 Incremental Monte-Carlo Updates：</p>
+<ol type="1">
+<li>采样一条 episode <span class="math inline">\(S_1,A_1,R_2,\ldots,S_T\)</span></li>
+<li>对于每一个 <span class="math inline">\(S_t\)</span> 及其 return <span class="math inline">\(G_t\)</span>，计算 <span class="math inline">\(N(S_t)\gets N(S_t)+1,\,V(S_t)\gets V(S_t)+\dfrac{1}{N(S_t)}(G_t-V(S_t))\)</span></li>
+<li>重复上述过程</li>
+</ol>
+<p>如果我们把系数 <span class="math inline">\(1/N(S_t)\)</span> 替换为某个固定常数 <span class="math inline">\(\alpha\)</span>，那就得到了<strong>指数移动平均</strong>的形式： <span class="math display">\[
+V(S_t)\gets V(S_t)+\alpha(G_t-V(S_t))
+\]</span> 这意味着我们会“遗忘”很早以前的结果。指数移动平均在非平稳（波动很大）的情形下很有用，我们不希望过早的历史信息对现在仍有相同比重的影响。</p>
+<h2 id="temporal-difference-learning">3 Temporal-Difference Learning</h2>
+<h3 id="texttd0">3.1 <span class="math inline">\(\text{TD}(0)\)</span></h3>
+<p>TD 也通过采样、与环境直接交互学习，但与 MC 不同的是，TD 不需要采样完整的、最后终止的 episode，它使用 <strong>bootstrapping</strong> 来估计。</p>
+<p>一个最简单的 TD 算法 <span class="math inline">\(\text{TD}(0)\)</span> 如下：</p>
+<ol type="1">
+<li><p>采样一条 episode</p></li>
+<li><p>使用 estimated return 来<strong>在线</strong>更新 value function： <span class="math display">\[
+V(S_t)\gets V(S_t)+\alpha({\color{purple}{R_{t+1}+\gamma V(S_{t+1})}}-V(S_t))
+\]</span> 其中 <span class="math inline">\(R_{t+1}+\gamma V(S_{t+1})\)</span> 称为 <strong>TD target</strong>，<span class="math inline">\(\delta_t=R_{t+1}+\gamma V(S_{t+1})-V(S_t)\)</span> 称作 <strong>TD error</strong>.</p></li>
+<li><p>重复上述过程</p></li>
+</ol>
+<p>可以看见，与 Incremental MC（的指数移动平均形式）相对比，<span class="math inline">\(\text{TD}(0)\)</span> 用一个带有估计性质的 <span class="math inline">\(R_{t+1}+\gamma V(S_{t+1})\)</span> 代替了真实的 <span class="math inline">\(G_t\)</span>，这就是 bootstrapping 的含义——用自己手上的估计值而非真实值。</p>
+<p>David 在课堂上举了一个有趣的例子说明 TD 相比 MC 的好处。考虑一个开车的场景，在某一个 episode 中，我们与对面驶来的车擦肩而过——差点就车祸但是没有车祸。如果使用 MC 方法，我们不会得到任何负面的反馈，因为车祸毕竟没有发生，但使用 TD 方法，我们将期望车祸很有可能发生，因而会立刻更新 value function，而不是一定要等到挂掉之后才能更新。</p>
+<p>到这里，我们可以看到——TD 可以在得到最终结果之前学习，即可以在线学习；MC 必须等到一个 episode 结束后、return 被计算出来后才能更新；TD 可以在无法到达终止状态的环境中学习，MC 不可以。</p>
+<h3 id="bias-variance-trade-off">3.2 Bias / Variance Trade-off</h3>
+<p>Return <span class="math inline">\(G_t\)</span> 是 <span class="math inline">\(v_\pi(S_t)\)</span> 的无偏（unbiased）估计（因为后者本身就是前者的期望），真实的 TD target <span class="math inline">\(R_{t+1}+\gamma v_\pi(S_{t+1})\)</span> 也是 <span class="math inline">\(v_\pi(S_t)\)</span> 的无偏估计，但是 TD target <span class="math inline">\(R_{t+1}+\gamma V(S_{t+1})\)</span> 是有偏（biased）的。</p>
+<blockquote>
+<p>类似于方差和样本方差的区别。</p>
+</blockquote>
+<p>另一方面，由于 <span class="math inline">\(G_t\)</span> 依赖于后续发生的动作、转移、奖励等等，有很多种可能，而 TD target 只考虑下一步的可能情形，因此前者将比后者具有更大的方差。</p>
+<ul>
+<li>MC 高方差，零偏置
+<ul>
+<li>好的收敛性</li>
+<li>对初始值不敏感</li>
+<li>简单，易于理解</li>
+</ul></li>
+<li>TD 低方差，有偏置
+<ul>
+<li>通常效率更高</li>
+<li><span class="math inline">\(\text{TD}(0)\)</span> 收敛到 <span class="math inline">\(v_\pi(s)\)</span></li>
+<li>对初始值更敏感</li>
+</ul></li>
+</ul>
+<p><br/></p>
+<p><strong>Random Walk Example</strong></p>
+<p>为了直观对比 MC 和 TD 的收敛速度，我们考虑下面这个随机游走的例子。</p>
+<p><img src="RW.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>从 C 点开始随机游走，如果终止在右边获得 1 的奖励，终止在左边获得 0 的奖励。</p>
+<p>假设我们把所有状态的 value function 都初始化为 0.5，随着采样数量的增加，value function 确实逐渐逼近真实值：</p>
+<p><img src="RW2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>不同的方法（MC v.s. TD）、不同的步长 <span class="math inline">\(\alpha\)</span>，有着不同的收敛速度：</p>
+<p><img src="RW3.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h3 id="batch-mc-and-td">3.3 Batch MC and TD</h3>
+<p>如果我们无法不断地采样，手上只有一批有限数量的样本，那么根据这批样本做 MC 或 TD，能收敛到正确结果吗？</p>
+<p>举一个简单的例子，假设 MDP 只有两个状态：A 和 B，我们手上有 8 个 episodes：</p>
+<ol type="1">
+<li>A, 0, B, 0</li>
+<li>B, 1</li>
+<li>B, 1</li>
+<li>B, 1</li>
+<li>B, 1</li>
+<li>B, 1</li>
+<li>B, 1</li>
+<li>B, 0</li>
+</ol>
+<p>使用 MC 方法，我们将得到 <span class="math inline">\(V(A)=0,\,V(B)=0.75\)</span>；而使用 TD 方法，我们将得到 <span class="math inline">\(V(A)=0.75,\,V(B)=0.75\)</span>.</p>
+<p>可以看出，本质上来说，</p>
+<ul>
+<li><p>MC 缩小 value function 和观察到的 return 之间的均方误差</p></li>
+<li><p><span class="math inline">\(\text{TD}(0)\)</span> 相当于先根据 episodes 建立起最符合这些样本的 MDP，然后解这个 MDP</p>
+<p><img src="BatchTD.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p></li>
+</ul>
+<p>因为 TD 首先建立 MDP 模型，它更能够去利用 Markov property，在 Markov environments 下效率更高；而 MC 忽视了 Markov property，在 non-Markov environments 下效率更高。</p>
+<h3 id="unified-view">3.4 Unified View</h3>
+<p>Okay，现在我们将 MC, TD 和 DP 解 MDP 总结一下：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="MC.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="TD.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="DP.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<p>MC 会采出一条到达终止状态的 episode，然后更新沿途经过的状态；TD 每次更新只需向前走一步，用下一步的 value function 更新当前状态；而 DP 建立在我们已知整个 MDP 的基础上，我们也只向前走一步，但是严格按照概率对所有的可能进行递推计算。</p>
+<p><br/></p>
+<p>按照是否 sample，MC 和 TD 被划分为一类，DP 被划分为一类；按照是否 bootstrapping（用自己手上的值更新自己，而非真实值），TD 和 DP 被划分为一类，MC 被划分为一类。因此我们可以画一个 2D 的分类图：</p>
+<p><img src="unified.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>我们很容易注意到，有一个角落是没有讲过的——既不 sample，也不 bootstrapping。这其实对应着最暴力的穷尽搜索。但是我们还应注意到，在是/否 bootstrapping 之间，其实存在灰色地带——我们往前多走几步，但是又不走到头，称之为 <span class="math inline">\(n\)</span>-step TD.</p>
+<h2 id="texttdlambda">4 <span class="math inline">\(\text{TD}(\lambda)\)</span></h2>
+<h3 id="n-step-td">4.1 <span class="math inline">\(n\)</span>-step TD</h3>
+<p>上一节的最后已经解释了 <span class="math inline">\(n\)</span>-step TD 的基本思想：</p>
+<p><img src="TDlambda.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>反映在公式中，即是：</p>
+<p><img src="TDlambda2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /> <span class="math display">\[
+G_t^{(n)}=R_{t+1}+\gamma R_{t+2}+\cdots+\gamma ^{n-1}R_{t+n}+\gamma^nV(S_{t+n})
+\]</span> 更新方式变为： <span class="math display">\[
+V(S_t)\gets V(S_t)+\alpha(G_t^{(n)}-V(S_t))
+\]</span> 一个自然的问题就是，向前走的步数 <span class="math inline">\(n\)</span> 取多大最好呢？面对不同的问题，最好的 <span class="math inline">\(n\)</span> 值往往不同，我们需要一个算法帮助我们确定最好的 <span class="math inline">\(n\)</span> 值。</p>
+<p>一个简单的想法是，既然我们不知道哪个 <span class="math inline">\(n\)</span> 最好，那就干脆取多个 <span class="math inline">\(n\)</span> 值算平均，这样至少保证结果不会很差，比较稳定。当然，实践中我们需要一个更高效的算法，这就引入了 <span class="math inline">\(\text{TD}(\lambda)\)</span>.</p>
+<h3 id="forward-view-of-texttdlambda">4.2 Forward View of <span class="math inline">\(\text{TD}(\lambda)\)</span></h3>
+<p>我们对所有 <span class="math inline">\(n\)</span> 值<strong>按照几何级数</strong>做平均，称之为 <span class="math inline">\(\lambda\)</span>-return：</p>
+<p><img src="lambda-return.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+<p>当然，最后终止的那一步不再是几何级数，而是 <span class="math inline">\(1\)</span> 减去之前所有的系数之和。这里为了简便起见，没有把这一点体现在公式中： <span class="math display">\[
+G_t^\lambda=(1-\lambda)\sum_{n=1}^\infty\lambda^{n-1}G_t^{(n)}
+\]</span> 更新方式变为： <span class="math display">\[
+V(S_t)\gets V(S_t)+\alpha (G_t^\lambda-V(S_t))
+\]</span> 当 <span class="math inline">\(\lambda=0\)</span> 时，就是上一节的 <span class="math inline">\(\text{TD}(0)\)</span>；当 <span class="math inline">\(\lambda=1\)</span> 时，就是 Monte-Carlo.</p>
+<p><br/></p>
+<p>为了计算 <span class="math inline">\(G_t^\lambda\)</span>，我们需要像 MC 一样采样完整的 episode，将每一步的 <span class="math inline">\(G_t^{(n)}\)</span> 计算出来，然后加权求和。这种方法称作 forward view：</p>
+<p><img src="forward.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<h3 id="backward-view-of-texttdlambda">4.3 Backward View of <span class="math inline">\(\text{TD}(\lambda)\)</span></h3>
+<p>Forward view 更多是理论上的贡献，鉴于它具有 MC 一样的缺点，我们更常采用 backward view.</p>
+<p>首先我们引入一个概念——<strong>eligibility traces</strong>. 它类似于神经元受刺激后的激活状态——受刺激的瞬间激活值拉高，然后随时间推移逐渐降低，直到下一次刺激。具体而言，我们对每一个状态 <span class="math inline">\(s\)</span> 维护一个值 <span class="math inline">\(E_t(s)\)</span>，满足： <span class="math display">\[
+\begin{align}
+&amp;E_0(s)=0\\
+&amp;E_t(s)=\gamma\lambda E_{t-1}(s)+\mathbf 1(S_t=s)
+\end{align}
+\]</span> 在时刻 <span class="math inline">\(t\)</span>，如果没有进入状态 <span class="math inline">\(s\)</span>，则 <span class="math inline">\(E_t(s)\)</span> 减少到 <span class="math inline">\(\gamma\lambda\)</span> 倍的上一时刻值；否则，<span class="math inline">\(E_t(s)\)</span> 有一个瞬时的 <span class="math inline">\(1\)</span> 的增加：</p>
+<p><img src="eligibility.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>利用 eligibility traces，我们在每个时刻对所有状态依 TD-error <span class="math inline">\(\delta_t\)</span> 和 <span class="math inline">\(E_t(s)\)</span> 按比例对 <span class="math inline">\(V(s)\)</span> 做更新： <span class="math display">\[
+\begin{align}
+&amp;\delta_t = R_{t+1}+\gamma V(S_{t+1})-V(S_t)\\
+&amp;V(s)\gets V(s)+\alpha\delta_tE_t(s)
+\end{align}
+\]</span> <img src="backward.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>当 <span class="math inline">\(\lambda=0\)</span> 时，<span class="math inline">\(E_t(s)=\mathbf 1(S_t=s)\)</span>，因此我们只对当前进入的这个状态做更新 <span class="math inline">\(V(s)\gets V(s)+\alpha\delta_t\)</span>，这等价于 <span class="math inline">\(\text{TD}(0)\)</span>.</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/David-Silver/" class="category-chain-item">David Silver</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/reinforcement-learning/" class="print-no-link">#reinforcement learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[David Silver强化学习]4·Model-Free Prediction</div>
+      <div>https://xyfjason.github.io/blog-main/2022/04/30/David-Silver强化学习-4·Model-Free-Prediction/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年4月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/05/07/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-5%C2%B7Model-Free-Control/" title="[David Silver强化学习]5·Model-Free Control">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[David Silver强化学习]5·Model-Free Control</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/04/17/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-3%C2%B7Planning-by-Dynamic-Programming/" title="[David Silver强化学习]3·Planning by Dynamic Programming">
+                        <span class="hidden-mobile">[David Silver强化学习]3·Planning by Dynamic Programming</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

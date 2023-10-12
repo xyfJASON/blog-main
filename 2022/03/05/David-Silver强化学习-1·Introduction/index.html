@@ -1,0 +1,865 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Introduction">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[David Silver强化学习]1·Introduction">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/03/05/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-1%C2%B7Introduction/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Introduction">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+<meta property="article:published_time" content="2022-03-05T12:34:55.000Z">
+<meta property="article:modified_time" content="2023-09-09T00:34:48.445Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="reinforcement learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+  
+  
+  
+  <title>[David Silver强化学习]1·Introduction - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_chess.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[David Silver强化学习]1·Introduction"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-05 20:34" pubdate>
+          2022年3月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[David Silver强化学习]1·Introduction</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="about-rl">1 About RL</h2>
+<p>强化学习是一个交叉领域，与计算机科学、工程学、数学、神经学、心理学、生态学等众多学科都有联系。</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="subjects.png" srcset="/blog-main/logo/imageloading.png" lazyload width=90%/></div><div class="group-image-wrap"><img src="ml.png" srcset="/blog-main/logo/imageloading.png" lazyload width=95%/></div></div></div>
+<p>一般而言，我们把机器学习分成有监督学习、无监督学习和强化学习三大类。强化学习与另外二者有很大的区别：</p>
+<ul>
+<li>没有监督，只有 reward 信号</li>
+<li>反馈不及时，有延迟</li>
+<li>时序非常重要，没有独立同分布的数据</li>
+<li>Agent 的动作会影响它后续能获得的数据</li>
+</ul>
+<p>强化学习有很多应用，例如：控制直升机的特技飞行、下棋、管理投资、控制类人机器人行走、玩游戏……</p>
+<h2 id="the-rl-problem">2 The RL Problem</h2>
+<h3 id="rewards">2.1 Rewards</h3>
+<p>奖励 reward 是一个标量的反馈信号，记 <span class="math inline">\(R_t\)</span> 表示 <span class="math inline">\(t\)</span> 时刻的奖励。</p>
+<p><strong>Reward Hypothesis</strong>：强化学习的所有目标都可以描述为最大化累积奖励的期望。</p>
+<p>尽管目标很明确，但 agent 的决策过程却要考虑众多复杂的因素：当下的动作可能会造成长期影响、奖励可能会有延迟、牺牲短期奖励也许能带来长期奖励……</p>
+<h3 id="environments">2.2 Environments</h3>
+<p><img src="overview.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<p>强化学习概览：</p>
+<ul>
+<li>在时刻 <span class="math inline">\(t\)</span>，agent 会：
+<ul>
+<li>执行一个动作 action <span class="math inline">\(A_t\)</span></li>
+<li>收到对环境的观察 observation <span class="math inline">\(O_t\)</span></li>
+<li>收到奖励 reward <span class="math inline">\(R_t\)</span></li>
+</ul></li>
+<li>而 environment 会：
+<ul>
+<li>收到一个动作 action <span class="math inline">\(A_t\)</span></li>
+<li>给出对环境的观察 observation <span class="math inline">\(O_{t+1}\)</span></li>
+<li>给出奖励 reward <span class="math inline">\(R_{t+1}\)</span></li>
+</ul></li>
+</ul>
+<blockquote>
+<p>对下标的一点说明：关于强化学习的符号下标，也即时间戳，有两种写法。一种人认为，执行一个动作 <span class="math inline">\(A_t\)</span> 之后，环境已经发生了改变，因此此时返回的奖励下标应该 +1，即 <span class="math inline">\(R_{t+1}\)</span>；另一种人认为，返回的奖励是对刚执行的这个动作的反馈，因此下标和动作保持一致，即 <span class="math inline">\(R_t\)</span>。两种写法都可行，它们没有本质区别，仅仅是记号上的差异而已。本课程采用第一种写法，特此说明以免在后续公式中产生疑问。</p>
+</blockquote>
+<h3 id="state">2.3 State</h3>
+<p>定义<strong>历史 history</strong> 是一系列 observations、actions 和 rewards： <span class="math display">\[
+H_t=O_1,R_1,A_1,\ldots,A_{t-1},O_t,R_t
+\]</span> 而<strong>状态 state</strong> 定义为历史的函数，我理解为从历史中提取的我们想要的信息： <span class="math display">\[
+S_t=f(H_t)
+\]</span> <br/></p>
+<p>状态分为环境状态 environment state <span class="math inline">\(S_t^e\)</span> 和 agent state <span class="math inline">\(S_t^a\)</span>。</p>
+<p>前者是环境的内在表述方式，环境根据当前状态和其运行机制给出下一时刻的观察和奖励；它通常对 agent 是不可见的；就算是可见的也可能包含无关信息。</p>
+<p>后者是 agent 对环境的表述，是做决策所需要的信息，比如你看到的游戏画面。</p>
+<p><br/></p>
+<p>定义：称一个状态是 <strong>Markov state</strong> 当且仅当 <span class="math display">\[
+\mathbb P(S_{t+1}\mid S_t)=\mathbb P(S_{t+1}\mid S_1,\ldots,S_t)
+\]</span> 就是说<strong>下一时刻的状态仅决定于当前状态而与历史状态无关</strong>。根据定义，易知环境状态 <span class="math inline">\(S_t^e\)</span> 是 Markov 的，历史 <span class="math inline">\(H_t\)</span> 也满足 Markov 性质。</p>
+<p><br/></p>
+<p>状态的定义方式对决策有很大的影响。课程举了下面这个非常形象的例子，如果你以历史三次观察到的事件为状态表示，你将预测会被电击；如果你以过去各事件发生次数为状态表示，你会觉得应该有奶酪；而如果你以整个历史为状态表示，你无法预测会被电击还是有奶酪。</p>
+<p><img src="rat.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p><br/></p>
+<p>当 agent 能够直接观察到 environment state，即 <span class="math inline">\(O_t=S_t^a=S_t^e\)</span> 时，称为 fully observable environments，称该环境下的问题是 <strong>Markov decision process (MDP)</strong>，这是课程的核心。</p>
+<p>相反，一些环境是 partially observable 的，例如只有摄像机的机器人无法知道它在房间的绝对位置，称这样的问题是 <strong>partially observable Markov decision process (POMDP)</strong>. 这时，agent 必须自己构建状态的表述，例如：</p>
+<ul>
+<li>所有历史：<span class="math inline">\(S_t^a=H_t\)</span></li>
+<li>Environment state 的置信概率：<span class="math inline">\(S_t^a=[\mathbb P(S_t^e=s^1),\ldots,\mathbb P(S_t^e=s^n)]\)</span></li>
+<li>用 RNN 建模：<span class="math inline">\(S_t^a=\sigma(S_{t-1}^a W_s+O_t W_o)\)</span></li>
+</ul>
+<h2 id="inside-an-rl-agent">3 Inside An RL Agent</h2>
+<h3 id="major-components">3.1 Major Components</h3>
+<p>一个 agent 由以下一个或多个组成成分构成：策略、价值函数、模型。</p>
+<p><br/></p>
+<p><strong>策略 Policy</strong>：agent 的行为函数</p>
+<p>策略是从状态到行为的映射，可分为确定性和不确定性</p>
+<ul>
+<li>确定性（deterministic）策略：<span class="math inline">\(a=\pi(s)\)</span></li>
+<li>不确定性（stochastic）策略：<span class="math inline">\(\pi(a\mid s)=\mathbb P(A_t=a\mid S_t=s)\)</span></li>
+</ul>
+<p><br/></p>
+<p><strong>价值函数 Value function</strong>：评价一个状态或动作的好坏</p>
+<p>价值函数是对未来奖励的预测，定义为<u>在某个特定策略 <span class="math inline">\(\pi\)</span> 下</u>，未来获得奖励的加权和的期望： <span class="math display">\[
+v_\pi(s)=\mathbb E_\pi[R_{t+1}+\gamma R_{t+2}+\gamma^2 R_{t+3}+\cdots\mid S_t=s]
+\]</span> 其中 <span class="math inline">\(\gamma\in[0,1]\)</span> 是衰减系数。这个式子的意思是，假设当前状态为 <span class="math inline">\(s\)</span>，即 <span class="math inline">\(S_t=s\)</span>，那么 agent 依据某特定策略 <span class="math inline">\(\pi\)</span> 做动作，会立刻得到奖励 <span class="math inline">\(R_{t+1}\)</span>，进入状态 <span class="math inline">\(S_{t+1}\)</span>，然后继续依据策略 <span class="math inline">\(\pi\)</span> 做动作，得到奖励 <span class="math inline">\(R_{t+2}\)</span>……由于这个过程是随机的（一方面，策略可能是不确定性策略；另一方面，做出动作后环境的变化也可能是随机的），所以要取期望。</p>
+<p>更详尽的内容在下一课探讨。</p>
+<p><br/></p>
+<p><strong>模型 Model</strong>：agent 对环境的建模</p>
+<p>设 <span class="math inline">\(\mathcal P\)</span> 预测下一个状态，<span class="math inline">\(\mathcal R\)</span> 预测下一个时刻的奖励： <span class="math display">\[
+\begin{align}
+&amp;\mathcal P_{ss&#39;}^a=\mathbb P(S_{t+1}=s&#39;\mid S_t=s,A_t=a)\\
+&amp;\mathcal R_s^a=\mathbb E[R_{t+1}\mid S_t=s,A_t=a]
+\end{align}
+\]</span> <span class="math inline">\(\mathcal P\)</span> 意味着在特定状态做特定动作，导致的下一个状态是不确定的。这可能与玩游戏不太一致（毕竟我们按下左方向键，游戏角色总不会往右跑吧），但是这种随机性的引入能更好地反映现实。</p>
+<p><br/></p>
+<p>以走迷宫为例，策略、价值函数、模型分别可以形象化的表示为：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="maze_policy.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="maze_value.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="maze_model.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<p>注意走迷宫的目标是找到最短路径，所以模型中每一步的奖励都是负的，这样最大化累积奖励就是最小化走的步数。</p>
+<h3 id="categories">3.2 Categories</h3>
+<p>根据 RL agents 组成成分的不同，可以分成三类：</p>
+<ul>
+<li>Value based：只有 value function，没有 policy 或者说 policy 隐含于 value function 之中</li>
+<li>Policy based：只有 policy，没有 value function</li>
+<li>Actor critic：既有 policy，又有 value function</li>
+</ul>
+<p>根据 RL agents 是否对环境建立模型，可以分成两类：</p>
+<ul>
+<li>Model free：仅关注于 policy 和/或 value function，不对环境建模。也就是说，我们不关心环境的运行机制究竟是怎样的，仅根据我们与环境之间的交互结果作决策。</li>
+<li>Model based：对环境建模，让模型表述环境的运行机制，这样我们清楚地知道每一步会发生什么，并寻找最优决策方式。</li>
+</ul>
+<p><img src="taxonomy.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<h2 id="problems-within-rl">4 Problems within RL</h2>
+<p><strong>Learning and Planning</strong></p>
+<p>在 learning 问题中，agent 不知道环境的运行机制、不知道游戏的规则，仅能通过与环境交互来改善策略；在 planning 问题中，agent 有一个环境的模型，无需与环境交互就可以依靠模型进行运算来改善策略。</p>
+<p>二者是紧密相连的，面对一个 learning 问题，agent 首先通过交互构建模型，学习环境的运行机制，然后用模型进行规划。</p>
+<p><strong>Exploration and Exploitation</strong></p>
+<p>Exploration 和 exploitation 是一种 trade-off 的关系。前者意味着试错，可能导致更差的奖励，但也可能发现更好的策略；后者意味着用已知的信息找寻最好的策略，而不是尝试新事物。</p>
+<p><strong>Prediction and control</strong></p>
+<p>Prediction 指给定一个策略后，计算未来的奖励。可以理解为求解给定策略下的价值函数。</p>
+<p>Control 指找到最佳策略以最大化未来的奖励。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/David-Silver/" class="category-chain-item">David Silver</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/reinforcement-learning/" class="print-no-link">#reinforcement learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[David Silver强化学习]1·Introduction</div>
+      <div>https://xyfjason.github.io/blog-main/2022/03/05/David-Silver强化学习-1·Introduction/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/06/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%89%E7%AB%A0%C2%B7%E5%B8%B8%E8%A7%81%E5%88%86%E5%B8%83%E6%97%8F%EF%BC%88%E4%B8%89%EF%BC%89/" title="[统计推断]第三章·常见分布族（三）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[统计推断]第三章·常见分布族（三）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/01/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%89%E7%AB%A0%C2%B7%E5%B8%B8%E8%A7%81%E5%88%86%E5%B8%83%E6%97%8F%EF%BC%88%E4%BA%8C%EF%BC%89/" title="[统计推断]第三章·常见分布族（二）">
+                        <span class="hidden-mobile">[统计推断]第三章·常见分布族（二）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

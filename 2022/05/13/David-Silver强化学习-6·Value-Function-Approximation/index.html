@@ -1,0 +1,909 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Value Function Approximation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[David Silver强化学习]6·Value Function Approximation">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/05/13/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-6%C2%B7Value-Function-Approximation/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Value Function Approximation">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+<meta property="article:published_time" content="2022-05-13T02:45:06.000Z">
+<meta property="article:modified_time" content="2023-09-09T00:35:20.107Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="reinforcement learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+  
+  
+  
+  <title>[David Silver强化学习]6·Value Function Approximation - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_chess.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[David Silver强化学习]6·Value Function Approximation"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-05-13 10:45" pubdate>
+          2022年5月13日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          43 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[David Silver强化学习]6·Value Function Approximation</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\calA}{\mathcal A}
+\newcommand{\calP}{\mathcal P}
+\newcommand{\calR}{\mathcal R}
+\newcommand{\calS}{\mathcal S}
+\newcommand{\E}{\mathbb E}
+\newcommand{\bfw}{\mathbf w}
+\newcommand{\bfx}{\mathbf x}
+\]</span></p>
+<h2 id="introduction">1 Introduction</h2>
+<p>之前我们学习的所有算法都要求存储下 <span class="math inline">\(V(s)\)</span> 或者 <span class="math inline">\(Q(s,a)\)</span>，称之为 Table Lookup 的方法。但是实际问题的状态和动作数量可能非常多，甚至于是连续的而非离散的，表格就无法存储并处理。此时，我们可以用一个模型（函数）去近似 value function，即： <span class="math display">\[
+\hat v(s,\bfw)\approx v_\pi(s)\quad \hat q(s,a,\bfw)\approx q_\pi(s,a)
+\]</span> 其中 <span class="math inline">\(\bfw\)</span> 是模型的参数，譬如神经网络的参数。这样做还有一个好处，假若模型具有良好的泛化性，即能从见过的状态泛化到没有见过的状态，那么我们还可以得知没见过的状态的 value function.</p>
+<p><img src="approx.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>用来近似的模型（函数）有许多选择：</p>
+<ul>
+<li>线性模型（特征的线性组合）</li>
+<li>神经网络</li>
+<li>决策树</li>
+<li>最近邻</li>
+<li>傅立叶/小波基</li>
+<li>……</li>
+</ul>
+<p>本课程关注可微分的模型，即线性模型和神经网络。</p>
+<h2 id="incremental-methods">2 Incremental Methods</h2>
+<h3 id="gradient-descent">2.1 Gradient Descent</h3>
+<p>因为我们只考虑可微分的模型，所以优化模型的方法可以用梯度下降。更具体地说，我们使用 MSE (Mean-Squared Error) 作为估计值与真实值的损失函数： <span class="math display">\[
+J(\bfw)=\frac{1}{2}\E_\pi\left[(v_\pi(S)-\hat v(S, \bfw))^2\right]
+\]</span> 则更新的每一步为： <span class="math display">\[
+\Delta \bfw=-\alpha\nabla_\bfw J(\bfw)=\alpha\E_\pi[(v_\pi(S)-\hat v(S,\bfw))\nabla_\bfw \hat v(S,\bfw)]
+\]</span> 由于本节我们考虑 incremental methods，即每走一步就更新，所以： <span class="math display">\[
+\Delta \bfw =\alpha(v_\pi(S)-\hat v(S,\bfw))\nabla_\bfw \hat v(S,\bfw)
+\]</span></p>
+<h3 id="linear-function-approximation">2.2 Linear Function Approximation</h3>
+<p>最简单的模型即线性模型，我们使用特征向量来表示一个状态： <span class="math display">\[
+\bfx(S)=\begin{bmatrix}\bfx_1(S)\\\vdots\\\bfx_n(S)\end{bmatrix}
+\]</span> 则模型为特征向量的线性组合： <span class="math display">\[
+\hat v(S,\bfw)=\bfx(S)^T\bfw=\sum_{j=1}^n\bfx_j(S)\bfw_j
+\]</span> 使用 MSE 损失函数和梯度下降优化方法： <span class="math display">\[
+\begin{align}
+&amp;\nabla_\bfw \hat v(S,\bfw)=\bfx(S)\\
+&amp;\Delta\bfw=\alpha(v_\pi(S)-\hat v(S,\bfw))\bfx(S)
+\end{align}
+\]</span></p>
+<blockquote>
+<p><span class="math inline">\(\text{更新量}=\text{步长（学习率）}\times\text{预测误差}\times\text{特征向量}\)</span></p>
+</blockquote>
+<p>值得注意的是，Table Lookup 和线性模型近似并不是完全不同的两种方式，如果我们设置特征向量为： <span class="math display">\[
+\bfx(S)=\begin{bmatrix}\mathbf 1(S=s_1)\\\vdots\\\mathbf 1(S=s_n)\end{bmatrix}
+\]</span> 则线性模型本质就是选取当前所在状态的对应权重，并使其逼近 <span class="math inline">\(v_\pi(S)\)</span>，因此权重 <span class="math inline">\(\bfw\)</span> 正是我们存储的表格 <span class="math inline">\(V(S)\)</span>.</p>
+<h3 id="incremental-prediction-algorithms">2.3 Incremental Prediction Algorithms</h3>
+<p>上文依赖于真实的 value function <span class="math inline">\(v_\pi(S)\)</span> 作为监督信号，但是在 RL 中这显然不成立。因此在实践中，我们用 target 代替 <span class="math inline">\(v_\pi(s)\)</span>：</p>
+<ul>
+<li><p>MC <span class="math display">\[
+\Delta\bfw=\alpha({\color{purple}{G_t}}-\hat v(S_t,\bfw))\nabla_\bfw\hat v(S_t, \bfw)
+\]</span></p></li>
+<li><p>TD(0) <span class="math display">\[
+\Delta\bfw=\alpha({\color{purple}{R_{t+1}+\gamma\hat v(S_{t+1},\bfw)}}-\hat v(S_t,\bfw))\nabla_\bfw\hat v(S_t, \bfw)
+\]</span></p></li>
+<li><p><span class="math inline">\(\text{TD}(\lambda)\)</span> <span class="math display">\[
+\Delta\bfw=\alpha({\color{purple}{G_t^\lambda}}-\hat v(S_t,\bfw))\nabla_\bfw\hat v(S_t, \bfw)
+\]</span> Backward view： <span class="math display">\[
+\begin{align}
+&amp;\delta_t=R_{t+1}+\gamma\hat v(S_{t+1},\bfw)-\hat v(S_t,\bfw)\\
+&amp;E_t=\gamma\lambda E_{t-1}+\bfx(S_{t})\\
+&amp;\Delta\bfw=\alpha\delta_tE_t
+\end{align}
+\]</span></p></li>
+</ul>
+<h3 id="incremental-control-algorithms">2.4 Incremental Control Algorithms</h3>
+<p>做 control 的基本思路不变，即在评价策略和更新策略之间反复迭代。同样的，我们需要将 <span class="math inline">\(V\)</span> 替换为 <span class="math inline">\(Q\)</span>.</p>
+<p><img src="iteration.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>在 MSE 损失函数下，每一步的更新为： <span class="math display">\[
+\Delta \bfw=\alpha(q_\pi(S,A)-\hat q(S,A,\bfw))\nabla_\bfw\hat q(S,A,\bfw)
+\]</span> 若设特征向量： <span class="math display">\[
+\bfx(S,A)=\begin{bmatrix}\bfx_1(S,A)\\\vdots\\\bfx_n(S,A)\end{bmatrix}
+\]</span> 并使用<strong>线性模型</strong>： <span class="math display">\[
+\hat q(S,A,\bfw)=\bfx(S,A)^T\bfw=\sum_{j=1}^n\bfx_j(S,A)\bfw_j
+\]</span> 则更新为： <span class="math display">\[
+\Delta \bfw=\alpha(q_\pi(S,A)-\hat q(S,A,\bfw))\bfx(S,A)
+\]</span> 类似 prediction，我们实操时用 target 代替 <span class="math inline">\(q_\pi(s,a)\)</span>：</p>
+<ul>
+<li><p>MC <span class="math display">\[
+\Delta\bfw=\alpha({\color{purple}{G_t}}-\hat q(S_t,A_t,\bfw))\nabla_\bfw\hat q(S_t,A_t,\bfw)
+\]</span></p></li>
+<li><p>TD(0) <span class="math display">\[
+\Delta\bfw=\alpha({\color{purple}{R_{t+1}+\gamma\hat q(S_{t+1}, A_t)}}-\hat q(S_t,A_t,\bfw))\nabla_\bfw\hat q(S_t,A_t,\bfw)
+\]</span></p></li>
+<li><p><span class="math inline">\(\text{TD}(\lambda)\)</span> <span class="math display">\[
+\Delta\bfw=\alpha({\color{purple}{q_t^\lambda}}-\hat q(S_t,A_t,\bfw))\nabla_\bfw\hat q(S_t,A_t,\bfw)
+\]</span> Backward view： <span class="math display">\[
+\begin{align}
+&amp;\delta_t=R_{t+1}+\gamma\hat q(S_{t+1},A_{t+1},\bfw)-\hat q(S_t,A_t,\bfw)\\
+&amp;E_t=\gamma\lambda E_{t-1}+\nabla_\bfw \hat q(S_t,A_t,\bfw)\\
+&amp;\Delta \bfw=\alpha\delta_tE_t
+\end{align}
+\]</span></p></li>
+</ul>
+<h3 id="convergence">2.5 Convergence</h3>
+<p><img src="convergence1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>TD 在 off-policy 和 non-linear function approximation 时不收敛是因为它并没有沿着任何目标函数的梯度进行更新，有人提出了改进的 Gradient TD：</p>
+<p><img src="convergence2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p><img src="convergence3.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h2 id="batch-methods">3 Batch Methods</h2>
+<h3 id="least-squares-prediction">3.1 Least Squares Prediction</h3>
+<p>虽然 gradient descent 很简单，但是它并不 sample efficient，因为我们浪费了许多过往的经验。不妨把这些过往的经验存下来，视为一个<strong>训练集</strong>，每次更新取出一个 batch，就像我们在监督学习里做的那样。</p>
+<p>形式化地说，经验（experience）是一系列 <span class="math inline">\(\langle \text{state}, \text{value}\rangle\)</span> pairs： <span class="math display">\[
+\mathcal D=\{\langle s_1, v_1^\pi\rangle,\ldots,\langle s_T, v_T^\pi\rangle\}
+\]</span> 我们将优化目标设置为最小二乘（least squares）： <span class="math display">\[
+LS(\bfw)=\sum_{t=1}^T(v_t^\pi-\hat v(s_t,\bfw))^2=\E_\mathcal D[(v^\pi-\hat v(s,\bfw))^2]
+\]</span></p>
+<p><br/></p>
+<p><strong>SGD with Experience Replay</strong></p>
+<p>一般地，我们可以使用 SGD 迭代求解上述最小二乘问题，步骤如下：</p>
+<ol type="1">
+<li><p>从 experience 中采样 <span class="math display">\[
+\langle s,v^\pi\rangle\sim \mathcal D
+\]</span></p></li>
+<li><p>使用梯度下降更新参数 <span class="math display">\[
+\Delta \bfw=\alpha(v^\pi-\hat v(s,\bfw))\nabla_\bfw \hat v(s,\bfw)
+\]</span></p></li>
+<li><p>反复上述步骤，最终收敛到最小二乘的解： <span class="math display">\[
+\bfw^\pi=\arg\min_{\bfw}LS(\bfw)
+\]</span></p></li>
+</ol>
+<p><br/></p>
+<p><strong>Experience Replay in Deep Q-Networks (DQN)</strong></p>
+<p>特别地，我们考虑使用神经网络作为近似函数的情形。DQN 使用 <strong>experience replay</strong> 和 <strong>fixed Q-targets</strong> 这两个 trick 使得训练过程更加稳定，其步骤如下：</p>
+<ol type="1">
+<li><p>根据 <span class="math inline">\(\epsilon\text{-greedy}\)</span> 策略采取行动 <span class="math inline">\(a_t\)</span></p></li>
+<li><p>将转移 <span class="math inline">\((s_t,a_t,r_{t+1},s_{t+1})\)</span> 存储在 replay memory <span class="math inline">\(\mathcal D\)</span> 中</p></li>
+<li><p>从 <span class="math inline">\(\mathcal D\)</span> 中随机采样一个 mini-batch <span class="math inline">\((s,a,r,s&#39;)\)</span></p></li>
+<li><p><strong>用老的、固定的参数 <span class="math inline">\(\bfw^-\)</span></strong> 计算 Q-learning targets</p></li>
+<li><p>使用 SGD 优化 MSE 损失函数： <span class="math display">\[
+\mathcal L_i(\bfw_i)=\E_{s,a,r,s&#39;\sim\mathcal D_i}\left[\left(r+\gamma \max_{a&#39;}Q(s&#39;,a&#39;;\bfw_i^-)-Q(s,a;\bfw_i)\right)^2\right]
+\]</span></p></li>
+</ol>
+<p><br/></p>
+<p><strong>Linear Least Squares Prediction</strong></p>
+<p>上面我们用数值解法（SGD）求解了最小二乘，但众所周知，最小二乘在线性模型下是可以直接写出解析解的。如果我们用线性模型去近似 <span class="math inline">\(q(s,a)\)</span>，那么可以直接解出： <span class="math display">\[
+\bfw=\left(\sum_{t=1}^T\bfx(s_t)\bfx(s_t)^\top\right)^{-1}\sum_{t=1}^T\bfx(s_t)v_t^\pi
+\]</span> 对于长度为 <span class="math inline">\(N\)</span> 的特征向量，直接求解的复杂度是 <span class="math inline">\(O(N^3)\)</span> 的，使用 Shermann-Morrison 算法是 <span class="math inline">\(O(N^2)\)</span> 的。</p>
+<p><br/></p>
+<p><strong>Algorithms</strong></p>
+<p>上文内容只是方法论，实际中我们不知道 <span class="math inline">\(v_t^\pi\)</span>，需要将 <span class="math inline">\(v_t^\pi\)</span> 换做 MC target, TD target 或 <span class="math inline">\(\text{TD}(\lambda)\)</span> target，得到具体的算法。</p>
+<ul>
+<li>LSMC：<span class="math inline">\(v_t^\pi\approx G_t\)</span></li>
+<li>LSTD：<span class="math inline">\(v_t^\pi\approx R_{t+1}+\gamma \hat v(S_{t+1},w)\)</span></li>
+<li><span class="math inline">\(\text{LSTD}(\lambda)\)</span>：<span class="math inline">\(v_t^\pi\approx G_t^\lambda\)</span></li>
+</ul>
+<p><img src="convergence4.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h3 id="least-squres-control">3.2 Least Squres Control</h3>
+<p>Control 只需将 <span class="math inline">\(v\)</span> 替换为 <span class="math inline">\(q\)</span>，然后遵循 policy iteration 的方式——使用最小二乘的方式进行策略评估，贪心地更新策略，如此迭代。</p>
+<p><img src="convergence5.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/David-Silver/" class="category-chain-item">David Silver</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/reinforcement-learning/" class="print-no-link">#reinforcement learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[David Silver强化学习]6·Value Function Approximation</div>
+      <div>https://xyfjason.github.io/blog-main/2022/05/13/David-Silver强化学习-6·Value-Function-Approximation/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年5月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/05/25/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-7%C2%B7Policy-Gradient/" title="[David Silver强化学习]7·Policy Gradient">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[David Silver强化学习]7·Policy Gradient</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/05/07/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-5%C2%B7Model-Free-Control/" title="[David Silver强化学习]5·Model-Free Control">
+                        <span class="hidden-mobile">[David Silver强化学习]5·Model-Free Control</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

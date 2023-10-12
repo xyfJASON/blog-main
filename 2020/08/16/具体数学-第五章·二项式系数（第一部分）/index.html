@@ -1,0 +1,1119 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="第五章·二项式系数分8节，包含基本恒等式、生成函数、超几何函数、机械求和法等内容。这是笔记第一部分，包括基本恒等式、一些练习、处理的技巧，以及牛顿级数、二项式反演。  基本恒等式 二项式系数 \[ \binom{r}{k}&#x3D;\begin{cases}\frac{r(r-1)\cdots(r-k+1)}{k(k-1)\cdots 1}&#x3D;\frac{r^{\underline{k}}}{k!},&amp;a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[具体数学]第五章·二项式系数（第一部分）">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2020/08/16/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E4%BA%94%E7%AB%A0%C2%B7%E4%BA%8C%E9%A1%B9%E5%BC%8F%E7%B3%BB%E6%95%B0%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="第五章·二项式系数分8节，包含基本恒等式、生成函数、超几何函数、机械求和法等内容。这是笔记第一部分，包括基本恒等式、一些练习、处理的技巧，以及牛顿级数、二项式反演。  基本恒等式 二项式系数 \[ \binom{r}{k}&#x3D;\begin{cases}\frac{r(r-1)\cdots(r-k+1)}{k(k-1)\cdots 1}&#x3D;\frac{r^{\underline{k}}}{k!},&amp;a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_study1.jpg">
+<meta property="article:published_time" content="2020-08-16T01:37:58.000Z">
+<meta property="article:modified_time" content="2023-10-12T10:17:15.633Z">
+<meta property="article:author" content="xyfJASON">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_study1.jpg">
+  
+  
+  
+  <title>[具体数学]第五章·二项式系数（第一部分） - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_study1.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[具体数学]第五章·二项式系数（第一部分）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-08-16 09:37" pubdate>
+          2020年8月16日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          17k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          144 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[具体数学]第五章·二项式系数（第一部分）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>第五章·二项式系数分8节，包含基本恒等式、生成函数、超几何函数、机械求和法等内容。这是笔记第一部分，包括基本恒等式、一些练习、处理的技巧，以及牛顿级数、二项式反演。</p>
+</blockquote>
+<h2 id="基本恒等式">基本恒等式</h2>
+<h3 id="二项式系数">二项式系数</h3>
+<p><span class="math display">\[
+\binom{r}{k}=\begin{cases}\frac{r(r-1)\cdots(r-k+1)}{k(k-1)\cdots 1}=\frac{r^{\underline{k}}}{k!},&amp;k\geqslant 0\\0,&amp;k&lt;0\end{cases}
+\]</span> 注意上式中，<span class="math inline">\(k\in \mathbb Z\)</span>，而 <span class="math inline">\(r\)</span> 可以是<strong>任意实数</strong>（甚至<strong>复数</strong>）。</p>
+<ul>
+<li>只有当 <span class="math inline">\(r,k\)</span> 取非负整数时，<span class="math inline">\(\binom{r}{k}\)</span> 才有组合解释。但是，鉴于二项式系数还有许多其他用途，所以将范围推广至实数；</li>
+<li>可以把 <span class="math inline">\(\binom{r}{k}\)</span> 视为 <span class="math inline">\(r\)</span> 的 <span class="math inline">\(k\)</span> 次多项式，此观点常常有用；</li>
+<li>下指标 <span class="math inline">\(k\)</span> 是非整数的情形应用很少，故这里不考虑。</li>
+</ul>
+<h3 id="最重要的十个二项式系数恒等式">最重要的十个二项式系数恒等式</h3>
+<p><span class="math display">\[
+\color{purple}{\begin{align}
+&amp;\binom{n}{k}=\frac{n!}{k!(n-k)!},\quad 整数\;n\geqslant k\geqslant 0&amp;&amp;阶乘展开式\\
+&amp;\binom{n}{k}=\binom{n}{n-k},\quad 整数\;n\geqslant0,k\in\mathbb{Z}&amp;&amp;对称恒等式\\
+&amp;\binom{r}{k}=\frac{r}{k}\binom{r-1}{k-1},\quad 整数\;k\neq 0&amp;&amp;吸收/提取恒等式\\
+&amp;\binom{r}{k}=\binom{r-1}{k}+\binom{r-1}{k-1},\quad k\in\mathbb{Z}&amp;&amp;加法恒等式\\
+&amp;\binom{r}{k}=(-1)^k\binom{k-r-1}{k},\quad k\in\mathbb{Z}&amp;&amp;上指标反转\\
+&amp;\binom{r}{m}\binom{m}{k}=\binom{r}{k}\binom{r-k}{m-k},\quad m,k\in\mathbb{Z}&amp;&amp;三项式版恒等式\\
+&amp;\sum_{k}\binom{r}{k}x^ky^{r-k}=(x+y)^r，整数\;r\geqslant 0\;或者\; \left|\frac{x}{y}\right|&lt;1&amp;&amp;二项式定理\\
+&amp;\sum_{k\leqslant n}\binom{r+k}{k}=\binom{r+n+1}{n},\quad n\in\mathbb{Z}&amp;&amp;平行求和法\\
+&amp;\sum_{0\leqslant k\leqslant n}\binom{k}{m}=\binom{n+1}{m+1},\quad 整数\;m,n\geqslant 0&amp;&amp;上指标求和法\\
+&amp;\sum_{k}\binom{r}{k}\binom{s}{n-k}=\binom{r+s}{n},\quad n\in\mathbb{Z}&amp;&amp;范德蒙德卷积公式
+\end{align}}
+\]</span></p>
+<p>其中，范德蒙德卷积公式有如下推论： <span class="math display">\[
+\color{blue}{\begin{align}
+&amp;\sum_k\binom{l}{m+k}\binom{s}{n+k}=\binom{l+s}{l-m+n}&amp;&amp;,整数\;l\geqslant 0,\,m,n\in\mathbb{Z}\\
+&amp;\sum_k\binom{l}{m+k}\binom{s+k}{n}(-1)^k=(-1)^{l+m}\binom{s-m}{n-l}&amp;&amp;,整数\;l\geqslant 0,\,m,n\in\mathbb{Z}\\
+&amp;\sum_{k\leqslant l}\binom{l-k}{m}\binom{s}{k-n}(-1)^k=(-1)^{l+m}\binom{s-m-1}{l-m-n}&amp;&amp;,整数\;l,m,n\geqslant 0\\
+&amp;\sum_{-q\leqslant k\leqslant l}\binom{l-k}{m}\binom{q+k}{n}=\binom{l+q+1}{m+n+1}&amp;&amp;,整数\;m,n\geqslant0,整数\;l+q\geqslant 0
+\end{align}}
+\]</span></p>
+<blockquote>
+<p>注意<strong>对称性+上指标反转</strong>可以把上/下指标中的变量给移动到下/上指标去。上述的推论都可以通过<strong>不断进行对称和反转</strong>得到。</p>
+</blockquote>
+<h3 id="上述恒等式的证明">上述恒等式的证明</h3>
+<ul>
+<li><p>吸收/提取恒等式： <span class="math display">\[
+\binom{r}{k}=\frac{r^{\underline{k}}}{k!}=\frac{r}{k}\frac{(r-1)^{\underline{k-1}}}{(k-1)!}=\frac{r}{k}\binom{r-1}{k-1}
+\]</span></p>
+<blockquote>
+<p>在杨辉三角中，即 <span class="math inline">\((r,k)\)</span> 的数等于 <span class="math inline">\((r-1,k-1)\)</span> 的数乘上 <span class="math inline">\(r/k\)</span>.</p>
+</blockquote></li>
+<li><p>加法恒等式：代数证明略，组合证明：先设 <span class="math inline">\(r\in\mathbb{Z}_+\)</span>，从 <span class="math inline">\(r\)</span> 个人中选取 <span class="math inline">\(k\)</span> 个人，等价于设一个特殊的人，选他+从 <span class="math inline">\(r-1\)</span> 人中选 <span class="math inline">\(k-1\)</span> 个，不选他+从 <span class="math inline">\(r-1\)</span> 人中选 <span class="math inline">\(k\)</span> 个。推广到实数，由于等号两边都是 <span class="math inline">\(r\)</span> 的 <span class="math inline">\(k\)</span> 次多项式，它们的差也是 <span class="math inline">\(r\)</span> 的 <span class="math inline">\(k\)</span> 次多项式，最多有 <span class="math inline">\(k\)</span> 个零点，或者恒为零；然而易知这个等式在 <span class="math inline">\(\mathbb{Z^*}\)</span> 内恒成立，已经有多于 <span class="math inline">\(k\)</span> 个零点了，所以二者之差恒为零，即等式在 <span class="math inline">\(\mathbb{R}\)</span> 上恒成立。<span class="math inline">\(\square\)</span></p>
+<blockquote>
+<p>上述过程称为<strong>多项式推理法</strong>，非常重要！</p>
+<p>在杨辉三角中，即上两个相加等于下面一个。</p>
+</blockquote></li>
+<li><p>上指标反转： <span class="math display">\[
+(-1)^k\binom{k-r-1}{k}=(-1)^k\frac{(k-r-1)^{\underline k}}{k!}=\frac{r^{\underline k}}{k!}=\binom{r}{k}
+\]</span></p></li>
+<li><p>三项式版恒等式： <span class="math display">\[
+\begin{align}
+&amp;\binom{r}{m}\binom{m}{k}=\frac{r!}{m!(r-m)!}\frac{m!}{k!(m-k)!}=\frac{r!}{(r-m)!k!(m-k)!}\\
+&amp;\binom{r}{k}\binom{r-k}{m-k}=\frac{r!}{k!(r-k)!}\frac{(r-k)!}{(m-k)!(r-m)!}=\frac{r!}{k!(m-k)!(r-m)!}
+\end{align}
+\]</span> 故二者相等。</p></li>
+<li><p>平行求和法： <span class="math display">\[
+\begin{align}
+\sum_{k\leqslant n}\binom{r+k}{k}&amp;=\binom{r}{0}+\binom{r+1}{1}+\cdots+\binom{r+n}{n}\\
+&amp;=\binom{r}{-1}+\binom{r}{0}+\binom{r+1}{1}+\cdots+\binom{r+n}{n}&amp;&amp;因为\;\binom{r}{-1}=0\\
+&amp;=\binom{r+1}{0}+\binom{r+1}{1}+\cdots+\binom{r+n}{n}&amp;&amp;前两项加法恒等式合并\\
+&amp;=\cdots&amp;&amp;不断合并\\
+&amp;=\binom{r+n+1}{n}
+\end{align}
+\]</span></p>
+<blockquote>
+<p>在杨辉三角中，即一条斜 <span class="math inline">\(45^\circ\)</span> 向下的线上的所有值加起来等于末尾那个数的下一行的数。</p>
+</blockquote></li>
+<li><p>上指标求和法： <span class="math display">\[
+\begin{align}
+\sum_{0\leqslant k\leqslant n}\binom{k}{m}&amp;=\binom{0}{m}+\binom{1}{m}+\cdots+\binom{n}{m}\\
+&amp;=\binom{0}{m+1}+\binom{0}{m}+\binom{1}{m}+\cdots+\binom{n}{m}&amp;&amp;因为\;\binom{0}{m+1}=0\\
+&amp;=\binom{1}{m+1}+\binom{1}{m}+\cdots+\binom{n}{m}&amp;&amp;前两项加法恒等式合并\\
+&amp;=\cdots&amp;&amp;不断合并\\
+&amp;=\binom{n+1}{m+1}
+\end{align}
+\]</span></p>
+<blockquote>
+<p>在杨辉三角中，即一条竖线上的 <span class="math inline">\(n\)</span> 个值加起来等于末尾那个值的右下角的值。</p>
+</blockquote></li>
+<li><p>范德蒙德卷积公式：组合证明：先设 <span class="math inline">\(r,s\in\mathbb{Z}_+\)</span>，左式是从 <span class="math inline">\(r\)</span> 个男生中选 <span class="math inline">\(k\)</span> 个，加上从 <span class="math inline">\(s\)</span> 个女生中选 <span class="math inline">\(n-k\)</span> 个，枚举这个 <span class="math inline">\(k\)</span>，右式是从 <span class="math inline">\(r+s\)</span> 个人中选 <span class="math inline">\(n\)</span> 个人，二者显然相等。然后再由前面提及的<strong>多项式推理法</strong>推广到 <span class="math inline">\(\mathbb{R}\)</span> 上。</p></li>
+</ul>
+<blockquote>
+<p>我的批注：上面许多恒等式都可以在<strong>杨辉三角</strong>中形象化地记忆，其证明也在杨辉三角中有直观体现。</p>
+<p><img src="形象化.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+</blockquote>
+<p>除此以外，关于二项式系数的恒等式还有茫茫多……</p>
+<h2 id="基本练习">基本练习</h2>
+<h3 id="问题1比值的和式">问题1：比值的和式</h3>
+<p>求 <span class="math display">\[
+\sum_{k=0}^m\frac{\binom{m}{k}}{\binom{n}{k}},\quad整数\;n\geqslant m\geqslant 0
+\]</span> 的封闭形式。</p>
+<p>解：由三项式恒等式 <span class="math inline">\(\binom{r}{m}\binom{m}{k}=\binom{r}{k}\binom{r-k}{m-k}\)</span>，可知：<span class="math inline">\(\binom{m}{k}/\binom{n}{k}=\binom{n-k}{m-k}/\binom{n}{m}\)</span>，于是： <span class="math display">\[
+\begin{align}
+\sum_{k=0}^m\frac{\binom{m}{k}}{\binom{n}{k}}&amp;=\sum_{k=0}^m\frac{\binom{n-k}{m-k}}{\binom{n}{m}}\\
+&amp;=\frac{1}{\binom{n}{m}}\sum_{k=0}^m\binom{n-k}{m-k}\\
+&amp;=\frac{1}{\binom{n}{m}}\sum_{t=0}^m\binom{n-m+t}{t}&amp;&amp;令\;t=m-k\\
+&amp;=\frac{1}{\binom{n}{m}}\binom{n+1}{m}&amp;&amp;平行求和法\\
+&amp;=\frac{n+1}{n+1-m}
+\end{align}
+\]</span></p>
+<blockquote>
+<p>上述过程怎么想到的呢？首先运用三项式恒等式可以使分母不含 <span class="math inline">\(k\)</span>，得以提出求和号；然后，考虑 <span class="math inline">\(\sum\limits_{k=0}^m\binom{n-k}{m-k}\)</span> 在杨辉三角中的形态，是一个斜 <span class="math inline">\(45^\circ\)</span> 向下的形态，于是转换到平行求和法。</p>
+</blockquote>
+<h3 id="问题2来自排序文献">问题2：来自排序文献</h3>
+<p>求 <span class="math display">\[
+T=\sum_{k=0}^nk\binom{m-k-1}{m-n-1}/\binom{m}{n}
+\]</span> 的封闭形式。</p>
+<p>解：</p>
+<p>设 <span class="math inline">\(S=\sum\limits_{k=0}^nk\binom{m-k-1}{m-n-1}\)</span>，<span class="math inline">\(T\)</span> 即是 <span class="math inline">\(S/\binom{m}{n}\)</span>，下面计算 <span class="math inline">\(S\)</span>： <span class="math display">\[
+\begin{align}
+S&amp;=\sum_{k=0}^nk\binom{m-k-1}{m-n-1}\\
+&amp;=\sum_{k=0}^nm\binom{m-k-1}{m-n-1}-\sum_{k=0}^n(m-k)\binom{m-k-1}{m-n-1}\\
+&amp;=m\sum_{k=0}^{n}\binom{m-k-1}{m-n-1}-(m-n)\sum_{k=0}^n\binom{m-k}{m-n}&amp;&amp; 对后者使用吸收恒等式\\
+&amp;=mA-(m-n)B
+\end{align}
+\]</span> 其中， <span class="math display">\[
+\begin{align}
+A&amp;=\sum_{k=0}^n\binom{m-k-1}{m-n-1}\\
+&amp;=\sum_{t=m-n-1}^{m-1}\binom{t}{m-n-1}&amp;&amp;令\;t=m-k-1\\
+&amp;=\binom{m}{m-n}&amp;&amp;实施上指标求和法\\
+\\
+B&amp;=\sum_{k=0}^n\binom{m-k}{m-n}\\
+&amp;=\sum_{t=m-n}^m\binom{t}{m-n}&amp;&amp;令\;t=m-k\\
+&amp;=\binom{m+1}{m-n+1}&amp;&amp;实施上指标求和法
+\end{align}
+\]</span></p>
+<p>于是乎： <span class="math display">\[
+\begin{align}
+S&amp;=mA-(m-n)B\\
+&amp;=m\binom{m}{m-n}-(m-n)\binom{m+1}{m-n+1}\\
+&amp;=\binom{m}{m-n}\left[m-(m-n)\frac{m+1}{m-n+1}\right]&amp;&amp;吸收恒等式\\
+&amp;=\frac{m!}{(m-n+1)!(n-1)!}=\binom{m}{n-1}
+\end{align}
+\]</span></p>
+<p>故 <span class="math display">\[
+T=S/\binom{m}{n}=\frac{m!}{(m-n+1)!(n-1)!}\cdot\frac{n!(m-n)!}{m!}=\frac{n}{m-n+1}
+\]</span></p>
+<blockquote>
+<p>上述解答的思考过程：首先，<span class="math inline">\(S\)</span> 中二项式系数外有个 <span class="math inline">\(k\)</span>，自然想到用吸收恒等式把 <span class="math inline">\(k\)</span> 给<strong>吸进去</strong>，为了应用吸收恒等式，把原式拆成了两部分；观察 <span class="math inline">\(A,B\)</span> 的形态，在杨辉三角中，它们都是某一竖条相加，自然转换成上指标求和法求解。</p>
+</blockquote>
+<h3 id="问题3来自以往的考试题">问题3：来自以往的考试题</h3>
+<p>求 <span class="math display">\[
+Q_n=\sum_{k\leqslant 2^n}\binom{2^n-k}{k}(-1)^k
+\]</span> 解：似乎没有什么公式可供使用，我们考虑求出它的<strong>递归式</strong>。然而，<span class="math inline">\(n\)</span> 总是以 <span class="math inline">\(2\)</span> 的幂次跳跃，在杨辉三角中相距 <span class="math inline">\(2^k\)</span> 行数的两个数也不好找什么关系（我们知道的关系时加法恒等式，给定相邻两行的关系）。不过这给我们启发，我们不妨考虑一个更普适的问题： <span class="math display">\[
+R_m=\sum_{k\leqslant m}\binom{m-k}{k}(-1)^k
+\]</span> 那么 <span class="math inline">\(Q_n=R_{2^n}\)</span>. 若解得 <span class="math inline">\(R_m\)</span>，则自然解得 <span class="math inline">\(Q_n\)</span>. <span class="math display">\[
+\begin{align}
+R_m&amp;=\sum_{k\leqslant m}\binom{m-k}{k}(-1)^k\\
+&amp;=\sum_{k\leqslant m}\binom{m-k-1}{k}(-1)^k+\sum_{k\leqslant m}\binom{m-k-1}{k-1}(-1)^k\\
+&amp;=\left[\sum_{k\leqslant m-1}\binom{m-k-1}{k}(-1)^k+\binom{-1}{m}(-1)^m\right]+\left[\sum_{k\leqslant m-1}\binom{m-k-2}{k}(-1)^{k+1}\right]\\
+&amp;=\left[R_{m-1}+{(-1)}^{2m}\right]+\left[-\sum_{k\leqslant m-2}\binom{m-2-k}{k}(-1)^{k}+\binom{-1}{m-1}(-1)^{m}\right]\\
+&amp;=R_{m-1}+1-R_{m-2}+(-1)^{2m-1}\\&amp;=R_{m-1}-R_{m-2}
+\end{align}
+\]</span></p>
+<p>于是 <span class="math inline">\(R_m=R_{m-1}-R_{m-2}=(R_{m-2}-R_{m-3})-R_{m-2}=-R_{m-3}=R_{m-6}\)</span>，以 <span class="math inline">\(6\)</span> 为周期，故： <span class="math display">\[
+R_m=\begin{cases}1&amp;m\bmod 6=0\\1&amp;m\bmod 6=1\\0&amp;m\bmod 6=2\\-1&amp;m\bmod 6=3\\-1&amp;m\bmod 6=4\\0&amp;m\bmod 6=5\\\end{cases}
+\]</span> 故： <span class="math display">\[
+Q_n=R_{2^n}=\begin{cases}1&amp;n=0\\0&amp;n\;奇数\\-1&amp;n\;偶数且\;n&gt;0\end{cases}
+\]</span></p>
+<blockquote>
+<p>当找不到公式予以化简时，不妨考虑寻找<strong>递归式</strong>。</p>
+</blockquote>
+<h3 id="问题4包含两个二项式系数的和式">问题4：包含两个二项式系数的和式</h3>
+<p>求 <span class="math display">\[
+\sum_{k=0}^nk\binom{m-k-1}{m-n-1}\quad,整数\;m&gt;n\geqslant 0
+\]</span> 的封闭形式。</p>
+<p>解：这个就是问题2中的 <span class="math inline">\(S\)</span>，不过我们换一个角度看它。视 <span class="math inline">\(k\)</span> 为 <span class="math inline">\(\binom{k}{1}\)</span>，再根据范德蒙德卷积公式的推论公式：<span class="math inline">\(\sum\limits_{-q\leqslant k\leqslant l}\binom{l-k}{m}\binom{q+k}{n}=\binom{l+q+1}{m+n+1}\)</span>，有： <span class="math display">\[
+\sum_{k=0}^n\binom{k}{1}\binom{m-k-1}{m-n-1}=\binom{m}{m-n+1}
+\]</span> &gt; 注意应用推论公式的条件是 <span class="math inline">\(0\leqslant k &lt; m\)</span>，这里只加到了 <span class="math inline">\(n\)</span> 仍是正确的，是因为当 <span class="math inline">\(k&gt;n\)</span> 时，<span class="math inline">\(m-k-1&lt;m-n-1\)</span>，于是 <span class="math inline">\(\binom{m-k-1}{m-n-1}=0\)</span>.</p>
+<h3 id="问题5有三个因子的和式">问题5：有三个因子的和式</h3>
+<p>求 <span class="math display">\[
+\sum_k\binom{n}{k}\binom{s}{k}k\quad,整数\;n\geqslant 0
+\]</span> 的封闭形式。</p>
+<p>解： <span class="math display">\[
+\begin{align}
+\sum_k\binom{n}{k}\binom{s}{k}k&amp;=\sum_{k}\binom{n}{k}\binom{s-1}{k-1}s&amp;&amp;提取恒等式\\
+&amp;=s\sum_k\binom{n}{n-k}\binom{s-1}{k-1}&amp;&amp;对称性\\
+&amp;=s\binom{n+s-1}{n-1}&amp;&amp;范德蒙德卷积
+\end{align}
+\]</span></p>
+<blockquote>
+<p>如果把 <span class="math inline">\(k\)</span> 吸进 <span class="math inline">\(\binom{n}{k}\)</span>，得到的 <span class="math inline">\(\binom{n-1}{k-1}\)</span> 中 <span class="math inline">\(n-1\)</span> 有可能是负的，则不能运用对称性继续推导了（一定注意对称性要求上指标是<strong>正整数</strong>）。</p>
+</blockquote>
+<h3 id="问题6一个令人惊悚的和式">问题6：一个令人惊悚的和式</h3>
+<p>求 <span class="math display">\[
+\sum_{k\geqslant 0}\binom{n+k}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1}\quad,整数\;n\geqslant k
+\]</span> 的封闭形式。</p>
+<p>解： <span class="math display">\[
+\begin{align}
+\sum_{k\geqslant 0}\binom{n+k}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1}&amp;=\sum_{k\geqslant 0}\binom{n+k}{k}\binom{n}{k}\frac{(-1)^k}{k+1}&amp;&amp;三项式版恒等式\\
+&amp;=\sum_{k\geqslant 0}\binom{n+k}{k}\binom{n+1}{k+1}\frac{1}{n+1}(-1)^k&amp;&amp;吸收恒等式\\
+&amp;=\frac{1}{n+1}\sum_{k\geqslant0}\binom{-n-1}{k}\binom{n+1}{k+1}&amp;&amp;上指标反转\\
+&amp;=\frac{1}{n+1}\sum_{k\geqslant 0}\binom{-n-1}{k}\binom{n+1}{n-k}&amp;&amp;对称性\\
+&amp;=\frac{1}{n+1}\binom{0}{n}=[n=0]
+\end{align}
+\]</span></p>
+<blockquote>
+<p>再三强调对称性只能应用在上指标是正整数的情形下，上面推到过程如果对 <span class="math inline">\(\binom{n+k}{k}\)</span> 使用了对称性，会得到错误的结果（恒为 <span class="math inline">\(0\)</span>）。</p>
+</blockquote>
+<h3 id="问题7新的障碍">问题7：新的障碍</h3>
+<p>求 <span class="math display">\[
+\sum_{k\geqslant 0}\binom{n+k}{m+2k}\binom{2k}{k}\frac{(-1)^k}{k+1}\quad,整数\;m,n&gt;0
+\]</span> 的封闭形式，</p>
+<p>解： <span class="math display">\[
+\begin{align}
+&amp;\sum_{k\geqslant 0}\binom{n+k}{m+2k}\binom{2k}{k}\frac{(-1)^k}{k+1}\\
+=&amp;\sum_{k\geqslant 0}\sum_{0\leqslant j\leqslant n+k-1}\binom{n+k-1-j}{2k}\binom{j}{m-1}\binom{2k}{k}\frac{(-1)^k}{k+1}&amp;&amp;逆用范德蒙德卷积公式的推论\\
+=&amp;\sum_{j\geqslant 0}\binom{j}{m-1}\sum_{k\geqslant j-n+1\\k\geqslant 0}\binom{n+k-1-j}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1}&amp;&amp;求和号换序\\
+=&amp;\sum_{0\leqslant j&lt; n}\binom{j}{m-1}[n=j+1]&amp;&amp;上一题结论\\
+=&amp;\binom{n-1}{m-1}
+\end{align}
+\]</span></p>
+<blockquote>
+<p>解题思路：如果 <span class="math inline">\(m=0\)</span>，就是上一题了，可惜这个 <span class="math inline">\(m\)</span> 使得三项式版恒等式无法使用，后续也就难以进行了。既然这个 <span class="math inline">\(m\)</span> 这么讨厌，那就让它消失，精彩之处在于<strong>逆用</strong>范德蒙德卷积公式的推论达到这个效果。</p>
+</blockquote>
+<h3 id="问题8不同的障碍">问题8：不同的障碍</h3>
+<p>求 <span class="math display">\[
+\sum_{k\geqslant0}\binom{n+k}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1+m}\quad,整数\;m,n\geqslant 0
+\]</span> 的封闭形式。</p>
+<p>解：</p>
+<p><span class="math display">\[
+\begin{align}
+\sum_{k\geqslant0}\binom{n+k}{2k}\binom{2k}{k}\frac{(-1)^k}{k+1+m}&amp;=\sum_{k\geqslant 0}\binom{n+k}{k}\binom{n}{k}\frac{(-1)^k}{k+1+m}&amp;&amp;三项式版恒等式
+\end{align}
+\]</span></p>
+<p>根据<strong>问题1的结论</strong>，<span class="math inline">\(\sum\limits_{k=0}^m{\binom{m}{k}}{\binom{n}{k}}^{-1}=\frac{n+1}{n+1-m},\quad整数\;n\geqslant m\geqslant 0\)</span>，于是 <span class="math inline">\(\frac{1}{k+1+m}=\frac{1}{k+1}\sum\limits_{j=0}^m\binom{m}{j}{\binom{-k-2}{j}}^{-1}\)</span>. 带入上式得： <span class="math display">\[
+\begin{align}
+原式&amp;=\sum_{k\geqslant 0}\sum\limits_{j=0}^m\binom{n+k}{k}\binom{n}{k}\frac{(-1)^k}{k+1}\binom{m}{j}{\binom{-k-2}{j}}^{-1}\\
+&amp;=\sum_{j=0}^m\sum_{k\geqslant 0}\binom{n+k}{k}\binom{n+1}{k+1}\frac{(-1)^k}{n+1}\binom{m}{j}{\binom{-k-2}{j}}^{-1}&amp;&amp;吸收恒等式
+\end{align}
+\]</span> 接下来作者就把它展开成阶乘，然后写回二项式系数了……可我实在是没看出来作者怎么做到的，所以这个坑先留着吧……</p>
+<h2 id="处理的技巧">处理的技巧</h2>
+<h3 id="技巧1取一半">技巧1：取一半</h3>
+<p><strong>加倍公式</strong>（duplication formula）： <span class="math display">\[
+\color{blue}{r^{\underline k}{\left(r-\frac{1}{2}\right)}^{\underline k}=(2r)^{\underline {2k}}/2^{2k}\quad,整数\;k\geqslant 0}
+\]</span> 证明： <span class="math display">\[
+\begin{align}
+r^{\underline k}{\left(r-\frac{1}{2}\right)}^{\underline k}
+&amp;=r(r-1)\cdots (r-k+1)\cdot \left(r-\frac{1}{2}\right)\left(r-\frac{3}{2}\right)\cdots\left(r-\frac{2k-1}{2}\right)\\
+&amp;=r\left(r-\frac{1}{2}\right)(r-1)\left(r-\frac{3}{2}\right)\cdots \left(r-\frac{2k-1}{2}\right)(r-k+1)\\
+&amp;=2r(2r-1)(2r-2)(2r-3)\cdots(2r-2k+1)(2r-2k+2)/2^{2k}\\
+&amp;={(2r)}^{\underline {2k}}/2^{2k}
+\end{align}
+\]</span> 证毕。</p>
+<p>对加倍公式两边除以 <span class="math inline">\({k!}^2\)</span>，得到： <span class="math display">\[
+\color{purple}{\binom{r}{k}\binom{r-\frac{1}{2}}{k}=\binom{2r}{2k}\binom{2k}{k}/2^{2k}\quad,k\in\mathbb{Z}}\tag{1}
+\]</span> 如果令 <span class="math inline">\(k=r=n\)</span>，得到： <span class="math display">\[
+\color{purple}{\binom{n-\frac{1}{2}}{n}=\binom{2n}{n}/{2^{2n}}\quad,n\in\mathbb{Z}}\tag{2}
+\]</span> 对上式进行<strong>反转上指标</strong>，得到： <span class="math display">\[
+\color{purple}{(-1)^n\binom{-\frac{1}{2}}{n}=\binom{2n}{n}/2^{2n}}\implies\color{purple}{\binom{-\frac{1}{2}}{n}={\left(-\frac{1}{4}\right)}^n\binom{2n}{n}\quad,n\in\mathbb{Z}}\tag{3}
+\]</span> 在 <span class="math inline">\((1)\)</span> 式中，设 <span class="math inline">\(r=\frac{n}{2}\)</span>，对所有 <span class="math inline">\(k\in\mathbb{Z}\)</span> 求和，得到： <span class="math display">\[
+\color{purple}{\begin{align}
+\sum_k\binom{n}{2k}\binom{2k}{k}2^{-2k}&amp;=\sum_k\binom{\frac{n}{2}}{k}\binom{\frac{n-1}{2}}{k}\\&amp;=\sum_k\binom{\frac{n}{2}}{\frac{n}{2}-k}\binom{\frac{n-1}{2}}{k}\;或\;\sum_k\binom{\frac{n}{2}}{k}\binom{\frac{n-1}{2}}{\frac{n-1}{2}-k}&amp;&amp;选整数那个应用对称性\\&amp;=\binom{n-\frac{1}{2}}{\frac{n}{2}}\;或\;\binom{n-\frac{1}{2}}{\frac{n-1}{2}}&amp;&amp;范德蒙德卷积\\&amp;=\binom{n-\frac{1}{2}}{\left\lfloor\frac{n}{2}\right\rfloor}
+\end{align}}\tag{4}
+\]</span> 由范德蒙德卷积我们知道：<span class="math inline">\(\sum\limits_k\binom{-1/2}{k}\binom{-1/2}{n-k}=\binom{-1}{n}=(-1)^n\)</span>，如果把 <span class="math inline">\((3)\)</span> 式结论代入得到： <span class="math display">\[
+\binom{-1/2}{k}\binom{-1/2}{n-k}=\left(-\frac{1}{4}\right)^n\binom{2k}{k}\binom{2n-2k}{n-k}
+\]</span> 于是我们有： <span class="math display">\[
+\color{purple}{\sum_k\binom{2k}{k}\binom{2n-2k}{n-k}=4^n\quad,\;整数\;n\geqslant 0}\tag{5}
+\]</span></p>
+<blockquote>
+<p>这个技巧常常怎么使用呢？我们对形如 <span class="math inline">\(\binom{2k}{k}\)</span> 的二项式系数特别不爽，因为无论是对称性还是上指标反转都无法将其处理为上下指标只有一边含有 <span class="math inline">\(k\)</span> 的形式。还记得问题6、7、8中，我们是靠着三项式版恒等式把它干掉的。现在我们多了一种工具，即把 <span class="math inline">\(\binom{2k}{k}\)</span> 写成 <span class="math inline">\(\binom{n-1/2}{k}\)</span> 的式子，其中 <span class="math inline">\(n\)</span> 是某个适当的整数（常取 <span class="math inline">\(0,1,k\)</span>）。核心公式： <span class="math display">\[
+\binom{2k}{k}=2^{2k}\binom{r}{k}\binom{r-1/2}{k}\binom{2r}{2k}^{-1}
+\]</span></p>
+</blockquote>
+<h3 id="技巧2高阶差分">技巧2：高阶差分</h3>
+<p>差分： <span class="math display">\[
+\Delta f(x)=f(x+1)-f(x)
+\]</span> 高阶差分： <span class="math display">\[
+\begin{align}
+&amp;\Delta^2f(x)=\Delta f(x+1)-\Delta f(x)=f(x+2)-2f(x+1)+f(x)\\
+&amp;\Delta^3f(x)=\Delta^2f(x+1)-\Delta^2f(x)=f(x+3)-3f(x+2)+3f(x+1)-f(x)\\
+&amp;\cdots\\
+&amp;\color{purple}{\Delta^nf(x)=\sum_{k}\binom{n}{k}(-1)^{n-k}f(x+k)}
+\end{align}
+\]</span> 利用<strong>算子</strong>证明：<span class="math inline">\(E\)</span> 移位算子，<span class="math inline">\(1\)</span> 恒等算子，那么差分算子 <span class="math inline">\(\Delta=E-1\)</span>，对算子应用二项式定理： <span class="math display">\[
+\Delta^n=(E-1)^n=\sum_k\binom{n}{k}E^k(-1)^{n-k}
+\]</span> 证毕。</p>
+<p><br></p>
+<h4 id="应用1负的下降幂的一个情形">应用1（负的下降幂的一个情形）</h4>
+<p>考虑函数 <span class="math inline">\(f(x)=(x-1)^{\underline {-1}}=\frac{1}{x}\)</span>，则根据 <span class="math inline">\(\Delta x^{\underline n}=nx^{\underline {n-1}}\)</span>，有： <span class="math display">\[
+\Delta^n\left((x-1)^{\underline{-1}}\right)=(-1)^n\frac{n!}{x(x+1)\cdots(x+n)}
+\]</span> 代入高阶差分式有： <span class="math display">\[
+\begin{align}
+&amp;\sum_k\binom{n}{k}(-1)^{n-k}\frac{1}{x+k}=(-1)^n\frac{n!}{x(x+1)\cdots (x+n)}\\
+\implies&amp;\color{purple}{\sum_k\binom{n}{k}\frac{(-1)^k}{x+k}=\frac{n!}{x(x+1)\cdots(x+n)}=x^{-1}{\binom{x+n}{n}}^{-1}\quad,x\neq0,-1,\cdots,-n}
+\end{align}
+\]</span> 两个角度看，我们对和式求出了封闭形式，或者说对 <span class="math inline">\(n!/x(x+1)\cdots(x+n)\)</span> 求得了一个部分分式的展开形式。</p>
+<h4 id="应用2牛顿级数">应用2（牛顿级数）</h4>
+<p>设 <span class="math inline">\(f(x)=a_dx^d+a_{d-1}x^{d-1}+\cdots+a_1x^1+a_0x^0\)</span> 是一个 <span class="math inline">\(d\)</span> 次多项式，则 <span class="math inline">\(\Delta f(x)\)</span> 是 <span class="math inline">\(d-1\)</span> 次多项式，……，<span class="math inline">\(\Delta^df(x)\)</span> 是一个常数，对于 <span class="math inline">\(n&gt;d\)</span>，<span class="math inline">\(\Delta^nf(x)=0\)</span>.</p>
+<p>根据后面章节的内容，任何幂次都能表示成下降幂的和式，从而 <span class="math inline">\(f(x)\)</span> 可以写作：<span class="math inline">\(f(x)=b_dx^{\underline d}+b_{d-1}x^{\underline{d-1}}+\cdots b_1x^{\underline 1}+b_0x^{\underline 0}\)</span>. 又设 <span class="math inline">\(c_k=k!\cdot b_k\)</span>，则有： <span class="math display">\[
+f(x)=c_d\binom{x}{d}+c_{d-1}\binom{x}{d-1}+\cdots+c_1\binom{x}{1}+c_0\binom{x}{0}
+\]</span> 即任何多项式都可以表示成二项式系数的倍数之和。该展开式称为<strong>牛顿级数</strong>。</p>
+<p>由加法恒等式： <span class="math display">\[
+\Delta\binom{x}{k}=\binom{x+1}{k}-\binom{x}{k}=\binom{x}{k-1}
+\]</span> 可得牛顿级数的 <span class="math inline">\(n\)</span> 阶差分为： <span class="math display">\[
+\Delta^nf(x)=c_d\binom{x}{d-n}+c_{d-1}\binom{x}{d-1-n}+\cdots+c_1\binom{x}{1-n}+c_0\binom{x}{-n}
+\]</span> 令 <span class="math inline">\(x=0\)</span>，除了 <span class="math inline">\(k=n\)</span> 的项 <span class="math inline">\(c_k\binom{x}{k-n}=c_k\)</span>，其他项都是 <span class="math inline">\(0\)</span>，于是： <span class="math display">\[
+\Delta^nf(0)=\begin{cases}c_n&amp;n\leqslant d\\0&amp;n&gt;d\end{cases}
+\]</span> 因此牛顿级数写作： <span class="math display">\[
+\color{purple}{f(x)=\Delta^df(0)\binom{x}{d}+\Delta^{d-1}f(0)\binom{x}{d-1}+\cdots+\Delta f(0)\binom{x}{1}+f(0)\binom{x}{0}=\sum_{k=0}^d\Delta^kf(0)\binom{x}{k}}
+\]</span> 我们可以对上式进行推广，如果 <span class="math inline">\(x\)</span> 是非负整数，显然把它写成无穷项也是没有问题的（后面的都是 <span class="math inline">\(0\)</span>），但是如果 <span class="math inline">\(x\)</span> 不是非负整数，<strong>无穷级数是否收敛，收敛到的值是否是原来的值</strong>都是问题。不过我们还是将其写出为好： <span class="math display">\[
+\color{purple}{\begin{align}f(x)&amp;=f(0)\binom{x}{0}+\Delta f(0)\binom{x}{1}+\Delta^2f(0)\binom{x}{2}+\cdots\\&amp;=\frac{f(0)}{0!}x^{\underline 0}+\frac{\Delta f(0)}{1!}x^{\underline 1}+\frac{\Delta^2f(0)}{2!}x^{\underline 2}+\cdots\end{align}}
+\]</span> 想到了什么？没错，正式麦克劳林级数： <span class="math display">\[
+f(x)=\frac{f(0)}{0!}x^0+\frac{f&#39;(0)}{1!}x+\frac{f&#39;&#39;(0)}{2!}x^2+\cdots
+\]</span> 如果设 <span class="math inline">\(f(x)=g(x+a)\)</span>，我们可以得到类比泰勒级数的结果： <span class="math display">\[
+\color{purple}{g(x+a)=\frac{g(a)}{0!}x^{\underline 0}+\frac{\Delta g(a)}{1!}x^{\underline 1}+\frac{\Delta^2g(a)}{2!}x^{\underline 2}+\cdots}
+\]</span> 换句话说，<strong>牛顿级数是泰勒级数的离散形式</strong>。</p>
+<h4 id="应用3textbfjames-stirling-对阶乘的推广">应用3（<span class="math inline">\(\textbf{James Stirling}\)</span> 对阶乘的推广）</h4>
+<p><span class="math inline">\(\textbf{James Stirling}\)</span> 利用牛顿级数把阶乘函数推广到非整数的值，他将 <span class="math inline">\(\ln x!\)</span> 展开： <span class="math display">\[
+\ln x!=\sum_n s_n\binom{x}{n}
+\]</span> 根据牛顿级数的内容和高阶差分公式： <span class="math display">\[
+\begin{align}
+s_n&amp;=\Delta^n (\ln x!)|_{x=0}\\
+&amp;=\Delta^{n-1}(\ln (x+1)!-\ln x!)|_{x=0}\\
+&amp;=\Delta^{n-1}\ln(x+1)|_{x=0}\\
+&amp;=\sum_{k}\binom{n-1}{k}(-1)^{n-1-k}\ln (x+k+1)|_{x=0}\\
+&amp;=\sum_k\binom{n-1}{k}(-1)^{n-1-k}\ln(k+1)
+\end{align}
+\]</span></p>
+<blockquote>
+<p>上述推导中，先使用了一个差分把阶乘干掉了，再套用高阶差分公式，着实妙哉！</p>
+</blockquote>
+<p>于是，<span class="math inline">\(s_0=s_1=0,s_2=\ln 2,s_3=\ln\frac{3}{4},s_4=\ln\frac{32}{27},\cdots\)</span>. 我们得到的级数可以证明是收敛的，这样代入非整数的值 <span class="math inline">\(x\)</span> 进入 <span class="math inline">\(\ln x!\)</span> 的展开式就可以知道 <span class="math inline">\(x!\)</span> 的值了。</p>
+<h3 id="技巧3反演">技巧3：反演</h3>
+<p><strong>二项式反演</strong>： <span class="math display">\[
+\color{purple}{g(n)=\sum_k\binom{n}{k}(-1)^kf(k)\iff f(n)=\sum_k\binom{n}{k}(-1)^kg(k)}
+\]</span> 证明：由于 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(g\)</span> 完全对称，只需要证明必要性。已知 <span class="math inline">\(g(n)=\sum\limits_k\binom{n}{k}(-1)^kf(k)\)</span>，那么： <span class="math display">\[
+\begin{align}
+\sum_k\binom{n}{k}(-1)^kg(k)&amp;=\sum_k\binom{n}{k}(-1)^k\sum_j\binom{k}{j}(-1)^jf(j)\\
+&amp;=\sum_jf(j)\sum_k\binom{n}{k}\binom{k}{j}(-1)^{j+k}&amp;&amp;求和号换序\\
+&amp;=\sum_jf(j)\sum_k(-1)^{j+k}\binom{n}{j}\binom{n-j}{k-j}&amp;&amp;三项式版恒等式\\
+&amp;=\sum_jf(j)\binom{n}{j}\sum_t(-1)^t\binom{n-j}{t}&amp;&amp;令\;t=k-j\\
+&amp;=\sum_jf(j)\binom{n}{j}(1-1)^{n-j}&amp;&amp;二项式定理\\
+&amp;=\sum_jf(j)\binom{n}{j}[n=j]\\
+&amp;=f(n)
+\end{align}
+\]</span> 证毕。</p>
+<p>另一个形式： <span class="math display">\[
+\color{purple}{g(n)=\sum_k\binom{n}{k}f(k)\iff f(n)=(-1)^n\sum_k\binom{n}{k}(-1)^kg(k)}
+\]</span> 只需要把 <span class="math inline">\((-1)^kf(k)\)</span> 视为一个整体就可以得到上式。</p>
+<h4 id="应用足球胜利问题">应用（足球胜利问题）</h4>
+<p><span class="math inline">\(n\)</span> 个球迷把他们的帽子抛向空中，这些帽子随机落下，使得每个球迷都随机得到一个帽子，有多少种方式 <span class="math inline">\(h(n,k)\)</span> 使恰好 <span class="math inline">\(k\)</span> 个球迷拿到他们自己的帽子？</p>
+<blockquote>
+<p><span class="math inline">\(D_n=h(n,0)\)</span> 就是著名的<strong>错排问题</strong>。</p>
+</blockquote>
+<p>显然，<span class="math inline">\(h(n,k)=\binom{n}{k}h(n-k,0)\)</span>，即选出 <span class="math inline">\(k\)</span> 人拿自己的帽子，其余 <span class="math inline">\(n-k\)</span> 人都不是自己的帽子。</p>
+<p>一个简单的观察是，对于所有 <span class="math inline">\(k\)</span>，<span class="math inline">\(h(n,k)\)</span> 的和就是所有可能的排列，即 <span class="math inline">\(n!\)</span>，所以我们有： <span class="math display">\[
+\sum_k h(n,k)=\sum_k\binom{n}{k}h(n-k,0)=\sum_k\binom{n}{n-k}h(k,0)=\sum_k\binom{n}{k}h(k,0)=n!
+\]</span></p>
+<p>实施二项式反演，得到： <span class="math display">\[
+D_n=h(n,0)=(-1)^n\sum_k\binom{n}{k}(-1)^kk!
+\]</span> 化简该式： <span class="math display">\[
+\begin{align}
+D_n&amp;=(-1)^n\sum_k\binom{n}{k}(-1)^kk!\\
+&amp;=\sum_{k=0}^n\frac{n!}{(n-k)!}(-1)^{n+k}\\
+&amp;=n!\sum_{k=0}^n\frac{(-1)^k}{k!}\\
+\end{align}
+\]</span></p>
+<p>我们知道：<span class="math inline">\(e^{-x}=\sum\limits_{n=0}^\infty\frac{(-x)^n}{n!}\implies e^{-1}=\sum\limits_{n=0}^\infty\frac{(-1)^n}{n!}\)</span>，于是 <span class="math inline">\(D_n\)</span> 和 <span class="math inline">\(n!/e\)</span> 之间的差值是 <span class="math inline">\(n!\sum\limits_{k=n+1}^\infty\frac{(-1)^k}{k!}=(-1)^{n+1}\left(\frac{1}{n+1}-\frac{1}{(n+1)(n+2)}+\frac{1}{(n+1)(n+2)(n+3)}-\cdots\right)\)</span>，括号中的值介于 <span class="math inline">\(\frac{1}{n+1}\)</span> 和 <span class="math inline">\(\frac{1}{n+1}-\frac{1}{(n+1)(n+2)}=\frac{1}{n+2}\)</span> 之间，所以在 <span class="math inline">\(n&gt;0\)</span> 的时候，我们只需要将 <span class="math inline">\(n!/e\)</span> 四舍五入即可得到 <span class="math inline">\(D_n\)</span> 的封闭形式，即： <span class="math display">\[
+\color{purple}{D_n=\left\lfloor\frac{n!}{e}+\frac{1}{2}\right\rfloor+[n=0]}
+\]</span> <br></p>
+<p>从上述推导中的 <span class="math inline">\(D_n=n!\sum\limits_{k=0}^n\frac{(-1)^k}{k!}\)</span> 可以得到：<span class="math inline">\(D_n-nD_{n-1}=n!\sum\limits_{k=0}^n\frac{(-1)^k}{k!}-n!\sum\limits_{k=0}^{n-1}\frac{(-1)^k}{k!}=n!\frac{(-1)^n}{n!}=(-1)^n\)</span>，于是我们得到 <span class="math inline">\(D_n\)</span> 的一个递归式： <span class="math display">\[
+\color{purple}{D_n=nD_{n-1}+(-1)^n}
+\]</span> 如果把 <span class="math inline">\(D_{n-1}\)</span> 也按照该递归式展开，我们可以得到一个更常见（大家应该已经很熟悉）的递归式： <span class="math display">\[
+\color{purple}{D_n=(n-1)(D_{n-1}+D_{n-2})}
+\]</span></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6/" class="category-chain-item">具体数学</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[具体数学]第五章·二项式系数（第一部分）</div>
+      <div>https://xyfjason.github.io/blog-main/2020/08/16/具体数学-第五章·二项式系数（第一部分）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年8月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2020/08/23/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E4%BA%94%E7%AB%A0%C2%B7%E4%BA%8C%E9%A1%B9%E5%BC%8F%E7%B3%BB%E6%95%B0%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/" title="[具体数学]第五章·二项式系数（第二部分）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[具体数学]第五章·二项式系数（第二部分）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2020/08/07/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E5%9B%9B%E7%AB%A0%C2%B7%E6%95%B0%E8%AE%BA/" title="[具体数学]第四章·数论">
+                        <span class="hidden-mobile">[具体数学]第四章·数论</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

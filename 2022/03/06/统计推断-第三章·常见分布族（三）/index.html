@@ -1,0 +1,928 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Beta}{\mathrm{B}} \newcommand{\btheta}{\boldsymbol{\theta}} \] 1 指数族 若一个概率密度函数族或概率质量函数族可以表示为： \[ f(x\vert\btheta)&#x3D;h(x)c(\bthe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[统计推断]第三章·常见分布族（三）">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/03/06/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%89%E7%AB%A0%C2%B7%E5%B8%B8%E8%A7%81%E5%88%86%E5%B8%83%E6%97%8F%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Beta}{\mathrm{B}} \newcommand{\btheta}{\boldsymbol{\theta}} \] 1 指数族 若一个概率密度函数族或概率质量函数族可以表示为： \[ f(x\vert\btheta)&#x3D;h(x)c(\bthe">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+<meta property="article:published_time" content="2022-03-06T08:40:17.000Z">
+<meta property="article:modified_time" content="2023-09-16T06:03:39.185Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="statistics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+  
+  
+  
+  <title>[统计推断]第三章·常见分布族（三） - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/statistics.jpeg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[统计推断]第三章·常见分布族（三）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-06 16:40" pubdate>
+          2022年3月6日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          79 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[统计推断]第三章·常见分布族（三）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Beta}{\mathrm{B}}
+\newcommand{\btheta}{\boldsymbol{\theta}}
+\]</span></p>
+<h2 id="指数族">1 指数族</h2>
+<p>若一个概率密度函数族或概率质量函数族可以表示为： <span class="math display">\[
+f(x\vert\btheta)=h(x)c(\btheta)\exp\left(\sum_{i=1}^kw_i(\btheta)t_i(x)\right)\tag{1}\label{form1}
+\]</span> 则称之为<strong>指数族（exponential family）</strong>。其中 <span class="math inline">\(h(x)\geq 0\)</span>，<span class="math inline">\(t_1(x),\ldots,t_k(x)\)</span> 是观测值 <span class="math inline">\(x\)</span> 且不依赖于 <span class="math inline">\(\btheta\)</span> 的实值函数，<span class="math inline">\(c(\btheta)\geq 0\)</span>，<span class="math inline">\(w_1(\btheta),\ldots,w_k(\btheta)\)</span> 是参数向量 <span class="math inline">\(\btheta\)</span> 且不依赖于 <span class="math inline">\(x\)</span> 的实值函数。连续的正态分布族、伽玛分布族、贝塔分布族，离散的二项分布族、泊松分布族、负二项分布族都是指数族。</p>
+<p>指数族的特殊形式决定了它具有很好的统计学性质：</p>
+<p><strong>定理</strong>：设随机变量 <span class="math inline">\(X\)</span> 的 pdf 或 pmf 形如上式，则： <span class="math display">\[
+\begin{align}
+&amp;\E\left[\sum_{i=1}^k\frac{\partial w_i(\btheta)}{\partial \btheta_j}t_i(X)\right]=-\frac{\partial}{\partial\btheta_j}\ln c(\btheta)\\
+&amp;\Var\left(\sum_{i=1}^k\frac{\partial w_i(\btheta)}{\partial \btheta_j}t_i(X)\right)=-\frac{\partial^2}{\partial\btheta_j^2}\ln c(\btheta)-\E\left[\sum_{i=1}^k\frac{\partial^2 w_i(\btheta)}{\partial \btheta_j^2}t_i(X)\right]
+\end{align}
+\]</span> 上面的公式虽然看似复杂，但应用时却很奏效，它们将积分与求和变成求导运算，而后者计算起来非常容易。</p>
+<p><em>Proof</em>.</p>
+<ol type="1">
+<li><p>对 <span class="math display">\[
+\int f(x\vert \btheta)\mathrm dx=\int h(x)c(\btheta)\exp\left(\sum_{i=1}^kw_i(\btheta)t_i(x)\right)\mathrm dx=1
+\]</span> 求导，得到： <span class="math display">\[
+\begin{align}
+&amp;\int\left[h(x)\exp\left(\sum_{i=1}^kw_i(\btheta)t_i(x)\right)\left(\frac{\partial c(\btheta)}{\partial\btheta_j}+c(\btheta)\frac{\partial w_i(\btheta)}{\partial \btheta_j}t_i(x)\right)\right]\mathrm dx\\
+=&amp;\E\left[\sum_{i=1}^k\frac{\partial w_i(\btheta)}{\partial \btheta_j}t_i(X)\right]+\frac{\partial c(\btheta)}{\partial\btheta_j}\int\left[h(x)\exp\left(\sum_{i=1}^kw_i(\btheta)t_i(x)\right)\right]\mathrm dx\\
+=&amp;\E\left[\sum_{i=1}^k\frac{\partial w_i(\btheta)}{\partial \btheta_j}t_i(X)\right]+\frac{\partial c(\btheta)}{\partial\btheta_j}\frac{1}{c(\btheta)}\\
+=&amp;\E\left[\sum_{i=1}^k\frac{\partial w_i(\btheta)}{\partial \btheta_j}t_i(X)\right]+\frac{\partial}{\partial\btheta_j}\ln c(\btheta)\\
+=&amp;0
+\end{align}
+\]</span></p></li>
+<li><p>对上式求两次导，可证得第二式，过程略。</p></li>
+</ol>
+<p>Q.E.D.</p>
+<div class="note note-success">
+            <p>例子【二项分布】设 <span class="math inline">\(n\)</span> 为正整数，<span class="math inline">\(0&lt;p&lt;1\)</span>： <span class="math display">\[\begin{align}f(x\vert p)&amp;=\binom{n}{x}p^x(1-p)^{n-x}\\&amp;=\binom{n}{x}(1-p)^n\left(\frac{p}{1-p}\right)^x\\&amp;=\binom{n}{x}(1-p)^n\exp\left(x\cdot\ln\frac{p}{1-p}\right)&amp;&amp;x=0,\ldots,n\end{align}\]</span> 取 <span class="math display">\[\begin{align}&amp;h(x)=\binom{n}{x}&amp;&amp;x=0,\ldots,n\\&amp;c(p)=(1-p)^n&amp;&amp;0&lt;p&lt;1\\&amp;w_1(p)=\ln\frac{p}{1-p}&amp;&amp;0&lt;p&lt;1\\&amp;t_1(x)=x&amp;&amp;x=0,\ldots,n\end{align}\]</span> 由于我们限制了 <span class="math inline">\(x=0,\ldots,n\)</span>，<span class="math inline">\(0&lt;p&lt;1\)</span>，保证了 <span class="math inline">\(h(x)\geq 0,\,c(p)\geq0\)</span>，因此在给定 <span class="math inline">\(n\)</span> 的情形下，二项分布族是一个指数族。</p><p>由于 <span class="math display">\[\begin{align}&amp;\frac{\mathrm d}{\mathrm dp}w_1(p)=\frac{\mathrm d}{\mathrm dp}\ln\frac{p}{1-p}=\frac{1}{p(1-p)}\\&amp;\frac{\mathrm d^2}{\mathrm dp^2}w_1(p)=\frac{\mathrm d}{\mathrm dp}\frac{1}{p(1-p)}=\frac{2p-1}{p^2(1-p)^2}\\&amp;\frac{\mathrm d}{\mathrm dp}\ln c(p)=\frac{\mathrm d}{\mathrm dp}n\ln (1-p)=\frac{-n}{1-p}\\&amp;\frac{\mathrm d^2}{\mathrm dp^2}\ln c(p)=\frac{\mathrm d}{\mathrm dp}\frac{-n}{1-p}=\frac{-n}{(1-p)^2}\end{align}\]</span> 故根据前文定理得： <span class="math display">\[\begin{align}&amp;\E\left[\frac{X}{p(1-p)}\right]=\frac{n}{1-p}\\&amp;\Var\left(\frac{X}{p(1-p)}\right)=\frac{n}{(1-p)^2}-\E\left[\frac{2p-1}{p^2(1-p)^2}X\right]\end{align}\]</span> 解得：<span class="math inline">\(\E X=np,\,\Var X=np^2-np(2p-1)=np(1-p)\)</span>.</p>
+          </div>
+<div class="note note-success">
+            <p>例子【正态分布】设 <span class="math inline">\(-\infty&lt;\mu&lt;+\infty\)</span>，<span class="math inline">\(\sigma&gt;0\)</span>： <span class="math display">\[f(x\vert \mu,\sigma^2)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{\mu^2}{2\sigma^2}\right)\exp\left(-\frac{x^2}{2\sigma^2}+\frac{\mu x}{\sigma^2}\right)\]</span> 取 <span class="math display">\[\begin{align}&amp;h(x)=1&amp;&amp;-\infty&lt;x&lt;+\infty\\&amp;c(\mu,\sigma)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{\mu^2}{2\sigma^2}\right)&amp;&amp;-\infty&lt;\mu&lt;+\infty,\,\sigma&gt;0\\&amp;w_1(\mu,\sigma)=-\frac{1}{\sigma^2}&amp;&amp;-\infty&lt;\mu&lt;+\infty,\,\sigma&gt;0\\&amp;w_2(\mu,\sigma)=\frac{\mu}{\sigma^2}&amp;&amp;-\infty&lt;\mu&lt;+\infty,\,\sigma&gt;0\\&amp;t_1(x)=\frac{x}{2}&amp;&amp;-\infty&lt;x&lt;+\infty\\&amp;t_2(x)=x&amp;&amp;-\infty&lt;x&lt;+\infty\end{align}\]</span> 故正态分布族是指数族。</p>
+          </div>
+<p>注意，<u>在把概率密度/质量函数族写作 <span class="math inline">\(\eqref{form1}\)</span> 形式时，应保证 <span class="math inline">\(x\)</span> 的定义域范围不变</u>，我们可以借助<strong>示性函数</strong>将 <span class="math inline">\(x\)</span> 的定义范围写入表达式。例如对于正态分布： <span class="math display">\[
+f(x\vert \mu,\sigma^2)=\frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{\mu^2}{2\sigma^2}\right)\exp\left(-\frac{x^2}{2\sigma^2}+\frac{\mu x}{\sigma^2}\right)I_{(-\infty,+\infty)}(x)
+\]</span> 定义域有时候会比较 tricky。例如概率密度函数 <span class="math inline">\(f(x\vert \theta)=\frac{1}{\theta}\exp\left(1-\frac{x}{\theta}\right)I_{[\theta,+\infty)}(x)\)</span> 虽然看起来很像指数族，但是由于 <span class="math inline">\(x\)</span> 的定义范围 <span class="math inline">\(I_{[\theta,+\infty)}(x)\)</span> 依赖于 <span class="math inline">\(\theta\)</span>，故它并不是指数族。</p>
+<p><br/></p>
+<p>如果对指数族定义式做一个变量替换 <span class="math inline">\(\eta_i=w_i(\btheta)\)</span>，得到指数族的另一个形式： <span class="math display">\[
+f(x\vert \eta)=h(x)c^\ast(\eta)\exp\left(\sum_{i=1}^k\eta_i t_i(x)\right)\tag{2}\label{form2}
+\]</span> 称集合 <span class="math display">\[
+\mathcal H=\left\{\eta=(\eta_1,\ldots,\eta_k):\int_{-\infty}^{+\infty}h(x)\exp\left(\sum_{i=1}^k\eta_it_i(x)\right)\mathrm dx&lt;+\infty\right\}
+\]</span> 为指数族的<strong>自然参数空间</strong>。对于任意 <span class="math inline">\(\eta\in\mathcal H\)</span>，为保证概率密度函数积分为 <span class="math inline">\(1\)</span>，必有 <span class="math display">\[
+c^\ast(\eta)=\left[\int_{-\infty}^{+\infty}h(x)\exp\left(\sum_{i=1}^k\eta_it_i(x)\right)\mathrm dx\right]^{-1}
+\]</span> <span class="math inline">\(\eqref{form2}\)</span> 式比 <span class="math inline">\(\eqref{form1}\)</span> 式更为灵活和广泛，集合 <span class="math inline">\(\{\eta=(w_1(\btheta),\ldots,w_k(\btheta)):c(\btheta)&gt;0\}\)</span> 是自然参数空间 <span class="math inline">\(\mathcal H\)</span> 的子集，而 <span class="math inline">\(\mathcal H\)</span> 中可能还存在其他的 <span class="math inline">\(\eta\)</span> 值。</p>
+<p><br/></p>
+<p>如果指数族 pdf 满足：<span class="math inline">\(\dim\btheta &lt;k\)</span>，则称作<strong>曲指数族</strong>；如果 <span class="math inline">\(\dim\btheta=k\)</span>，则称作<strong>完全指数族</strong>。</p>
+<h2 id="位置和尺度族">2 位置和尺度族</h2>
+<p>本节将构造三种分布族：位置族、尺度族、位置-尺度族，构造方法为：预先给定该分布族的一个标准 pdf <span class="math inline">\(f(x)\)</span>，然后用指定方法对其进行变换以得到该分布族的所有其他 pdf.</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(f(x)\)</span> 是 pdf，<span class="math inline">\(\mu\)</span> 和 <span class="math inline">\(\sigma&gt;0\)</span> 是任意给定参数，则函数 <span class="math display">\[
+g(x\vert\mu,\sigma)=\frac{1}{\sigma}f\left(\frac{x-\mu}{\sigma}\right)
+\]</span> 也是 pdf. 证明非常容易，略去。</p>
+<p><br/></p>
+<p><strong>位置族</strong></p>
+<p>设 <span class="math inline">\(f(x)\)</span> 是 pdf，则称 <span class="math inline">\(f(x-\mu),\,-\infty&lt;\mu&lt;+\infty\)</span> 是<strong>标准 pdf 为 <span class="math inline">\(f(x)\)</span> 的位置族</strong>，称参数 <span class="math inline">\(\mu\)</span> 为<strong>位置参数</strong>。</p>
+<p>直观上就是将标准 pdf 向右平移了 <span class="math inline">\(\mu\)</span> 个单位。</p>
+<p><img src="location.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="Exponential location densities" width=50% /></p>
+<p><br/></p>
+<p><strong>尺度族</strong></p>
+<p>设 <span class="math inline">\(f(x)\)</span> 是 pdf，则称 <span class="math inline">\((1/\sigma)f(x/\sigma),\,\sigma&gt;0\)</span> 是<strong>标准 pdf 为 <span class="math inline">\(f(x)\)</span> 的尺度族</strong>，称参数 <span class="math inline">\(\sigma\)</span> 为<strong>尺度参数</strong>。</p>
+<p>直观上就是将标准 pdf 横向拉伸了 <span class="math inline">\(\sigma\)</span> 倍并纵向压缩到原来的 <span class="math inline">\(1/\sigma\)</span>。</p>
+<p><img src="scale.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="Scale family" width=50% /></p>
+<p><br/></p>
+<p><strong>位置-尺度族</strong></p>
+<p>设 <span class="math inline">\(f(x)\)</span> 是 pdf，则称 <span class="math inline">\((1/\sigma)f((x-\mu)/\sigma),\,\sigma&gt;0\)</span> 是<strong>标准 pdf 为 <span class="math inline">\(f(x)\)</span> 的位置-尺度族</strong>。</p>
+<p>正态分布族和双指数分布族都是位置-尺度族的例子。</p>
+<p>位置-尺度族的概率计算常通过标准化变量计算： <span class="math display">\[
+P(X\leq x)=P\left(\frac{X-\mu}{\sigma}\leq\frac{x-\mu}{\sigma}\right)=P\left(Z\leq\frac{x-\mu}{\sigma}\right)
+\]</span> 标准化变量的概率 <span class="math inline">\(P(Z\leq z)\)</span> 常常容易计算或可查表得到。</p>
+<h2 id="不等式与恒等式">3 不等式与恒等式</h2>
+<h3 id="切比雪夫不等式">3.1 切比雪夫不等式</h3>
+<p>设 <span class="math inline">\(X\)</span> 是随机变量，<span class="math inline">\(g(x)\)</span> 是非负函数，则对任意 <span class="math inline">\(r&gt;0\)</span> 有 <span class="math display">\[
+P(g(X)\geq r)\leq \frac{\E g(X)}{r}
+\]</span> <em>Proof</em>. <span class="math display">\[
+\begin{align}
+\E g(X)&amp;=\int_{-\infty}^{+\infty}g(x) f_X(x)\mathrm dx\\
+&amp;\geq\int_{\{x:g(x)\geq r\}}g(x)f_X(x)\mathrm dx\\
+&amp;\geq r\int_{\{x:g(x)\geq r\}}f_X(x)\mathrm dx\\
+&amp;=rP(g(X)\geq r)
+\end{align}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p>可能切比雪夫不等式更常见的形式不是上面这样，但可以从它推导出来：设 <span class="math inline">\(g(x)=(x-\mu)^2/\sigma^2\)</span>，其中 <span class="math inline">\(\mu=\E X,\,\sigma^2=\Var X\)</span>. 取 <span class="math inline">\(r=t^2\)</span>，代入 Chebychev 不等式得到： <span class="math display">\[
+P\left(\frac{(x-\mu)^2}{\sigma^2}\geq t^2\right)\leq\frac{1}{t^2}\E\left[\frac{(X-\mu)^2}{\sigma^2}\right]=\frac{1}{t^2}
+\]</span> 即： <span class="math display">\[
+P(|X-\mu|\geq t\sigma)\leq \frac{1}{t^2}
+\]</span> 此不等式告诉我们随机变量偏离其均值的上界，<strong>无论 <span class="math inline">\(X\)</span> 是什么分布</strong>。也正是因为它没有对分布作限制，这个结论往往比较保守。</p>
+<h3 id="马尔可夫不等式">3.2 马尔可夫不等式</h3>
+<p>若 <span class="math inline">\(P(Y\geq 0)=1\)</span> 且 <span class="math inline">\(P(Y=0)&lt;1\)</span>，则对任意 <span class="math inline">\(r&gt;0\)</span>，有 <span class="math display">\[
+P(Y\geq r)\leq\frac{\E X}{r}
+\]</span></p>
+<h3 id="stein-引理">3.3 Stein 引理</h3>
+<p>设 <span class="math inline">\(X\sim N(\theta,\sigma^2)\)</span>，<span class="math inline">\(g\)</span> 是满足 <span class="math inline">\(\E |g&#39;(X)|&lt;+\infty\)</span> 的可导函数，则： <span class="math display">\[
+\E[g(X)(X-\theta)]=\sigma^2\E g&#39;(X)
+\]</span> <em>Proof</em>. <span class="math display">\[
+\begin{align}
+\E[g(X)(X-\theta)]&amp;=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{+\infty}g(x)(x-\theta)e^{-(x-\theta)^2/2\sigma^2}\mathrm dx\\
+&amp;=-\frac{\sigma}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}g(x)\mathrm de^{-(x-\theta)^2/2\sigma^2}\\
+&amp;=-\frac{\sigma}{\sqrt{2\pi}}\left[\left.g(x)e^{-(x-\theta)^2/2\sigma^2}\right|_{-\infty}^{+\infty}-\int_{-\infty}^{+\infty}e^{-(x-\theta)^2/2\sigma^2}g&#39;(x)\mathrm dx\right]\\
+&amp;=\sigma^2\E g&#39;(x)
+\end{align}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p><strong>高阶正态矩</strong>：利用 Stein 引理可以简化计算高阶正态矩：设 <span class="math inline">\(X\sim N(\theta,\sigma^2)\)</span>，则： <span class="math display">\[
+\begin{align}
+\E X^3&amp;=\E[X^2(X-\theta+\theta)]\\
+&amp;=\E[X^2(X-\theta)]+\theta\E X^2\\
+&amp;=2\sigma^2\E X+\theta\E X^2\\
+&amp;=2\sigma^2\theta+\theta(\sigma^2+\theta^2)\\
+&amp;=3\theta\sigma^2+\theta^3
+\end{align}
+\]</span></p>
+<h3 id="一个关于-chi2-随机变量的恒等式">3.4 一个关于 <span class="math inline">\(\chi^2\)</span> 随机变量的恒等式</h3>
+<p>设 <span class="math inline">\(\chi^2_p\)</span> 是自由度为 <span class="math inline">\(p\)</span> 的 <span class="math inline">\(\chi^2\)</span> 随机变量，则对任意函数 <span class="math inline">\(h(x)\)</span>，有： <span class="math display">\[
+\E h(\chi^2_p)=p\E\left[\frac{h(\chi^2_{p+2})}{\chi^2_{p+2}}\right]
+\]</span> 这里假定上述期望存在。</p>
+<p><em>Proof</em>. <span class="math display">\[
+\begin{align}
+\E h(\chi^2_p)&amp;=\frac{1}{\Gamma(p/2)2^{p/2}}\int_0^{+\infty}h(x)x^{p/2-1}e^{-x/2}\mathrm dx\\
+&amp;=\frac{p}{\Gamma({(p+2)}/2)2^{(p+2)/2}}\int_0^{+\infty}\frac{h(x)}{x} x^{(p+2)/2-1}e^{-x/2}\mathrm dx\\
+&amp;=p\E\left[\frac{h(\chi^2_{p+1})}{\chi^2_{p+1}}\right]
+\end{align}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p><strong>高阶 <span class="math inline">\(\chi^2\)</span> 矩</strong>：利用上述恒等式可以简化计算高阶 <span class="math inline">\(\chi^2\)</span> 矩： <span class="math display">\[
+\E[(\chi^2_{p})^2]=p\E[\chi^2_{p+2}]=p(p+2)
+\]</span></p>
+<h3 id="hwang-给出的两个恒等式">3.5 Hwang 给出的两个恒等式</h3>
+<blockquote>
+<p>文献：Hwang, Jiunn Tzon. "Improving upon standard estimators in discrete exponential families with applications to Poisson and negative binomial cases." <em>The Annals of Statistics</em> (1982): 857-867.</p>
+</blockquote>
+<p>设函数 <span class="math inline">\(g(x)\)</span> 满足 <span class="math inline">\(-\infty&lt;\E g(X)&lt;+\infty\)</span> 且 <span class="math inline">\(-\infty&lt;g(-1)&lt;+\infty\)</span>，那么：</p>
+<ol type="1">
+<li><p>若 <span class="math inline">\(X\)</span> 服从参数为 <span class="math inline">\(\lambda\)</span> 的 Poisson 分布，则： <span class="math display">\[
+\E[\lambda g(X)]=\E[Xg(X-1)]
+\]</span></p></li>
+<li><p>若 <span class="math inline">\(X\)</span> 服从参数为 <span class="math inline">\((r,p)\)</span> 的负二项分布，则： <span class="math display">\[
+\E[(1-p)g(X)]=\E\left[\frac{X}{r+X-1}g(X-1)\right]
+\]</span></p></li>
+</ol>
+<p><em>Proof</em>.</p>
+<ol type="1">
+<li><p><span class="math display">\[
+\begin{align}
+\E[\lambda g(X)]&amp;=\sum_{x=0}^{+\infty}\lambda g(x)\frac{e^{-\lambda}\lambda^x}{x!}\\
+&amp;=\sum_{x=0}^{+\infty}(x+1)g(x)\frac{e^{-\lambda}\lambda^{x+1}}{(x+1)!}\\
+&amp;=\sum_{y=1}^{+\infty}yg(y-1)\frac{e^{-\lambda}\lambda^y}{y!}&amp;&amp;y=x+1\\
+&amp;=\sum_{y=0}^{+\infty}yg(y-1)\frac{e^{-\lambda}\lambda^y}{y!}&amp;&amp;y=x+1\\
+&amp;=\E[Xg(X-1)]
+\end{align}
+\]</span></p></li>
+<li><p><span class="math display">\[
+\begin{align}
+\E[(1-p)g(X)]&amp;=\sum_{x=0}^{+\infty}(1-p)g(x)\binom{r+x-1}{x}p^r(1-p)^x\\
+&amp;=\sum_{y=1}^{+\infty}g(y-1)\binom{r+y-2}{y-1}p^r(1-p)^{y}&amp;&amp;y=x+1\\
+&amp;=\sum_{y=1}^{+\infty}g(y-1)\frac{y}{r+y-1}\binom{r+y-1}{y}p^r(1-p)^{y}\\
+&amp;=\sum_{y=0}^{+\infty}g(y-1)\frac{y}{r+y-1}\binom{r+y-1}{y}p^r(1-p)^{y}\\
+&amp;=\E\left[\frac{X}{r+X-1}g(X-1)\right]
+\end{align}
+\]</span></p></li>
+</ol>
+<p>Q.E.D.</p>
+<p><br/></p>
+<p><strong>高阶 Poisson 矩</strong>：利用上述恒等式可以简化计算高阶 Poisson 矩：设 <span class="math inline">\(X\sim\mathrm{poisson}(\lambda)\)</span>，则： <span class="math display">\[
+\E[\lambda X^2]=\E[X(X-1)^2]=\E X^3-2\E X^2+\E X
+\]</span> 故 <span class="math display">\[
+\E X^3=(\lambda+2)\E X^2-\E X=\lambda(\lambda+1)(\lambda+2)-\lambda=\lambda(\lambda^2+3\lambda+1)
+\]</span></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="category-chain-item">统计推断</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/statistics/" class="print-no-link">#statistics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[统计推断]第三章·常见分布族（三）</div>
+      <div>https://xyfjason.github.io/blog-main/2022/03/06/统计推断-第三章·常见分布族（三）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/14/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E5%9B%9B%E7%AB%A0%C2%B7%E4%BA%8C%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" title="[统计推断]第四章·二维随机变量">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[统计推断]第四章·二维随机变量</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/05/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-1%C2%B7Introduction/" title="[David Silver强化学习]1·Introduction">
+                        <span class="hidden-mobile">[David Silver强化学习]1·Introduction</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

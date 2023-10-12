@@ -1,0 +1,854 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本章介绍一些常见的概率分布，同时也会穿插一些在贝叶斯推断中非常重要的统计学概念。 一个常见的问题是密度估计（density estimation）：给定一个观察到的数据集 \(\mathbf x_1,\ldots,\mathbf x_N\)（假设独立同分布），为随机变量 \(\mathbf x\) 的概率分布 \(p(\mathbf x)\) 建模。值得注意的是，这个问题是 ill-posed 的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[PRML]2.Probability Distributions">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/05/04/PRML-2-Probability-Distributions/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="本章介绍一些常见的概率分布，同时也会穿插一些在贝叶斯推断中非常重要的统计学概念。 一个常见的问题是密度估计（density estimation）：给定一个观察到的数据集 \(\mathbf x_1,\ldots,\mathbf x_N\)（假设独立同分布），为随机变量 \(\mathbf x\) 的概率分布 \(p(\mathbf x)\) 建模。值得注意的是，这个问题是 ill-posed 的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/walle.webp">
+<meta property="article:published_time" content="2023-05-04T11:58:11.000Z">
+<meta property="article:modified_time" content="2023-09-09T00:36:34.993Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/walle.webp">
+  
+  
+  
+  <title>[PRML]2.Probability Distributions - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/walle.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[PRML]2.Probability Distributions"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-05-04 19:58" pubdate>
+          2023年5月4日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          57 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[PRML]2.Probability Distributions</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本章介绍一些常见的概率分布，同时也会穿插一些在贝叶斯推断中非常重要的统计学概念。</p>
+<p>一个常见的问题是密度估计（density estimation）：给定一个观察到的数据集 <span class="math inline">\(\mathbf x_1,\ldots,\mathbf x_N\)</span>（假设独立同分布），为随机变量 <span class="math inline">\(\mathbf x\)</span> 的概率分布 <span class="math inline">\(p(\mathbf x)\)</span> 建模。值得注意的是，这个问题是 ill-posed 的——存在无数种概率分布都能得到这一数据集。事实上，只要在 <span class="math inline">\(\mathbf x_1,\ldots,\mathbf x_N\)</span> 处概率不为零即可。</p>
+<p>密度估计方法可分为参数估计和非参估计。参数估计指用于建模的概率分布具有特定的形式并由一套参数决定，比如二项分布、多项分布和高斯分布等。用它们来做密度估计，其实就是找到对应参数的合适的值。例如，频率学派常常采用极大似然法，贝叶斯学派则先为这些参数指定一个先验分布，然后用贝叶斯定理计算后验分布。</p>
+<p>这里引入一个重要的概念——<strong>共轭先验（conjugate priors），即先验分布与后验分布具有相同的形式</strong>，这会对大大简化贝叶斯的分析过程。例如，多项分布的共轭先验是 Dirichlet 分布，一个高斯分布的均值的共轭先验是另一个高斯分布。这些分布都属于指数族，具有一些重要的性质。</p>
+<p>与参数估计相反，非参估计并不假设分布的某种具体形式，而是与数据集大小有关。这些模型仍然具有参数，但参数是为了控制模型的复杂度而非分布的形式。典型的方法有最近邻、核密度估计等。</p>
+<h2 id="binary-variables">Binary Variables</h2>
+<p>考虑一个二值随机变量 <span class="math inline">\(x\in\{0,1\}\)</span>，例如抛硬币是否为正面朝上，其分布由一个参数 <span class="math inline">\(\mu\)</span> 决定：<span class="math inline">\(x=1\)</span> 的概率为 <span class="math inline">\(\mu\)</span>，<span class="math inline">\(x=0\)</span> 的概率为 <span class="math inline">\(1-\mu\)</span>，即： <span class="math display">\[
+\text{Bern}(x\vert \mu)=\mu^x(1-\mu)^{1-x}
+\]</span> 这被称作 Bernoulli 分布。容易得到其均值和方差分别为： <span class="math display">\[
+\begin{align}
+\mathbb E[x]&amp;=\mu\\\text{var}[x]&amp;=\mu(1-\mu)
+\end{align}
+\]</span> 设有一个独立同分布的数据集 <span class="math inline">\(\mathcal D=\{x_1,\ldots,x_N\}\)</span>，那么似然为： <span class="math display">\[
+p(\mathcal D\vert\mu)=\prod_{n=1}^N\mu^{x_n}(1-\mu)^{1-x_n}
+\]</span> 对数似然为： <span class="math display">\[
+\ln p(\mathcal D\vert\mu)=\sum_{n=1}^N\left(x_n\ln\mu+(1-x_n)\ln(1-\mu)\right)
+\]</span> 值得注意的是，计算这个对数似然其实只需要知道 <span class="math inline">\(\sum_nx_n\)</span>，并不需要知道每一个 <span class="math inline">\(x_n\)</span>，这就涉及到了充分统计量（sufficient statistic）的概念，我们将在稍后叙述。若采用频率学派的极大似然法，对上式求导取零，解得： <span class="math display">\[
+\mu_\text{ML}=\frac{1}{N}\sum_{n=1}^N x_n
+\]</span> 即样本均值。</p>
+<p>现在考虑一种情况：抛了 3 次硬币而 3 次都是正面朝上，那么极大似然法会给出 <span class="math inline">\(\mu_\text{ML}=\frac{1}{3}(1+1+1)=1\)</span> 的解。也就是说，模型会预测未来始终都是正面朝上！常识告诉我们这并不合理，<strong>事实上这是一个极大似然法导致过拟合问题的极端例子</strong>，稍后我们将看到如何采用贝叶斯方法避免过拟合问题。</p>
+<p>假设 <span class="math inline">\(x=1\)</span>（正面朝上）发生的次数是 <span class="math inline">\(m\)</span>，则 <span class="math inline">\(m\)</span> 服从二项分布： <span class="math display">\[
+\text{Bin}(m\vert N,\mu)=\binom{N}{m}\mu^m(1-\mu)^{N-m}
+\]</span> 二项分布的均值和方差分别为： <span class="math display">\[
+\begin{align}
+\mathbb E[m]&amp;=N\mu\\
+\text{var}[m]&amp;=N\mu(1-\mu)
+\end{align}
+\]</span></p>
+<h3 id="the-beta-distribution">The beta distribution</h3>
+<p>上文我们看到，极大似然法容易导致过拟合。那么为了使用贝叶斯方法，我们需要为参数 <span class="math inline">\(\mu\)</span> 设置一个先验分布。为了方便，我们还希望先验分布与后验分布具有相同的形式。考虑到后验分布正比于似然乘以先验，而似然是 <span class="math inline">\(\mu^x(1-\mu)^{1-x}\)</span> 的形式，我们自然想到取先验也为 <span class="math inline">\(\mu\)</span> 和 <span class="math inline">\((1-\mu)\)</span> 的指数形式。因此，我们选择 beta 分布为先验分布： <span class="math display">\[
+\text{Beta}(\mu\vert a,b)=\frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)}\mu^{a-1}(1-\mu)^{b-1}
+\]</span> 其中 <span class="math inline">\(\Gamma(x)\)</span> 是 gamma 函数，上式前面的系数保证了 beta 分布的归一性。beta 分布的均值和方差分别是： <span class="math display">\[
+\begin{align}
+\mathbb E[\mu]&amp;=\frac{a}{a+b}\\
+\text{var}[\mu]&amp;=\frac{ab}{(a+b)^2(a+b+1)}
+\end{align}
+\]</span> 参数 <span class="math inline">\(a,b\)</span> 通常被称作超参数，下图展示了不同 <span class="math inline">\(a,b\)</span> 下 beta 分布的形状：</p>
+<p><img src="fig2.2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>为了验证后验分布确实也是 beta 分布的形式，我们先暂时抛开归一化系数： <span class="math display">\[
+p(\mu\vert m,l,a,b)\propto p(m\vert l,\mu)\cdot p(\mu\vert a,b)\propto \mu^{m+a-1}(1-\mu)^{l+b-1}
+\]</span> 其中 <span class="math inline">\(l=N-m\)</span>，即反面朝上的次数。上式已经足以证明后验分布就是 beta 分布，现在只需要参照 beta 分布的形式把归一化系数加上即可： <span class="math display">\[
+p(\mu\vert m,l,a,b)=\frac{\Gamma(m+a+l+b)}{\Gamma(m+a)\Gamma(l+b)}\mu^{m+a-1}(1-\mu)^{l+b-1}\tag{1}\label{1}
+\]</span> 对比先验与后验分布，可见当我们观察到数据集中有 <span class="math inline">\(m\)</span> 次 <span class="math inline">\(x=1\)</span> 和 <span class="math inline">\(l\)</span> 次 <span class="math inline">\(x=0\)</span> 时，对参数分布的影响是给 <span class="math inline">\(a\)</span> 加上 <span class="math inline">\(m\)</span>，给 <span class="math inline">\(b\)</span> 加上 <span class="math inline">\(l\)</span>. 因此，我们可以把超参数 <span class="math inline">\(a,b\)</span> 理解为 <span class="math inline">\(x=1\)</span> 和 <span class="math inline">\(x=0\)</span> 的“有效观察次数”（不一定是整数）。进一步，如果我们观察到了新的数据，那么我们可以把当前的后验分布当作先验分布，继续计算新的后验分布。特别地，如果我们每次只观察到一个数据，那么如果是 <span class="math inline">\(x=1\)</span>，就给 <span class="math inline">\(a\)</span> 加 1，否则给 <span class="math inline">\(b\)</span> 加 1，下图展示了这样的一步更新：</p>
+<p><img src="fig2.3.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>可见，在贝叶斯视角下，这种序列式（sequential）的学习方法是非常自然的。这可以被应用在 real-time learning 之中。</p>
+<p>如果要预测下一次试验的结果，那么其实就是要求解 <span class="math inline">\(p(x\vert\mathcal D)\)</span>，根据贝叶斯方法，我们使用 sum rule 和 predict rule： <span class="math display">\[
+p(x=1\vert \mathcal D)=\int p(x=1\vert\mu)p(\mu\vert \mathcal D)\mathrm d\mu=\int_0^1\mu p(\mu\vert\mathcal D)\mathrm d\mu=\mathbb E[\mu\vert\mathcal D]
+\]</span> 即后验分布的均值，其中后验分布由 <span class="math inline">\(\eqref{1}\)</span> 式给出。根据 beta 分布的均值结论，得到： <span class="math display">\[
+p(x=1\vert\mathcal D)=\frac{m+a}{m+a+l+b}
+\]</span> 直观而言，这就是所有观察（包括真观察到的数据集和假设的先验观察）中 <span class="math inline">\(x=1\)</span> 所占比例。当数据集非常大时，<span class="math inline">\(m,l\to\infty\)</span>，上式收敛到与极大似然相同的解。事实上这是一个普遍规律：<strong>当数据集大小趋向无穷时，贝叶斯方法和极大似然法会趋向一致</strong>。（毕竟解决过拟合问题最本质的方案就是加大数据量嘛～）</p>
+<p>另外，从图 2.2 中我们看到，<strong>随着观察的数据量增加，后验分布变得越来越集中。事实上，这是贝叶斯学习方法的普遍性质</strong>。为了说明这一点，考虑一个参数 <span class="math inline">\(\theta\)</span> 和一个数据集 <span class="math inline">\(\mathcal D\)</span>，它们构成联合分布 <span class="math inline">\(p(\theta,\mathcal D)\)</span>. 根据重期望公式（law of total expectation）： <span class="math display">\[
+\mathbb E_\theta[\theta]=\mathbb E_\mathcal D[\mathbb E_\theta[\theta\vert\mathcal D]]
+\]</span> 这说明，<span class="math inline">\(\theta\)</span> 的后验均值，在所有数据的平均意义下，等于先验均值。又根据全方差公式（law of total variance）： <span class="math display">\[
+\text{var}_\theta[\theta]=\mathbb E_\mathcal D[\text{var}_\theta[\theta\vert\mathcal D]]+\text{var}_\mathcal D[\mathbb E_\theta[\theta\vert\mathcal D]]&gt;\mathbb E_\mathcal D[\text{var}_\theta[\theta\vert\mathcal D]]
+\]</span> 这说明 <span class="math inline">\(\theta\)</span> 的后验方差，在所有数据的平均意义下，小于先验方差。也就是说，在观察到新的数据后，<span class="math inline">\(\theta\)</span> 的不确定性（在平均意义下）会变小，分布得更集中。</p>
+<h2 id="multinomial-variables">Multinomial Variables</h2>
+<p>前一节我们讨论了二值变量，引出 Bernoulli 分布和二项分布，以及二项分布的共轭分布——beta 分布。如果变量不止取两个值，而是 <span class="math inline">\(K\)</span> 个，那么我们也可以进行类似的讨论。我们可以用一个 <span class="math inline">\(K\)</span> 维向量 <span class="math inline">\(\mathbf x\)</span> 来表示随机变量的取值，<span class="math inline">\(\mathbf x\)</span> 只有一个分量为 1，其余为 0（one-hot），若 <span class="math inline">\(x_k=1\)</span>，就表示随机变量取值为 <span class="math inline">\(k\)</span>. 设参数 <span class="math inline">\(\mu_k\)</span> 表示 <span class="math inline">\(x_k=1\)</span> 的概率，那么： <span class="math display">\[
+p(\mathbf x\vert\boldsymbol\mu)=\prod_{k=1}^K \mu_k^{x_k}
+\]</span> 其中 <span class="math inline">\(\boldsymbol\mu=(\mu_1,\ldots,\mu_k)^\mathrm T\)</span>，且 <span class="math inline">\(\mu_k\geq 0,\,\sum_k\mu_k=1\)</span>.</p>
+<p>考虑一个独立同分布的数据集 <span class="math inline">\(\mathbf x_1,\ldots,\mathbf x_N\)</span>，那么对应的似然函数为： <span class="math display">\[
+p(\mathcal D\vert\boldsymbol\mu)=\prod_{n=1}^N\prod_{k=1}^K\mu_k^{x_{nk}}=\prod_{k=1}^K\mu_k^{\sum_n x_{nk}}=\prod_{k=1}^K\mu_k^{m_k}
+\]</span> 其中 <span class="math inline">\(m_k=\sum_n x_{nk}\)</span> 为所有数据中 <span class="math inline">\(x_k=1\)</span> 的数量，是该分布的充分统计量。</p>
+<p>依旧先考虑极大似然估计，注意这个问题有约束条件，所以拉格朗日函数为： <span class="math display">\[
+\sum_{k=1}^K m_k\ln \mu_k+\lambda\left(\sum_{k=1}^K\mu_k-1\right)
+\]</span> 求导取零，解得： <span class="math display">\[
+\mu_k^{\text{ML}}=\frac{m_k}{N}
+\]</span> 即所有样本中 <span class="math inline">\(x_k=1\)</span> 所占比例。</p>
+<p>考虑 <span class="math inline">\(m_1,\ldots,m_K\)</span> 的联合分布，它是二项分布的推广，称作多项分布： <span class="math display">\[
+\text{Mult}(m_1,m_2,\ldots,m_K\vert \boldsymbol\mu,N)=\binom{N}{m_1m_2\ldots m_K}\prod_{k=1}^K\mu_k^{m_k}
+\]</span> 注意 <span class="math inline">\(m_k\)</span> 满足约束 <span class="math inline">\(\sum_{k} m_k=N\)</span>.</p>
+<h3 id="the-dirichlet-distribution">The Dirichlet distribution</h3>
+<p>同第一节一样，我们希望用贝叶斯方法推断参数 <span class="math inline">\(\boldsymbol\mu\)</span>，且希望先验分布与后验分布具有相同的形式。观察似然函数，它是 <span class="math inline">\(\mu_k\)</span> 的指数的乘积，所以一个自然的想法就是取先验分布也是 <span class="math inline">\(\mu_k\)</span> 的指数的乘积形式。或者我们也可以依葫芦画瓢，推广一下 beta 分布。无论如何，先验分布应该是如下形式： <span class="math display">\[
+p(\boldsymbol\mu\vert\boldsymbol\alpha)\propto \prod_{k=1}^K\mu_k^{\alpha_k-1}
+\]</span> 加上归一化系数，即得到 Dirichlet 分布： <span class="math display">\[
+\text{Dir}(\boldsymbol\mu\vert\boldsymbol\alpha)=\frac{\Gamma(\alpha_0)}{\Gamma(\alpha_1)\cdots\Gamma(\alpha_K)}\prod_{k=1}^K\mu_k^{\alpha_k-1}
+\]</span> 其中 <span class="math display">\[
+\alpha_0=\sum_{k=1}^K \alpha_k
+\]</span> 值得注意的是，由于约束条件 <span class="math inline">\(\sum_k\mu_k=1\)</span> 的存在，所以 Dirichlet 分布的支撑集是 <span class="math inline">\(K-1\)</span> 阶的单纯形（simplex），即一个有界线性流形，如下图所示：</p>
+<p><img src="fig2.4.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>不同 <span class="math inline">\(\boldsymbol\alpha\)</span> 下的 Dirichlet 分布示意图如下图所示：</p>
+<p><img src="fig2.5.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>容易验证后验分布确实也是一个 Dirichlet 分布： <span class="math display">\[
+p(\boldsymbol\mu\vert \mathcal D,\boldsymbol\alpha)\propto p(\mathcal D\vert\boldsymbol\mu)\cdot p(\mu\vert\boldsymbol\alpha)\propto \prod_{k=1}^K\mu_k^{m_k+\alpha_k-1}
+\]</span> 加上归一化系数： <span class="math display">\[
+p(\boldsymbol\mu\vert\mathcal D,\boldsymbol\alpha)=\text{Dir}(\boldsymbol\mu\vert\boldsymbol\alpha+\mathbf m)=\frac{\Gamma(\alpha_0+N)}{\Gamma(\alpha_1+m_1)\cdots\Gamma(\alpha_K+m_K)}\prod_{k=1}^K\mu_k^{m_k+\alpha_k-1}
+\]</span></p>
+<h2 id="the-gaussian-distribution">The Gaussian Distribution</h2>
+<p>前两节我们分别讨论了二值变量和多值变量，但它们都是离散变量。这一节我们讨论连续变量，毫无疑问从高斯分布（正态分布）开始。</p>
+<p>单变量的高斯分布为： <span class="math display">\[
+\mathcal N(x\vert\mu,\sigma^2)=\frac{1}{(2\pi\sigma^2)^{1/2}}\exp\left(-\frac{1}{2\sigma^2}(x-\mu)^2\right)
+\]</span> <span class="math inline">\(D\)</span> 维随机向量 <span class="math inline">\(\mathbf x\)</span> 的高斯分布为： <span class="math display">\[
+\mathcal N(\mathbf x\vert\boldsymbol\mu,\boldsymbol\Sigma)=\frac{1}{(2\pi)^{D/2}}\frac{1}{(\boldsymbol\Sigma)^{1/2}}\exp\left(-\frac{1}{2}(\mathbf x-\boldsymbol\mu)^\mathrm T{\boldsymbol\Sigma}^{-1}(\mathbf x-\boldsymbol\mu)\right)
+\]</span> 高斯分布可以从多种角度推导出来。例如我们在第一章已经看到了，对于一个随机变量，高斯分布是让它的熵取到最大的分布。对于多元高斯分布也是如此。</p>
+<p>另一种推导高斯分布的角度是考虑多个随机变量之和。中心极限定理告诉我们，在一些条件下，随着随机变量的数量增加，它们的和（或均值）趋向于高斯分布。例如，二项随机变量可以视作 <span class="math inline">\(N\)</span> 个 Bernoulli 随机变量的和，所以随着 <span class="math inline">\(N\)</span> 增加，二项分布就会趋向于高斯分布。</p>
+<p>高斯分布具有很多重要的分析性质，这些性质是以后章节的更复杂的模型的基础，所以务必应掌握。</p>
+<p>首先考虑高斯分布的几何形式。从其概率密度函数可以看出，高斯分布以平方的形式依赖于 <span class="math inline">\(\mathbf x\)</span>： <span class="math display">\[
+\Delta^2=(\mathbf x-\boldsymbol\mu)^\mathrm T{\boldsymbol\Sigma}^{-1}(\mathbf x-\boldsymbol\mu)
+\]</span> 这里 <span class="math inline">\(\Delta\)</span> 被称作 <span class="math inline">\(\mathbf x\)</span> 与 <span class="math inline">\(\boldsymbol\mu\)</span> 之间的马氏距离（Mahalanobis distance），当 <span class="math inline">\(\boldsymbol\Sigma\)</span> 是单位矩阵时，马氏距离退化为欧氏距离。</p>
+<p>未完待续。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/PRML/" class="category-chain-item">PRML</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[PRML]2.Probability Distributions</div>
+      <div>https://xyfjason.github.io/blog-main/2023/05/04/PRML-2-Probability-Distributions/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年5月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/03/Midjourney-%E8%B0%83%E7%A0%94/" title="Midjourney 调研">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Midjourney 调研</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/04/28/PRML-Appendix-E-Lagrange-Multipliers/" title="[PRML]Appendix E.Lagrange Multipliers">
+                        <span class="hidden-mobile">[PRML]Appendix E.Lagrange Multipliers</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

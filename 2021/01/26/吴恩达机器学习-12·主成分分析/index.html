@@ -1,0 +1,834 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="吴恩达机器学习系列课程：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV164411b7dx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[吴恩达机器学习]12·主成分分析">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/01/26/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-12%C2%B7%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="吴恩达机器学习系列课程：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV164411b7dx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_walle.jpg">
+<meta property="article:published_time" content="2021-01-26T13:17:49.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:42:41.891Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_walle.jpg">
+  
+  
+  
+  <title>[吴恩达机器学习]12·主成分分析 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_walle.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[吴恩达机器学习]12·主成分分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-01-26 21:17" pubdate>
+          2021年1月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[吴恩达机器学习]12·主成分分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>吴恩达机器学习系列课程：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV164411b7dx" class="uri">https://www.bilibili.com/video/BV164411b7dx</a></p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/41120789/answer/481966094" class="uri">https://www.zhihu.com/question/41120789/answer/481966094</a></p>
+<span id="more"></span>
+<h2 id="数据降维">数据降维</h2>
+<p>我们的数据特征常常包含众多维度，但它们中的有些维度其实没有存在的必要。最极端的情况就是某一维度是其他若干维度的线性组合，那么这一维度就完全可以丢掉；但现实不会这么精准，如果某一维度是其他若干维度的线性组合加上微小的扰动，我们其实也可以将其丢掉。这就是数据降维。</p>
+<p><img src="data%20compression.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p>数据降维有众多算法可以完成，主成分分析即是其中之一。</p>
+<h2 id="主成分分析">主成分分析</h2>
+<p>主成分分析（Principal Component Analysis）的基本思想是：假设原始数据的特征有 <span class="math inline">\(n\)</span> 维，我们想将其缩减到 <span class="math inline">\(k\)</span> 维，那么我们只需要在原来的 <span class="math inline">\(n\)</span> 维空间中找到一个 <span class="math inline">\(k\)</span> 维的子空间，使得所有数据到这个子空间的距离平方和最小；此时，原数据在这个子空间上的投影就是我们新的 <span class="math inline">\(k\)</span> 维的数据。</p>
+<h3 id="数学推导">数学推导</h3>
+<p>为方便，我们首先将数据中心化，即使得数据的平均值在原点处。<u>一个获得所需要的 <span class="math inline">\(k\)</span> 维子空间的简单方式是：找到一个合适的 <span class="math inline">\(n\)</span> 维空间，直接选取前 <span class="math inline">\(k\)</span> 维作为子空间</u>。具体而言，对于一个数据点 <span class="math inline">\(x=\begin{bmatrix}x_1\\x_2\\\vdots\\x_n\end{bmatrix}\in\mathbb R^n\)</span>，设我们要找的 <span class="math inline">\(n\)</span> 维空间的规范正交基为 <span class="math inline">\(u_1,u_2,\ldots,u_n\)</span>，则 <span class="math inline">\(x\)</span> 在其中的新坐标为： <span class="math display">\[
+y_j=x\cdot u_j=x_1u_{j1}+x_2u_{j2}+\cdots+x_nu_{jn}
+\]</span> 它到前 <span class="math inline">\(k\)</span> 维形成的子空间（即以 <span class="math inline">\(u_1,u_2,\ldots,u_k\)</span> 为基底的子空间）的距离之平方为： <span class="math display">\[
+{y_{k+1}}^2+{y_{k+2}}^2+\cdots+{y_n}^2
+\]</span> 假设我们有 <span class="math inline">\(m\)</span> 个数据 <span class="math inline">\(x^{(1)},x^{(2)},\ldots,x^{(m)}\)</span>，于是我们的优化目标为： <span class="math display">\[
+\min \sum_{i=1}^m {y^{(i)}_{k+1}}^2+{y^{(i)}_{k+2}}^2+\cdots+{y^{(i)}_{n}}^2
+\]</span> 又由于在不同的基下 <span class="math inline">\({||x||}^2\)</span> 都是一个定值，于是最小化上述距离等价于： <span class="math display">\[
+\max \sum_{i=1}^m{y^{(i)}_1}^2+{y^{(i)}_2}^2+\cdots+{y^{(i)}_k}^2
+\]</span> 其充分条件为： <span class="math display">\[
+\max \sum_{i=1}^m {y_r^{(i)}}^2,\quad r=1,2,\ldots,k
+\]</span> 这就是我们要解决的问题。</p>
+<p><br></p>
+<p>由于 <span class="math display">\[
+\begin{align}
+\sum_{i=1}^m{y^{(i)}_r}^2&amp;=\sum_{i=1}^m(x^{(i)}\cdot u_r)^2\\
+&amp;=\sum_{i=1}^m\left(u_r^Tx^{(i)}\right)\left({x^{(i)}}^Tu_r\right)\\
+&amp;=u_r^T\left(\sum_{i=1}^mx^{(i)}{x^{(i)}}^T\right) u_r
+\end{align}
+\]</span> 这是一个正定二次型，<span class="math inline">\(\sum\limits_{i=1}^mx^{(i)}{x^{(i)}}^T\)</span> 是一个正定矩阵，可以进行奇异值分解： <span class="math display">\[
+\sum_{i=1}^mx^{(i)}{x^{(i)}}^T=U\Sigma U^T
+\]</span> 其中，<span class="math inline">\(U\)</span> 是正交矩阵，<span class="math inline">\(\Sigma\)</span> 是对角矩阵 <span class="math inline">\(\begin{bmatrix}\sigma_1&amp;\cdots&amp;0\\\vdots&amp;\ddots&amp;\vdots\\0&amp;\cdots&amp;\sigma_n\end{bmatrix}\)</span>，<span class="math inline">\(\sigma_1,\ldots,\sigma_n\)</span> 是奇异值，<span class="math inline">\(\sigma_1&gt;\cdots&gt;\sigma_n\)</span>.</p>
+<p>令 <span class="math inline">\(v_r=U^Tu_r\)</span>，由于 <span class="math inline">\(U\)</span> 正交，所以 <span class="math inline">\(v_r\)</span> 也是单位向量，代回得到： <span class="math display">\[
+\begin{align}
+\sum_{i=1}^m{y^{(i)}_r}^2&amp;=u_r^TU\Sigma U^Tu_r\\
+&amp;=(U^T u_r)^T\Sigma(U^Tu_r)\\
+&amp;=v_r^T\Sigma v_r\\
+&amp;=\sigma_1v_{r1}^2+\sigma_2v_{r2}^2+\cdots+\sigma_nv_{rn}^2
+\end{align}
+\]</span> 所以我们的优化目标变成了： <span class="math display">\[
+\begin{align}
+&amp;\max\sum_{i=1}^n\sigma_iv_{ri}^2\\
+&amp;\text{s.t.}\begin{cases}\sum\limits_{i=1}^nv_{ri}^2=1\\\sigma_1&gt;\cdots&gt;\sigma_n\end{cases}
+\end{align}
+\]</span> 很显然，它的解是：<span class="math inline">\(v_{r1}=1,v_{r2}=\cdots=v_{rn}=0\)</span>，即 <span class="math inline">\(v_r=\begin{bmatrix}1\\0\\\vdots\\0\end{bmatrix}\)</span>。又由于 <span class="math inline">\(u_r=Uv_r\)</span>，<u>所以我们要找的 <span class="math inline">\(n\)</span> 维空间的各个基向量就是矩阵 <span class="math inline">\(\sum\limits_{i=1}^mx^{(i)}{x^{(i)}}^T\)</span> 的各个奇异值对应的奇异向量</u>，我们要降维到的 <span class="math inline">\(k\)</span> 维子空间的各个基向量就是前 <span class="math inline">\(k\)</span> 个奇异向量，对原来的数据进行基变换，就得到了降维后的数据。</p>
+<h3 id="步骤总结">步骤总结</h3>
+<p>总结一下，主成分分析的推导过程稍显复杂，但是它的实现很简单，主要是以下步骤：</p>
+<ol type="1">
+<li><p>计算矩阵 <span class="math inline">\(\sum\limits_{i=1}^mx^{(i)}{x^{(i)}}^T\)</span>；</p>
+<p>更简单的表达是：设矩阵 <span class="math inline">\(X=\begin{bmatrix}{x^{(1)}}^T\\{x^{(2)}}^T\\\vdots\\{x^{(m)}}^T\end{bmatrix}\)</span> 为数据集，那么计算矩阵 <span class="math inline">\(X^TX\)</span> 即可。</p></li>
+<li><p>进行奇异值分解，得到奇异向量；</p></li>
+<li><p>选取前 <span class="math inline">\(k\)</span> 个奇异向量作为降维后的空间的基向量，构成基变换矩阵 <span class="math inline">\(C\)</span>；</p></li>
+<li><p>对于原数据 <span class="math inline">\(x\)</span>，取 <span class="math inline">\(z=C^Tx\)</span> 为其降维后的数据。</p>
+<p>更简单的表达是：取 <span class="math inline">\(Z=XC\)</span>，则 <span class="math inline">\(Z\)</span> 是降维后的数据集。</p></li>
+</ol>
+<h3 id="主成分数量的选择">主成分数量的选择</h3>
+<p>那么在实践中，我们到底选择多大的 <span class="math inline">\(k\)</span> 值比较好呢？对此，我们定义一个平均误差为： <span class="math display">\[
+\frac{1}{m}\sum_{i=1}^m||x^{(i)}-x_\text{approx}^{(i)}||^2
+\]</span> 其中，<span class="math inline">\(x_\text{approx}^{(i)}\)</span> 表示数据 <span class="math inline">\(x^{(i)}\)</span> 在我们找到的 <span class="math inline">\(k\)</span> 维子空间上的投影。再定义一个总方差为： <span class="math display">\[
+\frac{1}{m}\sum_{i=1}^m||x^{(i)}||^2
+\]</span> 则一般的，我们会选择最小的 <span class="math inline">\(k\)</span> 使得： <span class="math display">\[
+\frac{\frac{1}{m}\sum\limits_{i=1}^m||x^{(i)}-x_\text{approx}^{(i)}||^2}{\frac{1}{m}\sum\limits_{i=1}^m||x^{(i)}||^2}\leqslant 0.01
+\]</span> 并称之为「<span class="math inline">\(99\%\)</span> 的方差得以保留」。</p>
+<p>这个式子看起来并不好计算，但事实上，借助我们的奇异值，可以证明，对于给定的 <span class="math inline">\(k\)</span>： <span class="math display">\[
+\frac{\frac{1}{m}\sum\limits_{i=1}^m||x^{(i)}-x_\text{approx}^{(i)}||^2}{\frac{1}{m}\sum\limits_{i=1}^m||x^{(i)}||^2}=1-\frac{\sum\limits_{i=1}^k\sigma_k}{\sum\limits_{i=1}^n\sigma_i}
+\]</span> 这就好算了。</p>
+<h2 id="实现">实现</h2>
+<h3 id="二维压缩为一维">二维压缩为一维</h3>
+<p>二维平面上的原始数据：</p>
+<p><img src="Figure_0.png" srcset="/blog-main/logo/imageloading.png" lazyload width="50%" height="50%" /></p>
+<p>主成分分析代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">PCA</span>(<span class="hljs-params">X, dim = -<span class="hljs-number">1</span></span>):<br>	<span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">	X is the input data: (m, n)</span><br><span class="hljs-string"></span><br><span class="hljs-string">	dim is the dimension after reduction</span><br><span class="hljs-string">	if dim=-1, then the program select the smallest dim</span><br><span class="hljs-string">	such that 99% of variance is retained</span><br><span class="hljs-string">	</span><br><span class="hljs-string">	return the data after reduction: (m, dim)</span><br><span class="hljs-string">	and the data recovered from reduced data: (m, n)</span><br><span class="hljs-string">	&quot;&quot;&quot;</span><br>	Xmean = np.empty((<span class="hljs-number">1</span>, X.shape[<span class="hljs-number">1</span>]))<br>	Xstd = np.empty((<span class="hljs-number">1</span>, X.shape[<span class="hljs-number">1</span>]))<br>	<span class="hljs-keyword">def</span> <span class="hljs-title function_">normalization</span>(<span class="hljs-params">X, k</span>):<br>		<span class="hljs-keyword">global</span> Xmean, Xstd<br>		<span class="hljs-keyword">if</span> k == <span class="hljs-number">1</span>:<br>			Xmean = np.mean(X, axis=<span class="hljs-number">0</span>)<br>			Xstd = np.std(X, axis=<span class="hljs-number">0</span>, ddof=<span class="hljs-number">1</span>)<br>			<span class="hljs-keyword">return</span> (X - Xmean) / Xstd<br>		<span class="hljs-keyword">else</span>:<br>			<span class="hljs-keyword">return</span> X * Xstd + Xmean<br><br>	Xnorm = normalization(X, <span class="hljs-number">1</span>)<br>	u, s, v = np.linalg.svd(Xnorm.T @ Xnorm)<br>	<span class="hljs-keyword">if</span> dim == -<span class="hljs-number">1</span>:<br>		dim = <span class="hljs-number">1</span><br>		<span class="hljs-keyword">while</span> s[:dim].<span class="hljs-built_in">sum</span>() / s.<span class="hljs-built_in">sum</span>() &lt; <span class="hljs-number">0.99</span>:<br>			dim += <span class="hljs-number">1</span><br>	<span class="hljs-keyword">return</span> Xnorm @ u[:, :dim], normalization(Xnorm @ u[:, :dim] @ u[:, :dim].T, <span class="hljs-number">0</span>)<br></code></pre></td></tr></table></figure>
+<p>得到映射的点：</p>
+<p><img src="Figure_1.png" srcset="/blog-main/logo/imageloading.png" lazyload width="50%" height="50%" /></p>
+<h3 id="人脸特征压缩">人脸特征压缩</h3>
+<p>我们给出了 <span class="math inline">\(5000\)</span> 张人脸照片，每张照片含有 <span class="math inline">\(32\times32\)</span> 的灰度像素，形成维度为 <span class="math inline">\(1024\)</span> 的向量作为其特征。前 <span class="math inline">\(100\)</span> 张照片如图所示：</p>
+<p><img src="Figure_2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p>现在将其压缩为 <span class="math inline">\(\text{dim}={36,100}\)</span> 维的数据，恢复后结果如下：</p>
+<p><img src="Figure_dim=36.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p><img src="Figure_dim=100.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/Andrew-Ng/" class="category-chain-item">Andrew Ng</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[吴恩达机器学习]12·主成分分析</div>
+      <div>https://xyfjason.github.io/blog-main/2021/01/26/吴恩达机器学习-12·主成分分析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年1月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2021/01/29/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-13%C2%B7%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B/" title="[吴恩达机器学习]13·异常检测">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[吴恩达机器学习]13·异常检测</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2021/01/25/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-11%C2%B7K-means%E8%81%9A%E7%B1%BB/" title="[吴恩达机器学习]11·K-means聚类">
+                        <span class="hidden-mobile">[吴恩达机器学习]11·K-means聚类</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

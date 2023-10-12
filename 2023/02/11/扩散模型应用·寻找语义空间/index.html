@@ -1,0 +1,822 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \]  封面来自 CivitAI.  Diffusion Autoencoders CVPR 2022 2021.11.30 尽管扩散模型的生成效果非常好，但是它缺乏有语义的隐空间，给一些下游应用带来了麻烦。即便是 DDIM 的确定性采样过程，其隐空间，即 \(\x_T\) 所在空间也不理想，典型表现就是 DDIM 的插值结果并不是平滑变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型应用·寻找语义空间">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%AF%BB%E6%89%BE%E8%AF%AD%E4%B9%89%E7%A9%BA%E9%97%B4/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \]  封面来自 CivitAI.  Diffusion Autoencoders CVPR 2022 2021.11.30 尽管扩散模型的生成效果非常好，但是它缺乏有语义的隐空间，给一些下游应用带来了麻烦。即便是 DDIM 的确定性采样过程，其隐空间，即 \(\x_T\) 所在空间也不理想，典型表现就是 DDIM 的插值结果并不是平滑变">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-semantic.png">
+<meta property="article:published_time" content="2023-02-11T05:36:48.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:16:50.402Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="computer vision">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-semantic.png">
+  
+  
+  
+  <title>扩散模型应用·寻找语义空间 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-application-semantic.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="扩散模型应用·寻找语义空间"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-11 13:36" pubdate>
+          2023年2月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          32 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">扩散模型应用·寻找语义空间</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\x}{\mathbf x}
+\]</span></p>
+<blockquote>
+<p>封面来自 <a target="_blank" rel="noopener" href="https://civitai.com/images/1283664?modelVersionId=102828&amp;prioritizedUserIds=312503&amp;period=AllTime&amp;sort=Most+Reactions&amp;limit=20">CivitAI</a>.</p>
+</blockquote>
+<h2 id="diffusion-autoencoders">Diffusion Autoencoders</h2>
+<p><span class="label label-success">CVPR 2022</span> <span class="label label-default">2021.11.30</span></p>
+<p>尽管扩散模型的生成效果非常好，但是它缺乏有语义的隐空间，给一些下游应用带来了麻烦。即便是 DDIM 的确定性采样过程，其隐空间，即 <span class="math inline">\(\x_T\)</span> 所在空间也不理想，典型表现就是 DDIM 的插值结果并不是平滑变化的。Diffusion Autoencoders 希望构造一个像 GANs 和 VAEs 一样方便操纵的隐空间，能够平滑地插值、控制语义和编辑图像属性。为此，作者设计了如下架构：</p>
+<p><img src="diffusionae.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>Semantic encoder 是一个卷积编码器，目的是提取输入图像的语义特征 <span class="math inline">\(z_\text{sem}\)</span>；Conditional DDIM 是以 <span class="math inline">\(z_\text{sem}\)</span> 为条件输入（通过 AdaGN 融入）的扩散模型，可以把 <span class="math inline">\(\x_0\to\x_T\)</span> 过程看作“编码器”，<span class="math inline">\(\x_T\to\x_0\)</span> 过程看作“解码器”；Latent DDIM 稍后再做解释。在这个架构下，<strong><span class="math inline">\(z_\text{sem}\)</span> 和 <span class="math inline">\(\x_T\)</span> 共同形成了输入图像的隐空间</strong>。前者编码语义信息，让我们能够操纵生成图像的各种属性（如人的性别、年龄、微笑）；后者编码了 <span class="math inline">\(z_\text{sem}\)</span> 遗留的其他信息，往往是一些随机细节。二者共同作用，既有扩散模型能够几乎完美地重建输入图像的优势，又得到了 high-level 的语义表征 <span class="math inline">\(z_\text{sem}\)</span> 供下游任务的使用。</p>
+<p>现在，如果我们想用 Diffusion AE 做<strong>无条件</strong>生成，会发现一个问题——不知道 <span class="math inline">\(z_\text{sem}\)</span>，所以我们必须为 <span class="math inline">\(z_\text{sem}\)</span> 建模，这就是 Latent Diffusion 的用途。当然，任何生成模型都可以用来建模 <span class="math inline">\(z_\text{sem}\)</span>，只是作者觉得扩散模型更好罢了。因为 <span class="math inline">\(z_\text{sem}\in\mathbb R^{512}\)</span>，所以 Latent Diffusion 的模型 backbone 是一个十几层的 MLP，效果还不错。</p>
+<p>说了这么多，这个隐空间究竟是不是像作者声称的这么好，还得实验来证明——</p>
+<ol type="1">
+<li>在第一个实验中，作者固定 <span class="math inline">\(z_\text{sem}\)</span> 不变，随机采样 <span class="math inline">\(\x_T\)</span>，发现生成的结果也大体不变，只有细节改变，这证明了 <span class="math inline">\(z_\text{sem}\)</span> 和 <span class="math inline">\(\x_T\)</span> 确实一个编码图像语义、另一个编码随机细节。</li>
+<li>在第二个实验中，作者在隐空间中插值（<span class="math inline">\(z_\text{sem}\)</span> 用的线性插值，<span class="math inline">\(\x_T\)</span> 用的球面线性插值），并与 DDIM 和 StyleGAN 做比较，发现 Diffusion AE 既能得到像 StyleGAN 一样平滑的插值过程，也能像 DDIM 一样完美地重建插值端点。</li>
+<li>前两个实验证明作者设计的隐空间的确非常优秀，于是我们可以依靠它来编辑图像属性。通过在 <span class="math inline">\(z_\text{sem}\)</span> 空间中训练一个线性分类器，我们能得到某属性（如微笑）的方向向量，然后在 <span class="math inline">\(z_\text{sem}\)</span> 上加减方向向量即可。<span class="math inline">\(\x_T\)</span> 不用改动，因为第一个实验已经证明它和 high-level 语义关系不大。</li>
+<li>第四个实验作者定量比较了 Diffusion AE 和其他生成模型的重构性能，并消融了不同大小的 <span class="math inline">\(z_\text{sem}\)</span> 和是否有 <span class="math inline">\(\x_T\)</span> 对重构的影响。</li>
+<li>从扩散模型的角度，Diffusion AE 能够“加快”去噪。这里的加快不是指减小时间步，而是指 <span class="math inline">\(t\)</span> 时刻模型预测的 <span class="math inline">\(\hat\x_{0\vert t}\)</span> 更加准确。在原始的扩散模型中，我们用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，是因为 <span class="math inline">\(\x_0\)</span> 是未知的——如果知道，我们就没必要捣鼓一个扩散模型来生成了。但是现在由于 <span class="math inline">\(z_\text{sem}\)</span> 提取了 <span class="math inline">\(\x_0\)</span> 的许多信息，所以用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t,z_\text{sem})\)</span> 来近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 就相当于作了弊，当然能够更快的去噪了。</li>
+<li>作者进一步探索了 few-shot conditional 生成。给定目标类别的分类器 <span class="math inline">\(p_\gamma(c\vert z_\text{sem})\)</span>，通过拒绝采样得到 <span class="math inline">\(z_\text{sem}\)</span>，然后生成样本。</li>
+<li>最后测试无条件生成的性能，证明 Diffusion AE 相比一般的扩散模型并不会对图像质量带来损失。</li>
+</ol>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Diffusion Autoencoders 的生成样例（摘自<a target="_blank" rel="noopener" href="https://diff-ae.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Smiling-ffhq-18072.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Smiling-ffhq-37879.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Young-ffhq-4077.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Young-ffhq-41207.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Wavy_Hair-ffhq-4253.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Wavy_Hair-ffhq-4730.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Male-ffhq-3804.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diff-ae.github.io/data/website_results/Male-ffhq-4145.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"></div></div><video src="https://diff-ae.github.io/data/image/interpolate_ffhq/img8.mp4" type="video/mp4" controls="controls" width="30%"></video><video src="https://diff-ae.github.io/data/image/interpolate_ffhq/img4.mp4" type="video/mp4" controls="controls" width="30%"></video><video src="https://diff-ae.github.io/data/image/interpolate_ffhq/img2.mp4" type="video/mp4" controls="controls" width="30%"></video></details>
+          </div>
+<h2 id="asyrp">Asyrp</h2>
+<p><span class="label label-success">ICLR 2023 notable top 25%</span> <span class="label label-default">2022.10.20</span></p>
+<p>这篇论文的名字其实叫做 Diffusion Models already have a semantic latent space，也是相当直白了。具体而言，设隐变量为 <span class="math inline">\(h\)</span>，当我们做出变动 <span class="math inline">\(\Delta h\)</span> 时，要求满足下列性质：</p>
+<ul>
+<li>同质性：对于不同的样本，同样的 <span class="math inline">\(\Delta h\)</span> 会导致这些样本有着类似的改变（而不是各变各的）。</li>
+<li>线性：改变 <span class="math inline">\(\Delta h\)</span> 的大小能够控制样本改变的程度；对多个 <span class="math inline">\(\Delta h\)</span> 的线性组合能够控制样本同时朝多个方向改变。</li>
+<li>健壮性：<span class="math inline">\(\Delta h\)</span> 能够无损地编码原图。</li>
+<li>时间一致性：对于扩散模型来说，各个时间步下 <span class="math inline">\(\Delta h_t\)</span> 应该大抵一致。</li>
+</ul>
+<p>之前的工作 Diffusion Autoencoders<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Preechakul, Konpat, Nattanat Chatthee, Suttisak Wizadwongsa, and Supasorn Suwajanakorn. Diffusion autoencoders: Toward a meaningful and decodable representation. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 10619-10629. 2022.">[1]</span></a></sup> 通过训练一个编码器来人为构造了一个隐空间，而本文作者指出——训练好的扩散模型本身就有一个有语义的隐空间了，不需要专门去学习一个，这个隐空间就是 U-Net 的 bottleneck 的输出，作者称之为 "h-space"（我猜取这个名字是因为大家在写代码的时候喜欢把中间层变量命名为 <span class="math inline">\(h\)</span> 吧～）。空口无凭，怎么证明这个隐空间确实有语义呢？结合文本编辑图像的思路，只要我们对特定的属性，如 smiling，找到它的 <span class="math inline">\(\Delta h\)</span>，那就说明隐空间中确实有一块区域表示“微笑脸”，任何一个隐变量只要加上 <span class="math inline">\(\Delta h\)</span> 就能生成微笑的人脸。为了找到 <span class="math inline">\(\Delta h\)</span>，作者提出以下方法。</p>
+<p><img src="asyrp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>如图所示，作者在 h-space（就是预训练扩散模型的 U-Net 的 bottleneck 输出）后面用一个可学习的小网络 <span class="math inline">\(f_t\)</span>（两层 1x1 卷积构成）来输出 <span class="math inline">\(\Delta h_t\)</span>，然后训练 <span class="math inline">\(f_t\)</span> 让生成的人脸笑起来，这样就能得到“微笑”这个语义的 <span class="math inline">\(\Delta h\)</span> 了。这其实也是一个文本编辑图像的过程，做法和 DiffusionCLIP 类似，只不过 DiffusionCLIP 是微调整个 U-Net，而本文只训练一个很轻量 <span class="math inline">\(f_t\)</span>. 损失函数如下： <span class="math display">\[
+\mathcal L^{(t)}=\lambda_\text{CLIP}\mathcal L_\text{direction}(P_t^\text{edit},y^\text{tar};P_t^\text{source},y^\text{source})+\lambda_\text{recon}|\x_t^\text{edit}-\x_t^\text{source}|
+\]</span> 其中 <span class="math inline">\(P_t^\text{edit}\)</span> 指每一步预测的 <span class="math inline">\(\x_0\)</span>（这是论文的记法，我常写作 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 或者 <span class="math inline">\(\hat\x_{0|t}\)</span>），重构损失作为正则项防止编辑过头。</p>
+<p>本文另一个贡献是把逆向采样过程分成了三段：前期用改动的网络做 DDIM 采样来编辑；中期编辑得差不多了，就用原本的网络做 DDIM 采样；后期切换成 DDPM 采样来增加随机细节、提升图像质量。至于什么时候切换不同的采样方式，作者提出了两个指标分别量化编辑强度和采样质量，此处不再赘述，感兴趣的读者可以参看论文 Section 4.</p>
+<p>最后，读者可能想问标题的 Asyrp 是什么、上图中的 <span class="math inline">\(D_t\)</span> 是什么，这其实是本文的一个败笔。它用了一个过于简单的假设证明了 guidance 技巧没用，也是遭到了所有审稿人的质疑。幸好寻找有语义的隐空间这一点做得十分突出，大家还是一致倾向于接收本文。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Asyrp 的生成样例（摘自<a target="_blank" rel="noopener" href="https://kwonminki.github.io/Asyrp/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://kwonminki.github.io/Asyrp/resrc/celeba_church2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://kwonminki.github.io/Asyrp/resrc/out_of_domain_ver4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://kwonminki.github.io/Asyrp/resrc/afhq_metfaces_bedroom.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Preechakul, Konpat, Nattanat Chatthee, Suttisak Wizadwongsa, and Supasorn Suwajanakorn. Diffusion autoencoders: Toward a meaningful and decodable representation. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 10619-10629. 2022. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Kwon, Mingi, Jaeseok Jeong, and Youngjung Uh. Diffusion models already have a semantic latent space. <em>arXiv preprint arXiv:2210.10960</em> (2022). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>扩散模型应用·寻找语义空间</div>
+      <div>https://xyfjason.github.io/blog-main/2023/02/11/扩散模型应用·寻找语义空间/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E4%B8%AA%E6%80%A7%E5%8C%96%E7%94%9F%E6%88%90/" title="扩散模型应用·个性化生成">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型应用·个性化生成</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9F%BA%E4%BA%8E%E6%96%87%E6%9C%AC%E7%9A%84%E5%9B%BE%E5%83%8F%E7%BC%96%E8%BE%91/" title="扩散模型应用·基于文本的图像编辑">
+                        <span class="hidden-mobile">扩散模型应用·基于文本的图像编辑</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

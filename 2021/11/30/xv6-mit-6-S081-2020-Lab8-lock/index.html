@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Lab: locks https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2020&#x2F;labs&#x2F;lock.html 代码：https:&#x2F;&#x2F;github.com&#x2F;xyfJASON&#x2F;xv6-mit-6.S081-2020&#x2F;tree&#x2F;lock">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[xv6-mit-6.S081-2020]Lab8: lock">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab8-lock/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Lab: locks https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2020&#x2F;labs&#x2F;lock.html 代码：https:&#x2F;&#x2F;github.com&#x2F;xyfJASON&#x2F;xv6-mit-6.S081-2020&#x2F;tree&#x2F;lock">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/xv6.jpg">
+<meta property="article:published_time" content="2021-11-30T11:00:01.000Z">
+<meta property="article:modified_time" content="2023-09-09T01:08:56.839Z">
+<meta property="article:author" content="xyfJASON">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/xv6.jpg">
+  
+  
+  
+  <title>[xv6-mit-6.S081-2020]Lab8: lock - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/xv6.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[xv6-mit-6.S081-2020]Lab8: lock"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-30 19:00" pubdate>
+          2021年11月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          58 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[xv6-mit-6.S081-2020]Lab8: lock</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="lab-locks">Lab: locks</h1>
+<p>https://pdos.csail.mit.edu/6.S081/2020/labs/lock.html</p>
+<p>代码：https://github.com/xyfJASON/xv6-mit-6.S081-2020/tree/lock</p>
+<span id="more"></span>
+<p><br></p>
+<p>这次实验中我们将重新设计 xv6 的<strong>内存分配</strong>和<strong>磁盘块缓存</strong>机制以提高它们的并行性。并行性的性能可以由锁争用的次数反应出来——差的并行代码会导致高锁争用。</p>
+<h2 id="memory-allocator">Memory allocator</h2>
+<p>任务：原本的 kalloc.c 导致高锁争用的原因是 xv6 只维护了一个空闲页面链表，该链表有一个锁。为了减少锁争用，我们可以给每一个 CPU 维护一个空闲页面链表，这样不同 CPU 就可以并行地内存分配和释放，因为它们之间相互独立。但是，当一个 CPU 的空闲页面被分配完之后，它需要从其他的 CPU 的空闲页面链表中<strong>窃取</strong>一部分空闲页面。窃取过程可能导致锁争用，但是不会很频繁。</p>
+<p>我们的任务就是实现每一个 CPU 一个空闲链表，且在链表为空时窃取页面。所有锁的名字必须以 kmem 开头。kalloctest 检测是否减少了锁争用，usertests sbrkmuch 检测是否仍然能够分配所有内存。</p>
+<p>首先把原来的一个 kmem 结构体改成一个数组 kmems，使每个 CPU 有一个对应的空闲页面链表：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">kmem</span>&#123;</span><br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">spinlock</span> <span class="hljs-title">lock</span>;</span><br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">run</span> *<span class="hljs-title">freelist</span>;</span><br>&#125; kmems[NCPU];<br></code></pre></td></tr></table></figure>
+<p>然后每个 CPU 分别初始化：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span><br><span class="hljs-title function_">kinit</span><span class="hljs-params">()</span><br>&#123;<br>  <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; NCPU; i++)&#123;<br>    initlock(&amp;kmems[i].lock, <span class="hljs-string">&quot;kmem&quot;</span>);<br>    freerange(i == <span class="hljs-number">0</span> ? end : (<span class="hljs-type">void</span>*)PHYSTOP, (<span class="hljs-type">void</span>*)PHYSTOP);<br>  &#125;<br>  <span class="hljs-comment">/*initlock(&amp;kmem.lock, &quot;kmem&quot;);</span><br><span class="hljs-comment">  freerange(end, (void*)PHYSTOP);*/</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这里我偷了个懒，先给 0 号 CPU 分配所有内存，其他 CPU 不分配。由于一个 CPU 没有空闲页面时会去其他 CPU 处窃取，所以我希望足够长时间之后，页面能够大致平均分配开（这其实是一个数学问题……有时间可以研究一下……）。</p>
+<p>kfree 把释放的页面放进<strong>当前 CPU</strong> 的空闲页面链表。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span><br><span class="hljs-title function_">kfree</span><span class="hljs-params">(<span class="hljs-type">void</span> *pa)</span><br>&#123;<br>  ...<br>  r = (<span class="hljs-keyword">struct</span> run*)pa;<br>  push_off(); <span class="hljs-type">int</span> ci = cpuid(); pop_off();<br>  acquire(&amp;kmems[ci].lock);<br>  r-&gt;next = kmems[ci].freelist;<br>  kmems[ci].freelist = r;<br>  release(&amp;kmems[ci].lock);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>kalloc 从当前 CPU 空闲页面链表中取一个页面，如果不存在则窃取（steal）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> *<br><span class="hljs-title function_">kalloc</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">run</span> *<span class="hljs-title">r</span>;</span><br>  ...<br>  push_off(); <span class="hljs-type">int</span> ci = cpuid(); pop_off();<br>  acquire(&amp;kmems[ci].lock);<br>  r = kmems[ci].freelist;<br>  <span class="hljs-keyword">if</span>(r)<br>    kmems[ci].freelist = r-&gt;next;<br>  <span class="hljs-keyword">else</span> <span class="hljs-comment">// Steal from other CPU when freelist is empty.</span><br>    r = steal(ci);<br>  release(&amp;kmems[ci].lock);<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>窃取我实现的很暴力，逐一检查各个 CPU 是否有空闲页面，有就窃取过来：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">struct</span> run *<br><span class="hljs-title function_">steal</span><span class="hljs-params">(<span class="hljs-type">int</span> ci)</span><br>&#123;<br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">run</span> *<span class="hljs-title">r</span> =</span> <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; NCPU; i++)&#123;<br>    <span class="hljs-keyword">if</span>(i == ci) <span class="hljs-keyword">continue</span>;<br>    acquire(&amp;kmems[i].lock);<br>    <span class="hljs-keyword">if</span>((r = kmems[i].freelist))&#123;<br>      kmems[i].freelist = r-&gt;next;<br>      release(&amp;kmems[i].lock);<br>      <span class="hljs-keyword">break</span>;<br>    &#125;<br>    release(&amp;kmems[i].lock);<br>  &#125;<br>  <span class="hljs-keyword">return</span> r;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="buffer-cache">Buffer cache</h2>
+<p>xv6 在 bio.c 中实现了磁盘块的缓存机制，它是一个双向链表，每个元素是一个缓存块。一个缓存块（struct buf, kernel/buf.h）不仅包含数据，还包含有效位 valid、脏位 disk、设备号、磁盘块号、被引用次数等信息。<strong>整个双向链表由一个自旋锁保护，每个缓存块都由一个睡眠锁保护。</strong></p>
+<p>任务：由于整个缓存双向链表由一个自旋锁保护，所以多个进程反复读不同文件时会产生高锁争用。我们要更改缓存机制以减少锁争用。</p>
+<p>我选择的方法是 Hash：原本只有一个双向链表维护所有缓存块，现在我开 NBUCKETS 个桶，每个桶里面维护一个双向链表。一个块应该去哪个桶里找由 Hash 确定。</p>
+<p>Hash 函数是最简单的直接取模：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> NBUCKETS 13</span><br><span class="hljs-keyword">inline</span> uint <span class="hljs-title function_">myhash</span><span class="hljs-params">(uint blockno)</span>&#123;<br>  <span class="hljs-keyword">return</span> blockno % NBUCKETS;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><br></p>
+<p>然后修改 binit 给每个桶初始化：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span><br><span class="hljs-title function_">binit</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">b</span>;</span><br>  <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; NBUCKETS; i++)&#123;<br>    initlock(&amp;bcache.lock[i], <span class="hljs-string">&quot;bcache&quot;</span>);<br>    <span class="hljs-comment">// Create linked list of buffers</span><br>    bcache.head[i].prev = &amp;bcache.head[i];<br>    bcache.head[i].next = &amp;bcache.head[i];<br>  &#125;<br>  <span class="hljs-keyword">for</span>(b = bcache.buf; b &lt; bcache.buf+NBUF; b++)&#123;<br>    b-&gt;next = bcache.head[<span class="hljs-number">0</span>].next;<br>    b-&gt;prev = &amp;bcache.head[<span class="hljs-number">0</span>];<br>    initsleeplock(&amp;b-&gt;lock, <span class="hljs-string">&quot;buffer&quot;</span>);<br>    bcache.head[<span class="hljs-number">0</span>].next-&gt;prev = b;<br>    bcache.head[<span class="hljs-number">0</span>].next = b;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>和 kinit 一样我偷了个懒，先把所有缓存块给 0 号桶，因为当一个桶缓存块不够用时会去其他桶窃取。</p>
+<p><br></p>
+<p>接下来修改 bget。原本的 bget 在双向链表中<strong>扫描两次</strong>，第一次<strong>从前往后</strong>找是否命中，如果命中则返回命中的缓存块；如果没命中，则第二次<strong>从后往前</strong>找一块未被映射的缓存块（refcnt = 0），加上映射之后返回之。这样扫描实现了 LRU 机制。</p>
+<p>为了修改，我们除了把上述双向链表改成当前桶的双向链表以外，还需处理一种情况：如果当前桶没有空闲的缓存块，那么去其他桶窃取一块。为了方便，我把「从某桶取出某未映射缓存」写作如下函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// Extract and return available cache block from bucket b.</span><br><span class="hljs-keyword">struct</span> buf *<br><span class="hljs-title function_">bfind</span><span class="hljs-params">(<span class="hljs-type">int</span> i, <span class="hljs-type">int</span> needlock)</span>&#123;<br>  <span class="hljs-keyword">if</span>(needlock)<br>    acquire(&amp;bcache.lock[i]);<br>  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">struct</span> buf *b = bcache.head[i].prev; b != &amp;bcache.head[i]; b = b-&gt;prev)&#123;<br>    <span class="hljs-keyword">if</span>(b-&gt;refcnt == <span class="hljs-number">0</span>)&#123;<br>      b-&gt;prev-&gt;next = b-&gt;next;<br>      b-&gt;next-&gt;prev = b-&gt;prev;<br>      b-&gt;prev = b-&gt;next = <span class="hljs-number">0</span>;<br>      <span class="hljs-keyword">if</span>(needlock)<br>        release(&amp;bcache.lock[i]);<br>      <span class="hljs-keyword">return</span> b;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">if</span>(needlock)<br>    release(&amp;bcache.lock[i]);<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在 bget 中，先对当前桶执行 bfind，如果没找到则窃取——遍历其他桶执行 bfind，把返回的缓存块插入当前桶的双向链表。有一个坑是：如果 bfind 的是当前桶，小心不要重复上锁。</p>
+<p>然后本实验最难的点来了：<strong>窃取过程可能发生死锁</strong>。</p>
+<p>假设每个桶在窃取别人时都是从 0 号桶开始遍历，那么考虑如下情况：</p>
+<p><img src="dead.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p>0 号桶和 1 号桶都先执行 bget，把自己锁住；然后 0 号桶找 1 号桶要空闲块，于是申请 1 号桶的锁；1 号桶找 0 号桶要空闲块，于是申请 0 号桶的锁——这样就死锁了。但这时系统的 2 号桶可能有空闲块是可以给出来的。</p>
+<p>要解决这个问题，我和同学经过了漫长的讨论，目前有两种方案。但是，<strong>panic 或者死锁很难很难很难很难复现，所以我也没法保证下述策略一定正确……</strong></p>
+<h3 id="方案一更改遍历顺序">方案一：更改遍历顺序</h3>
+<p>i 号桶在窃取时从 i+1 开始向后遍历，直到绕一圈回来。其实这样做也可能死锁，但是死锁的唯一情形是——当前没有任何桶有空闲块，这样的情形下 xv6 原本的策略是 panic，不比死锁好哪儿去。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> buf*<br><span class="hljs-title function_">bget</span><span class="hljs-params">(uint dev, uint blockno)</span><br>&#123;<br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">b</span>;</span><br><br>  uint hashid = myhash(blockno);<br>  acquire(&amp;bcache.lock[hashid]);<br><br>  <span class="hljs-comment">// Is the block already cached?</span><br>  <span class="hljs-keyword">for</span>(b = bcache.head[hashid].next; b != &amp;bcache.head[hashid]; b = b-&gt;next)&#123;<br>    <span class="hljs-keyword">if</span>(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno)&#123;<br>      b-&gt;refcnt++;<br>      release(&amp;bcache.lock[hashid]);<br>      acquiresleep(&amp;b-&gt;lock);<br>      <span class="hljs-keyword">return</span> b;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">// Not cached.</span><br>  <span class="hljs-comment">// Recycle the least recently used (LRU) unused buffer.</span><br>  b = bfind(hashid, <span class="hljs-number">0</span>);<br>  <span class="hljs-keyword">if</span>(!b)<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = (hashid + <span class="hljs-number">1</span>) % NBUCKETS; i != hashid; i = (i + <span class="hljs-number">1</span>) % NBUCKETS)<br>      <span class="hljs-keyword">if</span>((b = bfind(i, <span class="hljs-number">1</span>)))  <span class="hljs-keyword">break</span>;<br>  <span class="hljs-keyword">if</span>(b)&#123;<br>    b-&gt;next = bcache.head[hashid].next;<br>    b-&gt;prev = &amp;bcache.head[hashid];<br>    bcache.head[hashid].next-&gt;prev = b;<br>    bcache.head[hashid].next = b;<br><br>    b-&gt;dev = dev;<br>    b-&gt;blockno = blockno;<br>    b-&gt;valid = <span class="hljs-number">0</span>;<br>    b-&gt;refcnt = <span class="hljs-number">1</span>;<br>    release(&amp;bcache.lock[hashid]);<br>    acquiresleep(&amp;b-&gt;lock);<br>    <span class="hljs-keyword">return</span> b;<br>  &#125;<br>  panic(<span class="hljs-string">&quot;bget: no buffers&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="方案二加全局锁">方案二：加全局锁</h3>
+<p>仔细思考死锁什么时候会发生：当我窃取别人时，别人也在窃取我。但是，我去窃取别人这个动作本身就说明了我自己都一贫如洗不能自给自足，别人还来窃取我，那必然是徒劳无功的。所以，如果我现在放开自己的锁，打开家门让别人来自己的桶里逛一圈，别人也拿不走什么东西。所以我们有了初步的解决方案：在窃取别人前释放自己的锁。</p>
+<p>然而，当我们兴致勃勃地写完代码运行测试的时候，就会发现 <code>panic freeing free block</code>。</p>
+<p>panic 的原因是我们没有保证 bget 的原子性，使得两个进程将同一个磁盘块做了两次缓存——在进程 1 释放锁之后，进程 2 也去访问同一个磁盘块，于是两个进程各自偷了一块缓存块，都对磁盘块做了缓存。由于这样很容易导致两个缓存不一致，因此是不被允许的。</p>
+<p>要解决（缓解）这个问题，考虑引入全局锁——即对整个 bcache 上锁。假若一个进程在释放某桶的锁之后，能立即加上全局锁，就可以避免另一个进程来找同一个磁盘块。</p>
+<p>但毕竟我们没法保证释放桶锁和加全局锁这两个操作是原子的，如果有个进程好巧不巧（概率很小）在这两个操作之间来查找同一个磁盘块，仍然会 panic。所以这种做法能够极大的缓解 panic 问题，但并没有根本上解决它。</p>
+<p>针对重复缓存的问题，我想了个办法：在窃取到缓存块之后，先在桶里再次查找一番是否有已映射的缓存块，如果有，就不映射窃取来的缓存块了。好比我出门走了一趟，回来发现已经有人往我家里放了我要的东西。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">static</span> <span class="hljs-keyword">struct</span> buf*<br><span class="hljs-title function_">bget</span><span class="hljs-params">(uint dev, uint blockno)</span><br>&#123;<br>  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">buf</span> *<span class="hljs-title">b</span>;</span><br><br>  uint hashid = myhash(blockno);<br>  acquire(&amp;bcache.buclock[hashid]);<br><br>  <span class="hljs-comment">// Is the block already cached?</span><br>  <span class="hljs-keyword">for</span>(b = bcache.head[hashid].next; b != &amp;bcache.head[hashid]; b = b-&gt;next)&#123;<br>    <span class="hljs-keyword">if</span>(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno)&#123;<br>      b-&gt;refcnt++;<br>      release(&amp;bcache.buclock[hashid]);<br>      acquiresleep(&amp;b-&gt;lock);<br>      <span class="hljs-keyword">return</span> b;<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-comment">// Not cached.</span><br>  <span class="hljs-comment">// Recycle the least recently used (LRU) unused buffer.</span><br>  b = bfind(hashid, <span class="hljs-number">0</span>);<br>  <span class="hljs-keyword">if</span>(!b)&#123;<br>    release(&amp;bcache.buclock[hashid]);<br>    acquire(&amp;bcache.lock);<br>    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; NBUCKETS; i++)<br>      <span class="hljs-keyword">if</span>(i != hashid &amp;&amp; (b = bfind(i, <span class="hljs-number">1</span>)))  <span class="hljs-keyword">break</span>;<br>    release(&amp;bcache.lock);<br>    acquire(&amp;bcache.buclock[hashid]);<br>  &#125;<br>  <span class="hljs-keyword">if</span>(b)&#123;<br>    b-&gt;next = bcache.head[hashid].next;<br>    b-&gt;prev = &amp;bcache.head[hashid];<br>    bcache.head[hashid].next-&gt;prev = b;<br>    bcache.head[hashid].next = b;<br>  &#125;<br>  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">struct</span> buf *bi = bcache.head[hashid].next; bi != &amp;bcache.head[hashid]; bi = bi-&gt;next)&#123;<br>    <span class="hljs-keyword">if</span>(bi-&gt;dev == dev &amp;&amp; bi-&gt;blockno == blockno)&#123;<br>      bi-&gt;refcnt++;<br>      release(&amp;bcache.buclock[hashid]);<br>      acquiresleep(&amp;bi-&gt;lock);<br>      <span class="hljs-keyword">return</span> bi;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">if</span>(b)&#123;<br>    b-&gt;dev = dev;<br>    b-&gt;blockno = blockno;<br>    b-&gt;valid = <span class="hljs-number">0</span>;<br>    b-&gt;refcnt = <span class="hljs-number">1</span>;<br>    release(&amp;bcache.buclock[hashid]);<br>    acquiresleep(&amp;b-&gt;lock);<br>    <span class="hljs-keyword">return</span> b;<br>  &#125;<br>  panic(<span class="hljs-string">&quot;bget: no buffers&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我强调这种办法只是为了解决重复缓存的问题，但是会不会导致其他问题嘛……我也不敢保证……</p>
+<p><br></p>
+<p>brelse、bpin、bunpin 都只需要把原来的锁换成当前桶的锁即可，这里不再赘述。</p>
+<p><br>make grade 截图：</p>
+<p><img src="result.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" class="category-chain-item">操作系统</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/xv6-lab/" class="category-chain-item">xv6-lab</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[xv6-mit-6.S081-2020]Lab8: lock</div>
+      <div>https://xyfjason.github.io/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab8-lock/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab9-fs/" title="[xv6-mit-6.S081-2020]Lab9: fs">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[xv6-mit-6.S081-2020]Lab9: fs</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab7-thread/" title="[xv6-mit-6.S081-2020]Lab7: thread">
+                        <span class="hidden-mobile">[xv6-mit-6.S081-2020]Lab7: thread</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

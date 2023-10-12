@@ -1,0 +1,875 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基础知识 在信息论中，随机变量 \(X\) 的（微分）熵定义为 \(-\log p(x)\) 的期望： \[ H(X)&#x3D;-\int_xp(x)\log p(x)\mathrm dx&#x3D;-\mathbb E_X[\log p(X)] \] 当涉及两个随机变量 \(X,Y\) 时，对它们的联合分布求熵也就得到了联合熵： \[ H(X,Y)&#x3D;-\int_x\int_yp(x,y)\log p(x,y)\m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="生成模型中的互信息">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/09/15/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BA%92%E4%BF%A1%E6%81%AF/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="基础知识 在信息论中，随机变量 \(X\) 的（微分）熵定义为 \(-\log p(x)\) 的期望： \[ H(X)&#x3D;-\int_xp(x)\log p(x)\mathrm dx&#x3D;-\mathbb E_X[\log p(X)] \] 当涉及两个随机变量 \(X,Y\) 时，对它们的联合分布求熵也就得到了联合熵： \[ H(X,Y)&#x3D;-\int_x\int_yp(x,y)\log p(x,y)\m">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mutual-information.png">
+<meta property="article:published_time" content="2023-09-15T02:48:19.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:37:52.046Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta property="article:tag" content="information theory">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mutual-information.png">
+  
+  
+  
+  <title>生成模型中的互信息 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/mutual-information.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="生成模型中的互信息"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-15 10:48" pubdate>
+          2023年9月15日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          80 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">生成模型中的互信息</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="基础知识">基础知识</h2>
+<p>在信息论中，随机变量 <span class="math inline">\(X\)</span> 的<strong>（微分）熵</strong>定义为 <span class="math inline">\(-\log p(x)\)</span> 的期望： <span class="math display">\[
+H(X)=-\int_xp(x)\log p(x)\mathrm dx=-\mathbb E_X[\log p(X)]
+\]</span> 当涉及两个随机变量 <span class="math inline">\(X,Y\)</span> 时，对它们的联合分布求熵也就得到了<strong>联合熵</strong>： <span class="math display">\[
+H(X,Y)=-\int_x\int_yp(x,y)\log p(x,y)\mathrm dx\mathrm dy=-\mathbb E_{X,Y}[\log p(X,Y)]
+\]</span> 当其中一个随机变量给定时，例如 <span class="math inline">\(X=x\)</span>，我们可以对条件概率分布 <span class="math inline">\(p(Y\vert X=x)\)</span> 求它的熵： <span class="math display">\[
+H(Y\vert X=x)=-\int_y p(y\vert x)\log p(y\vert x)\mathrm dy=-\mathbb E_{Y\vert X=x}[\log p(Y\vert X=x)]
+\]</span> 值得注意的是，<span class="math inline">\(H(Y\vert X=x)\)</span> 建立在已知 <span class="math inline">\(X\)</span> 取值为 <span class="math inline">\(x\)</span> 的情况下。那么在平均意义下，继续对 <span class="math inline">\(X\)</span> 取期望，就得到了<strong>条件熵</strong>： <span class="math display">\[
+\begin{align}
+H(Y\vert X)&amp;=-\int_xp(x)\int_y p(y\vert x)\log p(y\vert x)\mathrm dx\mathrm dy\\
+&amp;=-\int_x\int_y p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
+&amp;=-\mathbb E_{X,Y}[\log p(Y\vert X)]
+\end{align}
+\]</span> 不难证明，条件熵加上作为条件的那个随机变量的熵（也许可以称作边缘熵？），正好就是联合熵： <span class="math display">\[
+\begin{align}
+H(Y\vert X)+H(X)&amp;=-\int_x\int_y p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy-\int_xp(x)\log p(x)\mathrm dx\\
+&amp;=-\int_x\int_y p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy-\int_x\int_yp(x,y)\log p(x)\mathrm dx\mathrm dy\\
+&amp;=-\int_x\int_yp(x,y)\log\big(p(y\vert x)p(x)\big)\mathrm dx\mathrm dy\\
+&amp;=-\int_x\int_yp(x,y)\log p(x,y)\mathrm dx\mathrm dy\\
+&amp;=H(X,Y)
+\end{align}
+\]</span> 这个关系式可以类比 <span class="math inline">\(p(y\vert x)p(x)=p(x,y)\)</span> 来记忆。</p>
+<p>条件熵 <span class="math inline">\(H(Y\vert X)\)</span> 可以理解为在给定 <span class="math inline">\(X\)</span> 的条件下，<span class="math inline">\(Y\)</span> 还剩下的不确定性。例如，当 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Y\)</span> 独立时，<span class="math inline">\(X\)</span> 不能给 <span class="math inline">\(Y\)</span> 带来任何新的信息，即 <span class="math inline">\(H(Y\vert X)=H(Y)\)</span>，<span class="math inline">\(Y\)</span> 的不确定性不变；当 <span class="math inline">\(X\)</span> 完全决定了 <span class="math inline">\(Y\)</span> 时，给定 <span class="math inline">\(X\)</span> 的条件下 <span class="math inline">\(Y\)</span> 没有任何的不确定性，即 <span class="math inline">\(H(Y\vert X)=0\)</span>. 因此，我们用熵减去条件熵来表示 <span class="math inline">\(X\)</span> 带给 <span class="math inline">\(Y\)</span> 的不确定性，即<strong>互信息</strong>： <span class="math display">\[
+I(X;Y)=H(Y)-H(Y\vert X)
+\]</span> 如果把互信息的表达式展开： <span class="math display">\[
+\begin{align}
+I(X;Y)&amp;=H(Y)-H(Y\vert X)\\
+&amp;=-\int_yp(y)\log p(y)\mathrm dy+\int_x\int_yp(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
+&amp;=-\int_x\int_yp(x,y)\log p(y)\mathrm dx\mathrm dy+\int_x\int_yp(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
+&amp;=\int_x\int_y p(x,y)\log\frac{p(y\vert x)}{p(y)}\mathrm dx\mathrm dy\\
+&amp;=\int_x\int_y p(x,y)\log\frac{p(x,y)}{p(x)p(y)}\mathrm dx\mathrm dy\\
+&amp;=\text{KL}\big(p(x,y)\Vert p(x)p(y)\big)
+\end{align}
+\]</span> 我们发现互信息其实就是 <span class="math inline">\(p(x,y)\)</span> 与 <span class="math inline">\(p(x)p(y)\)</span> 之间的 KL 散度。由于 KL 散度衡量了两个分布之间的差异，所以从这个角度看，互信息在衡量 <span class="math inline">\(p(x,y)\)</span> 与 <span class="math inline">\(p(x)p(y)\)</span> 之间的差异（注意 <span class="math inline">\(p(x)p(y)\)</span> 确实是一个合法的概率分布）。当 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Y\)</span> 独立时，<span class="math inline">\(p(x,y)=p(x)p(y)\)</span>，KL 散度为 0，也即互信息为 0；否则，<span class="math inline">\(p(x,y)\)</span> 不能拆成 <span class="math inline">\(p(x)p(y)\)</span>，这两个分布存在差异，KL 散度非零，即互信息非零。</p>
+<p>从上式也能看出互信息其实是对称的，<span class="math inline">\(X\)</span> 带给 <span class="math inline">\(Y\)</span> 的不确定性等于 <span class="math inline">\(Y\)</span> 带给 <span class="math inline">\(X\)</span> 的不确定性： <span class="math display">\[
+I(X;Y)=H(Y)-H(Y\vert X)=H(X)-H(X\vert Y)
+\]</span> 以上涉及到的关系式可以用如下韦恩图直观地可视化出来：</p>
+<p><img src="relation-diagram.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<h2 id="infogan-infovae">InfoGAN &amp; InfoVAE</h2>
+<p>在生成模型的研究中，我们常常认为观测到的数据 <span class="math inline">\(\mathbf x\)</span> 背后是由维度更低的隐变量 <span class="math inline">\(\mathbf z\)</span> 控制的。记数据的真实分布为 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span>，我们无法直接写出它的形式，只能从中采样若干样本构成训练集。因此，为了对未知的 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span> 进行建模，我们可以构建一个解码器（生成器） <span class="math inline">\(p_\theta(\mathbf x\vert\mathbf z)\)</span>，并预定义一个隐变量的先验分布 <span class="math inline">\(p(\mathbf z)\)</span>（例如标准正态分布），那么就能够生成如下的数据分布： <span class="math display">\[
+p_\theta(\mathbf x)=\int_{\mathbf z}p_\theta(\mathbf x\vert\mathbf z)p(\mathbf z)\mathrm d\mathbf z
+\]</span> 训练生成模型的目标就是学习参数 <span class="math inline">\(\theta\)</span> 使得 <span class="math inline">\(p_\theta(\mathbf x)\)</span> 近似于 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span>. 然而，直接计算或遍历隐空间近似 <span class="math inline">\(p_\theta(\mathbf x)\)</span> 是不可行的，因此不同生成模型采用了不同的方法来解决这个问题。</p>
+<p>对于 GANs 一类生成模型，我们使用一个判别器与生成器做对抗，促使生成器的数据分布尽可能接近真实的数据分布。可以证明，GANs 在隐式地最小化 <span class="math inline">\(p_\theta(\mathbf x)\)</span> 与 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span> 之间的 JS 散度（或 F 散度、Wasserstein 距离等）。在这个情形下，为了避免<strong>生成器</strong>忽略掉隐变量 <span class="math inline">\(\mathbf z\)</span>，我们可以最大化互信息 <span class="math inline">\(I_{p_\theta}(\mathbf x;\mathbf z)\)</span>，这就是 InfoGAN 的核心思想。</p>
+<p>对于 VAEs 一类生成模型，我们引入了变分后验 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 推导出对数似然 <span class="math inline">\(\log p_\theta(\mathbf x)\)</span> 的变分下界 ELBO. 其中，<span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 实现为一个神经网络编码器。在这个情形下，为了避免<strong>编码器</strong>将不同的 <span class="math inline">\(\mathbf x\)</span> 都映射到没有差别的 <span class="math inline">\(\mathbf z\)</span> 中，即隐变量不包含输入的任何信息，我们可以最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span>，这就是 InfoVAE 的核心思想。</p>
+<p>可以看见，InfoGAN 和 InfoVAE 优化的互信息其实是不同的——前者是为了保留生成器（也就是解码器）的输入和输出之间的信息传递，而后者是为了保留编码器的输入和输出之间的信息传递。</p>
+<h3 id="infogan">InfoGAN</h3>
+<p>前文提到，InfoGAN 希望最大化互信息 <span class="math inline">\(I_{p_\theta}(\mathbf x;\mathbf z)\)</span>. 然而，<span class="math inline">\(I_{p_\theta}(\mathbf x;\mathbf z)\)</span> 本身是 intractable 的，这是因为： <span class="math display">\[
+I_{p_\theta}(\mathbf x;\mathbf z)=H(\mathbf z)-H(\mathbf z\vert\mathbf x)=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log p_\theta(\mathbf z\vert\mathbf x)\right]
+\]</span> 其中涉及到了后验分布的计算： <span class="math display">\[
+\begin{align}
+p_\theta(\mathbf z\vert\mathbf x)=\frac{p(\mathbf z)p_\theta(\mathbf x\vert\mathbf z)}{p_\theta(\mathbf x)}=\frac{p(\mathbf z)p_\theta(\mathbf x\vert\mathbf z)}{\int_{\mathbf z&#39;}p(\mathbf z&#39;)p_\theta(\mathbf x\vert\mathbf z&#39;)}
+\end{align}
+\]</span> 分母部分需要遍历隐空间——这在绝大多数情况下是不可行的。InfoGAN 的解决方案类似于 VAE——引入变分后验 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 去近似不可解的真实后验 <span class="math inline">\(p_\theta(\mathbf z\vert\mathbf x)\)</span>： <span class="math display">\[
+\begin{align}
+I_{p_\theta}(\mathbf x;\mathbf z)
+&amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log p_\theta(\mathbf z\vert\mathbf x)\right]\\
+&amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log\frac{p_\theta(\mathbf z\vert\mathbf x)}{q_\phi(\mathbf z\vert\mathbf x)}+\log q_\phi(\mathbf z\vert\mathbf x)\right]\\
+&amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x)}\Big[\underbrace{\text{KL}(p_\theta(\mathbf z\vert\mathbf x)\Vert q_\phi(\mathbf z\vert\mathbf x))}_{\geq 0}+\mathbb E_{p_\theta(\mathbf z\vert\mathbf x)}[\log q_\phi(\mathbf z\vert\mathbf x)]\Big]\\
+&amp;\geq H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log q_\phi(\mathbf z\vert\mathbf x)\right]\\
+&amp;=H(\mathbf z)+\mathbb E_{p(\mathbf z)}\left[\mathbb E_{p_\theta(\mathbf x\vert\mathbf z)}\left[\log q_\phi(\mathbf z\vert\mathbf x)\right]\right]
+\end{align}
+\]</span> 于是我们可以通过最大化这个变分下界来最大化互信息。特别地，如果我们固定取 <span class="math inline">\(p(\mathbf z)\)</span> 为标准正态分布，那么 <span class="math inline">\(H(\mathbf z)\)</span> 为常数，我们只需要优化 <span class="math inline">\(\mathbb E_{p(\mathbf z)}\left[\mathbb E_{p_\theta(\mathbf x\vert\mathbf z)}\left[\log q_\phi(\mathbf z\vert\mathbf x)\right]\right]\)</span> 即可。</p>
+<p>具体而言，InfoGAN 引入互信息的动机是希望在 GAN 的学习过程中鼓励隐变量的解耦。作者其实并没有直接最大化 <span class="math inline">\(I(\mathbf x;\mathbf z)\)</span>，而是将隐变量分为两部分：<span class="math inline">\(\mathbf z\)</span> 是无法解耦的部分，<span class="math inline">\(\mathbf c\)</span> 是可解耦的部分，并只最大化 <span class="math inline">\(I(\mathbf x;\mathbf c)\)</span>. 根据上面的讨论，引入变分后验 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span>： <span class="math display">\[
+I(\mathbf x;\mathbf c)\geq \mathcal L_I=H(\mathbf c)+\mathbb E_{p(\mathbf c)}\left[\mathbb E_{p_\theta(\mathbf x\vert\mathbf z,\mathbf c)}\left[\log q_\phi(\mathbf c\vert\mathbf x)\right]\right],\quad\mathbf z\sim p(\mathbf z)
+\]</span> 在实现上，<span class="math inline">\(\mathbf c\)</span> 可以是离散的，也可以是连续的。为了简便起见，我们将离散 <span class="math inline">\(\mathbf c\)</span> 的先验分布设为均匀类别分布，连续 <span class="math inline">\(\mathbf c\)</span> 的先验分布设为标准正态分布，那么上式中的 <span class="math inline">\(H(\mathbf c)\)</span> 也变成了常数。</p>
+<p><span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 使用一个神经网络解码器实现——特别地，这个网络可以与已有的判别器共用浅层部分，只需要最后拉出一个新的 head，因而 InfoGAN 新引入的计算量非常小。对于离散的 <span class="math inline">\(\mathbf c\)</span>，取 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 为 softmax 分布，那么容易推出 <span class="math inline">\(\mathcal L_I\)</span> 就是一个交叉熵损失；对于连续的 <span class="math inline">\(\mathbf c\)</span>，取 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 为高斯分布，那么 <span class="math inline">\(\mathcal L_I\)</span> 就是一个 MSE 损失函数。</p>
+<h3 id="infovae">InfoVAE</h3>
+<p>如前文所述，InfoVAE 希望最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span>. 在已有的编码器 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 下，可以推出 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span> 由两部分组成： <span class="math display">\[
+\begin{align}
+I_{q_\phi}(\mathbf x;\mathbf z)&amp;=\mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log\frac{q_\phi(\mathbf z\vert\mathbf x)}{q_\phi(\mathbf z)}\right]\right]\\
+&amp;=\mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log\frac{q_\phi(\mathbf z\vert\mathbf x)}{p(\mathbf z)}+\log\frac{p(\mathbf z)}{q_\phi(\mathbf z)}\right]\right]\\
+&amp;=\mathbb E_{p_\text{data}(\mathbf x)}\big[\underbrace{\text{KL}\big(q_\phi(\mathbf z\vert\mathbf x)\Vert p(\mathbf z)\big)}_\text{regularization}\big]-\underbrace{\text{KL}\big(q_\phi(\mathbf z)\Vert p(\mathbf z)\big)}_\text{prior matching}
+\end{align}
+\]</span></p>
+<p>我们发现第一项正好是原 VAE 的 ELBO 中的正则项： <span class="math display">\[
+\mathcal L_\text{ELBO}=\mathbb E_{p_\text{data}(\mathbf x)}\big[\underbrace{\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]}_\text{reconstruction}-\underbrace{\text{KL}\big(q_\phi(\mathbf z\vert\mathbf x)\Vert p(\mathbf z)\big)}_\text{regularization}\big]
+\]</span> 如果将 ELBO 与 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span> 相加（相当于为原 VAE 新添加一个最大化互信息的目标），这一正则项就被抵消了： <span class="math display">\[
+\mathcal L_\text{ELBO}+I_{q_\phi}(\mathbf x;\mathbf z)=\mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]\right]-\text{KL}\big(q_\phi(\mathbf z)\Vert p(\mathbf z)\big) \tag{1}\label{1}
+\]</span> 或者我们也可以理解为，保留重构项不变，将原来的正则项替换成了现在的先验匹配项。直观上，原正则项让不同 <span class="math inline">\(\mathbf x\)</span> 编码出来的 <span class="math inline">\(\mathbf z\)</span> 都趋向于同一个先验分布 <span class="math inline">\(p(\mathbf x)\)</span>，这显然与最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x,\mathbf z)\)</span> 是矛盾的。而新的先验匹配项只要求<strong>整体意义下</strong>编码出的 <span class="math inline">\(\mathbf z\)</span> 与先验分布 <span class="math inline">\(p(\mathbf x)\)</span> 相近即可，不同的 <span class="math inline">\(\mathbf x\)</span> 编码出的 <span class="math inline">\(\mathbf z\)</span> 依旧可以不同，因此有助于保留 <span class="math inline">\(\mathbf x\)</span> 与 <span class="math inline">\(\mathbf z\)</span> 之间的互信息。</p>
+<p>然而，<span class="math inline">\(q_\phi(\mathbf z)\)</span> 是 intractable 的，为此，我们可以把 KL 散度换成其他衡量两个分布差异的指标 <span class="math inline">\(D\)</span>，使得 <span class="math inline">\(D(q_\phi(\mathbf z)\Vert p(\mathbf z))\)</span>​ 可解。例如，取 <span class="math inline">\(D\)</span> 为 JS 散度，那么我们可以通过对抗训练的方式（GANs）来隐式地实现 JS 散度，这就是 Adversarial Autoencoders<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Makhzani, Alireza, Jonathon Shlens, Navdeep Jaitly, Ian Goodfellow, and Brendan Frey. Adversarial autoencoders. *arXiv preprint arXiv:1511.05644* (2015).">[7]</span></a></sup>；而取 <span class="math inline">\(D\)</span> 为 MMD，则可以按如下方式计算： <span class="math display">\[
+D_\text{MMD}\big(q_\phi(\mathbf z)\Vert p(\mathbf z)\big)=\mathbb E_{p(\mathbf z),p(\mathbf z&#39;)}[k(\mathbf z,\mathbf z&#39;)]-2\mathbb E_{q_\phi(\mathbf z),p(\mathbf z&#39;)}[k(\mathbf z,\mathbf z&#39;)]+\mathbb E_{q_\phi(\mathbf z),q_\phi(\mathbf z&#39;)}[k(\mathbf z,\mathbf z&#39;)]
+\]</span> 其中 <span class="math inline">\(k(\cdot,\cdot)\)</span> 是任一正定核，例如高斯核。作者称这样的模型为 MMD-VAE.</p>
+<p>进一步地，为了更好的通用性，作者在 <span class="math inline">\(\eqref{1}\)</span> 式的基础上引入了两个超参数 <span class="math inline">\(\alpha,\lambda\)</span> 来调节原 VAE 正则项与新先验匹配项的权重系数。因此，InfoVAE 最终的目标函数为： <span class="math display">\[
+\begin{align}
+\mathcal L_\text{InfoVAE}=&amp;\ \mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]\right]-\\
+&amp;\ (1-\alpha)\mathbb E_{p_\text{data}(\mathbf x)}\big[\text{KL}\big(q_\phi(\mathbf z\vert\mathbf x)\Vert p(\mathbf z)\big)\big]-\\
+&amp;\ (\alpha+\lambda-1) D(q_\phi(\mathbf z)\Vert p(\mathbf z))
+\end{align}
+\]</span> 作者在 MNIST 实验中取 <span class="math inline">\(\lambda=1000,\alpha=0\)</span>.</p>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>互信息(Mutual Information)浅尝辄止（一）：基础概念 - idejie的文章 - 知乎 https://zhuanlan.zhihu.com/p/240676850 <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Mutual information. https://en.wikipedia.org/wiki/Mutual_information <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>深度学习中常见的互信息的变分上下界(详细推导) - sonta的文章 - 知乎 https://zhuanlan.zhihu.com/p/91900950 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Barber, David, and Felix Agakov. The im algorithm: a variational approach to information maximization. <em>Advances in neural information processing systems</em> 16, no. 320 (2004): 201. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>A Tutorial on Information Maximizing Variational Autoencoders (InfoVAE). https://ermongroup.github.io/blog/a-tutorial-on-mmd-variational-autoencoders/ <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Zhao, Shengjia, Jiaming Song, and Stefano Ermon. Infovae: Information maximizing variational autoencoders. <em>arXiv preprint arXiv:1706.02262</em> (2017). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Makhzani, Alireza, Jonathon Shlens, Navdeep Jaitly, Ian Goodfellow, and Brendan Frey. Adversarial autoencoders. <em>arXiv preprint arXiv:1511.05644</em> (2015). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+        <a href="/blog-main/tags/information-theory/" class="print-no-link">#information theory</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>生成模型中的互信息</div>
+      <div>https://xyfjason.github.io/blog-main/2023/09/15/生成模型中的互信息/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/10/02/%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB-%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%86%B3%E7%AD%96%E8%AE%BA/" title="[模式分类]贝叶斯决策论">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[模式分类]贝叶斯决策论</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/09/09/Sublime-Text-%E9%85%8D%E7%BD%AE/" title="Sublime Text 配置">
+                        <span class="hidden-mobile">Sublime Text 配置</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

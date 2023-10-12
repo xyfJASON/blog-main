@@ -1,0 +1,910 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="由于扩散模型存在多种解释角度，并且有很多人在研究它，因此大家用的推导体系和书写符号或多或少有一些差异。在 Google 的这两篇论文中——Variational Diffusion Models[1]、Progressive Distillation for Fast Sampling of Diffusion Models[2]，作者将信噪比显式地写入了扩散模型的公式之中，并由此引出了对可学习噪">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型中的信噪比">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="由于扩散模型存在多种解释角度，并且有很多人在研究它，因此大家用的推导体系和书写符号或多或少有一些差异。在 Google 的这两篇论文中——Variational Diffusion Models[1]、Progressive Distillation for Fast Sampling of Diffusion Models[2]，作者将信噪比显式地写入了扩散模型的公式之中，并由此引出了对可学习噪">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vdm-distill.png">
+<meta property="article:published_time" content="2023-08-08T08:50:35.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:30:18.647Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vdm-distill.png">
+  
+  
+  
+  <title>扩散模型中的信噪比 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/vdm-distill.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="扩散模型中的信噪比"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-08 16:50" pubdate>
+          2023年8月8日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          99 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">扩散模型中的信噪比</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>由于扩散模型存在多种解释角度，并且有很多人在研究它，因此大家用的推导体系和书写符号或多或少有一些差异。在 Google 的这两篇论文中——Variational Diffusion Models<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. *Advances in neural information processing systems* 34 (2021): 21696-21707.">[1]</span></a></sup>、Progressive Distillation for Fast Sampling of Diffusion Models<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[2]</span></a></sup>，作者将<strong>信噪比</strong>显式地写入了扩散模型的公式之中，并由此引出了对<strong>可学习噪声序列</strong>、<strong>模型预测目标</strong>和<strong>损失函数权重</strong>的讨论。</p>
+<h2 id="引入信噪比">引入信噪比</h2>
+<p>本节探讨扩散模型的形式化，主要内容其实与 DDPM<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. *Advances in neural information processing systems* 33 (2020): 6840-6851.">[3]</span></a></sup> 基本一样，不同之处在于：</p>
+<ol type="1">
+<li>采用<strong>连续时间</strong>步 <span class="math inline">\(t\in[0,1]\)</span> 而非离散时间步 <span class="math inline">\(t\in\{1,\ldots,1000\}\)</span>，这有助于我们在具体实现时进行任意形式的离散化；</li>
+<li>引入了<strong>信噪比</strong>的概念，方便后续对噪声序列、损失函数权重等方面进行讨论，有助于我们更好地理解扩散模型的加噪和去噪过程。</li>
+</ol>
+<p>记 <span class="math inline">\(\mathbf x\sim p(\mathbf x)\)</span> 为真实数据，<span class="math inline">\(\mathbf z_t\)</span> 为 <span class="math inline">\(t\)</span> 时刻的隐变量，<span class="math inline">\(t\in[0,1]\)</span>. 前向加噪过程定义为： <span class="math display">\[
+q(\mathbf z_t\vert\mathbf x)=\mathcal N\left(\mathbf z_t;\alpha_t\mathbf x,\sigma_t^2\mathbf I\right)\label{1}\tag{1}
+\]</span> 其中 <span class="math inline">\(\alpha_t,\sigma_t^2\)</span> 是关于 <span class="math inline">\(t\)</span> 的光滑可导函数。事实上，DDPM 对应 <span class="math inline">\(\alpha_t=\sqrt{1-\sigma_t^2}\)</span> 的情形，而 SMLD<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. *Advances in neural information processing systems* 32 (2019).">[4]</span></a></sup> 对应 <span class="math inline">\(\alpha_t=1\)</span> 的情形。</p>
+<p>在 <span class="math inline">\(\eqref{1}\)</span> 式的定义下，我们定义<strong>信噪比</strong>为： <span class="math display">\[
+\text{SNR}(t)=\alpha_t^2/\sigma_t^2\label{2}\tag{2}
+\]</span> 并假设信噪比随时间严格单调递减，即随着 <span class="math inline">\(t\)</span> 增大，噪声占比越多。记 <span class="math inline">\(\lambda_t\)</span> 表示对数信噪比，即 <span class="math inline">\(\lambda_t=\log\text{SNR}(t)=\log(\alpha_t^2/\sigma_t^2)\)</span>.</p>
+<p>根据 <span class="math inline">\(\eqref{1}\)</span> 式，我们可以仿照 DDPM 的方法推导出 <span class="math inline">\(q(\mathbf z_t\vert\mathbf z_s)\)</span>，其中 <span class="math inline">\(0\leq s&lt;t\leq 1\)</span>： <span class="math display">\[
+\begin{align}
+&amp;q(\mathbf z_t\vert\mathbf z_s)=\mathcal N\left(\mathbf z_t;\alpha_{t|s} \mathbf z_s,\sigma_{t|s}^2\mathbf I\right)\\
+\text{where}\quad&amp;\alpha_{t|s}=\alpha_t/\alpha_s\\
+&amp;\sigma_{t|s}^2=\sigma_t^2-\alpha_{t|s}^2\sigma_s^2=\left(1-e^{\lambda_t-\lambda_s}\right)\sigma_t^2
+\end{align}\tag{3}\label{3}
+\]</span> 同样与 DDPM 类似，利用贝叶斯定理可以推导出 <span class="math inline">\(q(\mathbf z_s\vert\mathbf z_t,\mathbf x)\)</span>： <span class="math display">\[
+\begin{align}
+&amp;q(\mathbf z_s\vert\mathbf z_t,\mathbf x)=\mathcal N\left(\mathbf z_s;\tilde{\boldsymbol\mu}_{s|t}(\mathbf z_t,\mathbf x),\tilde\sigma^2_{s|t}\mathbf I\right)\\
+\text{where}\quad&amp;\tilde{\boldsymbol\mu}_{s|t}(\mathbf z_t,\mathbf x)=\frac{\alpha_{t|s}\sigma_s^2}{\sigma_t^2}\mathbf z_s+\frac{\alpha_s\sigma_{t|s}^2}{\sigma_t^2}\mathbf x=e^{\lambda_t-\lambda_s}(\alpha_s/\alpha_t)\mathbf z_s+(1-e^{\lambda_t-\lambda_s})\alpha_s\mathbf x\\
+&amp;\tilde\sigma^2_{s|t}=\frac{\sigma_{t|s}^2\sigma_s^2}{\sigma_t^2}=(1-e^{\lambda_t-\lambda_s})\sigma_s^2
+\end{align}\tag{4}\label{4}
+\]</span> <span class="math inline">\(\eqref{3},\eqref{4}\)</span> 式的具体推导过程见本文最后的附录。</p>
+<p><br/></p>
+<p>设生成模型为 <span class="math inline">\(p_\theta(\mathbf z_s\vert\mathbf z_t)\)</span>，为方便计算，取： <span class="math display">\[
+p_\theta(\mathbf z_s\vert\mathbf z_t)=q(\mathbf z_s\vert\mathbf z_t,\mathbf x=\hat{\mathbf x}_\theta(\mathbf z_t))
+\]</span> 即将 <span class="math inline">\(q(\mathbf z_s\vert\mathbf z_t,\mathbf x)\)</span> 中的真实数据 <span class="math inline">\(\mathbf x\)</span> 换成模型 <span class="math inline">\(\hat{\mathbf x}_\theta(\mathbf z_t)\)</span>，换句话说，<span class="math inline">\(\hat{\mathbf x}_\theta(\mathbf z_t)\)</span> 的作用就是去预测真实无噪图像 <span class="math inline">\(\mathbf x\)</span>. 注意这里为了书写简便省略了与时间步 <span class="math inline">\(t\)</span> 有关的输入。与 DDPM 一样，我们也可以将模型 <span class="math inline">\(\hat{\mathbf x}_\theta(\mathbf z_t)\)</span> 重参数化为噪声预测模型 <span class="math inline">\(\hat{\boldsymbol\epsilon}_\theta(\mathbf z_t)\)</span>： <span class="math display">\[
+\hat{\mathbf x}_\theta(\mathbf z_t)=\frac{1}{\alpha_t}\left(\mathbf z_t-\sigma_t\hat{\boldsymbol\epsilon}_\theta(\mathbf z_t)\right)\tag{5}\label{5}
+\]</span> <strong>尽管重参数化在数学上是等价的，但是对网络训练的影响是不同的</strong>。最直观的现象就是——当模型预测噪声时，由于 <span class="math inline">\(t\)</span> 越大，<span class="math inline">\(\mathbf z_t\)</span> 中原图分量的系数越接近 0，噪声分量的系数越接近 1，所以当 <span class="math inline">\(t\to1\)</span> 时（信噪比很小时）模型只需要把输入复制到输出就能达到很低的 loss；换句话说，<span class="math inline">\(t\)</span> 越大模型的学习越容易。相反，当模型预测原图时，<span class="math inline">\(t\)</span> 越小其学习越容易。<strong>这也是为什么损失函数中对不同 <span class="math inline">\(t\)</span> 的加权系数很重要</strong>。我们将在后文继续讨论这个问题。</p>
+<p><br/></p>
+<p>扩散模型的训练是通过最大化 ELBO 完成的。本文只考虑离散时间情形——事实上，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. *Advances in neural information processing systems* 34 (2021): 21696-21707.">[1]</span></a></sup>还讨论了连续时间情形，这里暂且不谈。设一共有 <span class="math inline">\(T\)</span> 步，为了与前文 <span class="math inline">\(t\in[0,1]\)</span> 的设定相符，可以将 <span class="math inline">\([0,1]\)</span> 分成 <span class="math inline">\(T\)</span> 份，并记 <span class="math inline">\(t(i)=i/T,s(i)=(i-1)/T\)</span>. 为了书写方便，后文直接用 <span class="math inline">\(t,s\)</span> 表示 <span class="math inline">\(t(i),s(i)\)</span>. ELBO 的推导与 DDPM 完全相同，这里就直接放结果： <span class="math display">\[
+\begin{align}
+\text{ELBO}=\underbrace{\mathbb E_{\mathbf z_0\sim q(\mathbf z_0\vert\mathbf x)}[\log p_\theta(\mathbf x\vert\mathbf z_0)]}_{\text{reconstruction}}-
+\underbrace{\text{KL}(q(\mathbf z_1\vert \mathbf x)\|p(\mathbf z_1))}_{\text{regularization}}-
+\sum_{i=1}^T\underbrace{\mathbb E_{\mathbf z_{t}\sim q(\mathbf z_{t}\vert\mathbf x)}\left[\text{KL}(q(\mathbf z_{s}\vert\mathbf z_{t},\mathbf x)\|p_\theta(\mathbf z_{s}\vert\mathbf z_{t}))\right]}_{\text{matching}}
+\end{align}
+\]</span> 在 DDPM 中，ELBO 最后简化为了一个均方差损失，且把系数给直接丢掉了。但是正如前文所说，加权系数是很重要的，在本文的语境下，<strong>这个系数其实能用信噪比表示出来</strong>，具体而言： <span class="math display">\[
+\begin{align}
+\text{KL}\left(q(\mathbf z_{s}\vert\mathbf z_{t},\mathbf x)\|p_\theta(\mathbf z_{s}\vert\mathbf z_{t})\right)&amp;=\frac{1}{2\tilde\sigma^2_{s|t}}\Big\Vert\tilde{\boldsymbol\mu}_{s|t}(\mathbf z_{t},\mathbf x)-\hat{\boldsymbol\mu}_\theta(\mathbf z_{t})\Big\Vert^2\\
+&amp;=\frac{\sigma_{t}^2}{2\sigma_{s}^2\sigma_{t|s}^2}\cdot\left(\frac{\alpha_{s}\sigma_{t|s}^2}{\sigma_{t}^2}\right)^2\cdot\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2\\
+&amp;=\frac{\alpha_{s}^2\sigma_{t|s}^2}{2\sigma_{s}^2\sigma_{t}^2}\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2\\
+&amp;=\frac{\alpha_{s}^2\left(\sigma_{t}^2-\alpha_{t|s}^2\sigma_{s}^2\right)}{2\sigma_{s}^2\sigma_{t}^2}\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2\\
+&amp;=\left(\frac{\alpha_{s}^2}{2\sigma_{s}^2}-\frac{\alpha_{t}^2}{2\sigma_{t}^2}\right)\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2\\
+&amp;=\frac{1}{2}\Big(\text{SNR}(s)-\text{SNR}(t)\Big)\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2\tag{6}\label{6}
+\end{align}
+\]</span> 如果模型预测噪声，那么根据 <span class="math inline">\(\eqref{5}\)</span> 式的重参数化，有： <span class="math display">\[
+\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2=\frac{\sigma_{t}^2}{\alpha_{t}^2}\Big\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_{t})\Big\Vert^2=\frac{1}{\text{SNR}(t)}\Big\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_{t})\Big\Vert^2\tag{7}\label{7}
+\]</span> 将 <span class="math inline">\(\eqref{7}\)</span> 式代入 <span class="math inline">\(\eqref{6}\)</span> 式得： <span class="math display">\[
+\text{KL}\left(q(\mathbf z_{s}\vert\mathbf z_{t},\mathbf x)\|p_\theta(\mathbf z_{s}\vert\mathbf z_{t})\right)=\frac{1}{2}\left(\frac{\text{SNR}(s)}{\text{SNR}(t)}-1\right)\Big\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_{t})\Big\Vert^2\tag{8}\label{8}
+\]</span> 可见 DDPM 丢掉的系数就是前面那一坨。在 DDPM 的噪声序列设置下，这个系数与时间步的关系长这样：</p>
+<p><img src="coef.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<p>因此，丢掉系数的作用就是减小了 <span class="math inline">\(t\)</span> 较小时的权重，让模型更加注重学习 <span class="math inline">\(t\)</span> 较大的情形，这一点也在 DDPM 原论文中提到了。</p>
+<h2 id="可学习噪声序列">可学习噪声序列</h2>
+<p>Variational Diffusion Models 一文将可学习参数引入了加噪过程，使得噪声序列是学习出来的而非人为设置的。具体而言，作者将噪声序列参数化为： <span class="math display">\[
+\sigma_t^2=\text{sigmoid}(\gamma_{\boldsymbol\eta}(t))
+\]</span> 如果遵循 DDPM 的设定 <span class="math inline">\(\alpha_t=\sqrt{1-\sigma_t^2}\)</span>，那么容易得到： <span class="math display">\[
+\begin{align}
+&amp;\alpha_t^2=\text{sigmoid}(-\gamma_{\boldsymbol\eta}(t))\\
+&amp;\text{SNR}(t)=\exp(-\gamma_{\boldsymbol\eta}(t))
+\end{align}
+\]</span> 于是 <span class="math inline">\(\eqref{8}\)</span> 式写作： <span class="math display">\[
+\text{KL}\left(q(\mathbf z_{s}\vert\mathbf z_{t},\mathbf x)\|p_\theta(\mathbf z_{s}\vert\mathbf z_{t})\right)=\frac{1}{2}\left(\exp(\gamma_{\boldsymbol\eta}(t)-\gamma_{\boldsymbol\eta}(s))-1\right)\Big\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_{t})\Big\Vert^2
+\]</span> 就可以依此训练噪声序列了。值得注意的是，<span class="math inline">\(\exp(\bullet)-1\)</span> 这个操作应使用各大深度学习库的 <code>expm1()</code> 函数以避免数值计算问题。</p>
+<p>值得注意的是，由于 <span class="math inline">\(\text{SNR}(t)\)</span> 应该是单调递减的，这要求 <span class="math inline">\(\gamma_{\boldsymbol\eta}(t)\)</span> 应该是单调递增的，所以作者将其建模为一个单调神经网络。具体而言，这个神经网络有三层 linear，权重均限制为正数，中间有一个 sigmoid 激活，具体写作： <span class="math display">\[
+\gamma_{\boldsymbol\eta}(t)=l_1(t)+l_2(\phi(l_2(l_1(t))))
+\]</span> 其中 <span class="math inline">\(l_2\)</span> 有 1024 个输出，其余仅有 1 个。</p>
+<p>作者在论文中展示了学习出来的噪声与其他人为设置的噪声的对比图，如下所示：</p>
+<p><img src="learned.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<p>可见，学习出来的噪声信噪比在初期下降远远慢于人为设置的噪声。</p>
+<h2 id="模型预测目标">模型预测目标</h2>
+<p>众所周知，原始 DDPM 预测的是噪声 <span class="math inline">\(\boldsymbol\epsilon\)</span> 或者原数据 <span class="math inline">\(\mathbf x\)</span>，那么有没有其他的预测目标呢？Progressive Distillation<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[2]</span></a></sup> 这篇论文对此做了讨论。特别说明，本节只考虑 DDPM 情形，即满足 <span class="math inline">\(\sigma_t^2+\alpha_t^2=1\)</span>.</p>
+<p>首先，为什么要寻求新的预测目标？前文提到，<span class="math inline">\(t\)</span> 越大，预测噪声越简单，而预测原数据越困难；反过来，<span class="math inline">\(t\)</span> 越小则前者越困难、后者越简单。所谓简单，就是网络只需要 copy 输入即可，并不需要真的去学习数据分布，这无疑是不好的。因此，一个很直接的想法是让模型同时预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> 和 <span class="math inline">\(\mathbf x\)</span>，推断时可以按照如下方式合并： <span class="math display">\[
+\hat{\mathbf x}=\sigma_t^2\hat{\mathbf x}_\theta(\mathbf z_t)+\alpha_t(\mathbf z_t-\sigma_t\hat{\boldsymbol\epsilon}_\theta(\mathbf z_t))
+\]</span> 当 <span class="math inline">\(t\to1\)</span> 时，<span class="math inline">\(\sigma_t^2\to1,\,\alpha_t\to0\)</span>，所以 <span class="math inline">\(\hat{\mathbf x}\approx\hat{\mathbf x}_\theta(\mathbf z_t)\)</span>；反过来，当 <span class="math inline">\(t\to0\)</span> 时，<span class="math inline">\(\hat{\mathbf x}\approx\mathbf z_t-\sigma_t\hat{\boldsymbol\epsilon}_\theta(\mathbf z_t)\)</span>. 因此，上述方法能够自动地根据 <span class="math inline">\(t\)</span> 的大小在两种方案之间做插值。</p>
+<p>不过，这样做看起来还是不够精巧，有没有更好的方法呢？论文提出了一个新的预测目标，我们称之为 v-prediction： <span class="math display">\[
+\mathbf v_t\equiv\alpha_t\boldsymbol\epsilon-\sigma_t\mathbf x\tag{9}\label{9}
+\]</span> 在上述定义下，训练模型 <span class="math inline">\(\hat{\mathbf v}_\theta(\mathbf z_t)\)</span> 来近似 <span class="math inline">\(\mathbf v_t\)</span>，可以推出： <span class="math display">\[
+\hat{\mathbf x}=\alpha_t\mathbf z_t-\sigma_t\hat{\mathbf v}_\theta(\mathbf z_t)
+\]</span> 可以看见，随着 <span class="math inline">\(t\)</span> 从 0 变到 1，<span class="math inline">\(\mathbf v_t\)</span> 会从 <span class="math inline">\(\boldsymbol\epsilon\)</span> 逐渐变到 <span class="math inline">\(-\mathbf x\)</span>，也就是说这个目标本身就是在做插值，能够调和预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> 和预测 <span class="math inline">\(\mathbf x\)</span> 总在某一头变得太过简单的问题，始终保持模型在努力地学习。因此，v-prediction 在后续的许多工作中都受到了人们的青睐。</p>
+<h2 id="损失函数权重">损失函数权重</h2>
+<p>目前为止，我们已经看到了好几种参数化方式，即不同的预测目标。它们之间相互关联，<strong>如果全部重参数化到 <span class="math inline">\(\mathbf x\)</span> 空间</strong>，就体现为不同的权重系数：</p>
+<ul>
+<li><p><strong>SNR weighing</strong>：预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> 等价于以 <span class="math inline">\(\text{SNR}(t)\)</span> 加权： <span class="math display">\[
+\Big\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_t)\Big\Vert^2=\text{SNR}(t)\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2
+\]</span></p></li>
+<li><p><strong>SNR+1 weighting</strong>：预测 <span class="math inline">\(\mathbf v_t\)</span> 等价于以 <span class="math inline">\(\text{SNR}(t)+1\)</span> 加权： <span class="math display">\[
+\Big\Vert\mathbf v_t-\hat{\mathbf v}_\theta(\mathbf z_t)\Big\Vert^2=(\text{SNR}(t)+1)\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2
+\]</span></p></li>
+<li><p><strong>Truncated SNR weighting</strong>：预测 <span class="math inline">\(\mathbf x\)</span> 与预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> 取 <span class="math inline">\(\max\)</span>： <span class="math display">\[
+\max\left(\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Vert^2,\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_t)\Vert^2\right)=\max\big(\text{SNR}(t),1\big)\Big\Vert\mathbf x-\hat{\mathbf x}_\theta(\mathbf z_{t})\Big\Vert^2
+\]</span></p></li>
+</ul>
+<p>当然，直接预测 <span class="math inline">\(\mathbf x\)</span> 本身就是不加权了。</p>
+<p><img src="weighting.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>事实上，我们可以将预测目标与权重设置解耦开——虽然预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> 等价于以 <span class="math inline">\(\text{SNR}(t)\)</span> 加权预测 <span class="math inline">\(\mathbf x\)</span>，但是如果我们想用 SNR+1 weighting，只需要乘一个系数 <span class="math inline">\((\text{SNR}(t)+1)/\text{SNR}(t)\)</span> 即可。因此，三种加权方式和四种预测目标（<span class="math inline">\(\boldsymbol\epsilon\)</span>、<span class="math inline">\(\mathbf x\)</span>、<span class="math inline">\(\mathbf v\)</span> 以及同时预测 <span class="math inline">\(\boldsymbol\epsilon,\mathbf x\)</span>）一共形成 12 种组合，作者分别进行了测试：</p>
+<p><img src="compare.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>由表可见，除了预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> + Truncated SNR weighting 的组合无法收敛以外，其他组合表现都差不多。再次强调，这里的加权都是指重参数化到 <span class="math inline">\(\mathbf x\)</span> 空间后的权重。</p>
+<h2 id="附录">附录</h2>
+<h3 id="qmathbf-z_tvertmathbf-z_s-的推导"><span class="math inline">\(q(\mathbf z_t\vert\mathbf z_s)\)</span> 的推导</h3>
+<p>设 <span class="math inline">\(q(\mathbf z_t\vert\mathbf z_s)=\mathcal N\left(\mathbf z_t;\alpha_{t|s} \mathbf z_s,\sigma_{t|s}^2\mathbf I\right)\)</span>，那么由 <span class="math inline">\(\mathbf x\)</span> 到 <span class="math inline">\(\mathbf z_s\)</span> 的一次采样可以写作： <span class="math display">\[
+\mathbf z_s=\alpha_s\mathbf x+\sigma_s\boldsymbol\epsilon_1,\quad\boldsymbol\epsilon_1\sim\mathcal N(\mathbf 0,\mathbf I)
+\]</span> 由 <span class="math inline">\(\mathbf z_s\)</span> 到 <span class="math inline">\(\mathbf z_t\)</span> 的一次采样可以写作： <span class="math display">\[
+\mathbf z_t=\alpha_{t|s}\mathbf z_s+\sigma_{t|s}\boldsymbol\epsilon_2,\quad\boldsymbol\epsilon_2\sim\mathcal N(\mathbf 0,\mathbf I)
+\]</span> 联立二式得： <span class="math display">\[
+\mathbf z_t=\alpha_{t|s}\alpha_s\mathbf x+\alpha_{t|s}\sigma_s\boldsymbol\epsilon_1+\sigma_{t|s}\boldsymbol\epsilon_2
+\]</span> 等价于进行如下一次采样： <span class="math display">\[
+\mathbf z_t=\underbrace{\alpha_{t|s}\alpha_s}_{\alpha_t}\mathbf x+\underbrace{\sqrt{\alpha_{t|s}^2\sigma_s^2+\sigma_{t|s}^2}}_{\sigma_t}\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf0,\mathbf I)
+\]</span> 因此： <span class="math display">\[
+\begin{align}
+&amp;\alpha_{t|s}=\alpha_t/\alpha_s\\
+&amp;\sigma_{t|s}^2=\sigma_t^2-\alpha_{t|s}^2\sigma_s^2
+\end{align}
+\]</span></p>
+<h3 id="qmathbf-z_svertmathbf-z_tmathbf-x-的推导"><span class="math inline">\(q(\mathbf z_s\vert\mathbf z_t,\mathbf x)\)</span> 的推导</h3>
+<p>求解 <span class="math inline">\(q(\mathbf z_s\vert\mathbf z_t,\mathbf x)\)</span> 可以使用贝叶斯定理： <span class="math display">\[
+\begin{align}
+q(\mathbf z_s\vert\mathbf z_t,\mathbf x)&amp;=\frac{q(\mathbf z_t\vert\mathbf z_s,\mathbf x)q(\mathbf z_s\vert\mathbf x)}{q(\mathbf z_t\vert\mathbf x)}=\frac{q(\mathbf z_t\vert\mathbf z_s)q(\mathbf z_s\vert\mathbf x)}{q(\mathbf z_t\vert\mathbf x)}\\
+&amp;\propto\exp\left(-\frac{1}{2}\left(\frac{\Vert\mathbf z_t-\alpha_{t|s}\mathbf z_s\Vert^2}{\sigma_{t|s}^2}+\frac{\Vert\mathbf z_s-\alpha_s\mathbf x\Vert^2}{\sigma_s^2}-\frac{\Vert\mathbf z_t-\alpha_t\mathbf x\Vert^2}{\sigma_t^2}\right)\right)\\
+&amp;=\exp\left(-\frac{1}{2}\left(\underbrace{\left(\frac{\alpha_{t|s}^2}{\sigma_{t|s}^2}+\frac{1}{\sigma_s^2}\right)}_{A}\Vert\mathbf z_s\Vert^2+\underbrace{\left(\frac{-2\alpha_{t|s}\mathbf z_t}{\sigma_{t|s}^2}+\frac{-2\alpha_s\mathbf x}{\sigma_s^2}\right)}_{B}\cdot\mathbf z_s+C(\mathbf z_t,\mathbf x)\right)\right)
+\end{align}
+\]</span> 因此 <span class="math inline">\(q(\mathbf z_s\vert\mathbf z_t,\mathbf x)\)</span> 服从正态分布 <span class="math inline">\(\mathcal N\left(\tilde{\boldsymbol\mu}_{s|t}(\mathbf z_t,\mathbf x),\tilde\sigma^2_{s|t}\mathbf I\right)\)</span>，且均值和方差分别为： <span class="math display">\[
+\begin{align}
+&amp;\tilde{\boldsymbol\mu}_{s|t}(\mathbf z_t,\mathbf x)=\frac{-B}{2A}=\frac{\alpha_{t|s}\sigma_s^2}{\sigma_t^2}\mathbf z_s+\frac{\alpha_s\sigma_{t|s}^2}{\sigma_t^2}\mathbf x\\
+&amp;\tilde\sigma^2_{s|t}=\frac{1}{A}=\frac{\sigma_{t|s}^2\sigma_s^2}{\sigma_t^2}
+\end{align}
+\]</span></p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. <em>Advances in neural information processing systems</em> 34 (2021): 21696-21707. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. <em>arXiv preprint arXiv:2202.00512</em> (2022). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. <em>Advances in neural information processing systems</em> 33 (2020): 6840-6851. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. <em>Advances in neural information processing systems</em> 32 (2019). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>扩散模型中的信噪比</div>
+      <div>https://xyfjason.github.io/blog-main/2023/08/08/扩散模型中的信噪比/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/09/09/Sublime-Text-%E9%85%8D%E7%BD%AE/" title="Sublime Text 配置">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Sublime Text 配置</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/21/Stable-Diffusion-%E8%AE%AD%E7%BB%83%E4%BD%A0%E7%9A%84LoRA-Linux/" title="[Stable Diffusion]训练你的LoRA(Linux)">
+                        <span class="hidden-mobile">[Stable Diffusion]训练你的LoRA(Linux)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

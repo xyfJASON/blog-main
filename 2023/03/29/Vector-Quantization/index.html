@@ -1,0 +1,931 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="VQ-VAE VQ-VAE[1] 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vector-Quantization">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/03/29/Vector-Quantization/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="VQ-VAE VQ-VAE[1] 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vq.png">
+<meta property="article:published_time" content="2023-03-29T07:26:12.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:57:25.808Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vq.png">
+  
+  
+  
+  <title>Vector-Quantization - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/vq.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Vector-Quantization"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-29 15:26" pubdate>
+          2023年3月29日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          86 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Vector-Quantization</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="vq-vae">VQ-VAE</h2>
+<p>VQ-VAE<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Van Den Oord, Aaron, and Oriol Vinyals. Neural discrete representation learning. *Advances in neural information processing systems* 30 (2017).">[1]</span></a></sup> 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：</p>
+<ol type="1">
+<li>隐空间是<strong>离散</strong>的，通过 VQ (Vector Quantization) 操作实现；</li>
+<li>先验分布是学习出来的。</li>
+</ol>
+<p>为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规划等复杂任务。后来 OpenAI 的 DALL·E 正是使用了 VQ-VAE (discrete VAE)，证明了它强大的能力。</p>
+<h3 id="vector-quantization">Vector Quantization</h3>
+<p><img src="vqvae.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>神经网络的输出一般是连续值，如何得到离散的表征呢？这就是 VQ (Vector Quantization) 技术。如上图所示，我们设置一个 codebook (embedding space) <span class="math inline">\(e\in\mathbb R^{K\times D}\)</span>，包含 <span class="math inline">\(K\)</span> 个 <span class="math inline">\(D\)</span> 维向量 <span class="math inline">\(e_1,e_2,\ldots,e_K\)</span>. 设编码器的输出为 <span class="math inline">\(z_e(x)\)</span>，那么在 codebook 里寻找一个与 <span class="math inline">\(z_e(x)\)</span> <strong>距离最近</strong>的向量 <span class="math inline">\(e_k\)</span> 代替 <span class="math inline">\(z_e(x)\)</span> 给到解码器，记作 <span class="math inline">\(z_q(x)\)</span>： <span class="math display">\[
+z_q(x)=e_k,\quad \text{where } k=\arg\min_j\Vert z_e(x)-e_j\Vert_2
+\]</span> 换句话说，VQ-VAE 的后验分布 <span class="math inline">\(q(z\vert x)\)</span> 是离散的 onehot 类别分布： <span class="math display">\[
+q(z=k\vert x)=\begin{cases}1&amp;\text{for }k=\arg\min_j\Vert z_e(x)-e_j\Vert_2\\0&amp;\text{otherwise}\end{cases}
+\]</span> 这里，<strong>隐变量 <span class="math inline">\(z\)</span> 的取值范围为整数索引，相应隐空间为所有索引构成的空间</strong>，因此是离散的。</p>
+<p>在 VQ-VAE 中，codebook 里的 codes 是可学习的，随着训练过程自适应地调整。所以可学习的参数一共包含编码器、解码器和 codebook 三个部分。如果我们简单地取先验分布 <span class="math inline">\(p(z)\)</span> 为离散的均匀类别分布，那么一件有趣的事情是 ELBO 中 KL 正则项变成了常数： <span class="math display">\[
+\begin{align}
+\text{KL}(q(z\vert x)\Vert p(z))&amp;=\sum_k q(z=k\vert x)\log \frac{q(z=k\vert x)}{p(z)}\\
+&amp;=\sum_k q(z=k\vert x)\log K+\sum_k q(z=k\vert x)\log q(z=k\vert x)\\
+&amp;=\log K+0\\
+&amp;=\log K
+\end{align}
+\]</span> 于是 ELBO 只剩下了重构项 <span class="math inline">\(\log p(x\vert z_q(x))\)</span>. 然而重构项并不能训练到 codebook，所以最终的损失函数其实是这样的： <span class="math display">\[
+\mathcal L=\underbrace{\log p(x\vert z_q(x))}_\text{reconstruction}+\underbrace{\Vert\text{sg}[z_e(x)]-e\Vert_2}_\text{vq}+\underbrace{\beta\Vert z_e(x)-\text{sg}[e]\Vert_2}_\text{commitment}
+\]</span> 其中 <span class="math inline">\(\text{sg}[\bullet]\)</span> 表示 stop gradient，即停止梯度的传播，在 pytorch 中可以用 <code>detach()</code> 操作实现。vq 项（或称作 embedding 项、codebook 项）让 codebook 里的 codes 接近编码器的输出，以此来训练 codebook；commitment 项反过来，让编码器的输出接近对应的 codes，避免输出波动太大在 codes 之间乱跳，影响训练。</p>
+<p>至此事情还没完，由于 VQ 操作引入了不可导的 argmin 算子，梯度无法从解码器流向编码器，所以现在编码器根本得不到训练。为此，作者引入了 <strong>Straight-Through Estimator</strong>——直接把 <span class="math inline">\(z_q(x)\)</span> 的梯度复制给 <span class="math inline">\(z_e(x)\)</span>，如上图中红色箭头所示. 毕竟 VQ 是靠查询最近邻实现的，二者实际的梯度应该也相差不大。</p>
+<div class="note note-info">
+            <p><strong>关于损失函数的一点理解</strong></p><p>初读 VQ-VAE 论文的时候难免会对损失函数的后两项产生疑惑——一个对 <span class="math inline">\(z_e(x)\)</span> stop gradient，另一个又对 <span class="math inline">\(e\)</span> stop gradient，这是想干嘛？不要 stop gradient 不就行了吗？我在此分享一下我的理解。</p><p>话还得从 VAE 中的 KL 正则项说起。回想一下 KL 正则项的作用是什么——把后验拉向一个预定义的分布，防止 VAE 退化成 AE. 但是现在，由于 <span class="math inline">\(q(z\vert x)\)</span> 一定是一个 onehot 类别分布，它无论如何也不可能接近一个均匀类别分布，所以 KL 项就失效了。但是 VQ-VAE 的 codebook 是可学习的，只要 codes 最后分布在合理的位置上，那没有这个 KL 项也罢。</p><p>我们现在来回答这个问题——为什么 vq 项中要对 <span class="math inline">\(z_e(x)\)</span> 停止梯度传播？站在「让 codes 分布合理」的角度，可以给出如下解释：随机初始化的 codes 并不一定是合理的，如果不停止梯度，那么它会对 <span class="math inline">\(z_e(x)\)</span> 产生负面的影响，让训练更加困难。相反，重构本身是一个还不错的寻找隐变量的手段（毕竟 autoencoder 就是这么干的），所以通过重构项来找到比较好的 <span class="math inline">\(z_e(x)\)</span>，然后只让 <span class="math inline">\(e\)</span> 去接近 <span class="math inline">\(z_e(x)\)</span>（而不是反过来），能让 codes 收敛到还不错的分布。</p><p>如此说来，commitment 项的存在就有点违背我们的解释了。的确，这一项更多地是经验性的举措，有人实验发现即使 <span class="math inline">\(\beta=0\)</span> 也没啥问题。</p><p>所以，就轻重缓急而言，重构项最重要，它直接决定了 <span class="math inline">\(z_e(x)\)</span> 和 <span class="math inline">\(e\)</span> 的分布大体应该如何；vq 项次之，但也不能省，毕竟解码器的输入终究是量化之后的向量，要和重构项打好配合才行；commitment 项最不重要，仅仅是一个稳定训练的经验性手段，不宜占据主导。因此我们应该把 vq 和 commitment 分开写，就变成损失函数里那让人困惑的样子了！</p><p>然而，论文称 <span class="math inline">\(\beta\in[0.1, 2.0]\)</span> 都有差不多的表现，这与我的理解中 commitment 项不宜占据主导又相矛盾了😓。唉，着实玄乎～</p>
+          </div>
+<div class="note note-info">
+            <p><strong>VAE 名不副实？</strong></p><p>假设我们现在完成了训练，考察用 VQ-VAE 重构输入的过程——<span class="math inline">\(x\)</span> 经过编码器得到 <span class="math inline">\(z_e(x)\)</span>，在 codebook 里做最近邻查找得到 <span class="math inline">\(z_q(x)\)</span>，解码器输出 <span class="math inline">\(\hat x\)</span> 来重构 <span class="math inline">\(x\)</span>——整个过程没有一点随机性！<strong>VQ-VAE 更像是一个在 bottleneck 处做了量化的 AE，而不是 VAE</strong>. 作者将其冠以 VAE 的名号，可能是他们确实是从 VAE 开始思考的吧。</p>
+          </div>
+<h3 id="ema-codebook">EMA Codebook</h3>
+<p>上一节我们介绍了，VQ 操作是一个最近邻查找的过程，产生的效果是把编码器输出的特征向量替换为距离它最近的 code，这不就是在做<strong>聚类</strong>嘛，聚类中心就是 codebook 里面的 codes. 所以我们其实不必使用 vq 项来训练 codebook，而是直接像 <strong>K-Means</strong> 那样更新聚类中心： <span class="math display">\[
+e_i=\frac{1}{n_i}\sum_{j=1}^{n_i} z_{i,j}
+\]</span> 其中 <span class="math inline">\(z_{i,1},\ldots,z_{i,n_i}\)</span> 是编码器所有输出中被分配给 <span class="math inline">\(e_i\)</span> 的 <span class="math inline">\(n_i\)</span> 个特征向量。然而有一个问题，实操中是用 minibatch 训练的，直接用上式并不准确。所以，作者提出用指数平滑来更新 <span class="math inline">\(e_i\)</span>： <span class="math display">\[
+\begin{align}
+&amp;N_i^{(t)}=N_i^{(t-1)}\ast \gamma+n_i^{(t)}(1-\gamma)\\
+&amp;m_i^{(t)}=m_i^{(t-1)}\ast \gamma +\sum_{j=1}^{n_i}z_{i,j}^{(t)}(1-\gamma)\\
+&amp;e_i^{(t)}=\frac{m_i^{(t)}}{N_i^{(t)}}
+\end{align}
+\]</span></p>
+<p>怎么理解？<span class="math inline">\(m_i^{(t)}\)</span> 可视为 <span class="math inline">\(t\)</span> 及其以前所有分配给 <span class="math inline">\(e_i\)</span> 的特征向量之和，<span class="math inline">\(N_i^{(t)}\)</span> 是特征向量个数和，所以 <span class="math inline">\(m_i^{(t)}\)</span> 除以 <span class="math inline">\(N_i^{(t)}\)</span> 就是新的聚类中心。不过这里的「和」都是 EMA 下的「加权和」——因为 codebook 随时间在不断更新，过往的分配关系已经不再准确，需要降低其权重。这与 MoCo 中的 Momentum Encoder 是类似的道理。</p>
+<div class="note note-success">
+            <p>虽然论文的主要实验都是用 vq 项来更新 codebook 的，但我复现发现用 K-Means + EMA 的方式更新 codebook 效果更好。事实上，后续的 VQ-VAE-2 和很多其他工作都是用 EMA 方式更新 codebook 的。</p>
+          </div>
+<h3 id="prior-learning">Prior Learning</h3>
+<p>VQ-VAE 训练结束后，我们就可以用它重构输入图像了。但是怎么直接生成新图像呢？</p>
+<p>在说明这一点之前，我们必须要对 VQ-VAE 的隐空间有充分的理解。设输入图像 <span class="math inline">\(x\in\mathbb R^{3\times H\times W}\)</span>，其编码器输出为 <span class="math inline">\(z_e(x)\in\mathbb R^{c\times h\times w}\)</span>，量化操作的索引矩阵记作 <span class="math inline">\(\text{index}(x)\in\mathbb N^{h\times w}\)</span>. 一个误解是 VQ-VAE 的隐空间是所有 <span class="math inline">\(\text{index}(x)\)</span> 构成的 <span class="math inline">\(\mathbb N^{h\times w}\)</span>，但这是错误的！在第一小节中我们说过，隐空间其实是一个个索引构成的 <span class="math inline">\(\mathbb N\)</span>. 这说明，VQ-VAE 并没有对索引矩阵中<strong>索引之间的关系</strong>进行建模，如果我们直接随机均匀采样 <span class="math inline">\(h\times w\)</span> 个索引凑在一起组成一张索引矩阵，它大概率并不对应一个自然图像的编码结果，所以也不能生成一个自然图像。</p>
+<p>因此，为了生成新图像，我们必须学习一个新的生成模型，对索引之间的分布做建模。鉴于索引是离散的，一个自然的选择就是 PixelCNN. 如果是音频数据，那么就用 WaveNet. 当然，有兴趣也可以尝试其他生成模型。</p>
+<h3 id="index-collapse-perplexity">Index Collapse &amp; Perplexity</h3>
+<p>虽然作者声称 VQ-VAE 不会遭遇 VAE 的 posterior collapse 问题，但我在实践中发现，它很容易遭遇 index collapse——编码器输出的所有特征向量全部被量化到一个或少数几个 codes 上。从某种意义上说，这也算是一种 posterior collapse 吧。起初我以为自己的实现有误，但一番搜索发现连 <a target="_blank" rel="noopener" href="https://github.com/karpathy/deep-vector-quantization">Andrej Karpathy</a> 也受其困扰。一个常见的解决方案是用 K-Means 初始化 codebook，但我实测发现用处不大😅，而<strong>调小学习率</strong>会有帮助。</p>
+<p>在代码实现中有一个 trick 是输出 perplexity 来监视是否发生了 index collapse. 当发生 index collapse 时，所有特征向量被量化到一个或少数几个 codes 上，这意味着熵很低；而理想情况是各个索引被均匀地选到，意味着熵很高。因此，索引的熵是能够监视训练是否发生了 index collapse 的指标，而 perplexity 就定义为这个熵的指数。Perplexity 的值域是 <span class="math inline">\([1,K]\)</span>：假设所有特征向量都量化到唯一一个 code 上，那么熵为 0，perplexity 就是 1；反之，如果各个索引的选择概率是完全均匀的，那么熵达到最大 <span class="math inline">\(\log K\)</span>，perplexity 就是 <span class="math inline">\(K\)</span>. 因此，perplexity 可以视作平均有多少个索引会被选择。如果训练时发现 perplexity 太小，甚至是 1，那就要赶紧处理 index collapse 问题了。</p>
+<h2 id="vq-vae-2">VQ-VAE-2</h2>
+<p>VQ-VAE-2<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Razavi, Ali, Aaron Van den Oord, and Oriol Vinyals. Generating diverse high-fidelity images with vq-vae-2. *Advances in neural information processing systems* 32 (2019).">[2]</span></a></sup> 依旧是 DeepMind 提出的，作者团队只换了一个人。也许他们也意识到了 VQ-VAE 更像是一个 AE 而不是 VAE，论文全程没有用 VAE 的那套概率术语，而是从信息压缩的角度做了更自然的描述。我们知道自回归模型的一大缺点是生成速度慢，这是因为一张高清图像的像素成千上万，而自回归模型只能串行生成一个个像素。为了解决这个问题，我们可以把自回归模型放到隐空间去，这样不仅速度成倍加快，信息密度也更高——像素空间中冗余繁杂的细节信息被压缩掉了，模型只需要考虑真正重要的语义信息。在这个视角下，VQ-VAE 训练 Encoder + VQ + Decoder 其实就是在寻找隐空间，找到隐空间之后，在隐空间上训练 PixelCNN 自回归模型做生成。这样梳理 VQ-VAE 的思路就显得顺畅直观了很多。事实上，这个思路后来被用到了 Stable Diffusion (Latent Diffusion) 上——在隐空间学习扩散模型，就像 VQ-VAE 在隐空间学习自回归模型一样（注意：这两个隐空间其实并不相同，一个是量化后的，一个是量化前的，只是说它们的思路与动机一样）。</p>
+<p>VQ-VAE-2 相比 VQ-VAE 没有太多理论上的创新，主要的改变是以下三点：</p>
+<ol type="1">
+<li><p>层次化地堆叠多层 VQ-VAE，使得 top-level 关注更多的高层语义，而 bottom-level 关注低层细节，如下图所示：</p>
+<p><img src="vqvae2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p></li>
+<li><p>用了更强大的 prior——top-level 的 prior 用带有 self-attention layer 的 Gated PixelCNN 建模。</p></li>
+<li><p>使用一个 classifier 对生成的图像做拒绝采样。</p></li>
+</ol>
+<p>VQ-VAE-2 能够达到和 BigGAN comparable 的水平，算是在 GANs 风头十足的时候给 VAEs 争了一口气吧。</p>
+<h2 id="vqgan">VQGAN</h2>
+<p>由于我是 2023 年才来读 VQGAN<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Esser, Patrick, Robin Rombach, and Bjorn Ommer. Taming transformers for high-resolution image synthesis. In *Proceedings of the IEEE/CVF conference on computer vision and pattern recognition*, pp. 12873-12883. 2021.">[3]</span></a></sup> 的，所以看到作者和单位的时候愣了一下——这不就是 Latent Diffusion 的作者吗！怪不得 Latent Diffusion 用的是 VQGAN 来得到隐空间呢！这说明一个优秀的工作真得能催生下一个优秀的工作，形成良性循环。</p>
+<p><img src="vqgan.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>话说回来，从上面这个概览图可以看出，VQGAN 和 VQ-VAE 的流程完全一致——先学习 codebook、再学习 prior. 学习 codebook 的部分与 VQ-VAE 大同小异，不同之处在于：加了一个 Patch Discriminator 做对抗训练，以及把重构损失的 L2 loss 换成了 perceptual loss. 实验证明 VQ-VAE 的重构非常模糊，而 VQGAN 能保留很多细节。为了实现无条件生成， VQ-VAE 使用 PixelCNN 学习 latent prior，能力比较弱，而 VQGAN 采用了 Transformer (GPT-2 架构)，依旧用自回归的方式训练和推断。</p>
+<p>除了无条件生成之外，VQGAN 也可以做有条件的生成。如果条件是类别标签，只需要把它融入 Transformer 的架构之中即可；如果条件是语义分割图、深度图、图像填充掩膜这种 2D 图像式的，那么作者对这些条件训练一个新的 VQGAN，把条件的隐变量表示同原图像的隐变量表示一并给到 Transformer 即可（因为 Transformer 是对 token 集合进行操作，所以直接给过去就行）。</p>
+<p>使用 Transformer 的一个缺点是非常吃显存，单卡 12GB 最大只能支持 <span class="math inline">\(16\times16\)</span> 的序列长度——也就是说，如果编码器下采样了 <span class="math inline">\(m\)</span> 次，那么输入图像最大只能是 <span class="math inline">\((16\cdot 2^m)\times(16\cdot 2^m)\)</span>. 为了生成更大分辨率的图像，作者把 Transformer 用滑动窗口的形式使用，如下图所示：</p>
+<p><img src="vqgan2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>依靠这些改进，VQGAN 能够生成百万像素的高清图像。论文开头第一页就放了一个风景全景图，十分惊艳。</p>
+<h2 id="vq-diffusion">VQ-Diffusion</h2>
+<p>2022 是扩散模型井喷的一年，我盲猜有人会拿扩散模型做 prior learning，一搜果然有—— VQ-Diffusion<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Gu, Shuyang, Dong Chen, Jianmin Bao, Fang Wen, Bo Zhang, Dongdong Chen, Lu Yuan, and Baining Guo. Vector quantized diffusion model for text-to-image synthesis. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 10696-10706. 2022.">[4]</span></a></sup><sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Tang, Zhicong, Shuyang Gu, Jianmin Bao, Dong Chen, and Fang Wen. Improved vector quantized diffusion models. *arXiv preprint arXiv:2205.16007* (2022).">[5]</span></a></sup>.</p>
+<p><img src="vqdiff.png" srcset="/blog-main/logo/imageloading.png" lazyload width=65% /></p>
+<p>如上图所示，Step 1 毫不意外的就是训一个 VQ-VAE，所以本篇工作的重点在于 Step 2——怎么在<strong>离散</strong>的隐空间中训练扩散模型来学习 prior.</p>
+<p><strong>由于本文的主题是 Vector Quantization，而 VQ-Diffusion 的主要贡献是在离散扩散模型方面，VQ 只是获取离散隐空间的手段，所以接下来的部分只稍微阐述一下离散扩散模型的设计思路，至于训练细节和模型改进（Improved VQ-Diffusion）就暂且略过，以免喧宾夺主。</strong></p>
+<p>扩散模型的加噪、去噪过程都是针对连续情形而言的，所以我们必须为离散情形重新定义新的前向过程。之前的一些工作采用随机修改的方式作为前向过程： <span class="math display">\[
+q(x_t\vert x_{t-1})=v^{\mathsf T}(x_t)\mathbf Q_tv(x_{t-1}),\quad x_t,x_{t-1}\in\{1,2,\ldots, K\}
+\]</span> 其中 <span class="math inline">\(v(x)\)</span> 表示一个长度为 <span class="math inline">\(K\)</span>（codebook 大小）的 one-hot 向量，只在第 <span class="math inline">\(x\)</span> 个元素处为 <span class="math inline">\(1\)</span>，其余地方为 <span class="math inline">\(0\)</span>. <span class="math inline">\(\mathbf Q_t\in\mathbb R^{K\times K}\)</span> 为马尔可夫链的转移矩阵，<span class="math inline">\([\mathbf Q_t]_{mn}=q(x_t=m\vert x_{t-1}=n)\)</span> 表示从 token <span class="math inline">\(n\)</span> 转移到 token <span class="math inline">\(m\)</span> 的概率。与连续扩散模型类似，我们可以直接推出 <span class="math inline">\(x_0\)</span> 转移到 <span class="math inline">\(x_t\)</span> 的概率： <span class="math display">\[
+q(x_t\vert x_0)=v^{\mathsf T}(x_t){\mathbf{\bar Q}}_tv(x_0),\quad \text{with }\mathbf{\bar Q}_t=\mathbf Q_t\cdots \mathbf Q_1
+\]</span> 也能在 <span class="math inline">\(x_0\)</span> 的条件下推出逆向过程： <span class="math display">\[
+q(x_{t-1}\vert x_t,x_0)=\frac{q(x_t\vert x_{t-1},x_0)q(x_{t-1}\vert x_0)}{q(x_t\vert x_0)}
+=\frac{\left(v^{\mathsf T}(x_t)\mathbf Q_t v(x_{t-1})\right)\left(v^{\mathsf T}(x_{t-1})\mathbf{\bar Q}_{t-1} v(x_0)\right)}{v^{\mathsf T}(x_t)\mathbf{\bar Q}_t v(x_0)}
+\]</span> 具体而言，<span class="math inline">\(\mathbf Q_t\)</span> 设计如下： <span class="math display">\[
+\mathbf Q_t=
+\begin{bmatrix}
+\alpha_t+\beta_t&amp;\beta_t&amp;\cdots&amp;\beta_t\\
+\beta_t&amp;\alpha_t+\beta_t&amp;\cdots&amp;\beta_t\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+\beta_t&amp;\beta_t&amp;\cdots&amp;\alpha_t+\beta_t\\
+\end{bmatrix}
+\]</span> 其中 <span class="math inline">\(\alpha_t\in[0,1],\,\beta_t=(1-\alpha_t)/K\)</span>. 直观地说，每个 token 都有 <span class="math inline">\(\alpha_t+\beta_t\)</span> 的概率保持自身不变，以及 <span class="math inline">\(K\beta_t\)</span> 的概率重新从 <span class="math inline">\(K\)</span> 个 tokens 里面均匀采样。</p>
+<p>然而，这种随机修改的破坏程度太大了，模型的训练难度很大。为此，作者受到 MLM (masked language modeling) 的启发，采用<strong>掩码+随机修改</strong>的方式转移： <span class="math display">\[
+\mathbf Q_t=
+\begin{bmatrix}
+\alpha_t+\beta_t&amp;\beta_t&amp;\beta_t&amp;\cdots&amp;0\\
+\beta_t&amp;\alpha_t+\beta_t&amp;\beta_t&amp;\cdots&amp;0\\
+\beta_t&amp;\beta_t&amp;\alpha_t+\beta_t&amp;\cdots&amp;0\\
+\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+\gamma_t&amp;\gamma_t&amp;\gamma_t&amp;\cdots&amp;1\\
+\end{bmatrix}
+\]</span> 每个 token 都有 <span class="math inline">\(\gamma_t\)</span> 的概率变成 <span class="math inline">\(\text{[MASK]}\)</span>，<span class="math inline">\(K\beta_t\)</span> 的概率重新采样，以及 <span class="math inline">\(\alpha_t=1-K\beta_t-\gamma_t\)</span> 的概率保持不变。由于模型能够在训练中认识到 <span class="math inline">\(\text{[MASK]}\)</span> 这个特殊 token，从而知道哪里被修改了，所以这种转移的破坏程度温和了许多，更容易训练了。</p>
+<p>如本节开头所言，为避免喧宾夺主，本文对 VQ-Diffusion 的介绍到此做个截断。如果以后有机会，我再去专门调研一下离散扩散模型的方法（挖坑😂）。</p>
+<h2 id="latent-diffusion-stable-diffusion">Latent Diffusion (Stable Diffusion)</h2>
+<p>既然前面已经提到了 Latent Diffusion<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Rombach, Robin, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution image synthesis with latent diffusion models. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 10684-10695. 2022.">[6]</span></a></sup>，那就简单说一下，并与 VQ Diffusion 做个对比。</p>
+<p><img src="latentdiff.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>顾名思义，Latent Diffusion 就是在隐空间上建立扩散模型，而这个隐空间正是通过训练 VAE 或 VQGAN 得到的——前者被作者称为 KL-reg，因为 VAE 可视为用 KL 作为正则项的 autoencoder；后者被称为 VQ-reg，即通过 VQ 操作做正则的 autoencoder.</p>
+<p>值得注意的是，对于 VQ-reg，VQ 操作被算进了 Decoder 之中，即扩散模型<strong>之后</strong>，所以扩散模型仍然是在连续（而非量化后）的特征空间上执行的。这也是 Latent Diffusion 和 VQ-Diffusion 的不同之处。</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;">Model</th>
+<th style="text-align: center;">Stage-1<br/>(latent space learning)</th>
+<th style="text-align: center;">Latent Space</th>
+<th style="text-align: center;">Stage-2<br/>(prior learning)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">VQ-VAE</td>
+<td style="text-align: center;">VQ-VAE</td>
+<td style="text-align: center;">Discrete<br/>(after quantization)</td>
+<td style="text-align: center;">Autoregressive<br/>PixelCNN</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">VQGAN</td>
+<td style="text-align: center;">VQGAN<br/>(VQ-VAE + GAN + Perceptual Loss)</td>
+<td style="text-align: center;">Discrete<br/>(after quantization)</td>
+<td style="text-align: center;">Autoregressive<br/>GPT-2 (Transformer)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">VQ-Diffusion</td>
+<td style="text-align: center;">VQ-VAE</td>
+<td style="text-align: center;">Discrete<br/>(after quantization)</td>
+<td style="text-align: center;">Discrete Diffusion</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Latent Diffusion<br/>(VQ-reg)</td>
+<td style="text-align: center;">VAE or VQGAN</td>
+<td style="text-align: center;">Continuous<br/>(before quantization)</td>
+<td style="text-align: center;">Continuous Diffusion</td>
+</tr>
+</tbody>
+</table>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Van Den Oord, Aaron, and Oriol Vinyals. Neural discrete representation learning. <em>Advances in neural information processing systems</em> 30 (2017). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Razavi, Ali, Aaron Van den Oord, and Oriol Vinyals. Generating diverse high-fidelity images with vq-vae-2. <em>Advances in neural information processing systems</em> 32 (2019). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Esser, Patrick, Robin Rombach, and Bjorn Ommer. Taming transformers for high-resolution image synthesis. In <em>Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</em>, pp. 12873-12883. 2021. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Gu, Shuyang, Dong Chen, Jianmin Bao, Fang Wen, Bo Zhang, Dongdong Chen, Lu Yuan, and Baining Guo. Vector quantized diffusion model for text-to-image synthesis. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 10696-10706. 2022. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Tang, Zhicong, Shuyang Gu, Jianmin Bao, Dong Chen, and Fang Wen. Improved vector quantized diffusion models. <em>arXiv preprint arXiv:2205.16007</em> (2022). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Rombach, Robin, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution image synthesis with latent diffusion models. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 10684-10695. 2022. <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/VAEs/" class="category-chain-item">VAEs</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Vector-Quantization</div>
+      <div>https://xyfjason.github.io/blog-main/2023/03/29/Vector-Quantization/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/04/23/PRML-1-Introduction/" title="[PRML]1.Introduction">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[PRML]1.Introduction</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90/" title="扩散模型应用·可控生成">
+                        <span class="hidden-mobile">扩散模型应用·可控生成</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

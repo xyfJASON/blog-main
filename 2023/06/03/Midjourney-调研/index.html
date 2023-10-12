@@ -1,0 +1,1432 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="官网 | 文档              特别说明：本文展示的所有图片都经过了大幅度的缩小和压缩处理，并非原图。            模型版本 使用 --version 或 --v 参数来指定版本。  v5.2：该版本有更好的颜色、对比度和结构，有略微更好的文本理解能力。对 --stylize 参数响应度更高。特别地，如果不想要 Midjourney 的默认审美风格，可以加参数 --style">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Midjourney 调研">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/06/03/Midjourney-%E8%B0%83%E7%A0%94/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="官网 | 文档              特别说明：本文展示的所有图片都经过了大幅度的缩小和压缩处理，并非原图。            模型版本 使用 --version 或 --v 参数来指定版本。  v5.2：该版本有更好的颜色、对比度和结构，有略微更好的文本理解能力。对 --stylize 参数响应度更高。特别地，如果不想要 Midjourney 的默认审美风格，可以加参数 --style">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/midjourney/dog_beach_shell.png">
+<meta property="article:published_time" content="2023-06-03T03:42:59.000Z">
+<meta property="article:modified_time" content="2023-09-09T01:15:23.562Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta property="article:tag" content="AIGC">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/midjourney/dog_beach_shell.png">
+  
+  
+  
+  <title>Midjourney 调研 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/midjourney/dog_beach_shell.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Midjourney 调研"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-03 11:42" pubdate>
+          2023年6月3日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          61 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Midjourney 调研</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a target="_blank" rel="noopener" href="https://www.midjourney.com/">官网</a> | <a target="_blank" rel="noopener" href="https://docs.midjourney.com/">文档</a></p>
+<div class="note note-warning">
+            <p><strong>特别说明：本文展示的所有图片都经过了大幅度的缩小和压缩处理，并非原图。</strong></p>
+          </div>
+<h2 id="模型版本">模型版本</h2>
+<p>使用 <code>--version</code> 或 <code>--v</code> 参数来指定版本。</p>
+<ul>
+<li><strong>v5.2</strong>：该版本有更好的颜色、对比度和结构，有略微更好的文本理解能力。对 <code>--stylize</code> 参数响应度更高。特别地，如果不想要 Midjourney 的默认审美风格，可以加参数 <code>--style raw</code>.</li>
+<li><strong>v5.1</strong>：该版本有更强的<strong>默认审美</strong>，因此使用比较简单的 prompt 就能达到很好的效果。它能与 prompt 保持很高的一致性，生成的图像更清晰（sharp），还支持一些新的特性，例如 <code>--tile</code> 参数（详见下文）。特别地，如果不想要 Midjourney 的默认审美风格，可以加参数 <code>--style raw</code>.</li>
+<li><strong>v5</strong>：相比 v5.1，v5 版本生成的图像会<strong>更像摄影</strong>，但需要更长的 prompts 来描述。</li>
+<li><strong>Niji Model 5</strong>：Midjourney 和 Spellbrush 合作微调的版本，专注于日本漫画风格（anime style），使用时只需在 prompt 后添加 <code>--niji 5</code> 即可，还可以使用 <code>--style</code> 参数得到更细分的风格。</li>
+</ul>
+<p>官网的例子我就不放了。这里展示我自己尝试的一个例子：</p>
+<table>
+<tr>
+<th style="text-align: center; width: 25%">
+prompt
+</th>
+<th style="text-align: center; width: 25%">
+v5.2
+</th>
+<th style="text-align: center; width: 25%">
+v5.1
+</th>
+<th style="text-align: center; width: 25%">
+v5
+</th>
+</tr>
+<tr>
+<td style="text-align: center">
+a cup of latte
+</td>
+<td>
+<img src="latte_v5_2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="latte_v5_1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="latte_v5.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+<tr>
+<th style="text-align: center">
+v5.2 raw
+</th>
+<th style="text-align: center">
+v5.1 raw
+</th>
+<th style="text-align: center">
+niji 5
+</th>
+<th style="text-align: center">
+v4
+</th>
+</tr>
+<tr>
+<td>
+<img src="latte_v5_2_raw.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="latte_v5_1_raw.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="latte_niji5.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="latte_v4.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>可以看出：</p>
+<ul>
+<li>v5.2/v5.1/v5 相比 v4 确实有质的飞越，前者的光影、反射比后者精致不少。面对粗糙的 prompt，v5.2/v5.1/v5 能自动添加勺子、桌子、背景绿植、咖啡豆等元素，使得画面更为丰富；相比之下，v4 基本真的就只是一杯拿铁。</li>
+<li>v5.2/v5.1 更偏艺术作品（所谓的默认审美）；而 raw 和 v5 都更加真实、更偏摄影照片。</li>
+</ul>
+<h2 id="基础功能">基础功能</h2>
+<h3 id="imagine-text-prompt"><code>/imagine &lt;text prompt&gt;</code></h3>
+<p>返回 4 张图片拼成的 grid，可以点击 U1/U2/U3/U4 来增大某张图片的分辨率（但是对于 v5 以上版本，默认返回的就是 1024x1024 的图，U 按钮不起超分作用，只是把这张图片单独分离出来）；可以点击 V1/V2/V3/V4 来基于某张图片做变化（variation）；可以点击 🔄 按钮重新生成。</p>
+<p><strong>生成速度</strong>：</p>
+<ul>
+<li>Fast 模式：40s 左右</li>
+<li>Relax 模式（排队）：3min 左右，具体时间取决于队列长度</li>
+</ul>
+<p><strong>来自官网的 Prompting Tip</strong>：使用简单、短小的句子，不要提很多很长的要求。例如，</p>
+<ul>
+<li>❌ Show me a picture of lots of blooming California poppies, make them bright, vibrant orange, and draw them in an illustrated style with colored pencils</li>
+<li>✔️ Bright orange California poppies drawn with colored pencils</li>
+</ul>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+冗长的 prompt
+</th>
+<th style="text-align: center; width: 50%">
+精简的 prompt
+</th>
+</tr>
+<tr>
+<td>
+<img src="prompt-long.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="prompt-short.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>实测感觉差别不是很大～</p>
+<h3 id="blend"><code>/blend</code></h3>
+<p>混合 2-5 张上传的图像。所谓混合，即提取每张图像的概念和风格，生成一张新的图像。</p>
+<table>
+<tr>
+<th style="text-align: center; width: 33%">
+input image 1
+</th>
+<th style="text-align: center; width: 33%">
+input image 2
+</th>
+<th style="text-align: center; width: 33%">
+output images
+</th>
+</tr>
+<tr>
+<td>
+<img src="blend-1-input-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-1-input-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-1-output.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>其中第一张输入图像是英国画家 Turner 的著名画作「Snow Storm: Steamboat off a Harbour's Mouth」。可以看见，Midjourney 保留了第二张输入图像的主体（黑色小狗），并试图加上第一张图像的风格以及背景。经测试，交换图片顺序并不会影响生成结果。</p>
+<table>
+<tr>
+<th style="text-align: center; width: 33%">
+input image 1
+</th>
+<th style="text-align: center; width: 33%">
+input image 2
+</th>
+<th style="text-align: center; width: 33%">
+output images
+</th>
+</tr>
+<tr>
+<td>
+<img src="blend-2-input-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-2-input-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-2-output.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>第一个例子中一张图片风格比较明显，另一张主体比较明显，那如果两张图片都是主体呢？这个例子中，可以看见输出图片把二者放在了一起，但其中一个主体更为突出；更有意思的是，它把花儿上的水滴画在了哈士奇的脸上，某种程度上算是一种风格融合。</p>
+<table>
+<tr>
+<th style="text-align: center; width: 33%">
+input image 1
+</th>
+<th style="text-align: center; width: 33%">
+input image 2
+</th>
+<th style="text-align: center; width: 33%">
+output images
+</th>
+</tr>
+<tr>
+<td>
+<img src="blend-3-input-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-3-input-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-3-output.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>无论顺序如何，Midjourney 总是以《星月夜》为整体构图，可如果我想要星月夜式的神奈川怎么办呢？</p>
+<table>
+<tr>
+<th colspan="2" style="text-align: center; width: 50%">
+input images
+</th>
+<th style="text-align: center; width: 50%">
+output images
+</th>
+</tr>
+<tr>
+<td style="width: 25%">
+<img src="blend-4-input-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td style="width: 25%">
+<img src="blend-4-input-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td rowspan="2">
+<img src="blend-4-output.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+<tr>
+<td>
+<img src="blend-4-input-3.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="blend-4-input-4.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>来个艺术作品大杂烩……呃……好吧😑</p>
+<p>总而言之，不太清楚 <code>/blend</code> 命令会提取哪张输入图片的什么特征进行融合，因此可能不能生成用户期望的结果。</p>
+<h3 id="describe"><code>/describe</code></h3>
+<p>返回 4 个描述上传的图像的 prompts，可以用这个方法来学习新的词汇和写 prompt 的方式。点击 1️⃣ 2️⃣ 3️⃣ 4️⃣ 按钮即可使用对应的 prompt 去生成图像，注意这并不意味着用返回的 prompt 就能够重新生成这张上传的图像。</p>
+<p><strong>图-文-图测试</strong>：上传一张图像，用 <code>/describe</code> 功能得到文字描述，再用这一段描述去生成图像，对比输入输出图像。</p>
+<table>
+<tr>
+<th style="text-align: center; width: 25%">
+input image &amp;<br/>re-generated images
+</th>
+<th style="text-align: center; width: 75%">
+output prompts
+</th>
+</tr>
+<tr>
+<td rowspan="4" style="text-align: center">
+<img src="describe-1-input.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload/><br/>⇩<br/><img src="describe-1-re.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+a brown terrier in the field, in the style of lively action poses, flickr, hasselblad 1600f, soft lighting, striped, joyful --ar 62:57
+</td>
+</tr>
+<tr>
+<td>
+<b>a puppy running through grass outdoors, in the style of hasselblad hc 100mm f/2.2, suffolk coast views, flickr, playful caricature, light brown and light amber, spiky mounds, bold lines, vibrant color --ar 62:57</b>
+</td>
+</tr>
+<tr>
+<td>
+a small dark brown dog running through the grass, in the style of danish golden age, flickr, hasselblad 1600f, suffolk coast views, joyful and optimistic, soft lighting --ar 62:57
+</td>
+</tr>
+<tr>
+<td>
+a beautiful field, in the style of petcore, dynamic pose, flickr, amber, toyism, walter langley, alpo jaakola --ar 62:57
+</td>
+</tr>
+<tr>
+<td rowspan="4" style="text-align: center">
+<img src="describe-2-input.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/><br/>⇩<br/><img src="describe-2-re.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+deer in the night, blue moon and stars on an illustration, in the style of dark yellow and light blue, made of insects, nature-inspired installations, sparklecore, lith printing, light installations, joyful celebration of nature
+</td>
+</tr>
+<tr>
+<td>
+hudson rebecca deer at the moon with night sky, in the style of dark azure and yellow, roger dean, glittery, luminescent installations, joyful celebration of nature, jonathan wolstenholme, the stars art group (xing xing)
+</td>
+</tr>
+<tr>
+<td>
+<b>a deer standing in the forest at night in the moonlight, in the style of sky-blue and yellow, dan matutina, damien hirst, glittery, joyful celebration of nature, richard doyle, wallpaper</b>
+</td>
+</tr>
+<tr>
+<td>
+deer of the night, teddy bear, forest in the light, in the style of dark sky-blue and yellow, silhouettes in space, splattered paint, i can't believe how beautiful this is, tangled nests, made of insects, characterful animal portraits
+</td>
+</tr>
+</table>
+<p>（加粗的 prompt 是我选择用来重新生成图片的 prompt）</p>
+<p>可以看见，Midjourney 给出的 prompts 一般遵循以下模式：首先一句话描述画面内容（a puppy running through grass outdoors），然后描述风格（in the style of lively action poses），对摄影作品加上相机品牌和参数（hasselblad 1600f）、图库（flickr），然后描述颜色和光影（soft lighting、light brown and light amber），描述整体情绪（joyful and optimistic），还可以加上艺术家名字（walter langley、alpo jaakola）或时代（danish golden age）。</p>
+<p>另外，使用这些 prompt 重新生成的图片，风格和主题与输入图像一致，但是内容差异较大。因此，这个功能的价值更多地在于获取高端上档次的 prompt.</p>
+<h2 id="进阶功能">进阶功能</h2>
+<h3 id="zoom-out">Zoom out</h3>
+<p>v5.2 版本新增功能，用于扩大图片。在使用 <code>/imagine</code> 生成 4 张图片后，使用 U 按钮分离出其中一张，就可以看到 zoom out 按钮。<strong>值得注意的是，该功能并不会对图片分辨率有大的改动，仅是画幅增大</strong>。</p>
+<p>该功能又分为几个子功能：</p>
+<ul>
+<li>Zoom Out 2X：扩大 2 倍，上下左右都会扩展</li>
+<li>Zoom Out 1.5X：扩大 1.5 倍，上下左右都会扩展</li>
+<li>Make Square：将非正方形图片扩展为正方形</li>
+<li>Custom Zoom：点击后弹出一个输入框，可以通过 <code>--ar</code> 参数自定义长宽比、通过 <code>--zoom</code> 参数自定义扩大倍数（取值范围 1~2）。特别地，当取 <code>--zoom</code> 为 1 时，相当于在使用 <code>--ar</code> 来调整长宽比。另外，还可以在此处更改 prompts.</li>
+</ul>
+<p>所有功能都会返回 4 张图片。</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="zoom.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div></div></div>
+<h3 id="image-prompts">Image prompts</h3>
+<p><img src="https://cdn.document360.io/3040c2b6-fead-4744-a3a9-d56d621c6c7e/Images/Documentation/MJ%20Prompt.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p>如图所示，<code>/imagine</code> 命令其实不仅仅接受文本，还接受图像的 URL，从而生成类似于给定图像的新图像。事实上，上文介绍的 <code>/blend</code> 命令就是其简化版本，相当于只允许输入 image prompts 的 <code>/imagine</code> 命令。特别地，对于本地图像，将其粘贴到对话框中发送出去，就可以在 discord 里面复制其 URL 了。</p>
+<p>参数 <code>--iw</code> 可以调节图像的参考权重（image weight），对于 v5 版本，权重范围 0~2，默认为 1.</p>
+<p>以下是我尝试的一个例子，参考图像为一只黑白相间的鸟，文本 prompt 为 "mechanical cyberpunk bird"，在不同 <code>--iw</code> 参数下结果如下（w/o 代表没有 image prompt，作为对照组）：</p>
+<table>
+<tr>
+<th style="text-align: center; width: 25%">
+image prompt
+</th>
+<th style="text-align: center; width: 25%">
+w/o
+</th>
+<th style="text-align: center; width: 25%">
+iw=0.0
+</th>
+<th style="text-align: center; width: 25%">
+iw=0.2
+</th>
+</tr>
+<tr>
+<td>
+<img src="imagep-input.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="imagep-wo.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="imagep-iw0_0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="imagep-iw0_2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+<tr>
+<th style="text-align: center; width: 25%">
+iw=0.5
+</th>
+<th style="text-align: center; width: 25%">
+iw=0.8
+</th>
+<th style="text-align: center; width: 25%">
+iw=1.0
+</th>
+<th style="text-align: center; width: 25%">
+iw=2.0
+</th>
+</tr>
+<tr>
+<td>
+<img src="imagep-iw0_5.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="imagep-iw0_8.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="imagep-iw1_0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="imagep-iw2_0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>可以观察到：</p>
+<ul>
+<li>一般而言，<code>iw</code> 越大，生成图像与参考图像越接近；<code>iw</code> 越小，生成图像与文本描述越接近。但是 <code>iw=0</code> 是一个例外，原以为 0 意味着完全不参考图像，等价于 w/o，结果它生成的图像反而接近 <code>iw=1</code> 的效果，也许是一个 bug；</li>
+<li>鸟的朝向并不会保持与输入图像一致，这一点很奇怪；由于 Midjourney 并没有公布任何技术细节，我只能猜想他们在训练时给图像条件加了水平翻转的增强。</li>
+</ul>
+<h3 id="multi-prompts">Multi prompts</h3>
+<p>基础用法是用 <code>::</code> 分隔 prompt，强制让 Midjourney 分别独立地考虑 <code>::</code> 前后的两个词。</p>
+<p>官网举了一个形象的例子：<code>hot dog</code> v.s. <code>hot:: dog</code>，我这里尝试了另一个例子：</p>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+dragon fly
+</th>
+<th style="text-align: center; width: 50%">
+dragon:: fly
+</th>
+</tr>
+<tr>
+<td>
+<img src="multi-no.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="multi-1-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>果然，前者被理解为了蜻蜓，而后者被理解为了飞龙。</p>
+<p>进一步地，可以在 <code>::</code> 后面加上数字来调整词语的权重，比如 <code>hot::2 dog</code> 就是“非常”热的狗。承接上文，我试了试不同权重下的 <code>dragon:: fly</code>：</p>
+<table>
+<tr>
+<th style="text-align: center; width: 25%">
+dragon::5 fly::
+</th>
+<th style="text-align: center; width: 25%">
+dragon::2 fly::
+</th>
+<th style="text-align: center; width: 25%">
+dragon:: fly::2
+</th>
+<th style="text-align: center; width: 25%">
+dragon:: fly::5
+</th>
+</tr>
+<tr>
+<td>
+<img src="multi-5-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="multi-2-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="multi-1-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="multi-1-5.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>可以看见，5:1 的权重下，所有龙都不飞了；2:1 的权重下，有些龙不飞；1:2 的权重下，龙飞得更张扬了，而且还有一张图把 fly 理解成了苍蝇；而 1:5 的权重下，fly 全被理解成了苍蝇，所有图都跟龙没啥关系了。</p>
+<p>以上权重都是正数，也可以使用负数权重来去除不想要的元素。更方便地，使用 <code>--no</code> 参数相当于把对应词汇的权重设置为 -0.5.</p>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+dragon:: fly --no sky
+</th>
+<th style="text-align: center; width: 50%">
+dragon:: fly:: sky::-1.5
+</th>
+</tr>
+<tr>
+<td>
+<img src="multi-no-sky.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="multi-no-sky2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>使用 <code>--no sky</code> 之后，前两只龙都变成了落在岩石上，但第三只龙还明显在天上；加强负数权重后，不管是龙也好苍蝇也好，都落在了地上，fly 一词主要体现在张开的翅膀上，还是蛮有意思的吼。</p>
+<h3 id="参数">参数</h3>
+<p>上文中我们已经用到了一些参数，比如 <code>--version</code> (<code>--v</code>) 指定模型版本、<code>--style</code> 指定某版本下的细分风格、<code>--iw</code> 控制参考图像的权重、<code>--no</code> 去除不想要的元素等。本小节将介绍更多的参数。由于参数很多，就不一一尝试了，相关示例请查看官网。</p>
+<p>下表摘取自 Midjourney 官网：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: center;">Affects initial generation</th>
+<th style="text-align: center;">Affects variations + remix</th>
+<th style="text-align: center;">Ver. 5</th>
+<th style="text-align: center;">Ver. 4</th>
+<th style="text-align: center;">Niji 5</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Max Aspect Ratio</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">any</td>
+<td style="text-align: center;">1:2 or 2:1</td>
+<td style="text-align: center;">any</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Chaos</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Image Weight</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">.5–2 default=1</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">.5–2 default=1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">No</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Quality</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">.5–2</td>
+<td style="text-align: center;">.5–2</td>
+<td style="text-align: center;">.5–2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Repeat</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Seed</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Stop</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Style</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">raw</td>
+<td style="text-align: center;">4a, and 4b</td>
+<td style="text-align: center;">cute, expressive, original and scenic</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Stylize</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">0–1000 default=100</td>
+<td style="text-align: center;">0–1000 default=100</td>
+<td style="text-align: center;">0–1000 default=100)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tile</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>--aspect</code> 或 <code>--ar</code>：指定长宽比。v5 版本已经能够支持任意长宽比，但是官网有一句提示：「大于 2:1 的长宽比是实验功能，可能生成不可预测的结果」。结合非正常比例的图像耗时更长的现象，我猜想大于 2:1 的图像是依靠 outpainting + 滑动窗口实现的。</li>
+<li><code>--chaos</code> 或 <code>--c</code>：有没有发现上面展示的图片中，每个 grid，也即每跑一次得到的 4 张图都比较相像？这是因为没有指定 <code>chaos</code> 参数，自动取默认值为 0 了。<code>chaos</code> 参数范围在 0~100 之间，其值越大，grid 中的 4 张图片就越不一样。结合扩散模型的原理——采样过程中前期时间步控制构图、后期时间步控制高频细节，不难猜想其实现原理。</li>
+<li><code>--quality</code> 或 <code>--q</code>：控制图像质量，质量越高耗时越长。猜想应该是依靠改变采样步数实现的，甚至可能会用不同的采样器。</li>
+<li><code>--repeat</code> 或 <code>--r</code>：反复多次跑一个任务。结合 <code>--chaos</code> 可以用来快速探索。</li>
+<li><code>--seed</code>：固定随机种子。</li>
+<li><code>--stop</code>：在采样过程中途停下来，返回模糊的图片（不出意外的话就是扩散模型每步预测的 <span class="math inline">\(\mathbf x_0\)</span>）。</li>
+<li><code>--stylize</code> 或 <code>--s</code>：Midjourney 的模型被训练得偏好于艺术性的色彩、组成和形式。<code>stylize</code> 参数决定这种“艺术性”的强弱。</li>
+<li><code>--tile</code>：生成的图像能够像瓷砖那样无缝拼接。</li>
+</ul>
+<h2 id="常见问题测试">常见问题测试</h2>
+<p>以下测试均在 v5.1 版本上进行。</p>
+<h3 id="属性对应绑定">属性对应/绑定</h3>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+A yellow book and a red vase
+</th>
+<th style="text-align: center; width: 50%">
+A smooth ball and a fluffy cube
+</th>
+</tr>
+<tr>
+<td>
+<img src="attribute-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="attribute-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>Midjourney 并不总能正确绑定物体的属性，例如颜色错乱（黄色的花瓶）和材质错乱（毛茸茸的球）。</p>
+<h3 id="位置关系">位置关系</h3>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+A glass of milk on the left of a giant cookie
+</th>
+<th style="text-align: center; width: 50%">
+A wine glass on top of a dog
+</th>
+</tr>
+<tr>
+<td>
+<img src="position-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="position-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>Midjourney 并不能正确处理物体之间的位置关系。</p>
+<h3 id="对象缺失">对象缺失</h3>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+A cat and a dog finding shells on the beach
+</th>
+<th style="text-align: center; width: 50%">
+A Tyrannosaurus rex chasing a Triceratops in the forest
+</th>
+</tr>
+<tr>
+<td>
+<img src="object-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="object-2.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>Midjourney 有时会缺少指定的对象，例如第一个例子的第一张图片缺少了狗。而第二个例子不止是对象缺失那么简单，霸王龙和三角龙莫名其妙地被融合在了一起，虽然挺有意思，但毕竟不符文意。</p>
+<h3 id="数量测试">数量测试</h3>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+One cat and two dogs sitting on the grass
+</th>
+<th style="text-align: center; width: 50%">
+Four horses galloping across the grassland at sunset
+</th>
+</tr>
+<tr>
+<td>
+<img src="number-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="number-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>Midjourney 并不能正确处理物体的数量。第一个例子明明是要一只猫和两只狗，但给的是一只狗和两只猫（当然这也有可能是属性绑定的问题）；第二个例子有时候只画了三匹马。</p>
+<h3 id="书写文字">书写文字</h3>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+A thick hardcover book titled "Midjourney"
+</th>
+<th style="text-align: center; width: 50%">
+An ice sculpture of letter "M"
+</th>
+</tr>
+<tr>
+<td>
+<img src="letter-test-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="letter-test-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>Midjourney 并不能正确书写文字。在第一个例子中，第一幅图意识到了 "Midjourney" 是书的标题，但无法正确拼写出来；其他图片都把 Midjourney 当成了描述性词汇，把书的封面绘制成了旅程地图（莫名想到魔戒）。在第二个例子中，前两幅图把字母 M 弄成了 N，后两幅图也怪怪的。</p>
+<h3 id="人物群像">人物群像</h3>
+<table>
+<tr>
+<th style="text-align: center; width: 50%">
+Messi, Suarez and Neymar celebrating a wonderful goal, photorealistic, canon 5d,1fujifilm xt100,Sony alpha, face shot --v 5
+</th>
+<th style="text-align: center; width: 50%">
+a study group in university discussing around a round table, laptops, caffe --v 5
+</th>
+</tr>
+<tr>
+<td>
+<img src="portrait-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+<td>
+<img src="portrait-2.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/>
+</td>
+</tr>
+</table>
+<p>手指和胳膊惨不忍睹；当人物距离较远时，脸部会扭曲变形。</p>
+<h3 id="小结">小结</h3>
+<p>其实前五个问题都与文本编码器有很大关系。根据 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2112.10741">GLIDE</a>、<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2204.06125">DALL·E 2</a> 和 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2205.11487">Imagen</a> 的论文，使用 CLIP 作为文本编码器时会有属性无法对应、无法书写文字等问题，而 T5 的表现会好很多，甚至像 GLIDE 那样从头训练一个 Transformer 都会在属性绑定问题上表现得更好。所以可以不负责任地猜想一下，Midjourney 团队有可能使用的是 <a target="_blank" rel="noopener" href="https://github.com/mlfoundations/open_clip">OpenCLIP</a> 的预训练文本编码器。</p>
+<h2 id="changelog">ChangeLog</h2>
+<p>2023.06.27：增加对 v5.2 版本的介绍，包括 zoom out 功能。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/AIGC/" class="category-chain-item">AIGC</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+        <a href="/blog-main/tags/AIGC/" class="print-no-link">#AIGC</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Midjourney 调研</div>
+      <div>https://xyfjason.github.io/blog-main/2023/06/03/Midjourney-调研/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/08/StyleGAN-%E7%B3%BB%E5%88%97/" title="StyleGAN 系列">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">StyleGAN 系列</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/05/04/PRML-2-Probability-Distributions/" title="[PRML]2.Probability Distributions">
+                        <span class="hidden-mobile">[PRML]2.Probability Distributions</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

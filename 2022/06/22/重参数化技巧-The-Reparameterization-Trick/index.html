@@ -1,0 +1,839 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="重参数化技巧 很早就听说过「重参数化技巧」，但一直没有去了解，近来这个词又反复出现在我眼中，遂搜索资料学了一下，记录于此。 一般而言，我们在机器学习&#x2F;深度学习的过程中遇到的优化目标长这样： \[ \mathbb E_{z\sim \mathcal P}[f_\theta(z)] \] 使用梯度下降优化之： \[ \begin{align} \nabla_\theta\mathbb E_{z\sim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="重参数化技巧 The Reparameterization Trick">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="重参数化技巧 很早就听说过「重参数化技巧」，但一直没有去了解，近来这个词又反复出现在我眼中，遂搜索资料学了一下，记录于此。 一般而言，我们在机器学习&#x2F;深度学习的过程中遇到的优化目标长这样： \[ \mathbb E_{z\sim \mathcal P}[f_\theta(z)] \] 使用梯度下降优化之： \[ \begin{align} \nabla_\theta\mathbb E_{z\sim">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reparameterization.png">
+<meta property="article:published_time" content="2022-06-22T03:06:57.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:00:38.008Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reparameterization.png">
+  
+  
+  
+  <title>重参数化技巧 The Reparameterization Trick - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/reparameterization.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="重参数化技巧 The Reparameterization Trick"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-22 11:06" pubdate>
+          2022年6月22日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">重参数化技巧 The Reparameterization Trick</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="重参数化技巧">重参数化技巧</h2>
+<p>很早就听说过「重参数化技巧」，但一直没有去了解，近来这个词又反复出现在我眼中，遂搜索资料学了一下，记录于此。</p>
+<p>一般而言，我们在机器学习/深度学习的过程中遇到的优化目标长这样： <span class="math display">\[
+\mathbb E_{z\sim \mathcal P}[f_\theta(z)]
+\]</span> 使用梯度下降优化之： <span class="math display">\[
+\begin{align}
+\nabla_\theta\mathbb E_{z\sim \mathcal P}[f_\theta(z)]&amp;=\nabla_\theta\left[\int p(z)f_\theta(z)\mathrm dz\right]\\
+&amp;=\int p(z)\nabla_\theta f_\theta(z) \mathrm dz\\
+&amp;=\mathbb E_{z\sim \mathcal P}[\nabla_\theta f_\theta(z)]
+\end{align}
+\]</span> 即期望和求梯度是可交换的，这使得我们可以通过「采样 <span class="math inline">\(z\sim \mathcal P\)</span> <span class="math inline">\(\to\)</span> 对每一个样本计算梯度 <span class="math inline">\(\nabla_\theta f_\theta(z)\)</span> <span class="math inline">\(\to\)</span> 求平均」的训练过程来近似上式。然而，在有些情形下（VAE、强化学习等），优化目标中的概率分布也由参数 <span class="math inline">\(\theta\)</span> 决定： <span class="math display">\[
+\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]
+\]</span> 如果我们尝试求它的梯度： <span class="math display">\[
+\begin{align}
+\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]&amp;=\nabla_\theta\left[\int p_\theta(z)f_\theta(z)\mathrm dz\right]\\
+&amp;=\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz+\int p_\theta(z)\nabla_\theta f_\theta(z)\mathrm dz\\
+&amp;={\color{purple}{\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz}}+\mathbb E_{z\sim \mathcal P_\theta}[\nabla f_\theta(z)]
+\end{align}
+\]</span> 会发现紫色那一坨没法通过采样近似——假若我们依旧从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样，采出来的样本并不能告诉我们怎么去更新 <span class="math inline">\(\theta\)</span>，换句话说，<strong>采样是一个不可导的操作</strong>。这时就需要用到重参数化技巧了！</p>
+<p>既然不能直接从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样，那就曲线救国——先从无参数分布 <span class="math inline">\(\mathcal Q\)</span> 中采样一个 <span class="math inline">\(\epsilon\)</span>，再通过变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span> 得到 <span class="math inline">\(z\)</span>. 这样，梯度就能够不经过采样操作传递给 <span class="math inline">\(\theta\)</span>：</p>
+<p><span class="math display">\[
+\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]=\nabla_\theta \mathbb E_{\epsilon\sim \mathcal Q}[f_\theta(g_\theta(\epsilon))]=\mathbb E_{\epsilon\sim \mathcal Q}[\nabla_\theta f_\theta(g_\theta(\epsilon))]
+\]</span> 因此训练过程就是「采样 <span class="math inline">\(\epsilon\sim \mathcal Q\)</span> <span class="math inline">\(\to\)</span> 对每一个样本计算梯度 <span class="math inline">\(\nabla_\theta f_\theta(g_\theta(\epsilon))\)</span> <span class="math inline">\(\to\)</span> 求平均」，和一般情形并无不同。</p>
+<p><img src="img.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="采样操作在计算图之外"/></p>
+<p>现在的问题就是，怎样确定分布 <span class="math inline">\(\mathcal Q\)</span> 和变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span>，使得变换后的结果满足 <span class="math inline">\(z\sim \mathcal P_\theta\)</span> 呢？这就得具体问题具体分析了。</p>
+<h3 id="高斯分布情形">高斯分布情形</h3>
+<p>在 VAE 中，<span class="math inline">\(\mathcal P_\theta\)</span> 要求是一个高斯分布，即：<span class="math inline">\(z\sim \mathcal P_\theta=\mathcal N(\mu_\theta, \sigma^2_\theta)\)</span>，其中 <span class="math inline">\(\mu_\theta, \sigma^2_\theta\)</span> 由一个 encoder 网络输出而来，<span class="math inline">\(\theta\)</span> 是这个 encoder 网络的参数。</p>
+<p>这是一种较为简单的情形，我们很容易想到取 <span class="math inline">\(\epsilon\sim \mathcal Q=\mathcal N(0, 1)\)</span>，并作变换 <span class="math inline">\(z=g_\theta(\epsilon)=\sigma_\theta \epsilon+\mu_\theta\)</span> 即可。</p>
+<h3 id="离散分布情形">离散分布情形</h3>
+<p>假若 <span class="math inline">\(z\)</span> 是离散随机变量，不妨设 <span class="math inline">\(z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>，其中 <span class="math inline">\(\sum_{i=1}^k p_i=1\)</span>，那么 <strong>Gumbel Max</strong> 提供了一种将采样过程重参数化的方式： <span class="math display">\[
+\mathop{\text{argmax}}_{i=1}^k\left[\log p_i-\log(-\log \epsilon_i)\right]\quad\quad \epsilon_i\sim U[0,1]
+\]</span> 可以证明，依据上式采样即相当于依据概率分布 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样。</p>
+<blockquote>
+<p>证明：不妨设 <span class="math inline">\(\text{argmax}\)</span> 输出为 <span class="math inline">\(1\)</span>，这意味着： <span class="math display">\[
+\log p_1-\log(-\log \epsilon_1)&gt;\log p_j-\log(-\log \epsilon_j)\quad\forall j\neq 1
+\]</span> 略作化简： <span class="math display">\[
+\epsilon_j&lt;\epsilon_1^{p_j/p_1}\quad\forall j\neq 1
+\]</span> 因为 <span class="math inline">\(\epsilon_i\)</span> 都是 <span class="math inline">\([0,1]\)</span> 上的均匀分布，所以在给定 <span class="math inline">\(\epsilon_1\)</span> 的条件下，上式成立的条件概率就是： <span class="math display">\[
+\prod_{j\neq 1}\epsilon_1^{p_j/p_1}=\epsilon_1^{1/p_1-1}
+\]</span> 因此采样结果为 <span class="math inline">\(1\)</span> 的概率是： <span class="math display">\[
+\int_0^1 \epsilon_1^{1/p_1-1}\mathrm d \epsilon_1=p_1\cdot\left.\epsilon_1^{1/p_1}\right|_0^1=p_1
+\]</span> 所以说，依据 Gumbel Max 采样和依据 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样效果相同。</p>
+</blockquote>
+<p>但是这里有个问题，虽然 Gumbel Max 使得采样操作避开了求导，却又引入了 <span class="math inline">\(\text{argmax}\)</span> 这个不可导操作！因此，我们需要进一步地用可导的 <span class="math inline">\(\text{softmax}\)</span> 对 <span class="math inline">\(\text{argmax}\)</span> 做近似（或者更准确地说，是对 <span class="math inline">\(\text{argmax}\)</span> 对应的那个 <span class="math inline">\(\text{onehot}\)</span> 向量做近似），我们将下式称为 <strong>Gumbel Softmax</strong>： <span class="math display">\[
+\text{softmax}\left(\frac{\log p_i-\log (-\log \epsilon_i)}{\tau}\right)\quad\quad \epsilon_i\sim U[0,1]
+\]</span> 其中 <span class="math inline">\(\tau&gt;0\)</span> 是温度参数，<span class="math inline">\(\tau\to 0\)</span> 时 <span class="math inline">\(\text{softmax}\to\text{onehot}\)</span>.</p>
+<p><img src="paper.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source:[5]" /></p>
+<p>说了这么多，我们现在总结一下，欲计算 <span class="math inline">\(\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\)</span>，首先采样 <span class="math inline">\(k\)</span> 个服从 <span class="math inline">\(U[0,1]\)</span> 的样本 <span class="math inline">\(\epsilon_i\)</span>，然后计算 Gumbel Softmax，得到一个 <span class="math inline">\(k\)</span> 维向量 <span class="math inline">\(\tilde z\)</span>，那么 <span class="math inline">\(f_\theta(\tilde z)\approx \mathbb E_{z\sim P_\theta}[f_\theta(z)]\)</span>.</p>
+<h3 id="小结">小结</h3>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">高斯分布情形</th>
+<th style="text-align: center;">离散分布情形</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\mathcal P_\theta\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\mathcal N(\mu_\theta, \sigma^2_\theta)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\mathcal Q\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\mathcal N(0,1)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(U[0,1]\)</span> (<span class="math inline">\(k\)</span> 个)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(g_\theta(\epsilon)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(z=\sigma_\theta \epsilon+\mu_\theta\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(z\)</span> 通过 Gumbel Softmax 计算</td>
+</tr>
+</tbody>
+</table>
+<h2 id="参考资料">参考资料</h2>
+<p>[1] 苏剑林. (Jun. 10, 2019). 《漫谈重参数：从正态分布到Gumbel Softmax 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/6705</p>
+<p>[2] The ReparameteriTrick. https://gregorygundersen.com/blog/2018/04/29/reparameteri/</p>
+<p>[3] PyTorch 32.Gumbel-Softmax Trick - 科技猛兽的文章 - 知乎 https://..com/p/166632315</p>
+<p>[4] 盘点深度学习中的不可导操作(次梯度和重参数化) - Houye的文章 - 知乎 https://..com/p/97465608</p>
+<p>[5] Jang, Eric, Shixiang Gu, and Ben Poole. Categorical reparameteriwith gumbel-softmax. <em>arXiv preprint arXiv:1611.01144</em> (2016). https://arxiv.org/pdf/1611.01144.pdf</p>
+<p>[6] 【Learning Notes】Gumbel 分布及应用浅析. https://blog.csdn.net/jackytintin/article/details/79364490]</p>
+<p>[7] [知识点] Reparametritricks重参数技巧讲解及应用 - 救命稻草人来了的文章 - 知乎 https://..com/p/35218887</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>重参数化技巧 The Reparameterization Trick</div>
+      <div>https://xyfjason.github.io/blog-main/2022/06/22/重参数化技巧-The-Reparameterization-Trick/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月22日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/06/28/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB-Inductive-Biases-for-Deep-Learning-of-Higher-Level-Cognition/" title="[论文阅读]Inductive Biases for Deep Learning of Higher-Level Cognition">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[论文阅读]Inductive Biases for Deep Learning of Higher-Level Cognition</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/05/25/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-7%C2%B7Policy-Gradient/" title="[David Silver强化学习]7·Policy Gradient">
+                        <span class="hidden-mobile">[David Silver强化学习]7·Policy Gradient</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

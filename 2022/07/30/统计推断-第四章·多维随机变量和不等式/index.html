@@ -1,0 +1,984 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\R}{\mathbb R} \newcommand{\d}{\mathrm d} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Cov}{\mathrm{Cov}} \]  本篇是《统计推断》第四章多维随机变量的后 2 节内容，主要关注于多维随机变量和一些不等式。  1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[统计推断]第四章·多维随机变量和不等式">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/07/30/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E5%9B%9B%E7%AB%A0%C2%B7%E5%A4%9A%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E5%92%8C%E4%B8%8D%E7%AD%89%E5%BC%8F/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\R}{\mathbb R} \newcommand{\d}{\mathrm d} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Cov}{\mathrm{Cov}} \]  本篇是《统计推断》第四章多维随机变量的后 2 节内容，主要关注于多维随机变量和一些不等式。  1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+<meta property="article:published_time" content="2022-07-30T12:27:23.000Z">
+<meta property="article:modified_time" content="2023-09-16T05:29:55.276Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="statistics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+  
+  
+  
+  <title>[统计推断]第四章·多维随机变量和不等式 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/statistics.jpeg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[统计推断]第四章·多维随机变量和不等式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-30 20:27" pubdate>
+          2022年7月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          99 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[统计推断]第四章·多维随机变量和不等式</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\d}{\mathrm d}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\]</span></p>
+<blockquote>
+<p>本篇是《统计推断》第四章多维随机变量的后 2 节内容，主要关注于多维随机变量和一些不等式。</p>
+</blockquote>
+<h2 id="多维分布">1 多维分布</h2>
+<blockquote>
+<p>关于记号：用黑体表示向量，如 <span class="math inline">\(\mathbf X=(X_1,\ldots,X_n)\)</span>，<span class="math inline">\(\mathbf x=(x_1,\ldots,x_n)\)</span>.</p>
+</blockquote>
+<h3 id="相关概念定义">1.1 相关概念定义</h3>
+<p>设随机向量 <span class="math inline">\(\mathbf X\)</span> 的样本空间是 <span class="math inline">\(\mathbb R^n\)</span> 的子集。若 <span class="math inline">\(\mathbf X\)</span> 为离散随机向量，则<strong>联合概率质量函数</strong>为： <span class="math display">\[
+f(x_1,\ldots,x_n)=P(X_1=x_1,\ldots,X_n=x_n)
+\]</span> 且对任意 <span class="math inline">\(A\subset \mathbb R^n\)</span>，有 <span class="math display">\[
+P(\mathbf X\in A)=\sum_{\mathbf x\in A}f(\mathbf x)
+\]</span> 若 <span class="math inline">\(\mathbf X\)</span> 为连续随机向量，则<strong>联合概率密度函数</strong>满足 <span class="math display">\[
+P(\mathbf X\in A)=\int\cdots\int_A f(\mathbf x)\mathrm d\mathbf x=\int\cdots\int_A f(x_1,\ldots,x_n)\mathrm d x_1\cdots \mathrm dx_n
+\]</span> 设 <span class="math inline">\(g(\mathbf x)\)</span> 是定义在 <span class="math inline">\(\mathbf X\)</span> 样本空间上的实值函数，则 <span class="math inline">\(g(\mathbf X)\)</span> 是随机变量，<strong>期望</strong>为： <span class="math display">\[
+\E[g(\mathbf X)]=\begin{cases}
+\int_{-\infty}^{+\infty}\cdots\int_{-\infty}^{+\infty}g(\mathbf x)f(\mathbf x)\mathrm dx&amp;\text{continuous}\\
+\sum_{\mathbf x\in\mathbb R^n}g(\mathbf x)f(\mathbf x)
+\end{cases}
+\]</span> <strong>边缘 pmf/pdf</strong> 由联合 pmf/pdf 关于其余分量求积分/求和得到。例如 <span class="math inline">\((X_1,\ldots,X_n)\)</span> 的前 <span class="math inline">\(k\)</span> 个分量 <span class="math inline">\((X_1,\ldots,X_k)\)</span> 的边缘 pdf 为： <span class="math display">\[
+f(x_1,\ldots,x_k)=\int_{-\infty}^{+\infty}\cdots\int_{-\infty}^{+\infty}f(x_1,\cdots,x_n)\mathrm dx_{k+1}\cdots\mathrm dx_n
+\]</span> <strong>条件 pmf/pdf</strong> 由联合 pmf/pdf 除以其余分量的边缘 pmf/pdf 得到。例如，若 <span class="math inline">\(f(x_1,\ldots,x_k)&gt;0\)</span>，则 <span class="math inline">\((X_{k+1},\ldots,X_n)\)</span> 在条件 <span class="math inline">\(X_1=x_1,\ldots,X_n=x_n\)</span> 下的 pdf/pmf 为： <span class="math display">\[
+f(x_{k+1},\ldots,x_n\mid x_1,\ldots,x_k)=\frac{f(x_1,\ldots,x_n)}{f(x_1,\ldots,x_k)}
+\]</span></p>
+<h3 id="多项分布二项分布的推广">1.2 多项分布——二项分布的推广</h3>
+<blockquote>
+<p>回顾二项分布： <span class="math display">\[
+P(X=x\mid n,p)=\binom{n}{x}p^x(1-p)^{n-x},\quad x=0,1,2,\ldots,n
+\]</span> 表示 <span class="math inline">\(n\)</span> 次独立伯努利试验中成功 <span class="math inline">\(x\)</span> 次的概率。</p>
+</blockquote>
+<p>设 <span class="math inline">\(m,n\)</span> 为正整数，数 <span class="math inline">\(p_1,\ldots,p_n\)</span> 满足 <span class="math inline">\(0\leq p_i\leq 1\)</span>，且 <span class="math inline">\(\sum_{i=1}^N p_i=1\)</span>，若随机向量 <span class="math inline">\((X_1,\ldots,X_n)\)</span> 的联合 pmf 为： <span class="math display">\[
+f(x_1,\ldots,x_n)=\frac{m!}{x_1!\cdots x_n!}p_1^{x_1}\cdots p_n^{x_n}=m!\prod_{i=1}^n\frac{p_i^{x_i}}{x_i!}
+\]</span> 其中 <span class="math inline">\(x_i\)</span> 均为非负整数且 <span class="math inline">\(\sum_{i=1}^nx_i=m\)</span>，则称 <span class="math inline">\((X_1,\ldots,X_n)\)</span> 服从 <strong><span class="math inline">\(m\)</span> 次试验、元概率为 <span class="math inline">\(p_1,\ldots,p_n\)</span> 的多项分布（multinomial distribution）</strong>。</p>
+<p>与二项分布类似， 多项分布的意义是：做 <span class="math inline">\(m\)</span> 次独立试验，每次试验有 <span class="math inline">\(n\)</span> 中可能的结果，发生概率分别为 <span class="math inline">\(p_1,\ldots,p_n\)</span>，随机变量 <span class="math inline">\(X_i\)</span> 表示第 <span class="math inline">\(i\)</span> 种结果出现的次数。</p>
+<p><br/></p>
+<p>二项分布中的系数称为二项式系数，类似的，多项分布中的系数是<strong>多项式系数</strong>： <span class="math display">\[
+\binom{m}{x_1,\ldots,x_n}=\frac{m!}{x_1!\cdots x_n!}
+\]</span> 表示将 <span class="math inline">\(m\)</span> 个物品分为 <span class="math inline">\(n\)</span> 类，第 <span class="math inline">\(i\)</span> 类有 <span class="math inline">\(x_i\)</span> 个物品的方案数。</p>
+<p>二项式定理可以推广为<strong>多项式定理</strong>：设 <span class="math inline">\(m,n\)</span> 为正整数，<span class="math inline">\(A\)</span> 是满足每个 <span class="math inline">\(x_i\)</span> 都是非负整数且 <span class="math inline">\(\sum_{i=1}^nx_i=m\)</span> 的全体向量 <span class="math inline">\(\mathbf x=(x_1,\ldots,x_n)\)</span> 的集合，则对<u>任意实数</u> <span class="math inline">\(p_1,\ldots,p_n\)</span>，有： <span class="math display">\[
+(p_1+\cdots+p_n)^m=\sum_{\mathbf x\in A}\frac{m!}{x_1!\cdots x_n!}p_1^{x_1}\cdots p_n^{x_n}
+\]</span> 根据多项式定理，容易知道多项分布的 pmf 之和确实为 1，而集合 <span class="math inline">\(A\)</span> 恰是其支撑集.</p>
+<p><br/></p>
+<p>根据多项分布的意义，不难想到其第 <span class="math inline">\(i\)</span> 个分量的边缘分布是 <span class="math inline">\(\text{binomial}(m,p_i)\)</span>. 事实上，以第 <span class="math inline">\(n\)</span> 个分量为例： <span class="math display">\[
+\begin{align}
+f(x_n)&amp;=\sum_{(x_1,\ldots,x_{n-1})}\frac{m!}{x_1!\cdots x_{n}!}p_1^{x_1}\cdots p_n^{x_n}\\
+&amp;=\sum_{(x_1,\ldots,x_{n-1})}\frac{m!}{x_1!\cdots x_{n}!}p_1^{x_1}\cdots p_n^{x_n}\frac{(m-x_n)!(1-p_n)^{m-x_n}}{(m-x_n)!(1-p_n)^{m-x_n}}\\
+&amp;=\left(\frac{m!}{x_n!(m-x_n)!}(1-p_n)^{m-x_n}p_n^{x_n}\right)\left(\sum_{(x_1,\ldots,x_{n-1})}\frac{(m-x_n)!}{x_1!\cdots x_{n-1}!}\prod_{i=1}^{n-1}\left(\frac{p_i}{1-p_n}\right)^{x_i}\right)\\
+&amp;=\frac{m!}{x_n!(m-x_n)!}(1-p_n)^{m-x_n}p_n^{x_n}
+\end{align}
+\]</span> 同样根据多项分布的意义，不难想到在第 <span class="math inline">\(i\)</span> 个分量的条件下，其余分量服从 <span class="math inline">\(m-x_i\)</span> 次试验、元概率为 <span class="math inline">\(p_1/(1-p_i),\ldots\)</span> 的多项分布。事实上，以第 <span class="math inline">\(n\)</span> 个分量作为条件为例： <span class="math display">\[
+\begin{align}
+f(x_1,\ldots,x_{n-1}\mid x_n)&amp;=\frac{f(x_1,\ldots,x_n)}{f(x_n)}\\
+&amp;=\frac{\dfrac{m!}{x_1!\cdots x_n!}p_1^{x_1}\cdots p_n^{x_n}}{\dfrac{m!}{x_n!(m-x_n)!}(1-p_n)^{m-x_n}p_n^{x_n}}\\
+&amp;=\frac{(m-x_n)!}{x_1!\cdots x_{n-1}!}\prod_{i=1}^{n-1}\left(\frac{p_i}{1-p_n}\right)^{x_i}
+\end{align}
+\]</span> <br/></p>
+<p>多项分布的任意两个分量都是负相关的，且： <span class="math display">\[
+\Cov(X_i,X_j)=-mp_ip_j
+\]</span> <em>Proof</em>.</p>
+<p>首先，由于多项分布的边缘分布是 <span class="math inline">\(\text{binomial}(m,p_i)\)</span>，所以 <span class="math inline">\(\E X_i=mp_i\)</span>，<span class="math inline">\(\Var X_i=mp_i(1-p_i)\)</span>，<span class="math inline">\(\E X_i^2=\Var X_i+(\E X_i)^2=mp_i(1-p_i+mp_i)\)</span>.</p>
+<p>其次，在 <span class="math inline">\(X_j=x_j\)</span> 的条件下，其余分量是一个多项分布，因此 <span class="math inline">\(X_i\)</span> 服从这个多项分布的边缘分布 <span class="math inline">\(\text{binomial}\left(m-x_j,\frac{p_i}{1-p_j}\right)\)</span>，故 <span class="math inline">\(\E[X_i\mid X_j=x_j]=(m-x_j)p_i/(1-p_j)\)</span>.</p>
+<p>于是： <span class="math display">\[
+\begin{align}
+\E[X_iX_j]&amp;=\E[\E[X_iX_j\mid X_j]]&amp;&amp;\text{重期望公式}\\
+&amp;=\E[X_j\E[X_i\mid X_j]]\\
+&amp;=\E\left[\frac{X_j(m-X_j)p_i}{(1-p_j)}\right]\\
+&amp;=\frac{p_i}{(1-p_j)}(m \E X_j-\E X_j^2)\\
+&amp;=\frac{p_i}{(1-p_j)}(m^2p_j-mp_j(1-p_j+mp_j))\\
+&amp;=m(m-1)p_ip_j
+\end{align}
+\]</span> 进而： <span class="math display">\[
+\begin{align}
+\Cov(X_i,X_j)&amp;=\E[X_iX_j]-\E[X_i]\E[X_j]\\
+&amp;=m(m-1)p_ip_j-mp_imp_j\\
+&amp;=-mp_ip_j
+\end{align}
+\]</span> Q.E.D.</p>
+<h3 id="独立性">1.3 独立性</h3>
+<p>前一篇讲了两个随机变量的独立性，我们将其进一步扩展：设 <span class="math inline">\(\mathbf X_1,\ldots,\mathbf X_n\)</span> 是一列随机向量，其联合 pdf/pmf 为 <span class="math inline">\(f(\mathbf x_1,\ldots,\mathbf x_n)\)</span>，<span class="math inline">\(\mathbf X_i\)</span> 的边缘 pdf/pmf 维 <span class="math inline">\(f_{\mathbf X_i}(\mathbf x_i)\)</span>，若对任意 <span class="math inline">\(x_1,\ldots,x_n\)</span>，都有</p>
+<p><span class="math display">\[
+f(\mathbf x_1,\ldots,\mathbf x_n)=f_{\mathbf X_1}(x_1)\cdots f_{\mathbf X_n}(x_n)=\prod_{i=1}^nf_{\mathbf X_i}(\mathbf x_i)
+\]</span> 则称 <span class="math inline">\(\mathbf X_1,\ldots,\mathbf X_n\)</span> 是<strong>相互独立的随机向量</strong>；若每个 <span class="math inline">\(X_i\)</span> 都是一维的，则称 <span class="math inline">\(X_1,\ldots,X_n\)</span> 是<strong>相互独立的随机变量</strong>。</p>
+<blockquote>
+<p>注意：相互独立比两两独立更强，可以构造出两两独立的一组随机向量，但它们并不相互独立。</p>
+</blockquote>
+<p><br/></p>
+<p>二维情形下的许多定理可以直接推广到多维情形：</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(X_1,\ldots,X_n\)</span> 是相互独立的随机变量，<span class="math inline">\(g_1,\ldots,g_n\)</span> 是实值一元函数，则： <span class="math display">\[
+\E[g_1(X_1)\cdots g_n(X_n)]=\E[g_1(X_1)]\cdots\E[g_n(X_n)]
+\]</span> <strong>定理</strong>：设 <span class="math inline">\(X_1,\ldots,X_n\)</span> 是相互独立的随机变量，矩母函数分别是 <span class="math inline">\(M_{X_1}(t),\ldots,M_{X_n}(t)\)</span>，令 <span class="math inline">\(Z=X_1+\cdots+X_n\)</span>，则 <span class="math inline">\(Z\)</span> 的矩母函数为： <span class="math display">\[
+M_Z(t)=M_{X_1}(t)\cdots M_{X_N}(t)
+\]</span></p>
+<div class="note note-success">
+            <p>例【伽玛变量和】伽玛分布的矩母函数为 <span class="math inline">\(M(t)=(1-\beta t)^{-\alpha}\)</span>，若 <span class="math inline">\(X_i\sim \text{Gamma}(\alpha_i,\beta)\)</span>，则 <span class="math inline">\(Z=X_1+\cdots+X_n\)</span> 的矩母函数为： <span class="math display">\[M_Z(t)=(1-\beta t)^{-\alpha_1}\cdots(1-\beta t)^{-\alpha_n}=(1-\beta t)^{-(\alpha_1+\cdots+\alpha_n)}\]</span> 故 <span class="math inline">\(Z\sim\text{Gamma}(\alpha_1+\cdots+\alpha_n,\beta)\)</span>.</p>
+          </div>
+<p><strong>定理</strong>：设 <span class="math inline">\(X_1,\ldots,X_n\)</span> 是相互独立的随机变量，矩母函数分别是 <span class="math inline">\(M_{X_1}(t),\ldots,M_{X_n}(t)\)</span>，令 <span class="math inline">\(Z=(a_1X_1+b_1)+\cdots(a_nX_n+b_n)\)</span>，则 <span class="math inline">\(Z\)</span> 的矩母函数为： <span class="math display">\[
+M_Z(t)=\left(e^{t\sum b_i}\right)M_{X_1}(a_1t)\cdots M_{X_n}(a_nt)
+\]</span> <em>Proof</em>. <span class="math display">\[
+\begin{align}
+M_Z(t)&amp;=\E e^{tZ}\\
+&amp;=\E\left[e^{t\sum (a_iX_i+b_i)}\right]\\
+&amp;=\left(e^{t\sum b_i}\right)\E\left[e^{ta_1X_1}\cdots e^{ta_nX_n}\right]\\
+&amp;=\left(e^{t\sum b_i}\right)M_{X_1}(a_1t)\cdots M_{X_n}(a_nt)
+\end{align}
+\]</span> Q.E.D.</p>
+<div class="note note-success">
+            <p>例【独立正态随机变量值和仍然服从正态分布】：设 <span class="math inline">\(X_1,\ldots,X_n\)</span> 是相互独立的随机变量，且 <span class="math inline">\(X_i\sim N(\mu_i,\sigma^2_i)\)</span>，则： <span class="math display">\[Z=\sum_{i=1}^n(a_iX_i+b_i)\sim N\left(\sum_{i=1}^n(a_i\mu_i+b_i),\sum_{i=1}^na_i^2\sigma_i^2\right)\]</span> <em>Proof</em>. 回忆 <span class="math inline">\(N(\mu,\sigma^2)\)</span> 随机变量的矩母函数为 <span class="math inline">\(M(t)=\exp(\mu t+\sigma^2t^2/2)\)</span>，于是 <span class="math display">\[\begin{align}M_Z(t)&amp;=\left(e^{t\sum b_i}\right) \exp({\mu_1a_1t+\sigma_1^2a_1^2t^2/2})\cdots \exp({\mu_na_nt+\sigma_n^2a_n^2t^2/2})\\&amp;=\left(e^{t\sum b_i}\right) \exp\left({\sum\mu_ia_it+\sigma_i^2a_i^2t^2/2}\right)\\&amp;=\exp\left[\left(\sum(a_i\mu_i+b_i)\right)t+\left(\sum a_i^2\sigma_i^2\right)t^2/2\right]\\\end{align}\]</span> 故 <span class="math inline">\(Z\sim N\left(\sum(a_i\mu_i+b_i),\sum a_i^2\sigma_i^2\right)\)</span>.</p><p>Q.E.D.</p>
+          </div>
+<p><strong>定理（独立的充要条件）</strong>：设 <span class="math inline">\(\mathbf X_1,\ldots,\mathbf X_n\)</span> 是一列随机向量，则 <span class="math inline">\(\mathbf X_1,\ldots,\mathbf X_n\)</span> 相互独立当且仅当存在函数 <span class="math inline">\(g_i(\mathbf x_i)\)</span> 使得 <span class="math inline">\((\mathbf X_1,\ldots,\mathbf X_n)\)</span> 的联合 pdf/pmf 可以写作： <span class="math display">\[
+f(\mathbf x_1,\ldots,\mathbf x_n)=g_1(\mathbf x_1)\cdots g_n(\mathbf x_n)
+\]</span> <strong>定理</strong>：设 <span class="math inline">\(\mathbf X_1,\ldots,\mathbf X_n\)</span> 是一列独立的随机向量，<span class="math inline">\(g_i(\mathbf x_i)\)</span> 是一元函数，则随机变量 <span class="math inline">\(U_i=g_i(\mathbf X_i)\)</span> 相互独立。</p>
+<h3 id="随机向量变换的分布">1.4 随机向量变换的分布</h3>
+<p>设随机向量 <span class="math inline">\((X_1,\ldots,X_n)\)</span> 的 pdf 为 <span class="math inline">\(f_\mathbf X(x_1,\ldots,x_n)\)</span>，<span class="math inline">\(\mathbf A=\{x:f_\mathbf X(x)&gt;0\}\)</span>. 考察新的随机向量 <span class="math inline">\((U_1,\ldots,U_n)\)</span>，其中 <span class="math inline">\(U_i=g_i(X_1,\ldots,X_n)\)</span>. 设 <span class="math inline">\(A_0,A_1,\ldots,A_k\)</span> 是 <span class="math inline">\(\mathbf A\)</span> 的一个划分且 <span class="math inline">\(P((X_1,\ldots,X_n)\in A_0)=0\)</span>. 对所有 <span class="math inline">\(i=1,\ldots,k\)</span>，变换 <span class="math inline">\((U_1,\ldots,U_n)=(g_1(\mathbf X),\ldots,g_n(\mathbf X))\)</span> 都是从 <span class="math inline">\(A_i\)</span> 到 <span class="math inline">\(\mathbf B\)</span> 的一对一变换，因此对每个 <span class="math inline">\(i\)</span> 都存在从 <span class="math inline">\(\mathbf B\)</span> 到 <span class="math inline">\(A_i\)</span> 的逆变换。记第 <span class="math inline">\(i\)</span> 个逆变换为 <span class="math inline">\(x_1=h_{1i}(u_1,\ldots,u_n),\ldots,x_n=h_{ni}(u_1,\ldots,u_n)\)</span>，则对任意 <span class="math inline">\((u_1,\ldots,u_n)\in\mathbf B\)</span>，它确定了唯一的 <span class="math inline">\((x_1,\ldots,x_n)\in A_i\)</span> 使得 <span class="math inline">\((u_1,\ldots,u_n)=(g_1(x_1,\ldots,x_n),\ldots,g_n(x_1,\ldots,x_n))\)</span>. 记 <span class="math inline">\(J_i\)</span> 为第 <span class="math inline">\(i\)</span> 个逆变换的 Jacobi 行列式： <span class="math display">\[
+J_i=\begin{vmatrix}
+\frac{\partial x_1}{\partial u_1}&amp;\frac{\partial x_1}{\partial u_2}&amp;\cdots&amp;\frac{\partial x_1}{\partial u_n}\\
+\frac{\partial x_2}{\partial u_1}&amp;\frac{\partial x_2}{\partial u_2}&amp;\cdots&amp;\frac{\partial x_2}{\partial u_n}\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+\frac{\partial x_n}{\partial u_1}&amp;\frac{\partial x_n}{\partial u_2}&amp;\cdots&amp;\frac{\partial x_n}{\partial u_n}\\
+\end{vmatrix}=
+\begin{vmatrix}
+\frac{\partial h_{1i}(\mathbf u)}{\partial u_1}&amp;\frac{\partial h_{1i}(\mathbf u)}{\partial u_2}&amp;\cdots&amp;\frac{\partial h_{1i}(\mathbf u)}{\partial u_n}\\
+\frac{\partial h_{2i}(\mathbf u)}{\partial u_1}&amp;\frac{\partial h_{2i}(\mathbf u)}{\partial u_2}&amp;\cdots&amp;\frac{\partial h_{2i}(\mathbf u)}{\partial u_n}\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+\frac{\partial h_{ni}(\mathbf u)}{\partial u_1}&amp;\frac{\partial h_{ni}(\mathbf u)}{\partial u_2}&amp;\cdots&amp;\frac{\partial h_{ni}(\mathbf u)}{\partial u_n}\\
+\end{vmatrix}
+\]</span> 假定 <span class="math inline">\(J_i\)</span> 在 <span class="math inline">\(\mathbf B\)</span> 上不恒为 <span class="math inline">\(0\)</span>，则对任意 <span class="math inline">\(\mathbf u\in\mathbf B\)</span>，联合 pdf 可以表示为： <span class="math display">\[
+f_\mathbf U(u_1,\ldots,u_n)=\sum_{i=1}^k f_\mathbf X(h_{1i}(u_1,\ldots,u_n),\ldots,h_{ni}(u_1,\ldots,u_n))|J_i|
+\]</span></p>
+<blockquote>
+<p>前面一堆集合划分啥的，只是为了在每个划出来的集合上有逆变换罢了。定理的重点在于，随机向量变换后，新的 pdf 不仅要把变换代入，<strong>还要乘上一个 Jacobi 行列式的绝对值</strong>。</p>
+</blockquote>
+<h2 id="不等式">2 不等式</h2>
+<h3 id="数值不等式">2.1 数值不等式</h3>
+<p><strong>引理</strong>：设 <span class="math inline">\(a,b,p,q\)</span> 为任意正数，且 <span class="math inline">\(p,q\)</span> 满足（显然 <span class="math inline">\(p,q&gt;1\)</span>）： <span class="math display">\[
+\frac{1}{p}+\frac{1}{q}=1
+\]</span> 则 <span class="math display">\[
+\frac{1}{p}a^p+\frac{1}{q}b^q\geq ab
+\]</span> 当且仅当 <span class="math inline">\(a^p=b^q\)</span> 时等式成立。</p>
+<p><em>Proof</em>. 考察函数 <span class="math display">\[
+g(a)=\frac{1}{p}a^p+\frac{1}{q}b^q-ab
+\]</span> 求导令为零： <span class="math display">\[
+g&#39;(a)=a^{p-1}-b=0\implies b=a^{p-1}
+\]</span> 又 <span class="math inline">\(g&#39;&#39;(a)=(p-1)a^{p-2}&gt;0\)</span>，故极小值为： <span class="math display">\[
+\frac{1}{p}a^p+\frac{1}{q}a^{q(p-1)}-a^p=0\quad \text{利用 }1/p+1/q=1\text{ 的条件}
+\]</span> 又极小值唯一且当且仅当 <span class="math inline">\(b=a^{p-1}\)</span>，也即 <span class="math inline">\(a^p=b^q\)</span> 时达到。</p>
+<p>Q.E.D.</p>
+<p><br/></p>
+<p><strong>Holder 不等式</strong>：设 <span class="math inline">\(X,Y\)</span> 为任意随机变量，<span class="math inline">\(p,q\)</span> 满足 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>，则： <span class="math display">\[
+|\E XY|\leq \E |XY|\leq (\E|X|^p)^{1/p}(\E|Y|^q)^{1/q}
+\]</span> <em>Proof</em>.</p>
+<p>左边：由于 <span class="math inline">\(-|XY|\leq XY\leq |XY|\)</span>，得 <span class="math inline">\(-\E|XY|\leq \E XY\leq \E |XY|\)</span>，即 <span class="math inline">\(|\E XY|\leq \E |XY|\)</span>.</p>
+<p>右边：令 <span class="math display">\[
+a=\frac{|X|}{(\E |X|^p)^{1/p}}\quad b=\frac{|Y|}{(\E |Y|^q)^{1/q}}
+\]</span> 则根据引理，有： <span class="math display">\[
+\frac{1}{p}\frac{|X|^p}{\E |X|^p}+\frac{1}{q}\frac{|Y|^p}{\E |Y|^q}\geq \frac{|XY|}{(\E|X|^p)^{1/p}(\E|Y|^q)^{1/q}}
+\]</span> 对两边取期望，左边期望为 <span class="math inline">\(1\)</span>，因此： <span class="math display">\[
+\E|XY|\leq (\E|X|^p)^{1/p}(\E|Y|^q)^{1/q}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p><strong>Cauchy-Schwarz 不等式</strong>：在 Holder 不等式中，取 <span class="math inline">\(p=q=2\)</span>，得： <span class="math display">\[
+|\E XY|\leq \E |XY|\leq (\E|X|^2)^{1/2}(\E|Y|^2)^{1/2}
+\]</span> <br/></p>
+<p><strong>协方差不等式</strong>：根据 Cauchy-Schwarz 不等式，有： <span class="math display">\[
+|\E (X-\E X)(Y-\E Y)|\leq (\E (X-\E X)^2)^{1/2}(\E (Y-\E Y)^2)^{1/2}
+\]</span> 两边平方，即得到： <span class="math display">\[
+\Cov(X,Y)^2\leq \Var X\Var Y
+\]</span> <br/></p>
+<p><strong>Liapounov 不等式</strong>：在 Holder 不等式中，令 <span class="math inline">\(Y\equiv 1\)</span>，则： <span class="math display">\[
+\E |X|\leq (\E |X|^p)^{1/p}\quad p&gt;1
+\]</span> 对任意 <span class="math inline">\(1&lt;r&lt;p\)</span>，用 <span class="math inline">\(|X|^r\)</span> 代替上式中的 <span class="math inline">\(|X|\)</span>，则： <span class="math display">\[
+\E |X|^r\leq (\E |X|^{pr})^{1/p}
+\]</span> 做变量替换 <span class="math inline">\(s=pr&gt;r\)</span>，得到： <span class="math display">\[
+(\E |X|^{r})^{1/r}\leq (\E|X|^s)^{1/s}\quad 1&lt;r&lt;s
+\]</span> <br/></p>
+<p><strong>Minkowski 不等式</strong>：设 <span class="math inline">\(X,Y\)</span> 为任意随机变量，则对任意 <span class="math inline">\(p&gt;1\)</span>，有： <span class="math display">\[
+[\E|X+Y|^p]^{1/p}\leq [\E |X|^p]^{1/p}+[\E |Y|^p]^{1/p}
+\]</span> <em>Proof</em>. 由三角不等式 <span class="math inline">\(|X+Y|\leq |X|+|Y|\)</span>，有： <span class="math display">\[
+\E|X+Y|^p=\E\left[|X+Y||X+Y|^{p-1}\right]\leq \E\left[|X||X+Y|^{p-1}\right]+\E\left[|Y||X+Y|^{p-1}\right]
+\]</span> 对上式右端两个期望分别使用 Holder 不等式，得到： <span class="math display">\[
+\E|X+Y|^p\leq (\E |X|^p)^{1/p}\left(\E |X+Y|^{q(p-1)}\right)^{1/q}+(\E |Y|^p)^{1/p}\left(\E |X+Y|^{q(p-1)}\right)^{1/q}
+\]</span> 其中 <span class="math inline">\(q\)</span> 满足 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>，即 <span class="math inline">\(q=\frac{p}{p-1}\)</span>. 两边除以 <span class="math inline">\(\left(\E |X+Y|^{q(p-1)}\right)^{1/q}\)</span>，则右边即为所求，左边为： <span class="math display">\[
+\frac{\E |X+Y|^p}{\left(\E |X+Y|^{q(p-1)}\right)^{1/q}}=\frac{\E |X+Y|^p}{\left(\E |X+Y|^{p}\right)^{1-1/p}}=\left(\E |X+Y|^p\right)^{1/p}
+\]</span> 亦为所求。Q.E.D.</p>
+<h3 id="函数不等式">2.2 函数不等式</h3>
+<p><strong>凸函数</strong>：如果对任意 <span class="math inline">\(x,y\)</span> 以及 <span class="math inline">\(0&lt;\lambda&lt;1\)</span>，函数 <span class="math inline">\(g(x)\)</span> 都满足 <span class="math inline">\(g(\lambda x+(1-\lambda)y)\leq \lambda g(x)+(1-\lambda)g(y)\)</span>，则称 <span class="math inline">\(g(x)\)</span> 为凸函数；如果 <span class="math inline">\(-g(x)\)</span> 是凸函数，则称 <span class="math inline">\(g(x)\)</span> 为凹函数。</p>
+<p><br/></p>
+<p><strong>Jensen 不等式</strong>：设 <span class="math inline">\(X\)</span> 是任意随机变量，如果 <span class="math inline">\(g(x)\)</span> 是凸函数，则： <span class="math display">\[
+\E g(X)\geq g(\E X)
+\]</span> 等号成立当且仅当对于 <span class="math inline">\(g(x)\)</span> 在 <span class="math inline">\(x=\E X\)</span> 处的切线 <span class="math inline">\(l(x)=ax+b\)</span>，有 <span class="math inline">\(P(g(X)=aX+b)=1\)</span>.</p>
+<p><em>Proof</em>. 设 <span class="math inline">\(g(x)\)</span> 在 <span class="math inline">\(x=\E X\)</span> 处的切线为 <span class="math inline">\(l(x)=ax+b\)</span>，由 <span class="math inline">\(g(x)\)</span> 的凸性可知 <span class="math inline">\(g(x)\geq ax+b\)</span>，于是： <span class="math display">\[
+\E g(X)\geq \E [aX+b]=a \E X+b=l(\E X)=g(\E X)
+\]</span> Q.E.D.</p>
+<p>若对 <span class="math inline">\(g(x)=x^2\)</span> 使用 Jensen 不等式，得到： <span class="math display">\[
+\E X^2\geq (\E X)^2
+\]</span> 若对 <span class="math inline">\(g(x)=1/x\)</span> 使用 Jensen 不等式，得到： <span class="math display">\[
+\E \frac{1}{X}\geq \frac{1}{\E X}
+\]</span> <br/></p>
+<p><strong>均值不等式</strong>：设 <span class="math inline">\(a_1,\ldots,a_n\)</span> 均为正数，令： <span class="math display">\[
+\begin{align}
+&amp;a_A=\frac{1}{n}(a_1+\cdots+a_n)\\
+&amp;a_G=(a_1\cdots a_n)^{1/n}\\
+&amp;a_H=\frac{n}{\frac{1}{a_1}+\cdots+\frac{1}{a_n}}
+\end{align}
+\]</span> 则： <span class="math display">\[
+a_H\leq a_G\leq a_A
+\]</span> <em>Proof</em>. 我们可以利用 Jensen 不等式完成证明。设随机变量 <span class="math inline">\(X\)</span> 取值范围为 <span class="math inline">\(\{a_1,\ldots,a_n\}\)</span> 且各取值概率相等，由于 <span class="math inline">\(\log x\)</span> 是凹函数，所以： <span class="math display">\[
+\begin{align}
+&amp;\log a_G=\frac{1}{n}\sum_{i=1}^n\log a_i=\E[\log X]\leq\log \E X=\log\left(\frac{1}{n}\sum_{i=1}^n a_i\right)=\log a_A\\
+&amp;\log\frac{1}{a_H}=\log\left(\frac{1}{n}\sum_{i=1}^n\frac{1}{a_i}\right)=\log \E\frac{1}{X}\geq \E \left[\log\frac{1}{X}\right]=-\frac{1}{n}\sum_{i=1}^n\log a_i=-\log a_G=\log\frac{1}{a_G}
+\end{align}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p><strong>协方差不等式 - Ⅱ</strong>：设 <span class="math inline">\(X\)</span> 是任意随机变量，<span class="math inline">\(g(x),h(x)\)</span> 是任意函数且 <span class="math inline">\(\E g(X),\E h(X)\)</span> 与 <span class="math inline">\(\E g(X)h(X)\)</span> 均存在，</p>
+<ol type="1">
+<li><p>若 <span class="math inline">\(g(x)\)</span> 是递增函数，<span class="math inline">\(h(x)\)</span> 是递减函数，则 <span class="math display">\[
+\E[g(X)h(X)]\leq (\E g(X))(\E h(X))
+\]</span></p></li>
+<li><p>若 <span class="math inline">\(g(x), h(x)\)</span> 同为递增或递减函数，则 <span class="math display">\[
+\E [g(X)h(X)]\geq (\E g(X))(\E h(X))
+\]</span></p></li>
+</ol>
+<p>协方差不等式有明显的直观解释：上面两种情形恰好反映了 <span class="math inline">\(g,h\)</span> 之间的负相关和正相关，借助该不等式我们可以直接估计期望，而无需计算高阶矩。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="category-chain-item">统计推断</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/statistics/" class="print-no-link">#statistics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[统计推断]第四章·多维随机变量和不等式</div>
+      <div>https://xyfjason.github.io/blog-main/2022/07/30/统计推断-第四章·多维随机变量和不等式/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/08/03/%E4%BB%8E%E4%BA%8C%E5%88%86%E7%B1%BB%E5%88%B0%E5%A4%9A%E5%88%86%E7%B1%BB%EF%BC%8C%E4%BB%8E%E5%8D%95%E6%A0%87%E7%AD%BE%E5%88%B0%E5%A4%9A%E6%A0%87%E7%AD%BE/" title="从二分类到多分类，从单标签到多标签">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">从二分类到多分类，从单标签到多标签</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/07/25/%E5%90%84%E7%A7%8D%E5%87%BD%E6%95%B0%E7%9A%84hard%E4%B8%8Esoft%E5%BD%A2%E5%BC%8F/" title="各种函数的hard与soft形式">
+                        <span class="hidden-mobile">各种函数的hard与soft形式</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

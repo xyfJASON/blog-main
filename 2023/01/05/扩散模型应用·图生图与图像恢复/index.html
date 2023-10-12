@@ -1,0 +1,960 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \]  封面来自 CivitAI.  图生图可以泛指基于输入图像生成新图像的过程，因此诸如 image restoration（超分、去噪、填充、上色等）、image-to-image translation、style transfer 等任务都可以归为其中。特别地，本文不包括基于文本的图像编辑方法，相关内容可在扩散模型应用·基于文本的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型应用·图生图与图像恢复">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9B%BE%E7%94%9F%E5%9B%BE%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%81%A2%E5%A4%8D/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \]  封面来自 CivitAI.  图生图可以泛指基于输入图像生成新图像的过程，因此诸如 image restoration（超分、去噪、填充、上色等）、image-to-image translation、style transfer 等任务都可以归为其中。特别地，本文不包括基于文本的图像编辑方法，相关内容可在扩散模型应用·基于文本的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-restoration.png">
+<meta property="article:published_time" content="2023-01-05T13:08:42.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:19:51.385Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="computer vision">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-restoration.png">
+  
+  
+  
+  <title>扩散模型应用·图生图与图像恢复 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-application-restoration.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="扩散模型应用·图生图与图像恢复"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-05 21:08" pubdate>
+          2023年1月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          104 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">扩散模型应用·图生图与图像恢复</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\x}{\mathbf x}
+\]</span></p>
+<blockquote>
+<p>封面来自 <a target="_blank" rel="noopener" href="https://civitai.com/images/1490468?modelVersionId=114367&amp;prioritizedUserIds=26957&amp;period=AllTime&amp;sort=Most+Reactions&amp;limit=20">CivitAI</a>.</p>
+</blockquote>
+<p>图生图可以泛指基于输入图像生成新图像的过程，因此诸如 image restoration（超分、去噪、填充、上色等）、image-to-image translation、style transfer 等任务都可以归为其中。特别地，本文不包括基于文本的图像编辑方法，相关内容可在<a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9F%BA%E4%BA%8E%E6%96%87%E6%9C%AC%E7%9A%84%E5%9B%BE%E5%83%8F%E7%BC%96%E8%BE%91/" title="扩散模型应用·基于文本的图像编辑">扩散模型应用·基于文本的图像编辑</a>中查看。</p>
+<h2 id="sr3">SR3</h2>
+<p><span class="label label-primary">Google</span> <span class="label label-success">TPAMI 2022</span> <span class="label label-default">2021.04.15</span></p>
+<p>SR3<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Saharia, Chitwan, Jonathan Ho, William Chan, Tim Salimans, David J. Fleet, and Mohammad Norouzi. Image super-resolution via iterative refinement. *IEEE Transactions on Pattern Analysis and Machine Intelligence* (2022).">[1]</span></a></sup> 将 DDPM 应用在了图像超分辨率中，取得了 SOTA 的效果。超分辨率是一种以低分辨率图像为条件的生成任务，把低分辨率图像融入模型的方式很简单——将其 bicubic 插值后 concatenate 到输入即可（作者也尝试了更复杂的，如 FiLM，但发现效果无明显差别）。另外，作者发现在 concatenate 之前做一些高斯模糊扰动能够有效提升 FID 2 个点。</p>
+<p>与 DDPM 相比，SR3 做了一些有趣的改变。训练时，对于时间步 <span class="math inline">\(t\)</span>，DDPM 用的是 <span class="math inline">\(\bar\alpha_t\)</span> 来计算相关变量和损失函数，但是 SR3 并没有直接使用 <span class="math inline">\(\bar\alpha_t\)</span>，而是从分布 <span class="math inline">\(\bar\alpha\sim p(\bar\alpha)=U(\bar\alpha_{t-1},\bar\alpha_t)\)</span> 之中随机取值；另外，模型直接接受 <span class="math inline">\(\bar\alpha\)</span> 作为输入而非时间步 <span class="math inline">\(t\)</span>. 这些改变允许我们在 inference 时在一定范围内灵活地调整 noise scale 和采样步数，从而提高效率。</p>
+<p>最后，论文中零散地提及了三个 future research，可供参考：</p>
+<ul>
+<li>给前向过程加入条件</li>
+<li>通过 <span class="math inline">\(p(\bar\alpha)\)</span> 来 scale 损失函数</li>
+<li>引入类似于 BigGAN 的 quality-diversity trade-off，当然我们现在知道 classifier(-free) guidance 提供了一种解决方案。</li>
+</ul>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 SR3 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="sr3-ex1.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="sr3-ex2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="sr3-ex3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="sr3-ex4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="sdedit">SDEdit</h2>
+<p><span class="label label-primary">Stanford</span> <span class="label label-primary">CMU</span> <span class="label label-success">ICLR 2022</span> <span class="label label-default">2021.08.02</span></p>
+<p>SDEdit<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Meng, Chenlin, Yutong He, Yang Song, Jiaming Song, Jiajun Wu, Jun-Yan Zhu, and Stefano Ermon. Sdedit: Guided image synthesis and editing with stochastic differential equations. In *International Conference on Learning Representations*. 2021.">[2]</span></a></sup> 的思想一张图就能看明白：</p>
+<p><img src="https://sde-image-editing.github.io/images/sde_stroke_generation.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>真实图像和我们画的图像分属两个分布，我们通过前向加噪过程让两个分布的支撑集越来越大，直到产生交集就停下。从交集中的一点出发，用在真实图像上训练好的扩散模型逆向去噪，就回到了真实分布。</p>
+<p>从图像处理的角度，我们知道加噪过程首先破坏的是高频信息，然后才破坏低频信息。所以当我们加噪到一定程度时，就可以去掉不想要的细节纹理，但仍保留大体结构，于是生成出来的图像就既能遵循输入的引导，又显得真实。</p>
+<p>显然，这里一个关键问题就是在什么时候停止加噪。如果停的太早，那么结果不够真实；如果停的太晚，那么可能丢掉了我们想要的引导。论文里称之为 <strong>realism-faithfulness trade-off</strong>.</p>
+<p>遗憾的是，这个问题没有一个通用的解答。它跟用户究竟想要更真实还是更还原有关，还跟引导图像本身的质量有关——如果引导图像是一片白色，那怎么着也没法很还原。一般而言，作者说在 <span class="math inline">\([0.3,0.6]\)</span> 区间内应该都还行（设时间是从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(1\)</span>）。</p>
+<p><img src="sdedit-tradeoff.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 SDEdit 的生成样例（摘自<a target="_blank" rel="noopener" href="https://sde-image-editing.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://sde-image-editing.github.io/images/teaser.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://sde-image-editing.github.io/images/stroke_based_generation.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="ilvr">ILVR</h2>
+<p><span class="label label-success">ICCV 2021 (oral)</span> <span class="label label-default">2021.08.06</span></p>
+<p>给定一张参考图像 <span class="math inline">\(\mathbf y\)</span>，ILVR<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Choi, Jooyoung, Sungwon Kim, Yonghyun Jeong, Youngjune Gwon, and Sungroh Yoon. ILVR: Conditioning Method for Denoising Diffusion Probabilistic Models. In *2021 IEEE/CVF International Conference on Computer Vision (ICCV)*, pp. 14347-14356. IEEE, 2021.">[3]</span></a></sup> 通过精调 DDPM 逆向过程的每一步，让生成的图像 <span class="math inline">\(\x_0\)</span> 接近参考图像。所谓接近，即作者希望 DDPM 能够满足： <span class="math display">\[
+\phi_N(\x_t)=\phi_N(\mathbf y_t)
+\]</span> 其中 <span class="math inline">\(\phi_N\)</span> 是一个低通滤波器，将输入图像下采样 <span class="math inline">\(N\)</span> 倍后上采样回来（我们知道下采样会丢失图像的细节，即高频信息，所以操作后的图像只剩下了低频信息，是谓低通滤波）；<span class="math inline">\(\mathbf y_t\)</span> 是参考图像的加噪版本。上式的意义很明显：希望生成图像的低频信息与参考图像的低频信息相同。为了做到这一点，作者设计了如下逆向过程算法：</p>
+<p><img src="ilvr-alg.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>可以看到，在 DDPM 给出的 <span class="math inline">\(\x&#39;_{t-1}\)</span> 的基础上，作者加上了一个偏移量 <span class="math inline">\(\phi_N(\mathbf y_{t-1})-\phi_N(\x&#39;_{t-1})\)</span>. 假若上/下采样是最近邻插值，那么 <span class="math inline">\(\phi_N(\phi_N(\x))=\phi_N(\x)\)</span>，则： <span class="math display">\[
+\begin{align}
+\phi_N(\x_{t-1})&amp;=\phi_N\left(\phi_N(\mathbf y_{t-1})+\x&#39;_{t-1}-\phi_N(\x&#39;_{t-1})\right)\\
+&amp;=\phi_N\left(\phi_N(\mathbf y_{t-1})\right)+\phi_N\left(\x&#39;_{t-1}\right)-\phi_N\left(\phi_N(\x&#39;_{t-1})\right)\\
+&amp;=\phi_N(\mathbf y_{t-1})+\phi_N(\x&#39;_{t-1})-\phi_N(\x&#39;_{t-1})\\
+&amp;=\phi_N(\mathbf y_{t-1})
+\end{align}
+\]</span> 即满足了条件。作者尝试了不同的上/下采样方法，发现效果其实差不多。</p>
+<p>下采样率 <span class="math inline">\(N\)</span> 是一个超参数，<span class="math inline">\(N\)</span> 越小，保留细节越多，生成图像就越接近参考图像。作者还指出，我们不一定在整个逆向过程都用到参考图像，可以只选择某些步用。选的步数越多，留给随机采样的发挥空间就越少，生成图像也越接近参考图像。</p>
+<div class="note note-info">
+            <p><strong>ILVR 与 classifier guidance 的联系</strong></p><p>是否有人觉得，ILVR 似曾相识？没错，ILVR 和 classifier guidance 的本质是一样的！</p><ul><li>ILVR：对采样的结果偏移了 <span class="math inline">\(\phi_N(\mathbf{y}_{t-1})-\phi_N(\x&#39;_{t-1})\)</span>；</li><li>Classifier guidance：对采样分布的均值偏移了 <span class="math inline">\(s\Sigma\nabla_\x \log p(y\vert \x)|_{\x=\mu}\)</span>.</li></ul><p>一方面，偏移结果（先采样再偏移）和偏移均值（先偏移再采样）显然是等价的；另一方面，<span class="math inline">\(\phi_N(\mathbf{y}_{t-1})-\phi_N(\x&#39;_{t-1})\)</span> 大致是 <span class="math inline">\(\x&#39;_{t-1}\)</span> 到 <span class="math inline">\(\mathbf{y}_{t-1}\)</span> 方向的向量，朝该方向走能够提升 <span class="math inline">\(p(\mathbf{y}_{t-1}\vert \x_{t-1})\)</span>，这与 <span class="math inline">\(\nabla_\x \log p(\mathbf{y}_{t-1}\vert \x_{t-1})\)</span> 的意义相吻合。</p><p>更有甚者，二者都有一个控制引导强度的超参数：下采样率 <span class="math inline">\(N\)</span> 和 guidance scale <span class="math inline">\(s\)</span>. 当 <span class="math inline">\(N\)</span> 增大时，满足 <span class="math inline">\(\phi_N(\x_t)=\phi_N(\mathbf{y}_t)\)</span> 的 <span class="math inline">\(\mathbf{y}_t\)</span> 更多，相当于 <span class="math inline">\(p(\mathbf{y}_{t-1}\vert \x_{t-1})\)</span> 分布变得更平缓，引导作用更弱；而 <span class="math inline">\(s\)</span> 减小时，<span class="math inline">\(p(y\vert\x)^s\)</span> 也是变得更平缓，引导作用也是更弱。完美！</p>
+          </div>
+<div class="note note-success">
+            <p>事实上，后文的许多工作都可以与 classifier guidance 建立起类似的联系。这类方法的特点是无需训练，只需要加载预训练模型，对逆向采样过程施加引导即可，对算力要求十分友好。</p>
+          </div>
+<p>ILVR 可以有许多有趣的应用，比如给一个在狗上面训练的模型以猫作为参考图像，并合理控制 <span class="math inline">\(N\)</span>，那么模型就会生成像这只猫的狗；又比如我们对图像做一些粗糙的涂改后当作参考图像，合理控制 <span class="math inline">\(N\)</span> 和步数范围，就能让模型既保留原有细节、又和谐化涂改的地方。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 ILVR 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="ilvr-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="palette">Palette</h2>
+<p><span class="label label-primary">Google</span> <span class="label label-success">SIGGRAPH 2022</span> <span class="label label-default">2021.11.10</span></p>
+<p>Palette<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Saharia, Chitwan, William Chan, Huiwen Chang, Chris Lee, Jonathan Ho, Tim Salimans, David Fleet, and Mohammad Norouzi. Palette: Image-to-image diffusion models. In *ACM SIGGRAPH 2022 Conference Proceedings*, pp. 1-10. 2022.">[4]</span></a></sup> 是 Google 提出的基于扩散模型做 Image-to-Image Translation 的统一框架，并分别在 colorization, inpainting, uncropping (outpainting) 和 JPEG restoration 四个任务上做了实验。Palette 并没有对不同任务做特别的调参、定制网络架构或任何辅助的损失，事实上，它也没对扩散模型做什么特别的改变，仅仅是把不同任务的退化后的图像当作条件给到模型而已。可能唯一需要提一下的就是对于 inpainting 和 uncropping (outpainting)，作者没有把 binary mask 给到模型，而是把缺失区域填上 Gaussian noise，这样的设置与扩散模型更搭。</p>
+<p>作者做了两方面的 ablation study：</p>
+<ol type="1">
+<li>常用 U-Net 架构里面的 (global) self-attention 真的有用。作者实验对比了 local self-attetion、无 attention 但用 dilated convolution、无 attention 但叠双倍的 resnet blocks，最后还是发现沿用 DDPM 就有的 attention 层最管用。</li>
+<li>许多基于扩散模型的图像恢复或翻译任务都采用的是 L1 loss 而非 L2 loss（如上文的 SR3 就用的 L1），作者实验发现二者的采样质量差不多，但是 L2 loss 能给出更多样的结果。推测是 L1 loss 倾向于让模型丢掉更多的模式。</li>
+</ol>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Palette 的生成样例（摘自<a target="_blank" rel="noopener" href="https://diffusion-palette.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/colorization/17.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/colorization/18.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/inpainting/18.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/inpainting/19.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/uncrop_top/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/uncrop_top/1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/jpeg_decompression/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/jpeg_decompression/1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/panoramas/image6.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://diffusion-palette.github.io/panoramas/image13.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="repaint">RePaint</h2>
+<p><span class="label label-success">CVPR 2022</span> <span class="label label-default">2022.01.24</span></p>
+<p>RePaint<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lugmayr, Andreas, Martin Danelljan, Andres Romero, Fisher Yu, Radu Timofte, and Luc Van Gool. Repaint: Inpainting using denoising diffusion probabilistic models. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 11461-11471. 2022.">[5]</span></a></sup> 是专注于 image inpainting 任务的模型，其基本思想与Blended Diffusion<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Avrahami, Omri, Dani Lischinski, and Ohad Fried. Blended diffusion for text-driven editing of natural images. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 18208-18218. 2022.">[6]</span></a></sup> 的 mask guidance 是一样的，即对于采样过程的每一步，掩码内使用模型的预测结果，而掩码外使用真实图像的加噪结果，如下图所示：</p>
+<p><img src="repaint.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>然而，上述采样模式会导致一个严重的问题——mask 内填充的内容与 mask 外已知的内容在语义上不能很好地匹配。这是因为针对已知部分的加噪过程并没有考虑 mask 内生成的部分。尽管在下一步模型会试图和谐化上一步的结果，但它本身又会带来的新的不和谐，所以这个问题会一直存在。更有甚者，我们的 noise level 是逐渐减小的，所以越往后越难更正前面各步带来的不和谐。</p>
+<p>但是，考虑到 DDPM 的机制是生成符合数据分布的图像，它理应收敛到语义匹配的结果上，只是实际采样时每一步都引入的不和谐让收敛过程变得很慢。为此，作者提出了 <strong>resampling</strong> 技术，即不断地把生成的 <span class="math inline">\(\x_{t-1}\)</span> 重新扩散回 <span class="math inline">\(\x_t\)</span>，在马尔可夫链上“反复横跳”，以期模型能缓解不和谐之处。当然，往回走一步可能不够，作者引入了两个超参数：<span class="math inline">\(j\)</span> 表示每次往回走的步数，<span class="math inline">\(r\)</span> 表示往回走多少次。下图是 <span class="math inline">\(j=10,r=10\)</span> 下时间步的变化情况：</p>
+<p><img src="repaint-time.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% alt="每一个尖峰高度是 j=10，每一段有 r=10 个尖峰。" /></p>
+<p>显然，resampling 的代价就是采样时长变成了原本的 <span class="math inline">\(r\)</span> 倍。</p>
+<p>相比传统的基于 Auto-Encoder + GAN 的模型，基于扩散模型的 RePaint 有一个显著的优势：仅一个预训练模型就能<strong>无缝适配任意形状的 mask</strong>. 这是因为 RePaint 只改动了扩散模型的采样过程，不必专门为填充任务训练。作者尝试了几种不同的 mask 设置：Wide、Narrow、SR 2x、Alt. Lines 、Expand、Half，都取得了不错的效果。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 RePaint 的生成样例（摘自<a target="_blank" rel="noopener" href="https://github.com/andreas128/RePaint">官方 repo</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://user-images.githubusercontent.com/11280511/150822917-737c00b0-b6bb-439d-a5bf-e73238d30990.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://user-images.githubusercontent.com/11280511/150803812-a4729ef8-6ad4-46aa-ae99-8c27fbb2ea2e.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="ddrm">DDRM</h2>
+<p><span class="label label-default">2022.01.27</span></p>
+<h2 id="ddib">DDIB</h2>
+<p><span class="label label-success">ICLR 2023</span> <span class="label label-default">2022.05.16</span></p>
+<p>DDIB<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="Su, Xuan, Jiaming Song, Chenlin Meng, and Stefano Ermon. Dual diffusion implicit bridges for image-to-image translation. In *The Eleventh International Conference on Learning Representations*. 2022.">[8]</span></a></sup> 的理论写得非常 fancy，联系了 Schrödinger Bridge Problem、Optimal Transport 等理论知识，但其实做法很简单——把两个分别训练的 DDIM 用 latent space 连接起来，就可以完成 image-to-image translation 了，如下图所示：</p>
+<p><img src="ddib.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>具体而言，设有两个分别在源域 A 和目标域 B 上预训练好的扩散模型，输入一张域 A 的图像，DDIB 首先在第一个扩散模型上用 ODESolver（如 DDIM）把输入图像转换为隐变量，再在第二个扩散模型上用 ODESolver（如 DDIM）把该隐变量转换到域 B，就完成了域 A 到域 B 的迁移。</p>
+<p>尽管 DDIB 非常直观简单，相比其他 image-to-image translation 方法，它有几个优点：</p>
+<ol type="1">
+<li>具有 cycle consistency：<span class="math inline">\(A_1 → l_1 → B → l_2 → A_2\)</span>，若忽略 ODESolver 的离散化误差，则 <span class="math inline">\(A_1=A_2\)</span>.</li>
+<li>DDIB 用的两个扩散模型分别训练互不干扰，可以保证数据隐私性。</li>
+<li>如果要在 <span class="math inline">\(n\)</span> 个域之间转换，只需要分别训练 <span class="math inline">\(n\)</span> 个模型，而如 CycleGAN 需要两两训练 <span class="math inline">\(O(n^2)\)</span> 个模型。</li>
+</ol>
+<p>但是，DDIB 毕竟没有显式地指导，所以转换过程也较难控制。特别地，当源域和目标域比较接近时（如狮子和老虎），DDIB 还能较好地工作；但是如果二者差距太大（如鸟和狗），那么源域图像中的主体的姿态就很难被保留下来。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 DDIB 的生成样例（摘自<a target="_blank" rel="noopener" href="https://suxuann.github.io/ddib/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://suxuann.github.io/ddib/assets/grid.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="ddnm">DDNM</h2>
+<p><span class="label label-primary">PKU Shenzhen</span> <span class="label label-success">ICLR 2023 spotlight</span> <span class="label label-default">2022.12.01</span></p>
+<blockquote>
+<p>论文作者的知乎讲解：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/588663035">链接</a></p>
+</blockquote>
+<p>在图像恢复任务中，超分、填充、上色对应的退化模式（下采样、掩码、灰度化）都属于线性退化，可以表达为如下形式： <span class="math display">\[
+\mathbf y=\mathbf A\x
+\]</span> 其中，<span class="math inline">\(\x\in\mathbb R^{D\times 1}\)</span> 是原图像，<span class="math inline">\(\mathbf A\in\mathbb R^{d\times D}\)</span> 为退化矩阵，<span class="math inline">\(\mathbf y\in\mathbb R^{d\times 1}\)</span> 为退化图像。图像恢复就是已知 <span class="math inline">\(\mathbf y\)</span>、<span class="math inline">\(\mathbf A\)</span>，求 <span class="math inline">\(\x\)</span> 的过程（当然，在更难的盲图像恢复任务中，<span class="math inline">\(\mathbf A\)</span> 也是未知的）。</p>
+<p>一般而言，同一个退化图像可以对应多个真实图像（称为 ill-posed problem），因此我们的目标其实是：</p>
+<ol type="1">
+<li><strong>Consistency</strong>：求解 <span class="math inline">\(\hat\x\)</span>，使得 <span class="math inline">\(\mathbf y=\mathbf A\hat \x\)</span> 成立；</li>
+<li><strong>Realness</strong>：<span class="math inline">\(\hat \x\sim q(\x)\)</span>，其中 <span class="math inline">\(q(\x)\)</span> 代表真实图像的分布。</li>
+</ol>
+<p>为解决这个问题，论文作者首先指出了 <strong>range-null space decomposition</strong>. 设 <span class="math inline">\(\mathbf A\)</span> 的伪逆为 <span class="math inline">\(\mathbf A^{\dagger}\in\mathbf R^{D\times d}\)</span>，即满足 <span class="math inline">\(\mathbf A\mathbf A^\dagger\mathbf A\equiv\mathbf A\)</span>，那么 <span class="math inline">\(\x\)</span> 可以分解为： <span class="math display">\[
+\x\equiv \mathbf A^\dagger\mathbf A\x+(\mathbf I-\mathbf A^\dagger\mathbf A)\x
+\]</span> 其中第一项 <span class="math inline">\(\mathbf A^\dagger\mathbf A\)</span> 是 <span class="math inline">\(\mathbf A\)</span> 的 range-space，因为 <span class="math inline">\(\mathbf A\mathbf A^\dagger\mathbf A\x=\mathbf A\x\)</span>；而第二项 <span class="math inline">\(\mathbf I-\mathbf A^\dagger\mathbf A\)</span> 是 <span class="math inline">\(\mathbf A\)</span> 的 null-space，因为 <span class="math inline">\(\mathbf A(\mathbf I-\mathbf A^\dagger\mathbf A)\x=\mathbf 0\)</span>.</p>
+<p>将 range-null space decomposition 应用到图像恢复任务中，我们能直接构造出满足 consistency 的解： <span class="math display">\[
+\hat\x=\mathbf A^\dagger \mathbf y+(\mathbf I-\mathbf A^\dagger\mathbf A)\bar\x
+\]</span> 因为无论 <span class="math inline">\(\bar\x\)</span> 是什么，都有： <span class="math display">\[
+\mathbf A\hat\x=\mathbf A\mathbf A^\dagger\mathbf y+\mathbf A(\mathbf I-\mathbf A^\dagger\mathbf A)\bar\x=\mathbf y+\mathbf A\bar\x-\mathbf A\bar\x=\mathbf y
+\]</span> 但是 <span class="math inline">\(\bar\x\)</span> 会影响 realness. 所以我们现在希望找到 <span class="math inline">\(\bar\x\)</span>，使得 <span class="math inline">\(\hat\x\sim q(\x)\)</span>，这就是扩散模型的用武之地了。</p>
+<p>我们知道，扩散模型在第 <span class="math inline">\(t\)</span> 步会预测一个 "clean" image <span class="math inline">\(\x_{0\vert t}=\x_\theta(\x_t,t)\)</span>，但它并不一定满足 consistency. 为此，作者做出修改： <span class="math display">\[
+\hat\x_{0\vert t}=\mathbf A^\dagger \mathbf y+(\mathbf I-\mathbf A^\dagger\mathbf A)\x_{0\vert t}
+\]</span> 那么根据上文所述，<span class="math inline">\(\hat\x_{0\vert t}\)</span> 是一定满足 consistency 的；又由于 <span class="math inline">\(\x_0\)</span> 其实就是 <span class="math inline">\(\hat\x_{0\vert1}\)</span>，所以我们能保证生成的结果满足 consistency. 接下来用修改后的结果计算 <span class="math inline">\(\x_{t-1}\)</span>： <span class="math display">\[
+\x_{t-1}=\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\hat\x_{0\vert t}+\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\x_t+\sigma_t\epsilon,\quad\epsilon\sim\mathcal N(\mathbf 0,\mathbf I)
+\]</span> 重复这个过程，算法和图示如下：</p>
+<p><img src="ddnm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>相比 DDPM，这里扩散模型只参与了 null-space 一项的计算，range-space 一项是我们直接计算的，所以作者将这种方法称为 <strong>Denoising Diffusion Null-Space Model (DDNM)</strong><sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wang, Yinhuai, Jiwen Yu, and Jian Zhang. Zero-Shot Image Restoration Using Denoising Diffusion Null-Space Model. *arXiv preprint arXiv:2212.00490* (2022).">[9]</span></a></sup>.</p>
+<p>可以看到，DDNM 要求我们知道 <span class="math inline">\(\mathbf A\)</span> 和 <span class="math inline">\(\mathbf A^\dagger\)</span>. 那么对于常见的退化，它们的 <span class="math inline">\(\mathbf A,\mathbf A^\dagger\)</span> 可以构造为：</p>
+<ol type="1">
+<li>填充：mask 就是 <span class="math inline">\(\mathbf A\)</span>。又由于 <span class="math inline">\(\mathbf A\mathbf A\mathbf A=\mathbf A\)</span>，所以 <span class="math inline">\(\mathbf A^\dagger=\mathbf A\)</span>；</li>
+<li>上色：<span class="math inline">\(\mathbf A=[1/3,1/3,1/3]\)</span>，即将各通道数值做平均。其伪逆为 <span class="math inline">\(\mathbf A^\dagger=[1,1,1]^\mathsf T\)</span>，可以由 <span class="math inline">\(\mathbf A\mathbf A^\dagger\equiv \mathbf I\)</span> 验证；</li>
+<li>超分：与上色类似，取 <span class="math inline">\(\mathbf A=[1/n^2,\ldots,1/n^2]\)</span>，其中 <span class="math inline">\(n\)</span> 是 patch 大小，好比 average pooling 层。其伪逆为 <span class="math inline">\(\mathbf A^\dagger=[1,\ldots,1]^\mathsf T\)</span>，好比 nearest upsample 层。</li>
+<li>复杂退化：以老照片修复为例，我们既需要填充划痕，又需要上色，还可能需要超分。因此 <span class="math inline">\(\mathbf A=\mathbf A_1\mathbf A_2\mathbf A_3\)</span>，对应伪逆为 <span class="math inline">\(\mathbf A^\dagger=\mathbf A_3^\dagger\mathbf A_2^\dagger\mathbf A_1^\dagger\)</span>.</li>
+</ol>
+<p><br/></p>
+<p>DDNM 可以解决没有噪声干扰的图像恢复任务，但是不能很好地解决带噪声的任务。为此，作者提出了 DDNM+，做了两方面的改进：</p>
+<ol type="1">
+<li><p>对于带噪声的任务，作者将其建模为： <span class="math display">\[
+\mathbf y=\mathbf A\x+\mathbf n,\quad \mathbf n\in\mathbb R^{d\times 1}\sim\mathcal N(\mathbf 0,\sigma_{\mathbf y}^2\mathbf I)
+\]</span> 如果直接应用 DDNM，有： <span class="math display">\[
+\hat\x_{0\vert t}=\mathbf A^\dagger(\mathbf A\x+\mathbf n)+(\mathbf I-\mathbf A^\dagger\mathbf A)\x_{0\vert t}=\x_{0\vert t}-\mathbf A^\dagger(\mathbf A\x_{0\vert t}-\mathbf A\x)+{\color{blue}{\mathbf A^\dagger\mathbf n}}
+\]</span> 可以看见噪声 <span class="math inline">\(\mathbf n\)</span> 会被保留下来并传递给 <span class="math inline">\(\x_{t-1}\)</span>，最终影响恢复效果。为了解决这个问题，考虑到扩散模型的逆向过程本身就是一个高斯分布，那么这个噪声 <span class="math inline">\(\mathbf n\)</span> 不正好可以利用进去吗？我们只需要调小方差，让 <span class="math inline">\(\mathbf n\)</span> 帮我们“补齐”调小的这一部分。于是，作者引入了两个参数 <span class="math inline">\({\color{blue}{\Sigma_t}}\)</span> 和 <span class="math inline">\({\color{blue}{\Phi_t}}\)</span>： <span class="math display">\[
+\begin{align}
+&amp;\hat\x_{0\vert t}=\x_{0\vert t}-{\color{blue}{\Sigma_t}}\mathbf A^\dagger(\mathbf A\x_{0\vert t}-\mathbf y)\\
+&amp;{\color{blue}{\hat p}}(\x_{t-1}\mid\x_t,\hat\x_{0\vert t})=\mathcal N(\x_{t-1};\mu_t(\x_t,\hat\x_{0\vert t}),{\color{blue}{\Phi_t}}\mathbf I)
+\end{align}
+\]</span> 特别地，如果取 <span class="math inline">\(\Sigma_t={\color{blue}{\lambda_t}}\mathbf I\)</span>，<span class="math inline">\(\Phi_t={\color{blue}{\gamma_t}}\mathbf I\)</span>，代入上式并都展开： <span class="math display">\[
+\begin{align}
+&amp;\hat\x_{0\vert t}={\color{blue}{\lambda_t}}\mathbf A^\dagger\mathbf y+(\mathbf I-{\color{blue}{\lambda_t}}\mathbf A^\dagger\mathbf A)\x_{0\vert t}\\
+&amp;\x_{t-1}=\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\hat\x_{0\vert t}+\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\x_t+\sqrt{\color{blue}{\gamma_t}}\epsilon,\quad\epsilon\sim\mathcal N(\mathbf 0,\mathbf I)
+\end{align}
+\]</span> 首先观察第一个式子，<span class="math inline">\(\hat\x_{0\vert t}\)</span> 的随机性完全来自于第一项。考虑到在超分和上色中，<span class="math inline">\(\mathbf A^\dagger\)</span> 都是复制操作，所以 <span class="math inline">\(\mathbf A^\dagger\mathbf y\)</span> 依旧可以用 <span class="math inline">\(\mathcal N(\mathbf 0,\sigma_\mathbf y^2)\)</span> 来近似，因此 <span class="math inline">\(\text{var}(\hat \x_{0\vert t})={\color{blue}{\lambda_t}}^2\sigma_\mathbf y^2\)</span>.</p>
+<p>再看第二个式子，<span class="math inline">\(\x_{t-1}\)</span> 的随机性来自于第一项和第三项，为了方便叙述，记 <span class="math inline">\(\hat \x_{0\vert t}\)</span> 前面那一坨系数为 <span class="math inline">\(a_t=\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\)</span>，那么第一项的方差就是 <span class="math inline">\(a_t^2\cdot\text{var}(\hat\x_{0\vert t})=a_t^2{\color{blue}{\lambda_t}}^2\sigma_\mathbf y^2\)</span>；第三项方差显然是 <span class="math inline">\({\color{blue}\gamma_t}\)</span>. 二者独立因此方差可加，所以 <span class="math inline">\(\text{var}(\x_{t-1})=(a_t{\color{blue}\lambda_t}\sigma_\mathbf y)^2+{\color{blue}\gamma_t}\)</span>.</p>
+<p>前文说过，我们引入两个参数是希望 <span class="math inline">\(\mathbf n\)</span> 补齐故意调小的方差，所以应该让 <span class="math inline">\(\text{var}(\x_{t-1})\)</span> 与 <span class="math inline">\(q(\x_{t-1}\vert \x_t)\)</span> 的方差相等，即 <span class="math inline">\((a_t{\color{blue}{\lambda_t}}\sigma_{\mathbf y})^2+{\color{blue}{\gamma_t}}=\sigma_t^2\)</span>；另一方面，<span class="math inline">\(\Sigma_t\)</span> 其实是有害于 consistency 的，所以我们应该尽可能让它接近 <span class="math inline">\(\mathbf I\)</span>. 综上，作者最终选取： <span class="math display">\[
+{\color{blue}{\gamma_t}}=\sigma_t^2-(a_t{\color{blue}\lambda_t}\sigma_{\mathbf y})^2,\quad\quad {\color{blue}{\lambda_t}}=\begin{cases}1,&amp;&amp;\sigma_t\geq a_t\sigma_{\mathbf y}\\\sigma_t/a_t \sigma_{\mathbf y},&amp;&amp;\sigma_t&lt;a_t\sigma_{\mathbf y}\end{cases}
+\]</span></p></li>
+<li><p>Time-Travel Trick. 作者发现，在大规模 average pooling 的超分、大 mask 填充、低采样率的压缩感知场景下，DDNM 的效果并不好。这是因为 <span class="math inline">\(\mathbf A^\dagger \mathbf y\)</span> 过于的 local，不能给逆向过程以有效的引导。作者给出的解决方案与 RePaint 的来回采样类似，即在 <span class="math inline">\(t\)</span> 时刻往回采样 <span class="math inline">\(\x_{t+l}\sim q(\x_{t+l}\vert\x_t)\)</span>，然后重新执行 DDNM 直到得到 <span class="math inline">\(\x_{t-1}\)</span>.</p></li>
+</ol>
+<p>DDNM+ 的算法如下所示：</p>
+<p><img src="ddnm+.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 DDNM 的生成样例（摘自<a target="_blank" rel="noopener" href="https://wyhuai.github.io/ddnm.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://wyhuai.github.io/ddnm.io/images/front.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Saharia, Chitwan, Jonathan Ho, William Chan, Tim Salimans, David J. Fleet, and Mohammad Norouzi. Image super-resolution via iterative refinement. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> (2022). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Meng, Chenlin, Yutong He, Yang Song, Jiaming Song, Jiajun Wu, Jun-Yan Zhu, and Stefano Ermon. Sdedit: Guided image synthesis and editing with stochastic differential equations. In <em>International Conference on Learning Representations</em>. 2021. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Choi, Jooyoung, Sungwon Kim, Yonghyun Jeong, Youngjune Gwon, and Sungroh Yoon. ILVR: Conditioning Method for Denoising Diffusion Probabilistic Models. In <em>2021 IEEE/CVF International Conference on Computer Vision (ICCV)</em>, pp. 14347-14356. IEEE, 2021. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Saharia, Chitwan, William Chan, Huiwen Chang, Chris Lee, Jonathan Ho, Tim Salimans, David Fleet, and Mohammad Norouzi. Palette: Image-to-image diffusion models. In <em>ACM SIGGRAPH 2022 Conference Proceedings</em>, pp. 1-10. 2022. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Lugmayr, Andreas, Martin Danelljan, Andres Romero, Fisher Yu, Radu Timofte, and Luc Van Gool. Repaint: Inpainting using denoising diffusion probabilistic models. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 11461-11471. 2022. <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Avrahami, Omri, Dani Lischinski, and Ohad Fried. Blended diffusion for text-driven editing of natural images. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 18208-18218. 2022. <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>DDRM <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Su, Xuan, Jiaming Song, Chenlin Meng, and Stefano Ermon. Dual diffusion implicit bridges for image-to-image translation. In <em>The Eleventh International Conference on Learning Representations</em>. 2022. <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>Wang, Yinhuai, Jiwen Yu, and Jian Zhang. Zero-Shot Image Restoration Using Denoising Diffusion Null-Space Model. <em>arXiv preprint arXiv:2212.00490</em> (2022). <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>扩散模型应用·图生图与图像恢复</div>
+      <div>https://xyfjason.github.io/blog-main/2023/01/05/扩散模型应用·图生图与图像恢复/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E6%96%87%E7%94%9F%E5%9B%BE%E5%A4%A7%E6%A8%A1%E5%9E%8B/" title="扩散模型应用·文生图大模型">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型应用·文生图大模型</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/12/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E6%9D%A1%E4%BB%B6%E5%BC%95%E5%AF%BC%E7%94%9F%E6%88%90/" title="扩散模型条件引导生成">
+                        <span class="hidden-mobile">扩散模型条件引导生成</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

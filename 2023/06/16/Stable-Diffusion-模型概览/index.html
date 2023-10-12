@@ -1,0 +1,985 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前置 代码库  官方 GitHub 仓库：  基于 Latent Diffusion 仓库搭建，常用于科研人员做基于 Stable Diffusion 的实验和开发。 Stable Diffusion v2.0 ~ v2.1: https:&#x2F;&#x2F;github.com&#x2F;Stability-AI&#x2F;StableDiffusion Stable Diffusion v1.1 ~ v1.5: https:&#x2F;&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Stable Diffusion]模型概览">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/06/16/Stable-Diffusion-%E6%A8%A1%E5%9E%8B%E6%A6%82%E8%A7%88/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="前置 代码库  官方 GitHub 仓库：  基于 Latent Diffusion 仓库搭建，常用于科研人员做基于 Stable Diffusion 的实验和开发。 Stable Diffusion v2.0 ~ v2.1: https:&#x2F;&#x2F;github.com&#x2F;Stability-AI&#x2F;StableDiffusion Stable Diffusion v1.1 ~ v1.5: https:&#x2F;&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/gwen-blindbox.png">
+<meta property="article:published_time" content="2023-06-16T02:55:52.000Z">
+<meta property="article:modified_time" content="2023-10-12T13:00:51.079Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta property="article:tag" content="AIGC">
+<meta property="article:tag" content="stable diffusion">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/gwen-blindbox.png">
+  
+  
+  
+  <title>[Stable Diffusion]模型概览 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/stable-diffusion/gwen-blindbox.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[Stable Diffusion]模型概览"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-16 10:55" pubdate>
+          2023年6月16日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          59 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[Stable Diffusion]模型概览</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前置">前置</h2>
+<h3 id="代码库">代码库</h3>
+<ul>
+<li><strong>官方 GitHub 仓库</strong>：
+<ul>
+<li>基于 Latent Diffusion 仓库搭建，常用于科研人员做基于 Stable Diffusion 的实验和开发。</li>
+<li>Stable Diffusion v2.0 ~ v2.1: <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/StableDiffusion" class="uri">https://github.com/Stability-AI/StableDiffusion</a></li>
+<li>Stable Diffusion v1.1 ~ v1.5: <a target="_blank" rel="noopener" href="https://github.com/runwayml/stable-diffusion" class="uri">https://github.com/runwayml/stable-diffusion</a></li>
+<li>Stable Diffusion v1.1 ~ v1.4: <a target="_blank" rel="noopener" href="https://github.com/compvis/stable-diffusion" class="uri">https://github.com/compvis/stable-diffusion</a></li>
+</ul></li>
+<li><strong>HuggingFace 🧨Diffusers</strong>:
+<ul>
+<li>HuggingFace 的扩散模型库，有着自己的一套 API，支持加载/微调 Stable Diffusion 模型。</li>
+<li>GitHub：<a target="_blank" rel="noopener" href="https://github.com/huggingface/diffusers" class="uri">https://github.com/huggingface/diffusers</a></li>
+<li>文档：<a target="_blank" rel="noopener" href="https://huggingface.co/docs/diffusers/index" class="uri">https://huggingface.co/docs/diffusers/index</a></li>
+</ul></li>
+<li><strong>webui</strong>
+<ul>
+<li>在 stablediffusion 和许多其他仓库（如 ESRGAN, CodeFormer 等）的基础上使用 gradio 搭建的 web 图形化界面，方便易用。</li>
+<li>GitHub：<a target="_blank" rel="noopener" href="https://github.com/AUTOMATIC1111/stable-diffusion-webui" class="uri">https://github.com/AUTOMATIC1111/stable-diffusion-webui</a></li>
+</ul></li>
+</ul>
+<h3 id="文件格式">文件格式</h3>
+<p>训练好的模型 checkpoint 有如下三种保存格式：</p>
+<ul>
+<li><strong><code>.ckpt</code></strong>：适用于官方 GitHub 仓库和 webui.</li>
+<li><strong><code>.safetensors</code></strong>：HuggingFace 推出的文件格式，旨在更安全、更快速地加载权重，可用于 webui.</li>
+<li><strong>Diffusers 格式</strong>：将 Stable Diffusion 的各个组件分别存储在子目录中，每个子目录包含 <code>.json</code> 配置文件和权重文件，适用于 HuggingFace Diffusers 库。</li>
+</ul>
+<p>举个例子，打开 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-1/tree/main">Stable Diffusion v2.1 官方仓库</a>可以看到，里面既有 <code>.ckpt</code> 文件、又有 <code>.safetensors</code> 文件、还有按组件分目录存储的配置文件和权重文件。<strong>事实上，上传者是把上述三种格式一股脑都传到了仓库中，我们按需下载即可</strong>。</p>
+<h2 id="官方模型">官方模型</h2>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="versions.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="v1-1-to-v1-5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="model-variants.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<blockquote>
+<p>注：v2.0 指代 v2-base，v2.0-v 指代 v2.</p>
+</blockquote>
+<p>FID Score 指示图像质量，CLIP Score 指示图像与文本的匹配程度。对于每个版本的模型，遍历 8 种 cfg-scale (classifier-free guidance scale)，连接成一条曲线。理论上，cfg-scale 越大，图像与文本越匹配，但图像质量可能会被损坏（例如颜色过饱和），这解释了曲线后半段的上升。但当 cfg-scale 比较小时，增大 cfg-scale 反而能让图像质量更好，推测这与训练时条件生成相对无条件生成占比更大有关。</p>
+<ul>
+<li><strong>Stable Diffusion v2.1</strong>
+<ul>
+<li><strong>说明</strong>：以 v2 权重初始化，在同一数据集上继续训练 55k steps，768x768 分辨率；然后在减轻了 NSFW 过滤限制的数据集上继续训练另外 155k steps.</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-1/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#reference-sampling-script">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-1#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v2.1-base</strong>
+<ul>
+<li><strong>说明</strong>：以 v2-base 权重初始化，继续训练 220k steps，512x512 分辨率，减轻了数据集的 NSFW 过滤限制。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-1-base/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#reference-sampling-script">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-1-base#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion x4-upscaler</strong>
+<ul>
+<li><strong>说明</strong>：4 倍上采样器。在 LAION 数据集中大于 2048x2048 分辨率的 10M 张图片上训练 1.25M steps.</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-x4-upscaler/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#image-upscaling-with-stable-diffusion">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-x4-upscaler#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v2</strong>
+<ul>
+<li><strong>说明</strong>：以 v2-base 权重初始化，在同一数据集上训练 150k steps，但训练目标换成了 v-prediction. 随后以 768x768 分辨率又训练了 140k steps.</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#reference-sampling-script">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v2-depth</strong>
+<ul>
+<li><strong>说明</strong>：以深度图为条件的图像生成。以 v2-base 权重初始化，训练 200k steps. 添加了一个额外的输入通道用于输入 <a target="_blank" rel="noopener" href="https://github.com/isl-org/MiDaS">MiDaS</a> 模型预测的深度图。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-depth/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#depth-conditional-stable-diffusion">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-depth#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v2-inpainting</strong>
+<ul>
+<li><strong>说明</strong>：图像填充模型。以 v2-base 权重初始化，训练 200k steps. 参考 <a target="_blank" rel="noopener" href="https://github.com/saic-mdal/lama">LaMa</a> 的掩码生成策略，加上输入图像的 VAE 隐空间表示一同作为 UNet 的条件。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-inpainting/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#image-inpainting-with-stable-diffusion">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-inpainting#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v2-base</strong>
+<ul>
+<li><strong>说明</strong>：从头训练，在过滤后的 LAION-5B 数据集上以 256x256 分辨率训练 550k steps. 接着在同样的数据集上以 512x512 分辨率训练 850k steps.</li>
+<li><strong>与 v1 对比</strong>：
+<ul>
+<li>使用更大的文本编码器：从 v1 的 CLIP ViT-L/14 换成了 <a target="_blank" rel="noopener" href="https://github.com/mlfoundations/open_clip">OpenCLIP-ViT/H</a>.</li>
+<li>使用 CLIP 倒数第二层而非倒数第一层，与 Imagen 和 novelai 一样。</li>
+<li>UNet 的结构略有调整：attention head 固定 dim=64 而不是固定 head 数量，不影响参数量；由于换了文本编码器，text embedding dim 从 768 变成了 1024，使得 cross-attention 的参数量有轻微变化。</li>
+</ul></li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-base/tree/main">链接</a>，包含全部三种文件格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/stablediffusion#reference-sampling-script">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-base#examples">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v1.5</strong>
+<ul>
+<li><strong>说明</strong>：以 v1.2 权重初始化，在 laion-aesthetics v2 5+ 数据集上以 512x512 分辨率训练 595k steps，同时以 10% 的概率丢弃文本条件来提升 classifier-free guidance 性能。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/runwayml/stable-diffusion-v1-5/tree/main">链接</a>，包含全部三种文件格式，可按需下载。其中，以 <code>v1-5-pruned-emaonly</code> 命名的文件只包含 EMA 权重，适用于推理；以 <code>v1-5-pruned</code> 命名的文件包含 EMA 权重和 non-EMA 权重，适用于接着微调。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/runwayml/stable-diffusion">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/runwayml/stable-diffusion-v1-5#diffusers">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v1.5 inpainting</strong>
+<ul>
+<li><strong>说明</strong>：图像填充模型。以 v1.5 权重初始化，在 laion-aesthetics v2 5+ 数据集上以 512x512 分辨率训练 440k steps，同时以 10% 的概率丢弃文本条件。为了支持 inpainting，给 UNet 增加了 5 个额外的输入通道（4 个用于编码输入图片，1 个用于掩码本身），它们以零值初始化。训练时生成随机掩码，并且以 25% 的概率遮掉整张图。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/runwayml/stable-diffusion-inpainting">链接</a>，包含 <code>.ckpt</code> 和 Diffusers 两种格式，可按需下载。</li>
+<li><strong>在官方 GitHub 仓库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://github.com/runwayml/stable-diffusion#inpainting-with-stable-diffusion">README</a>.</li>
+<li><strong>在 Diffusers 库中使用</strong>：见 <a target="_blank" rel="noopener" href="https://huggingface.co/runwayml/stable-diffusion-inpainting#diffusers">Examples</a>.</li>
+</ul></li>
+<li><strong>Stable Diffusion v1.4</strong>
+<ul>
+<li><strong>说明</strong>：以 v1.2 权重初始化，在 laion-aesthetics v2 5+ 数据集上以 512x512 分辨率训练 225k steps，同时以 10% 的概率丢弃文本条件来提升 classifier-free guidance 性能。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v1-4">Diffusers 格式</a>｜<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v-1-4-original"><code>.ckpt</code> 格式</a>，其中 <code>sd-v1-4.ckpt</code> 只包含 EMA 权重；<code>sd-v1-4-full-ema.ckpt</code> 包含 EMA 权重和 non-EMA 权重。</li>
+</ul></li>
+<li><strong>Stable diffusion v1.3</strong>
+<ul>
+<li><strong>说明</strong>：以 v1.2 权重初始化，在 laion-improved-aesthetics 数据集上以 512x512 分辨率训练 195k steps，同时以 10% 的概率丢弃文本条件来提升 classifier-free guidance 性能。</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v1-3">Diffusers 格式</a>｜<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v-1-3-original"><code>.ckpt</code> 格式</a></li>
+</ul></li>
+<li><strong>Stable Diffusion v1.2</strong>
+<ul>
+<li><strong>说明</strong>：以 v1.1 权重初始化，在 laion-improved-aesthetics 数据集上以 512x512 分辨率训练 515k steps.</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v1-2">Diffusers 格式</a>｜<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v-1-2-original"><code>.ckpt</code> 格式</a></li>
+</ul></li>
+<li><strong>Stable Diffusion v1.1</strong>
+<ul>
+<li><strong>说明</strong>：在 laion2B-en 数据集上以 256x256 分辨率训练 237k steps；在 laion-high-resolution 数据集上以 512x512 分辨率训练194k steps.</li>
+<li><strong>下载</strong>：<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v1-1">Diffusers 格式</a>｜<a target="_blank" rel="noopener" href="https://huggingface.co/CompVis/stable-diffusion-v-1-1-original"><code>.ckpt</code> 格式</a></li>
+</ul></li>
+</ul>
+<p><strong>在 webui 中使用</strong>：下载 <code>.ckpt</code> 或 <code>.safetensors</code> 格式的权重，放在 <code>./models/Stable-diffusion</code> 目录下，刷新 webui 顶部的模型选择框即可看到目录下所有的模型。</p>
+<h2 id="vae">VAE</h2>
+<p>VAE 是 Stable Diffusion (Latent Diffusion) 的一个组件，其编码器将输入图片从图像空间 <span class="math inline">\(\mathbb R^{3\times H\times W}\)</span> 映射到隐空间 <span class="math inline">\(\mathbb R^{4\times H/f\times W/f}\)</span>（<span class="math inline">\(f\)</span> 为下采样系数），在隐空间中通过扩散模型学习数据分布后，再由解码器映射回图像空间。VAE 编码图像的高频细节信息，使得隐空间中的扩散模型能把精力着重花在学习图像的 high-level 语义上，从而摆脱繁琐的细节。</p>
+<p>理论上，扩散模型的学习依赖于预训练好的 VAE，但我们也可以在训练好扩散模型后，固定住扩散模型而微调 VAE，使得图片的细节和色调更加完善。因此，我们有时能见到人们单独发布 VAE 权重。</p>
+<p><strong>在 webui 中使用</strong></p>
+<p>常见的模型权重一般会内置 VAE，无需再额外挂载；但有些模型没有内置 VAE，或者额外训练了自己的 VAE，这时就需要选择正确的 VAE 挂载上去。VAE 的选择框被淹没在了设置标签页里的众多设置项之中，我们可以在 Settings → User interface → Quicksettings list 中添加 sd_vae 一项，这样选择框就会被固定在整个页面上方，方便随时切换。</p>
+<p>在 webui 中，有两种使用 VAE 的方式：</p>
+<ol type="1">
+<li>将 VAE 权重命名为对应模型相同的名字（例如 <code>&lt;model name&gt;.vae.pt</code>），放在 <code>./models/Stable-diffusion</code> 目录下，那么 webui 会自动加载与模型名匹配的 VAE.</li>
+<li>将 VAE 权重放在 <code>./models/VAE</code> 下，在设置项中选择使用哪个 VAE.</li>
+</ol>
+<p><strong>社区模型举例</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/sd-vae-ft-mse-original/blob/main/vae-ft-mse-840000-ema-pruned.safetensors">sd-vae-ft-mse-original</a>：StabilityAI 在原始 kl-f8 autoencoder（使用 KL 作为正则项，下采样到原图大小的 1/8）上微调而来。数据集为 LAION-Aesthetics 和 LAION-Humans 按 1:1 比例混合。首先加载原 EMA 权重并以 L1 + LPIPS 为目标训练 313198 steps，然后以 MSE + 0.1 * LPIPS 为目标训练另外 280k steps. 只微调了 decoder 部分。</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/hakurei/waifu-diffusion-v1-4/tree/main/vae">kl-f8-anime2.ckpt</a>：Waifu Diffusion 的 VAE，顾名思义，专门对日漫风格微调。</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/NoCrypt/blessed_vae/blob/main/blessed2.vae.pt">blessed_vae</a>：据称能提高对比度。</li>
+<li><a target="_blank" rel="noopener" href="https://huggingface.co/WarriorMama777/OrangeMixs/blob/main/VAEs/orangemix.vae.pt">orangemix</a>：OrangeMixs 系列模型的 VAE.</li>
+</ul>
+<p><strong>测试</strong>：基底模型为 AnythingV5Ink_v32Ink.</p>
+<p><img src="vae.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<h2 id="微调模型-dreambooth-合并模型">微调模型 / Dreambooth / 合并模型</h2>
+<p>在 CivitAI 社区中以 "Checkpoint" 标签标识的模型，即通常说的基底模型（底模）。这些模型或是通过微调、或是通过合并权重得到，往往有着显著的风格，在特定领域上的出图效果往往远好于 Stable Diffusion 官方权重。</p>
+<p>其中，Dreambooth 指的是一种微调整个模型使之生成指定对象（即个性化生成）的方法，由 Google 在<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2208.12242">这篇论文</a>中提出，详细内容可以参看<a target="_blank" rel="noopener" href="https://xyfjason.top/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%E7%AF%87%EF%BC%88%E4%BA%8C%EF%BC%89/#DreamBooth">博客</a>。在 LoRA（详见后文）被引入 Stable Diffusion 之后，人们也会依照 DreamBooth 的方式微调 LoRA.</p>
+<p><strong>社区模型举例</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/6424">ChilloutMix</a>：写实人物</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/43331">majicMIX realistic</a>：写实人物，偏好东亚脸</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/4384">DreamShaper</a>：2.5D / 写实</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/4201">Realistic Vision</a>：写实</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/7371">ReV Animated</a>：2.5D</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/4468">Counterfeit-V3.0</a>：2D，日漫</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/15003">CyberRealistic</a>：写实人物，偏好欧美脸</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/9409">Anything</a>：2D，日漫</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/81458">AbsoluteReality</a>：写实</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/25694">epiCRealism</a>：写实</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/36520">GhostMix</a>：2.5D，CG</li>
+</ul>
+<p>另外，该<a target="_blank" rel="noopener" href="https://rentry.org/sdmodels">网站</a>收集了一些模型。</p>
+<h2 id="textual-inversion-embeddings">Textual Inversion Embeddings</h2>
+<p>由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2208.01618">这篇论文</a>提出的个性化生成方法，通过对一个特殊 text token 做 inversion，使之绑定到某特定对象上。该方法不改动基底模型的权重，仅需保存得到的 text embedding，所以文件非常小（几十到几百 KB）。但毕竟没有微调模型权重，其效果往往不如 LoRA.</p>
+<p>特殊用法：对低质量图片做 textual inversion，那么结果可作为 negative embedding 放入 negative prompts 中。</p>
+<p><strong>在 webui 中使用</strong></p>
+<p>将训练/下载的 textual inversion 文件放在 <code>./embeddings</code> 目录下，使用时找到 Generate 按钮下方第三个按钮 Show/hide extra networks，在弹出的页面中点击想使用的 embedding，则相关词语会出现在 prompt 框中。注意不要把 negative embedding 写在正向 prompt 里面了。</p>
+<p><strong>社区模型举例</strong>（Negative embeddings）</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/7808/easynegative">EasyNegative</a></li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/71961/fast-negative-embedding-fastnegativev2">Fast Negative Embedding</a></li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/5224/bad-artist-negative-embedding">Bad artist Negative embedding</a></li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/4629/deep-negative-v1x">Deep Negative V1.x</a></li>
+</ul>
+<h2 id="lora-模型">LoRA 模型</h2>
+<p>LoRA 是一种参数高效微调方法（PEFT），最早由<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">这篇论文</a>提出并应用于微调语言大模型之中，后来由<a target="_blank" rel="noopener" href="https://github.com/cloneofsimo/lora">这个代码库</a>引入到对 Stable Diffusion 模型的微调之中。LoRA 并不改变原模型的权重，而是在线性层旁边新增一个下采样-上采样的支路，通过训练这个支路来完成微调。因此，同一个基底 Stable Diffusion 模型可以搭载不同的 LoRA 使用，具有很高的灵活性。由于 LoRA 支路网络的参数量小（文件大小在几十到几百 MB 左右），相比微调整个模型，对算力的需求更加友好，并且也能达到不错的效果，因此很快受到大家的热烈欢迎，成为了目前最流行的微调 Stable Diffusion 的方法之一。</p>
+<p><strong>在 webui 中使用</strong></p>
+<p>将训练/下载的 LoRA 模型放在 <code>./models/Lora</code> 目录下，使用时找到 Generate 按钮下方第三个按钮 Show/hide extra networks，在弹出的页面中点击想使用的 LoRA，则 <code>&lt;lora:xxx:1&gt;</code> 会出现在 prompt 框中，其中 <code>1</code> 代表 LoRA 权重，可以按需修改。</p>
+<p><strong>使用疑问</strong></p>
+<ol type="1">
+<li>按理说，使用 LoRA 时需要配合训练用到的基底模型才能 work，但是实测发现同一个 LoRA 有时能够在不同基底模型上产生效果，这是为什么？猜测是因为这些基底模型都从同一个权重（如官方权重）微调而来，参数上或多或少差异不大。</li>
+<li>如何融合多个 LoRA？<strong>TODO!!!</strong></li>
+</ol>
+<p><strong>社区模型举例</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/58390/detail-tweaker-lora-lora">Detail Tweaker LoRA</a>：细节调整</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/64471/real-mechanical-parts">Real Mechanical Parts</a>：人体机械</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/26124/koreandolllikeness-v20">KoreanDollLikeness (v2.0)</a></li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/48363/taiwandolllikeness-v20">TaiwanDollLikeness (v2.0)</a></li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/25995/blindbox">blindbox/大概是盲盒</a>：盲盒</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/83816/spider-gwen-commission-or-goofy-ai">Spider Gwen (commission) | Goofy Ai</a>：格温蜘蛛侠</li>
+<li><a target="_blank" rel="noopener" href="https://civitai.com/models/36805/fonglets-hermione-granger-philosphers-stone">Fonglets Hermione Granger (Philosphers Stone)</a>：魔法石赫敏</li>
+</ul>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>https://github.com/compvis/stable-diffusion <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>https://github.com/runwayml/stable-diffusion <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>https://github.com/Stability-AI/StableDiffusion <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>https://cyberes.github.io/stable-diffusion-models/ <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>文生图模型之Stable Diffusion - 小小将的文章 - 知乎 https://zhuanlan.zhihu.com/p/617134893 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>StableDiffusion模型资源探索食用指南 - SeASnAkE的文章 - 知乎 https://zhuanlan.zhihu.com/p/597504900 <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>在StableDiffusion中说起VAE时,我们在谈论什么? - SeASnAkE的文章 - 知乎 https://zhuanlan.zhihu.com/p/599129815 <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/AIGC/" class="category-chain-item">AIGC</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+        <a href="/blog-main/tags/AIGC/" class="print-no-link">#AIGC</a>
+      
+        <a href="/blog-main/tags/stable-diffusion/" class="print-no-link">#stable diffusion</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[Stable Diffusion]模型概览</div>
+      <div>https://xyfjason.github.io/blog-main/2023/06/16/Stable-Diffusion-模型概览/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月16日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/21/Stable-Diffusion-%E8%AE%AD%E7%BB%83%E4%BD%A0%E7%9A%84LoRA-Linux/" title="[Stable Diffusion]训练你的LoRA(Linux)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[Stable Diffusion]训练你的LoRA(Linux)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/14/Stable-Diffusion-webui%E9%83%A8%E7%BD%B2(Linux)/" title="[Stable Diffusion]webui部署(Linux)">
+                        <span class="hidden-mobile">[Stable Diffusion]webui部署(Linux)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

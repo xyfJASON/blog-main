@@ -1,0 +1,982 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\R}{\mathbb R} \newcommand{\d}{\mathrm d} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Cov}{\mathrm{Cov}} \]  本篇是《统计推断》第四章多维随机变量的前 5 节内容，主要关注于二维随机变量。  1 联合分布与">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[统计推断]第四章·二维随机变量">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/03/14/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E5%9B%9B%E7%AB%A0%C2%B7%E4%BA%8C%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\R}{\mathbb R} \newcommand{\d}{\mathrm d} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Cov}{\mathrm{Cov}} \]  本篇是《统计推断》第四章多维随机变量的前 5 节内容，主要关注于二维随机变量。  1 联合分布与">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+<meta property="article:published_time" content="2022-03-14T07:31:28.000Z">
+<meta property="article:modified_time" content="2023-09-16T05:29:42.122Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="statistics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+  
+  
+  
+  <title>[统计推断]第四章·二维随机变量 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/statistics.jpeg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[统计推断]第四章·二维随机变量"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-14 15:31" pubdate>
+          2022年3月14日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          88 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[统计推断]第四章·二维随机变量</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\R}{\mathbb R}
+\newcommand{\d}{\mathrm d}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\]</span></p>
+<blockquote>
+<p>本篇是《统计推断》第四章多维随机变量的前 5 节内容，主要关注于二维随机变量。</p>
+</blockquote>
+<h2 id="联合分布与边缘分布">1 联合分布与边缘分布</h2>
+<p><span class="math inline">\(n\)</span> 维随机<strong>向量</strong>：样本空间 <span class="math inline">\(S\)</span> 到欧氏空间 <span class="math inline">\(\R^n\)</span> 的函数。</p>
+<p><strong>联合 pmf / pdf</strong>： <span class="math display">\[
+P((X,Y)\in A)=\begin{cases}\sum_{(x,y)\in A}f(x,y)&amp;&amp;\text{discrete}\\\iint_A f(x,y)\d x\d y&amp;&amp;\text{continuous}\end{cases}
+\]</span> <strong>期望</strong>： <span class="math display">\[
+\E[g(X,Y)]=\begin{cases}\sum_{(x,y)\in\R^2}g(x,y)f(x,y)&amp;&amp;\text{discrete}\\\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}g(x,y)f(x,y)\d x\d y&amp;&amp;\text{continuous}\end{cases}
+\]</span> <strong>边缘 pmf / pdf</strong>： <span class="math display">\[
+f_X(x)=\begin{cases}\sum_{y\in\R}f_{X,Y}(x,y)&amp;&amp;\text{discrete}\\\int_{-\infty}^{+\infty}f_{X,Y}(x,y)\d y&amp;&amp;\text{continuous}\end{cases}
+\]</span> <strong>联合 cdf</strong>： <span class="math display">\[
+F(x,y)=P(X\leq x,Y\leq y)
+\]</span> 对连续二维随机向量： <span class="math display">\[
+\frac{\partial^2F(x,y)}{\partial x\partial y}=f(x,y)
+\]</span></p>
+<h2 id="条件分布与独立性">2 条件分布与独立性</h2>
+<h3 id="条件分布条件期望条件方差">2.1 条件分布、条件期望、条件方差</h3>
+<p><strong>conditional pmf / pdf</strong>：设 <span class="math inline">\(f_X(x)&gt;0\)</span>， <span class="math display">\[
+f(y\mid x)=\frac{f(x,y)}{f_X(x)}
+\]</span> <strong>条件期望</strong>： <span class="math display">\[
+\E[g(Y)\mid X=x]=\begin{cases}\sum_yg(y)f(y\mid x)&amp;&amp;\text{discrete}\\\int_{-\infty}^{+\infty}g(y)f(y\mid x)\mathrm dy&amp;&amp;\text{continuous}\end{cases}
+\]</span> <strong>条件方差</strong>： <span class="math display">\[
+\Var(Y\mid X=x)=\E[Y^2\mid X=x]-(\E[Y\mid X=x])^2
+\]</span> <span class="math inline">\(Y\)</span> 在条件 <span class="math inline">\(X=x\)</span> 下的条件分布通常因 <span class="math inline">\(x\)</span> 的取值而异，所以我们实际上得到了 <span class="math inline">\(y\)</span> 的一族概率分布，每一个分布对应着一个 <span class="math inline">\(x\)</span>。类似的，<span class="math inline">\(\E[g(Y)\mid X=x]\)</span> 是 <span class="math inline">\(x\)</span> 的函数，因此 <span class="math inline">\(E[g(Y)\mid X]\)</span> 是一个取值依赖于 <span class="math inline">\(X\)</span> 的随机变量。</p>
+<h3 id="独立的定义和一个充要条件">2.2 独立的定义和一个充要条件</h3>
+<p><strong>独立</strong>： <span class="math display">\[
+f(x,y)=f_X(x)f_Y(y)
+\]</span> 易知：<span class="math inline">\(f(y\mid x)=f_Y(y)\)</span>，即条件 <span class="math inline">\(X=x\)</span> 并没有提供关于 <span class="math inline">\(Y\)</span> 的额外信息。</p>
+<p><br/></p>
+<p><strong>引理</strong>：<span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 独立当且仅当存在函数 <span class="math inline">\(g(x)\)</span> 和 <span class="math inline">\(h(y)\)</span>，使得对于任意 <span class="math inline">\(x,y\in\R\)</span> 都有： <span class="math display">\[
+f(x,y)=g(x)h(y)
+\]</span> <em>Proof</em>. 取 <span class="math inline">\(g(x)=f_X(x),\,h(y)=f_Y(y)\)</span> 即可证明必要性。为证明充分性，不妨设 <span class="math inline">\(X,Y\)</span> 都是连续随机变量，并令： <span class="math display">\[
+c=\int_{-\infty}^{+\infty}g(x)\mathrm dx\quad d=\int_{-\infty}^{+\infty}h(y)\mathrm dy
+\]</span> 则： <span class="math display">\[
+\begin{align}
+cd&amp;=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}g(x)h(y)\mathrm dx\mathrm dy\\
+&amp;=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}f(x,y)\mathrm dx\mathrm dy\\
+&amp;=1
+\end{align}
+\]</span> 且边缘 pdf 为： <span class="math display">\[
+\begin{align}
+f_X(x)&amp;=\int_{-\infty}^{+\infty}f(x,y)\mathrm dy=\int_{-\infty}^{+\infty}g(x)h(y)\mathrm dy=dg(x)\\
+f_Y(y)&amp;=\int_{-\infty}^{+\infty}f(x,y)\mathrm dx=\int_{-\infty}^{+\infty}g(x)h(y)\mathrm dx=ch(y)
+\end{align}
+\]</span> 于是： <span class="math display">\[
+f(x,y)=g(x)h(y)=cdg(x)h(y)=f_X(x)f_Y(y)
+\]</span> Q.E.D.</p>
+<blockquote>
+<p>注记：虽然 <span class="math inline">\(f(x,y)=g(x)h(y)\)</span> 并不意味着 <span class="math inline">\(g(x)\)</span> 和 <span class="math inline">\(h(y)\)</span> 就是边缘分布，但是他们和边缘分布呈倍数关系，且这两个倍数的系数乘积为 <span class="math inline">\(1\)</span>.</p>
+</blockquote>
+<h3 id="独立随机变量的期望和矩母函数">2.3 独立随机变量的期望和矩母函数</h3>
+<p>独立随机变量下，某些计算将变得十分简单：</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(X,Y\)</span> 是独立随机变量，则： <span class="math display">\[
+\E[g(X)h(Y)]=\E[g(X)]\E[h(Y)]
+\]</span> <em>Proof</em>. 不妨设 <span class="math inline">\(X,Y\)</span> 是连续随机变量，则： <span class="math display">\[
+\begin{align}
+\E[g(X)h(Y)]&amp;=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}g(x)h(y)f(x,y)\mathrm dx\mathrm dy\\
+&amp;=\int_{-\infty}^{+\infty}\int_{-\infty}^{+\infty}g(x)h(y)f_X(x)f_Y(y)\mathrm dx\mathrm dy\\
+&amp;=\left(\int_{-\infty}^{+\infty}g(x)f_X(x)\mathrm dx\right)\left(\int_{-\infty}^{+\infty}h(y)f_Y(y)\mathrm dy\right)\\
+&amp;=\E[g(X)]\E[h(Y)]
+\end{align}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p>应用上述定理，我们可以推导两个独立随机变量的和的矩母函数：</p>
+<p><strong>定理</strong>：设独立随机变量 <span class="math inline">\(X,Y\)</span> 的矩母函数分别为 <span class="math inline">\(M_X(t)\)</span> 和 <span class="math inline">\(M_Y(t)\)</span>，则随机变量 <span class="math inline">\(Z=X+Y\)</span> 的矩母函数为 <span class="math inline">\(M_Z(t)=M_X(t)M_Y(t)\)</span>.</p>
+<p><em>Proof</em>. <span class="math display">\[
+M_Z(t)=\E[e^{tZ}]=\E[e^{t(X+Y)}]=\E[e^{tX}e^{tY}]=\E[e^{tX}]\E[e^{tY}]=M_X(t)M_Y(t)
+\]</span> Q.E.D.</p>
+<div class="note note-success">
+            <p>例【独立正态随机变量的和】设 <span class="math inline">\(X\sim N(\mu,\sigma^2),\,Y\sim N(\gamma,\tau^2)\)</span> 是两个独立的正态随机变量，则随机变量 <span class="math inline">\(Z=X+Y\)</span> 服从 <span class="math inline">\(N(\mu+\gamma,\sigma^2+\tau^2)\)</span>.</p><p><em>Proof</em>. 根据前面章节的计算，我们知道 <span class="math inline">\(X,Y\)</span> 的矩母函数分别是： <span class="math display">\[M_X(t)=\exp(\mu t+\sigma^2t^2/2)\quad M_Y(t)=\exp(\gamma t+\tau^2t^2/2)\]</span> 于是根据上一条定理，有： <span class="math display">\[M_Z(t)=M_X(t)M_Y(t)=\exp((\mu+\gamma)t+(\sigma^2+\tau^2)t^2/2)\]</span> 于是 <span class="math inline">\(Z\sim N(\mu+\gamma,\sigma^2+\tau^2)\)</span>.</p><p>Q.E.D.</p>
+          </div>
+<h2 id="二维变换">3 二维变换</h2>
+<h3 id="二维随机向量的向量函数">3.1 二维随机向量的向量函数</h3>
+<p>设 <span class="math inline">\((X,Y)\)</span> 是概率分布已知的二维随机向量，考察新的二维随机向量 <span class="math inline">\((U, V)\)</span>，其中 <span class="math inline">\(U=g_1(X,Y),\,V=g_2(X,Y)\)</span>.</p>
+<p>若 <span class="math inline">\((X,Y)\)</span> 是离散的，则存在一个可数集 <span class="math inline">\(A\)</span> 使得 <span class="math inline">\((X,Y)\)</span> 的联合 pmf 在其上取值大于 <span class="math inline">\(0\)</span>. 令 <span class="math inline">\(B=\{(u,v):\exists (x,y)\in A\text{ s.t. }u=g_1(x,y),\,v=g_2(x,y)\}\)</span>，则 <span class="math inline">\(B\)</span> 是离散随机向量 <span class="math inline">\((U,V)\)</span> 全体可能的取值所构成的集合，是可数集。记 <span class="math inline">\(A_{uv}=\{(x,y)\in A:g_1(x,y)=u,\,g_2(x,y)=v\}\)</span>，则： <span class="math display">\[
+f_{U,V}(u,v)=P(U=u,V=v)=P((X,Y)\in A_{uv})=\sum_{(x,y)\in A_{uv}}f_{X,Y}(x,y)
+\]</span> <div class="note note-success">
+            <p>例【独立泊松随机变量的和】设 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 是一对独立的泊松随机变量，参数分别为 <span class="math inline">\(\theta\)</span> 和 <span class="math inline">\(\lambda\)</span>，则 <span class="math inline">\(X+Y\)</span> 服从参数为 <span class="math inline">\(\theta+\lambda\)</span> 的泊松分布。</p>
+          </div></p>
+<p>若 <span class="math inline">\((X,Y)\)</span> 是连续的，且 <span class="math inline">\(u=g_1(x,y)\)</span> 和 <span class="math inline">\(v=g_2(x,y)\)</span> 都是一对一的，则我们能从中解出逆变换：<span class="math inline">\(x=h_1(u,v),\,y=h_2(u,v)\)</span>. 定义 Jacobi 行列式： <span class="math display">\[
+J=\begin{vmatrix}\frac{\partial x}{\partial u}&amp;\frac{\partial x}{\partial v}\\\frac{\partial y}{\partial u}&amp;\frac{\partial y}{\partial v}\end{vmatrix}=\frac{\partial x}{\partial u}\frac{\partial y}{\partial v}-\frac{\partial x}{\partial v}\frac{\partial y}{\partial u}
+\]</span> 则： <span class="math display">\[
+f_{U,V}(u,v)=f_{X,Y}(h_1(u,v),h_2(u,v))|J|
+\]</span> &gt; 回忆第二章中，随机变量的单调函数的结论： &gt; <span class="math display">\[
+&gt; f_Y(y)=f_X(g^{-1}(y))\left|\frac{\mathrm d}{\mathrm dy}g^{-1}(y)\right|
+&gt; \]</span> &gt; 可以看见他们具有类似的形式，二维情形就是一维的拓展。</p>
+<h3 id="独立随机变量的函数依然独立">3.2 独立随机变量的函数依然独立</h3>
+<p><strong>定理</strong>：设 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 是一对独立的随机变量，<span class="math inline">\(g(x)\)</span> 是 <span class="math inline">\(x\)</span> 的一元函数，<span class="math inline">\(h(y)\)</span> 是 <span class="math inline">\(y\)</span> 的一元函数，则随机变量 <span class="math inline">\(U=g(X)\)</span> 与 <span class="math inline">\(V=h(Y)\)</span> 独立。</p>
+<p><em>Proof</em>. 不妨设 <span class="math inline">\(U,V\)</span> 都是连续随机变量。记：<span class="math inline">\(A_u=\{x:g(x)\leq u\},\,B_v=\{y:h(y)\leq v\}\)</span>，则 <span class="math inline">\(U,V\)</span> 的联合 cdf 为： <span class="math display">\[
+F_{U, V}(u, v)=P(U\leq u, V\leq v)=P(X\in A_u,Y\in B_v)=P(X\in A_u)P(Y\in B_v)
+\]</span> 故联合 pdf 为： <span class="math display">\[
+f_{U, V}(u, v)=\frac{\partial^2}{\partial u\partial v}F_{U, V}(u, v)=\left(\frac{\mathrm d}{\mathrm du}P(X\in A_u)\right)\left(\frac{\mathrm d}{\mathrm dv}P(X\in B_v)\right)
+\]</span> 该乘积的第一项是 <span class="math inline">\(u\)</span> 的函数，第二项是 <span class="math inline">\(v\)</span> 的函数，由上一节独立的充要条件知 <span class="math inline">\(U, V\)</span> 独立。</p>
+<p>Q.E.D.</p>
+<h2 id="多层模型与混合分布">4 多层模型与混合分布</h2>
+<h3 id="多层模型">4.1 多层模型</h3>
+<p>把事件分层建模往往更加容易。一个经典的例子是，一只昆虫产下大量的卵，已知每颗卵的成活率为 <span class="math inline">\(p\)</span>，问平均有多少颗卵能存活？</p>
+<p>昆虫产卵的数量 <span class="math inline">\(Y\)</span> 是一个服从参数为 <span class="math inline">\(\lambda\)</span> 的泊松分布的随机变量，存活卵的数量 <span class="math inline">\(X\)</span> 是一个服从参数为 <span class="math inline">\((Y,p)\)</span> 的二项分布的随机变量，因此我们可以建立分层模型： <span class="math display">\[
+\begin{align}
+&amp;X\mid Y\sim\text{binomial}(Y, p)&amp;&amp;\text{第一层（顶层）}\\
+&amp;Y\sim \text{poisson}(\lambda)&amp;&amp;\text{第二层}
+\end{align}
+\]</span> 那么 <span class="math inline">\(X\)</span> 实际上具有如下分布： <span class="math display">\[
+\begin{align}
+P(X=x)&amp;=\sum_{y=0}^{+\infty}P(X=x, Y=y)\\
+&amp;=\sum_{y=0}^{+\infty}P(X=x\mid Y=y)P(Y=y)\\
+&amp;=\sum_{y=0}^{+\infty}\binom{y}{x}p^x(1-p)^{y-x}\frac{e^{-\lambda}\lambda^y}{y!}\\
+&amp;=\frac{e^{-\lambda}(p\lambda)^x}{x!}\sum_{y=x}^{+\infty}\frac{(\lambda(1-p))^{y-x}}{(y-x)!}\\
+&amp;=\frac{e^{-\lambda}(p\lambda)^x}{x!}\sum_{t=0}^{+\infty}\frac{(\lambda(1-p))^{t}}{t!}&amp;&amp;t=y-x\\
+&amp;=\frac{e^{-\lambda}(p\lambda)^x}{x!}e^{\lambda(1-p)}\\
+&amp;=\frac{(p\lambda)^x}{x!}e^{-p\lambda}
+\end{align}
+\]</span> 故 <span class="math inline">\(X\sim\text{poisson}(p\lambda)\)</span>，与 <span class="math inline">\(Y\)</span> 没有关系。</p>
+<h3 id="重期望公式">4.2 重期望公式</h3>
+<p><strong>重期望公式</strong>：设 <span class="math inline">\(X，Y\)</span> 是任意随机变量，若下列期望存在，则有： <span class="math display">\[
+\E X=\E[\E[X\mid Y]]
+\]</span> <em>Proof</em>. 设 <span class="math inline">\(f(x,y)\)</span> 是联合 pdf，则： <span class="math display">\[
+\E X=\iint xf(x,y)\mathrm dx\mathrm dy=\int\left[\int xf(x\mid y)\mathrm dx\right]f(y)\mathrm dy=\E[\E[X\mid Y]]
+\]</span> Q.E.D.</p>
+<h3 id="混合分布">4.3 混合分布</h3>
+<p><strong>混合分布</strong>指的是多层模型导出的分布，可以定义为：若随机变量 <span class="math inline">\(X\)</span> 的分布依赖于服从某分布的另一个量，则称 <span class="math inline">\(X\)</span> 服从混合分布。</p>
+<p><strong>例【Poisson-Gamma 混合分布】</strong>设 <span class="math inline">\(Y\)</span> 有多层模型： <span class="math display">\[
+\begin{align}
+&amp;Y\mid \Lambda\sim\text{poisson}(\Lambda)\\
+&amp;\Lambda\sim \text{Gamma}(\alpha,\beta)
+\end{align}
+\]</span> 则 <span class="math inline">\(Y\)</span> 的边缘分布（当 <span class="math inline">\(\alpha\in\mathbb Z\)</span> 时）为负二项分布： <span class="math display">\[
+\begin{align}
+P(Y=y)&amp;=\int_0^{+\infty} P(Y=y,\Lambda=\lambda)\mathrm d\lambda\\
+&amp;=\int_0^{+\infty} P(Y=y\mid\Lambda=\lambda)P(\Lambda=\lambda)\mathrm d\lambda\\
+&amp;=\int_0^{+\infty}\frac{e^{-\lambda}\lambda^y}{y!}\frac{1}{\Gamma(\alpha)\beta^\alpha}\lambda ^{\alpha-1}e^{-\lambda/\beta}\mathrm d\lambda\\
+&amp;=\frac{1}{y!(\alpha-1)!\beta^\alpha}\int_0^{+\infty}\lambda ^{y+\alpha-1}e^{-\frac{\beta+1}{\beta}\lambda}\mathrm d\lambda\\
+&amp;=\frac{\beta^{y}}{y!(\alpha-1)!{(\beta+1)}^{y+\alpha}}\int_0^{+\infty}\left(\frac{\beta+1}{\beta}\lambda\right)^{y+\alpha-1}e^{-\left(\frac{\beta+1}{\beta}\lambda\right)}\mathrm d\left(\frac{\beta+1}{\beta}\lambda\right)\\
+&amp;=\frac{\beta^{y}}{y!(\alpha-1)!{(\beta+1)}^{y+\alpha}}\Gamma(y+\alpha)\\
+&amp;=\binom{y+\alpha-1}{y}\left(\frac{\beta}{\beta+1}\right)^{y}\left(\frac{1}{\beta+1}\right)^\alpha
+\end{align}
+\]</span></p>
+<h3 id="方差恒等式">4.4 方差恒等式</h3>
+<p>设 <span class="math inline">\(X，Y\)</span> 是任意随机变量，若下列期望存在，则有： <span class="math display">\[
+\Var X=\E[\Var(X\mid Y)]+\Var(\E[X\mid Y])
+\]</span> <em>Proof</em>. 根据 <span class="math inline">\(\Var X=\E X^2-(\E X)^2\)</span> 和重期望公式，有： <span class="math display">\[
+\begin{align}
+&amp;\E[\Var(X\mid Y)]+\Var(\E[X\mid Y])\\
+=&amp;\E[\E[X^2\mid Y]-(\E[X\mid Y])^2]+\E[(\E[X\mid Y])^2]-(\E[\E[X\mid Y]])^2\\
+=&amp;\E X^2-(\E X)^2\\
+=&amp;\Var X
+\end{align}
+\]</span> Q.E.D.</p>
+<h2 id="协方差与相关系数">5 协方差与相关系数</h2>
+<h3 id="定义">5.1 定义</h3>
+<p>随机变量 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 的<strong>协方差</strong>为： <span class="math display">\[
+\Cov(X,Y)=\E[(X-\E X)(Y-\E Y)]
+\]</span> <strong>相关系数</strong>为： <span class="math display">\[
+\rho_{XY}=\frac{\Cov(X,Y)}{\sqrt{\Var X\Var Y}}
+\]</span></p>
+<h3 id="定理">5.2 定理</h3>
+<p><strong>定理</strong>：设 <span class="math inline">\(X,Y\)</span> 是任意随机变量，则： <span class="math display">\[
+\Cov(X,Y)=\E XY-\E X\E Y
+\]</span> <em>Proof</em>. <span class="math display">\[
+\begin{align}
+\Cov(X,Y)&amp;=\E[(X-\E X)(Y-\E Y)]\\
+&amp;=\E[XY-X\E Y-Y\E X+\E X\E Y]\\
+&amp;=\E XY-\E X\E Y-\E X\E Y+\E X\E Y\\
+&amp;=\E XY-\E X\E Y\\
+\end{align}
+\]</span> Q.E.D.</p>
+<p><br/></p>
+<p><strong>定理</strong>：设 <span class="math inline">\(X\)</span> 和 <span class="math inline">\(Y\)</span> 是一对<strong>独立</strong>的随机变量，则 <span class="math inline">\(\Cov(X,Y)=\rho_{XY}=0\)</span>.</p>
+<p><em>Proof</em>. 由于 <span class="math inline">\(X,Y\)</span> 独立，根据上一篇的定理知 <span class="math inline">\(\E XY=\E X\E Y\)</span>，故 <span class="math inline">\(\Cov(X,Y)=\E XY-\E X\E Y=0\)</span>. Q.E.D.</p>
+<p>但是，<span class="math inline">\(\Cov(X,Y)=0\)</span> 或 <span class="math inline">\(\E XY=\E X\E Y\)</span> 并不代表 <span class="math inline">\(X,Y\)</span> 独立。</p>
+<p><br/></p>
+<p><strong>定理</strong>：设 <span class="math inline">\(X,Y\)</span> 是任意随机变量，<span class="math inline">\(a,b\)</span> 是任意两个常量，则： <span class="math display">\[
+\Var(aX+bY)=a^2\Var X+b^2\Var Y+2ab\Cov(X,Y)
+\]</span> <em>Proof</em>. <span class="math display">\[
+\begin{align}
+\Var(aX+bY)&amp;=\E[(aX+bY-a\E X-b\E Y)^2]\\
+&amp;=\E[(a(X-\E X)+b(Y-\E Y))^2]\\
+&amp;=\E[a^2(X-\E X)^2]+\E[b^2(Y-\E Y)^2]+\E[2ab(X-\E X)(Y-\E Y)]\\
+&amp;=a^2\E[(X-\E X)^2]+b^2\E[(Y-\E Y)^2]+2ab\E[(X-\E X)(Y-\E Y)]\\
+&amp;=a^2\Var X+b^2\Var Y+2ab\Cov(X,Y)
+\end{align}
+\]</span> Q.E.D.</p>
+<p>特别的，如果 <span class="math inline">\(X,Y\)</span> 独立，那么 <span class="math inline">\(\Var(aX+bY)=a^2\Var X+b^2\Var Y\)</span>.</p>
+<h3 id="协方差与相关本质是度量线性关系">5.3 协方差与相关本质是度量线性关系</h3>
+<p><strong>定理</strong>：设 <span class="math inline">\(X,Y\)</span> 是任意随机变量，则：</p>
+<ol type="1">
+<li><span class="math inline">\(\rho_{XY}\in[-1,1]\)</span></li>
+<li><span class="math inline">\(|\rho_{XY}|=1\)</span> 当且仅当存在数 <span class="math inline">\(a\neq 0\)</span> 以及 <span class="math inline">\(b\)</span> 使得 <span class="math inline">\(P(Y=aX+b)=1\)</span>. 若 <span class="math inline">\(\rho_{XY}=1\)</span>，则 <span class="math inline">\(a&gt;0\)</span>；若 <span class="math inline">\(\rho_{XY}=-1\)</span>，则 <span class="math inline">\(a&lt;0\)</span>.</li>
+</ol>
+<p><em>Proof</em>. 考察关于 <span class="math inline">\(t\)</span> 的函数 <span class="math inline">\(h(t)\)</span>： <span class="math display">\[
+h(t)=\E[((X-\E X)t+(Y-\E Y))^2]=t^2\Var X+2t\Cov(X,Y)+\Var Y
+\]</span> 这是一个二次函数。由于对于任意 <span class="math inline">\(t\)</span>，<span class="math inline">\(h(t)\)</span> 是一个非负随机变量的期望，所以其值非负，故二次函数判别式小于等于 <span class="math inline">\(0\)</span>： <span class="math display">\[
+\Delta=4\Cov(X,Y)^2-4\Var X\Var Y\leq 0
+\]</span> 得到： <span class="math display">\[
+\Cov(X,Y)^2\leq \Var X\Var Y\implies \rho_{XY}^2=\frac{\Cov(X,Y)^2}{\Var X\Var Y}\leq 1\implies-1\leq\rho_{XY}\leq 1
+\]</span> 这证明了第一个结论。</p>
+<p>另外，当 <span class="math inline">\(\rho_{XY}^2=1\)</span> 时，<span class="math inline">\(\Delta=0\)</span>，说明 <span class="math inline">\(h(t)\)</span> 有一个二重根，设为 <span class="math inline">\(t_0\)</span>，即 <span class="math inline">\(h(t_0)=0\)</span>. 为书写方便，记 <span class="math inline">\(Z=((X-\E X)t_0+(Y-\E Y))^2\geq 0\)</span>，则 <span class="math display">\[
+h(t_0)=\E Z=\int_0^{+\infty} zP(Z=z)\mathrm dz
+\]</span> 可以看出，<span class="math inline">\(h(t_0)=0\)</span> 当且仅当 <span class="math inline">\(P(Z=0)=1\)</span>，即： <span class="math display">\[
+P(((X-\E X)t_0+(Y-\E Y))^2=0)=1
+\]</span> 也即： <span class="math display">\[
+P((X-\E X)t_0+(Y-\E Y)=0)=1
+\]</span> 取 <span class="math inline">\(a=-t_0,\,b=t_0\E X+\E Y\)</span> 即得第二个结论的前半部分。</p>
+<p>又因为从 <span class="math inline">\(h(t_0)=0\)</span> 中可以解出：<span class="math inline">\(t_0=\frac{-2\Cov(X,Y)\pm\sqrt\Delta}{2\Var X}=-\frac{\Cov(X,Y)}{\Var X}\)</span>，可以看出 <span class="math inline">\(a\)</span> 与 <span class="math inline">\(\rho_{XY}\)</span> 同号，这证明了第二个结论的后半部分。</p>
+<p>Q.E.D.</p>
+<div class="note note-success">
+            <p>例【依赖关系很强但相关系数很小】：设 <span class="math inline">\(X\sim U(-1,1)\)</span>，<span class="math inline">\(Z\sim U(0,1/10)\)</span>，且 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Z\)</span> 独立。令 <span class="math inline">\(Y=X^2+Z\)</span>，考察随机向量 <span class="math inline">\((X,Y)\)</span>，在给定 <span class="math inline">\(X=x\)</span> 的条件下，<span class="math inline">\(Y=x^2+Z\)</span>，条件分布是 <span class="math inline">\(U(x^2,x^2+1/10)\)</span>，即： <span class="math display">\[f_Y(y\mid X=x)=\begin{cases}10,&amp;x^2\leq y\leq x^2+1/10\\0,&amp;\text{otherwise}\end{cases}\]</span> 于是联合分布： <span class="math display">\[f(x,y)=f_X(x)f_Y(y\mid X=x)=5\quad -1&lt;x&lt;1,\,x^2&lt;y&lt;x^2+1/10\]</span> 下图显示了 <span class="math inline">\((X,Y)\)</span> 的支撑集：</p><p><img src="rho0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p><p>可以看出，<span class="math inline">\(X,Y\)</span> 有着很强的依赖关系，但这种关系<strong>是非线性的</strong>，我们下面证明，它们的相关系数其实是 <span class="math inline">\(0\)</span>.</p><p>由于 <span class="math inline">\(\E X=\E X^3=0\)</span>，<span class="math inline">\(\E XZ=\E X\E Z=0\)</span>，故 <span class="math display">\[\begin{align}\Cov(X,Y)&amp;=\E [X(X^2+Z)]-\E X\E(X^2+Z)\\&amp;=\E X^3+\E XZ-\E X\E(X^2+Z)\\&amp;=0\end{align}\]</span> 进而 <span class="math inline">\(\rho_{XY}=0\)</span>.</p>
+          </div>
+<h3 id="二维正态分布">5.4 二维正态分布</h3>
+<p>设 <span class="math inline">\(-\infty&lt;\mu_X&lt;+\infty,\,-\infty&lt;\mu_Y&lt;+\infty,\,0&lt;\sigma_X,\,0&lt;\sigma_Y,\,-1&lt;\rho&lt;1\)</span>，则<strong>期望为 <span class="math inline">\(\mu_X,\mu_Y\)</span>、方差为 <span class="math inline">\(\sigma_X^2,\sigma_Y^2\)</span>、相关系数为 <span class="math inline">\(\rho\)</span> 的二维正态概率密度函数</strong>为： <span class="math display">\[
+f(x,y)=\frac{1}{2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2}}\exp\left(-\frac{1}{2(1-\rho^2)}\left(\left(\frac{x-\mu_X}{\sigma_X}\right)^2-2\rho\left(\frac{x-\mu_X}{\sigma_X}\right)\left(\frac{y-\mu_Y}{\sigma_Y}\right)+\left(\frac{y-\mu_Y}{\sigma_Y}\right)^2\right) \right)
+\]</span> 二维正态分布有很多很好的性质：</p>
+<ol type="1">
+<li><span class="math inline">\(X\)</span> 的边缘分布为 <span class="math inline">\(N(\mu_X,\sigma_X)\)</span></li>
+<li><span class="math inline">\(Y\)</span> 的边缘分布为 <span class="math inline">\(N(\mu_Y,\sigma_Y)\)</span></li>
+<li><span class="math inline">\(X,Y\)</span> 的相关系数为 <span class="math inline">\(\rho_{XY}=\rho\)</span></li>
+<li>对任意常量 <span class="math inline">\(a,b\)</span>，<span class="math inline">\(aX+bY\sim N(a\mu_X+b\mu_Y,a^2\sigma_X^2+b^2\sigma_Y^2+2ab\rho\sigma_X\sigma_Y)\)</span></li>
+</ol>
+<p>注意，二维正态分布的所有边缘分布都是正态的，但是边缘分布是正态的并不能说明联合分布是正态的。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="category-chain-item">统计推断</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/statistics/" class="print-no-link">#statistics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[统计推断]第四章·二维随机变量</div>
+      <div>https://xyfjason.github.io/blog-main/2022/03/14/统计推断-第四章·二维随机变量/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/04/15/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-2%C2%B7Markov-Decision-Processes/" title="[David Silver强化学习]2·Markov Decision Processes">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[David Silver强化学习]2·Markov Decision Processes</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/06/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%89%E7%AB%A0%C2%B7%E5%B8%B8%E8%A7%81%E5%88%86%E5%B8%83%E6%97%8F%EF%BC%88%E4%B8%89%EF%BC%89/" title="[统计推断]第三章·常见分布族（三）">
+                        <span class="hidden-mobile">[统计推断]第三章·常见分布族（三）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,926 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\E}{\mathbb E} \newcommand{\f}{\mathbf f} \newcommand{\w}{\mathbf w} \newcommand{\calN}{\mathcal N} \newcommand{\pdata}{p_\text{dat">
+<meta property="og:type" content="article">
+<meta property="og:title" content="连续时间扩散模型——SDE与ODE描述">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/04/%E8%BF%9E%E7%BB%AD%E6%97%B6%E9%97%B4%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E2%80%94%E2%80%94SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\E}{\mathbb E} \newcommand{\f}{\mathbf f} \newcommand{\w}{\mathbf w} \newcommand{\calN}{\mathcal N} \newcommand{\pdata}{p_\text{dat">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sde.png">
+<meta property="article:published_time" content="2022-12-04T04:45:07.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:34:07.335Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sde.png">
+  
+  
+  
+  <title>连续时间扩散模型——SDE与ODE描述 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/sde.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="连续时间扩散模型——SDE与ODE描述"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-04 12:45" pubdate>
+          2022年12月4日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          96 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">连续时间扩散模型——SDE与ODE描述</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\x}{\mathbf x}
+\newcommand{\z}{\mathbf z}
+\newcommand{\E}{\mathbb E}
+\newcommand{\f}{\mathbf f}
+\newcommand{\w}{\mathbf w}
+\newcommand{\calN}{\mathcal N}
+\newcommand{\pdata}{p_\text{data}}
+\]</span></p>
+<h2 id="brief-introduction">Brief Introduction</h2>
+<p>我们已经用两篇文章<a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">从VAE到DDPM</a>、<a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score-Based Generative Models</a> 分别介绍了 DDPM (Denoising Diffusion Probabilistic Models) 和 SMLD (Score Matching + Langevin Dynamics)，并说明了它们的本质其实是相同的。进一步，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[1]</span></a></sup>把它们扩展到了连续时间场景并使用<strong>随机微分方程（Stochastic Differential Equations, SDE）</strong>描述。在该视角下，DDPM 和 SMLD 是两个特殊形式 SDE 的离散化。DDPM / SMLD 的加噪过程对应 forward SDE，去噪过程对应 reverse SDE，解 reverse SDE 的过程就是生成过程。除了使用通用的 SDE 数值解法以外，作者根据问题特点提出了 Predictor-Corrector Samplers，统一并扩展了 DDPM / SMLD 的去噪过程。作者还构造了与 SDE 具有相同边缘分布的 ODE，从而得到确定性生成过程。</p>
+<h3 id="ddpm-recap">DDPM Recap</h3>
+<ol type="1">
+<li><p>加噪过程（前向过程）</p>
+<p>DDPM 将前向过程构建为一个离散马尔可夫链 <span class="math inline">\(\{\x_0,\x_1,\ldots,\x_N\}\)</span>，转移概率为： <span class="math display">\[
+p(\x_i\vert \x_{i-1})=\calN\left(\x_i;\sqrt{1-\beta_i}\x_{i-1},\beta_i\mathbf I\right)
+\]</span> 其中 <span class="math inline">\(0&lt;\beta_1,\beta_2,\ldots,\beta_N&lt;1\)</span> 是每一步转移的正态分布的方差。上式等价写作： <span class="math display">\[
+\x_i=\sqrt{1-\beta_i}\x_{i-1}+\sqrt{\beta_i}\z_{i-1},\quad i=1,\ldots,N \tag{1}\label{ddpm}
+\]</span> 在该转移概率下，我们有一个优秀的性质： <span class="math display">\[
+p_{\alpha_i}(\x_i\vert \x_0)=\calN\left(\x_{i};\sqrt{\bar\alpha_i}\x_0,(1-\bar\alpha_i)\mathbf I\right)\tag{2}\label{ddpm0}
+\]</span> 其中 <span class="math inline">\(\bar\alpha_i=\prod_{j=1}^i(1-\beta_j)\)</span>.</p></li>
+<li><p>去噪过程（逆向过程）</p>
+<p>去噪过程是前向过程的逆向，若以 score function 为目标构建模型 <span class="math inline">\(s_\theta(\x_i,i)\)</span>，则： <span class="math display">\[
+\begin{align}
+p_\theta(\x_{i-1}\vert\x_i)=\calN\left(\x_{i-1};\tfrac{1}{\sqrt{1-\beta_i}}(\x_i+\beta_is_\theta(\x_i,i)),\beta_i\mathbf I\right)
+\end{align}
+\]</span> 或写作： <span class="math display">\[
+\x_{i-1}=\frac{1}{\sqrt{1-\beta_i}}(\x_i+\beta_i s_\theta(\x_i,i))+\sqrt{\beta_i}\z_i,\quad i=N,N-1,\ldots,1 \tag{3}\label{reverse-ddpm}
+\]</span></p></li>
+<li><p>损失函数由 ELBO 推得： <span class="math display">\[
+\mathcal L=\sum_{i=1}^N(1-\alpha_i)\E_{\pdata(\x)}\left[\E_{p_{\alpha_i}(\tilde\x\vert \x)}\left[\left\|s_\theta(\tilde\x,i)-\nabla_{\tilde\x}\log p_{\alpha_i}(\tilde\x\vert\x)\right\|^2\right]\right]
+\]</span></p></li>
+</ol>
+<h3 id="smld-recap">SMLD Recap</h3>
+<ol type="1">
+<li><p>加噪过程</p>
+<p>与 DDPM 不同，SMLD 首先定义了从原数据到以 <span class="math inline">\(\sigma_i\)</span> 加噪的变换： <span class="math display">\[
+p_{\sigma_i}(\x_i\vert \x_0)=\calN(\x_i;\x_0,\sigma_i^2\mathbf I)\tag{4}\label{smld0}
+\]</span> 逆向思考，该分布可由如下相邻两个 noise scale 的转移得到： <span class="math display">\[
+p(\x_i\vert\x_{i-1})=\calN\left(\x_{i-1};\left(\sigma_i^2-\sigma_{i-1}^2\right)\mathbf I\right)
+\]</span> 或写作： <span class="math display">\[
+\x_i=\x_{i-1}+\sqrt{\sigma_i^2-\sigma_{i-1}^2}\ \z_{i-1},\quad i=1,\ldots,N \tag{5}\label{smld}
+\]</span></p></li>
+<li><p>去噪过程（Annealed Langevin Dynamics）</p>
+<p>在每个 noise scale 加噪的数据分布上，执行 <span class="math inline">\(M\)</span> 步 Langevin dynamics： <span class="math display">\[
+\x_i^m=\x_i^{m-1}+\epsilon_i s_\theta(\x_i^{m-1},\sigma_i)+\sqrt{2\epsilon_i}\ \z_i^m,\quad m=1,\ldots,M
+\]</span> 其中 <span class="math inline">\(\epsilon_i\)</span> 是步长相关参数。对 <span class="math inline">\(i=N,N-1\ldots,1\)</span> 均执行上述过程。</p></li>
+<li><p>损失函数由在每个 noise scale 上做 denoising score matching 推得： <span class="math display">\[
+\mathcal L=\sum_{i=1}^N \sigma_i^2\E_{\pdata(\x)}\left[\E_{p_{\sigma_i}(\tilde\x\vert\x)}\left[\left\|s_\theta(\tilde\x,\sigma_i)-\nabla_{\tilde\x}\log p_{\sigma_i}(\tilde\x\vert\x) \right\|^2\right]\right]
+\]</span></p></li>
+</ol>
+<h2 id="forward-sde">Forward SDE</h2>
+<p>DDPM 和 SMLD 都是在离散时间点扩散的，倘若将时间连续化，那么我们就能够得到对应的 SDE 表达。为了连续化，我们只需要将 <span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{smld}\)</span> 式写作差分形式，取 <span class="math inline">\(\Delta t\to0\)</span>，即得到微分形式。</p>
+<h3 id="ddpm-vp-sde">DDPM: VP SDE</h3>
+<p>为了方便叙述，定义 <span class="math inline">\(\bar\beta_i=N\beta_i\)</span>，那么 <span class="math inline">\(\eqref{ddpm}\)</span> 式改写作： <span class="math display">\[
+\x_i=\sqrt{1-\frac{\bar\beta_i}{N}}\ \x_{i-1}+\sqrt{\frac{\bar\beta_i}{N}}\ \mathbf z_{i-1},\quad i=1,\ldots,N
+\]</span> 设 <span class="math inline">\(\beta(\frac{i}{N})=\bar\beta_i,\,\x(\frac{i}{N})=\x_i,\,\z(\frac{i}{N})=\z_i\)</span>，那么对于 <span class="math inline">\(t=\left\{0,\frac{1}{N},\ldots,\frac{N-1}{N}\right\},\,\Delta t=\frac{1}{N}\)</span>，上式可写作： <span class="math display">\[
+\x(t+\Delta t)=\sqrt{1-\beta(t+\Delta t)\Delta t}\ \x(t)+\sqrt{\beta(t+\Delta t)\Delta t}\ \z(t)
+\]</span> 当 <span class="math inline">\(\Delta t\)</span> 很小时，根据近似 <span class="math inline">\((1+x)^\alpha\approx 1+\alpha x\)</span>，有： <span class="math display">\[
+\x(t+\Delta t)\approx\x(t)-\frac{1}{2}\beta(t+\Delta t)\Delta t\ \x(t)+\sqrt{\beta(t+\Delta t)\Delta t}\ \z(t)
+\]</span> 因此，令 <span class="math inline">\(\Delta t\to 0\)</span>，得到 ： <span class="math display">\[
+\mathrm  d\x=-\frac{1}{2}\beta(t)\x\ \mathrm dt+\sqrt{\beta(t)}\ \mathrm d\w\tag{6}\label{vp-sde}
+\]</span> 其中 <span class="math inline">\(\w\)</span> 是标准维纳过程（也称作布朗运动）。</p>
+<div class="note note-info">
+            <p><strong>维纳过程（布朗运动）直观解释</strong></p><p>考虑一个马尔可夫随机过程 <span class="math inline">\(\w\)</span>，其以一年为时间单位，下一年相比这一年的变化量服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>，即： <span class="math display">\[\w(t+1)=\w(t)+\z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 那么两年后，总变化量就是两个正态随机变量之和，服从 <span class="math inline">\(\calN(\mathbf 0,2\mathbf I)\)</span>： <span class="math display">\[\w(t+2)=\w(t)+\sqrt{2}\ \z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 反过来想，一年的变化量是两个半年变化量之和，所以半年的变化量应该服从 <span class="math inline">\(\calN(\mathbf 0,0.5\ \mathbf I)\)</span>： <span class="math display">\[\w(t+0.5)=\w(t)+\sqrt{0.5}\ \z(t),\quad\z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 以此类推，如果考虑 <span class="math inline">\(\Delta t\)</span> 的时间，变化量就应该服从 <span class="math inline">\(\calN(\mathbf 0,\Delta t\ \mathbf I)\)</span>： <span class="math display">\[\w(t+\Delta t)=\w(t)+\sqrt{\Delta t}\ \z(t),\quad\z(t)\sim \calN(\mathbf 0,\mathbf I)\]</span> 令 <span class="math inline">\(\Delta t\to 0\)</span>，则： <span class="math display">\[\mathrm d\w=\lim_{\Delta t\to0}\sqrt{\Delta t}\ \z(t)\]</span></p><p>这就是 <span class="math inline">\(\eqref{vp-sde}\)</span> 式后一项的由来。</p>
+          </div>
+<p>论文作者称 <span class="math inline">\(\eqref{vp-sde}\)</span> 式为 Variance Preserving (VP) SDE，因为当初始分布有单位方差时，该 SDE 描述的随机过程也始终有固定的方差。为了说明这点，作者直接给出了如下关于方差演进过程的 ODE： <span class="math display">\[
+\frac{\mathrm d\Sigma_\text{VP}(t)}{\mathrm dt}=\beta(t)(\mathbf I-\Sigma_\text{VP}(t))
+\]</span> 解得： <span class="math display">\[
+\Sigma_\text{VP}(t)=\mathbf I+e^{\int_0^t -\beta(s)\mathrm ds}(\Sigma_\text{VP}(0)-\mathbf I)
+\]</span> 因此，当 <span class="math inline">\(\Sigma_\text{VP}(0)=\mathbf I\)</span> 时，始终有 <span class="math inline">\(\Sigma_\text{VP}(t)=\mathbf I\)</span>. 另外，即便 <span class="math inline">\(\Sigma_\text{VP}(0)\neq\mathbf I\)</span>，当 <span class="math inline">\(t\to\infty\)</span> 时，<span class="math inline">\(e^{\int_{0}^t-\beta(s)\mathrm ds}\to0\)</span>，也有 <span class="math inline">\(\Sigma_\text{VP}(t)\to\mathbf I\)</span>.</p>
+<p>在上一篇文章的最后一节我们也对此做了解释——从 DDPM 的角度看，这无非就是说扩散过程最后会服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>.</p>
+<blockquote>
+<p>什么？你问这个 ODE 怎么来的？我也不会啊……</p>
+</blockquote>
+<h3 id="smld-ve-sde">SMLD: VE SDE</h3>
+<p>类似地，设 <span class="math inline">\(\sigma(\frac{i}{N})=\sigma_i,\,\x(\frac{i}{N})=\x_i,\,\z(\frac{i}{N})=\z_i\)</span>，那么对于 <span class="math inline">\(t=\left\{0,\frac{1}{N},\ldots,\frac{N-1}{N}\right\},\,\Delta t=\frac{1}{N}\)</span>，<span class="math inline">\(\eqref{smld}\)</span> 式可写作： <span class="math display">\[
+\x(t+\Delta t)=\x(t)+\sqrt{\sigma^2(t+\Delta t)-\sigma^2(t)}\ \mathbf z(t)
+\]</span> 当 <span class="math inline">\(\Delta t\)</span> 很小时，根据一阶泰勒展开 <span class="math inline">\(f(t+\Delta t)\approx f(t)+\frac{\mathrm df(t)}{\mathrm dt}\Delta t\)</span>，有： <span class="math display">\[
+\x(t+\Delta t)\approx\x(t)+\sqrt{\frac{\mathrm  d[\sigma^2(t)]}{\mathrm dt}\Delta t}\ \z(t)
+\]</span> 令 <span class="math inline">\(\Delta t\to 0\)</span>，得到： <span class="math display">\[
+\mathrm d\x=\sqrt{\frac{\mathrm d[\sigma^2(t)]}{\mathrm dt}}\mathrm d\w \tag{7}\label{ve-sde}
+\]</span> 该 SDE 被作者称为 Variance Exploding (VE) SDE，因为随着 <span class="math inline">\(t\to\infty\)</span>，其描述的随机过程方差将无限制增大。</p>
+<h3 id="general-form">General Form</h3>
+<p>上文我们分别推导了 DDPM 和 SMLD 对应的 SDE 形式。更一般地，对于一个连续时间的扩散过程 <span class="math inline">\(\{\x(t)\}_{t=0}^T\)</span>，其中 <span class="math inline">\(\x(0)\sim p_0\)</span> 并且 <span class="math inline">\(\x(T)\sim p_T\)</span>，即 <span class="math inline">\(p_0\)</span> 表示数据分布，<span class="math inline">\(p_T\)</span> 表示先验分布，我们可以用 Itô diffusion SDE 来描述这个扩散过程： <span class="math display">\[
+\mathrm d\x= \f(\x,t)\mathrm dt+g(t)\mathrm d\w \tag{8}\label{sde}
+\]</span> 其中 <span class="math inline">\(\f(\x,t):\mathbb R^d\to\mathbb R^d\)</span> 是一个向量值函数，称作 drift coefficient；<span class="math inline">\(g(t):\mathbb R\to\mathbb R\)</span> 是一个标量函数，称作 diffusion coefficient. 特别地，对于 DDPM 而言，<span class="math inline">\(\f(\x,t)=-\frac{1}{2}\beta(t)\x,\ g(t)=\sqrt{\beta(t)}\)</span>；对于 SMLD 而言，<span class="math inline">\(\f(\x,t)=\mathbf 0,\ g(t)=\sqrt{\frac{\mathrm d[\sigma^2(t)]}{\mathrm dt}}\)</span>. 因此我们在引言里说，DDPM 和 SMLD 分别是两个特殊形式 SDE 的离散化。</p>
+<h2 id="reverse-sde">Reverse SDE</h2>
+<p>同 DDPM 类似，forward SDE 将数据 <span class="math inline">\(\x(0)\sim p_0\)</span> 变换为了先验分布 <span class="math inline">\(\x(T)\sim p_T\)</span>，而 reverse SDE 将该过程逆向，即可得到生成模型。</p>
+<p>记 <span class="math inline">\(p_t(\x)\)</span> 为 <span class="math inline">\(\x(t)\)</span> 的概率分布，<span class="math inline">\(p_{st}(\x(t)\vert\x(s))\)</span> 为从 <span class="math inline">\(\x(s)\)</span> 到 <span class="math inline">\(\x(t)\)</span> 的转移概率分布。对于 <span class="math inline">\(\eqref{sde}\)</span> 式，根据论文<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="Anderson, Brian DO. Reverse-time diffusion equation models. *Stochastic Processes and their Applications* 12, no. 3 (1982): 313-326.">[9]</span></a></sup>的结论，其 reverse-time SDE 为： <span class="math display">\[
+\mathrm d\x=\left[\f(\x,t)-g^2(t)\nabla_\x\log p_t(\x)\right]\mathrm  dt+g(t)\mathrm d\bar\w \tag{9}\label{reverse-sde}
+\]</span> 其中 <span class="math inline">\(\bar\w\)</span> 是一个标准维纳过程（布朗运动）。</p>
+<p><br/></p>
+<p>我们又看到了老朋友 score function <span class="math inline">\(\nabla_\x\log p_t(\x)\)</span>，依旧使用 denoising score matching 来训练模型： <span class="math display">\[
+\E_t\left[\lambda(t)\E_{\x(0)}\E_{\x(t)\vert\x(0)}\left[\left\|s_\theta(\x(t),t)-\nabla_{\x(t)}\log p_{0t}(\x(t)\vert\x(0)) \right\|_2^2\right]\right] \tag{10}\label{loss}
+\]</span> 其中 <span class="math inline">\(\lambda:[0,T]\to \mathbb R_{&gt;0}\)</span> 是加权系数。与 DDPM / SMLD 类似，可以选取 <span class="math inline">\(\lambda(t)\propto1/\E[\Vert\nabla_{\x(t)}\log p_{0t}(\x(t)\vert\x(0)) \Vert^2]\)</span>.</p>
+<p>在训练好模型之后，用模型替换 <span class="math inline">\(\eqref{reverse-sde}\)</span> 式中的 score function 即可： <span class="math display">\[
+\mathrm d\x=\left[\f(\x,t)-g^2(t)s_\theta(\x,t)\right]\mathrm  dt+g(t)\mathrm d\bar\w \tag{9&#39;}\label{reverse-sde-est}
+\]</span></p>
+<h2 id="solving-the-reverse-sde">Solving the Reverse SDE</h2>
+<p>为了生成数据，我们随机采样 <span class="math inline">\(\x(T)\sim p_T\)</span>，通过求解 <span class="math inline">\(\eqref{reverse-sde-est}\)</span> 式得到 <span class="math inline">\(\x(0)\)</span>. 作者首先指出，我们可以使用常见的通用数值求解方法解该 SDE；随后考虑到问题的特殊性，提出了 Predictor-Corrector 方法提高性能。</p>
+<h3 id="numerical-sde-solvers">Numerical SDE Solvers</h3>
+<p>存在一些广泛适用的 SDE 数值解法，例如 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Euler%E2%80%93Maruyama_method">Euler-Maruyama</a> 和 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_method_(SDE)">stochastic Runge-Kutta</a>，它们分别是求解 ODE 的 Euler 法和 Runge-Kutta 法在 SDE 上的扩展。</p>
+<div class="note note-info">
+            <p><strong>Euler 法回顾</strong>（摘自《计算方法》课程笔记）</p><p>对于初值问题： <span class="math display">\[\begin{cases}\frac{\mathrm dy}{\mathrm dx}=f(x,y)&amp;&amp;a\leq x\leq b\\y(a)=\eta\end{cases}\]</span> 数值求解方法是指：取定步长 <span class="math inline">\(h\)</span>，在一系列点 <span class="math inline">\(\{x_0=a,\,x_1=a+h,\,x_2=a+2h,\,\ldots\}\)</span> 上求 <span class="math inline">\(y_i=y(x_i)\)</span>.</p><p><strong>Euler 法</strong>是最简单的数值求解方法之一。考虑在 <span class="math inline">\([x_n,x_{n+1}]\)</span> 上对 <span class="math inline">\(y&#39;(x)=f(x,y(x))\)</span> 积分，有： <span class="math display">\[\begin{align}y(x_{n+1})&amp;=y(x_n)+\int_{x_n}^{x_{n+1}}f(x,y(x))\mathrm d x\\&amp;\approx y(x_n)+ hf(x_n,y(x_n))&amp;&amp;\text{左矩形近似积分}\\&amp;=y_n+ hf(x_n,y_n)\end{align}\]</span> 以此公式迭代求解即可。若做出图来，<span class="math inline">\(y_i\)</span> 其实就是不断沿当前导数方向走折线，因此也称作 <strong>Euler 折线法</strong>。</p><p><img src="euler.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://www.researchgate.net/figure/Eulers-method-The-dashed-line-shows-the-solution-computed-by-successive-iterations-of_fig1_333678760" width=50% /></p><p>如果用更准确的梯形公式而非矩形来近似积分，可得： <span class="math display">\[y_{n+1}=y_n+\frac{h}{2}[f(x_n,y_n)+f(x_{n+1},y_{n+1})]\]</span> 但这是关于 <span class="math inline">\(y_{n+1}\)</span> 的隐格式，无法直接求解。故一般先使用 Euler 折线法求出一个初始值，再依梯形公式迭代。</p><p>特别地，如果只迭代一次，称作<strong>改进 Euler 法</strong>： <span class="math display">\[\begin{cases}y_{n+1}^{(0)}=y_n+h f(x_n,y_n)\\y_{n+1}=y_{n+1}^{(0)}+\frac{h}{2}\left[f(x_n,y_n)+f\left(x_{n+1},y_{n+1}^{(0)}\right)\right]\end{cases}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>Runge-Kutta 法回顾</strong>（摘自《计算方法）课程笔记）</p><p>理论上，<span class="math inline">\(y(x_{n+1})\)</span> 和 <span class="math inline">\(y(x_n)\)</span> 的差距由泰勒展开给出： <span class="math display">\[y(x_{n+1})=y(x_n)+h y&#39;(x_n)+\frac{h^2}{2!}y&#39;&#39;(x_n)+\cdots\]</span> 如果允许，我们可以截断到任意精度，让解更加准确。Euler 法只有 <span class="math inline">\(h f(x_n,y_n)\)</span> 一项，其实是截断到一阶；利用泰勒展开可以证明，改进 Euler 法截断到了二阶。然而直接计算高阶导数非常麻烦，Runge-Kutta 法提供了一种巧妙的构造，间接地利用了这种思想。</p><p>我们可以将 Euler 法写作： <span class="math display">\[\begin{cases}y_{n+1}=y_n+h K_1\\K_1=f(x_n,y_n)\end{cases}\]</span> 改进 Euler 法写作： <span class="math display">\[\begin{cases}y_{n+1}=y_n+\frac{1}{2}hK_1+\frac{1}{2}hK_2\\K_1=f(x_n,y_n)\\K_2=f(x_n+h,y_n+hK_1)\end{cases}\]</span> 以此类推，<span class="math inline">\(s\)</span> 阶 R-K 法写作： <span class="math display">\[\begin{cases}y_{n+1}=y_n+h\sum_{i=1}^s R_iK_i\\K_1=f(x_n,y_n)\\K_i=f(x_n+a_ih,y_n+h\sum_{j=1}^{i-1}b_{ij}K_j),&amp;&amp;i=2,3,\ldots,s\end{cases}\]</span> 其中 <span class="math inline">\(R_i,\,a_i,\,b_{ij}\)</span> 为参数，以使得 <span class="math inline">\(y(x_{n+1})-y_{n+1}\)</span> 泰勒展开后 <span class="math inline">\(h^i\)</span> 系数为 <span class="math inline">\(0\)</span> (<span class="math inline">\(i=1,2,\ldots,s\)</span>)，即截断到 <span class="math inline">\(s\)</span> 阶。</p>
+          </div>
+<p>Euler-Maruyama 法和 Euler 法类似，只需要从初值开始，选定步长反复迭代即可。具体而言，对于 <span class="math inline">\(\eqref{reverse-sde-est}\)</span> 式，选择一个小步长 <span class="math inline">\(\Delta t\approx 0\)</span>，初始化 <span class="math inline">\(t\gets T\)</span>，然后迭代执行下述过程直至 <span class="math inline">\(t\approx 0\)</span>： <span class="math display">\[
+\begin{align}
+\Delta \mathbf{x} &amp;\gets \left[\mathbf{f}(\mathbf{x}, t) - g^2(t) \mathbf{s}_\theta(\mathbf{x}, t)\right]\Delta t + g(t) \sqrt{\vert \Delta t\vert }\mathbf{z}_t ,&amp;&amp;\z_t\sim \calN(\mathbf 0,\mathbf I)\\ 
+\mathbf{x} &amp;\gets \mathbf{x} + \Delta \mathbf{x}\\ 
+t &amp;\gets t + \Delta t
+\end{align}
+\]</span></p>
+<h3 id="reverse-diffusion-samplers">Reverse Diffusion Samplers</h3>
+<p>除了使用 Euler-Maruyama 等通用 SDE solver 以外，我们还有其他求解 reverse SDE <span class="math inline">\(\eqref{reverse-sde-est}\)</span> 式的做法吗？在第二节中，我们将前向过程连续化得到 forward SDE，那反过来，把 reverse SDE 离散化不就得到逆向过程了吗？ <span class="math display">\[
+\begin{align}
+&amp;\mathrm d\x=\left[\f(\x,t)-g^2(t)s_\theta(\x,t)\right]\mathrm  dt+g(t)\mathrm d\bar\w \tag{9&#39;}\\
+&amp;\text{(discretization) }\Bigg\Downarrow\\
+&amp;\x_i=\x_{i+1}-\f_{i+1}(\x_{i+1})+g_{i+1}^2 s_\theta(\x_{i+1},i+1)+g_{i+1}\z_{i+1} \tag{10}\label{reverse-diffusion}
+\end{align}
+\]</span> 作者将这种方法称作 reverse diffusion samplers.</p>
+<h3 id="predictor-corrector-samplers">Predictor-Corrector Samplers</h3>
+<p>与一般的 SDE 不同的是，我们现在有一个 score-based model <span class="math inline">\(s_\theta(\x,t)\approx\nabla_\x\log p_t(\x)\)</span>，可以利用 score-based MCMC 方法来改进通用 SDE solvers 的解。具体而言，每一步首先由通用 SDE solvers 给出一个解（predictor），然后由 MCMC 方法来修正解的分布（corrector），因此作者称该方法为 Predictor-Corrector (PC) samplers. 特别地，DDPM 相当于用 ancestral sampling 作为 predictor、identity function 作为 corrector；而 SMLD 相当于用 identity function 作为 predictor、Langevin dynamics 作为 corrector.</p>
+<h2 id="probability-flow-ode">Probability Flow ODE</h2>
+<p>上文中，我们已经构建了连续时间扩散模型的 SDE 描述。宋飏等人提出，对于任一 SDE 描述的扩散过程，都存在一个 ODE 描述的确定性过程与之有相同的边缘分布 <span class="math inline">\(\{p_t(\x)\}_{t=0}^T\)</span>. 具体地，<span class="math inline">\(\eqref{reverse-sde}\)</span> 式对应的 ODE 为： <span class="math display">\[
+\mathrm d\x=\left[\f(\x,t)-\frac{1}{2}g^2(t)\nabla_\x\log p_t(\x)\right]\mathrm dt \tag{11}\label{reverse-ode}
+\]</span> 同上一节类似，我们可以用常用的 RK45 来解上式，也可以将其离散化为 <span class="math inline">\(\x_{i}=\x_{i+1}-\f_{i+1}(\x_{i+1})+\frac{1}{2}g_{i+1}^2s_\theta(\x_{i+1},i+1)\)</span> 求解，predictor-corrector samplers 的思想也依然适用。但是作者指出，尽管解 ODE 比解 SDE 更快，其生成图片的质量往往不如 SDE.</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In <em>International Conference on Learning Representations</em>. 2020. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Yang Song. Generative Modeling by Estimating Gradients of the Data Distribution. https://yang-song.net/blog/2021/score/ <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>扩散模型与能量模型，Score-Matching和SDE，ODE的关系 - 中森的文章 - 知乎 https://zhuanlan.zhihu.com/p/576779879 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>苏剑林. (Aug. 03, 2022). 《生成扩散模型漫谈（五）：一般框架之SDE篇 》[Blog post]. Retrieved from https://kexue.fm/archives/9209 <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>苏剑林. (Aug. 08, 2022). 《生成扩散模型漫谈（六）：一般框架之ODE篇 》[Blog post]. Retrieved from https://kexue.fm/archives/9228 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Wiener Process and Ito's Lemma - 无情小超超的文章 - 知乎 https://zhuanlan.zhihu.com/p/148808235 <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Score-based Generative Models总结 - o00O00o的文章 - 知乎 https://zhuanlan.zhihu.com/p/583666759 <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Tanmaya Shekhar Dabral. Stochastic Differential Equations and Diffusion Models. https://www.vanillabug.com/posts/sde/ <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>Anderson, Brian DO. Reverse-time diffusion equation models. <em>Stochastic Processes and their Applications</em> 12, no. 3 (1982): 313-326. <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>连续时间扩散模型——SDE与ODE描述</div>
+      <div>https://xyfjason.github.io/blog-main/2022/12/04/连续时间扩散模型——SDE与ODE描述/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/12/11/%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B7%A5%E4%BD%9C%E7%AB%99%EF%BC%88%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87%EF%BC%89/" title="搭建个人深度学习工作站（操作系统篇）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">搭建个人深度学习工作站（操作系统篇）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/11/30/2022%E4%BF%9D%E7%A0%94%E5%9B%9E%E5%BF%86%E5%BD%95/" title="保研回忆录">
+                        <span class="hidden-mobile">保研回忆录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

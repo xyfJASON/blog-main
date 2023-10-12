@@ -1,0 +1,825 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Stanford CS231n Convolutional Neural Networks for Visual Recognition">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CS231n]4·Convoluntional Neural Networks">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/03/03/CS231n-4%C2%B7Convoluntional-Neural-Networks/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Stanford CS231n Convolutional Neural Networks for Visual Recognition">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_woman-book.jpg">
+<meta property="article:published_time" content="2021-03-03T06:34:29.000Z">
+<meta property="article:modified_time" content="2023-09-09T00:34:13.732Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="computer vision">
+<meta property="article:tag" content="deep learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_woman-book.jpg">
+  
+  
+  
+  <title>[CS231n]4·Convoluntional Neural Networks - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_woman-book.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[CS231n]4·Convoluntional Neural Networks"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-03-03 14:34" pubdate>
+          2021年3月3日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[CS231n]4·Convoluntional Neural Networks</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><a target="_blank" rel="noopener" href="https://cs231n.github.io/">CS231n Convolutional Neural Networks for Visual Recognition</a></p>
+<p>https://www.bilibili.com/video/BV1nJ411z7fe</p>
+<span id="more"></span>
+<h2 id="architecture-overview">Architecture Overview</h2>
+<p>在图像处理的任务中，图片的特征具有局部性，而全连接的传统神经网络引入了太多冗余的参数，既浪费又难以训练。因此，CNN 被提出以解决这个问题。CNN 的架构和传统神经网络架构类似，都具有输入层、隐藏层和输出层。不同的是，CNN 中每一层都是 <span class="math inline">\(3\)</span> 维的神经元，如下图所示：</p>
+<p><img src="conv.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload width="80%" height="80%" /></p>
+<p>例如，CIFAR-10 数据集的输入可以是 <span class="math inline">\(32\times32\times3\)</span> 的，即 <span class="math inline">\(\text{RGB}\)</span> 三个通道分别有 <span class="math inline">\(32\times32\)</span> 的像素；其输出可以是 <span class="math inline">\(1\times1\times10\)</span>，分别表示 <span class="math inline">\(10\)</span> 个分类上的得分。</p>
+<p>下面来详细分析 CNN 中各种层的结构。</p>
+<hr />
+<h2 id="layers-used-to-build-cnn">Layers used to build CNN</h2>
+<p>CNN 中主要有三种层：<strong>Convolutinal Layer, Pooling Layer, Fully-Connected Layer</strong>，将它们堆叠在一起就可以形成一个 CNN 的架构。</p>
+<p>例如，[INPUT - CONV - RELU - POLL - FC] 就是一种简单的 CNN 架构。其中，CONV / FC 层具有需要学习的参数，而 RELU / POOL 层是固定的函数；CONV / FC / POOL 层都有超参数，而 RELU 没有。</p>
+<p><img src="layers.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload width="80%" height="80%" /></p>
+<h3 id="convolutional-layer">Convolutional Layer</h3>
+<p>Convolutional Layer 是 CNN 的核心。其基本思想很简单，就是用一个<strong>卷积核</strong>（<strong>filter</strong> / <strong>kernel</strong>）在输入图像上扫一遍，得到输出图像，其中卷积核的参数就是神经网络要学习的参数。设输入深度为 <span class="math inline">\(D_1\)</span>，则这个卷积核的深度也是 <span class="math inline">\(D_1\)</span>，即将输入图像某一区域<strong>所有层</strong>的数据一起做线性组合；如果输入的深度是 <span class="math inline">\(D_2\)</span>，那么我们需要 <span class="math inline">\(D_2\)</span> 个不同的卷积核，形成输出的不同层。</p>
+<p><img src="filter.png" srcset="/blog-main/logo/imageloading.png" lazyload width="100%" height="100%" /></p>
+<p>正式地说，设输入是一个 <span class="math inline">\(W_1\times H_1\times D_1\)</span> 的 <span class="math inline">\(3\)</span> 维数组（即上一层），Convolutional Layer 有以下几个超参数：</p>
+<ul>
+<li><span class="math inline">\(K\)</span>：filters 的个数</li>
+<li><span class="math inline">\(F\)</span>：filters 的边长</li>
+<li><span class="math inline">\(S\)</span>：filters 进行扫描时的步长</li>
+<li><span class="math inline">\(P\)</span>：zero padding，在输入图像的边缘补充的长度</li>
+</ul>
+<p>输出一个 <span class="math inline">\(W_2\times H_2\times D_2\)</span> 的 <span class="math inline">\(3\)</span> 维数组，其中： <span class="math display">\[
+\begin{align}
+W_2&amp;=(W_1-F+2P)/S+1\\
+H_2&amp;=(H_1-F+2P)/S+1\\
+D_2&amp;=K
+\end{align}
+\]</span> 在进行卷积操作时，我们需要注意计算得到的 <span class="math inline">\(W_2\)</span> 和 <span class="math inline">\(H_2\)</span> 是不是整数，如果不是，需要调整 <span class="math inline">\(P\)</span> 或者 <span class="math inline">\(S\)</span>。另外，注意对于输出的每一个 depth slice，其上的神经元是由同一个卷积核算出来的，分享了同样的参数，这有助于减少 CNN 的参数数量。</p>
+<p><br></p>
+<p><strong>im2col</strong> 是实现卷积操作的一个方法，正如其名 image to column，它将二维图像变成一个列向量以方便地实施卷积操作。举例说明，假设输入图像是 <span class="math inline">\([227\times227\times3]\)</span>，使用 <span class="math inline">\([11\times11\times3]\)</span> 的卷积核并取步长为 <span class="math inline">\(4\)</span>，想要得到 <span class="math inline">\([55\times 55\times96]\)</span> 的输出。那么，我们将 <span class="math inline">\([11\times 11\times 3]\)</span> 的卷积核拉伸成 <span class="math inline">\(11\times11\times3=363\)</span> 维的<strong>行向量</strong>，各卷积核拼接起来得到 <span class="math inline">\([96\times 363]\)</span> 的参数矩阵；然后把输入图像中对应 <span class="math inline">\(55\times 55\)</span> 个位置的 <span class="math inline">\([11\times11\times3]\)</span> 全拿出来拉伸成<strong>列向量</strong>并顺次拼接成 <span class="math inline">\([363\times 3025]\)</span> 的矩阵；二者相乘即可得到 <span class="math inline">\([96\times 3025]\)</span> 的矩阵，每一行的列向量还原成 <span class="math inline">\([55\times 55]\)</span> 即得到输出结果。</p>
+<h3 id="pooling-layer">Pooling Layer</h3>
+<p>插入 Pooling Layer 是为了减小当前层的大小，与 Convolutional Layer 类似，它用一个 filter 扫描整个图像，然后做某种无参数的计算，如取 <span class="math inline">\(\max\)</span> (<em>max pooling</em>) 或者 <span class="math inline">\(\text{L2 norm}\)</span> (<em>L2-norm pooling</em>) 或者平均值 (<em>average pooling</em>).</p>
+<p><img src="pool.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload width="80%" height="80%" /></p>
+<h3 id="fully-connected-layer">Fully-connected Layer</h3>
+<p>CNN 中的全连接层和传统神经网络的全连接层一模一样，一般最后连接输出层的时候用全连接层。</p>
+<p>FC Layer 可以和 CONV Layer 相互转化：</p>
+<ul>
+<li>CONV 转 FC：只需要强行设定 FC 中某些权重为 <span class="math inline">\(0\)</span>；</li>
+<li>FC 转 CONV：设定 CONV 卷积核大小与输入相同，那么一次卷积运算相当于 FC 前一层到后一层的某一个神经元的运算。</li>
+</ul>
+<hr />
+<h2 id="cnn-architectures">CNN Architectures</h2>
+<p>上一节讲了 CNN 中主要的三种层，这一节讲如何把它们的组合在一起形成 CNN.</p>
+<h3 id="layer-patterns">Layer Patterns</h3>
+<p>最常见的各种层的组合是：</p>
+<p><strong>INPUT</strong> -&gt; [ [ <strong>CONV</strong> -&gt; <strong>RELU</strong> ] * N -&gt; <strong>POOL</strong>? ] * M -&gt; [<strong>FC</strong> -&gt; <strong>RELU</strong>] * K -&gt; <strong>FC</strong></p>
+<p>即若干 CONV-RELU layers，选择性地接 POOL layer，重复该结构直到最后接上传统的神经网络。</p>
+<p><br></p>
+<p>实践中注意一点：相比用一个具有较大 filter 的卷积层，更好的是使用多个具有较小 filter 的卷积层堆叠起来，因为一方面，堆叠起来的层引入更多非线性因素，使神经网络更强大；另一方面，后者具有更少的参数。</p>
+<h3 id="layer-sizing-patterns">Layer Sizing Patterns</h3>
+<ul>
+<li><strong>input layer</strong>：最好能被 <span class="math inline">\(2\)</span> 整除很多次；</li>
+<li><strong>conv layers</strong>：应使用小的 filters（如 <span class="math inline">\(3\times 3\)</span> 或最多 <span class="math inline">\(5\times 5\)</span>），使用步长 <span class="math inline">\(S=1\)</span>，并且使用 zero padding 保证输出图像的大小和输入的大小相等（取 <span class="math inline">\(P=(F-1)/2\)</span> 即可），这样能够防止略过图像边缘的信息，而把缩小 feature map 的任务交给 Pooling layer；</li>
+<li><strong>pool layers</strong>：负责缩小输入的大小。最常用一个 <span class="math inline">\(2\times 2\)</span> 的 filter 以步长为 <span class="math inline">\(2\)</span> 扫描一遍，丢掉恰好 <span class="math inline">\(75\%\)</span> 的结果；也可以使用 <span class="math inline">\(3\times 3\)</span> 的 filter，但是基本不用 <span class="math inline">\(&gt;3\)</span> 的 filter，因为这样太过 aggresive 而使得结果变差。</li>
+</ul>
+<h3 id="case-studies">Case studies</h3>
+<p>有一些经典的 CNN 结构有一个名字，例如：</p>
+<ul>
+<li><strong>LeNet</strong>：由 Yann LeCun 在 1990's 实现的。<a target="_blank" rel="noopener" href="http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf">Gradient-Based Learning Applied to Document Recognition</a></li>
+<li><strong>AlexNet</strong>：由 Alex Krizhevsky, Ilya Sutskever 和 Geoff Hinton 实现，在 2012 年 ImageNet ILSVRC 比赛中以绝对优势夺冠，并使得 CNN 从此广受欢迎。<a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf">ImageNet Classification with Deep Convolutional Neural Networks</a></li>
+<li><strong>ZF Net</strong>：由 Matthew Zeiler 和 Rob Fergus 发明，在 ILSVRC 2013 夺冠。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1311.2901">Visualizing and Understanding Convolutional Networks</a></li>
+<li><strong>GoogLeNet</strong>：由 Szeged 等人实现，在 ILSVRC 2014 夺冠。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1409.4842">Going Deeper with Convolutions</a></li>
+<li><strong>VGGNet</strong>：由 Karen Simonyan 和 Andrew Zisserman 实现，是 ILSVRC 2014 的第二名。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1409.1556">Very Deep Convolutional Networks for Large-Scale Visual Recognition</a></li>
+<li><strong>ResNet</strong>：由何恺明等人实现，在 ILSVRC 2015 夺冠。<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1512.03385">Deep Residual Learning for Image Recognition</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/Stanford-CS231n/" class="category-chain-item">Stanford CS231n</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+      
+        <a href="/blog-main/tags/deep-learning/" class="print-no-link">#deep learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[CS231n]4·Convoluntional Neural Networks</div>
+      <div>https://xyfjason.github.io/blog-main/2021/03/03/CS231n-4·Convoluntional-Neural-Networks/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年3月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2021/03/06/CS231n-5%C2%B7Recurrent-Neural-Networks/" title="[CS231n]5·Recurrent Neural Networks">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[CS231n]5·Recurrent Neural Networks</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2021/02/24/CS231n-3%C2%B7Neural-Networks/" title="[CS231n]3·Neural Networks">
+                        <span class="hidden-mobile">[CS231n]3·Neural Networks</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1054 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="简介 LoRA 是一种参数高效微调方法（PEFT），最早由 LoRA: Low-Rank Adaptation of Large Language Models 提出并应用于微调语言大模型之中，后来由 Low-rank Adaptation for Fast Text-to-Image Diffusion Fine-tuning 引入到对 Stable Diffusion 模型的微调之中。LoRA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Stable Diffusion]训练你的LoRA(Linux)">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/06/21/Stable-Diffusion-%E8%AE%AD%E7%BB%83%E4%BD%A0%E7%9A%84LoRA-Linux/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="简介 LoRA 是一种参数高效微调方法（PEFT），最早由 LoRA: Low-Rank Adaptation of Large Language Models 提出并应用于微调语言大模型之中，后来由 Low-rank Adaptation for Fast Text-to-Image Diffusion Fine-tuning 引入到对 Stable Diffusion 模型的微调之中。LoRA">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/lora.png">
+<meta property="article:published_time" content="2023-06-21T09:08:13.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:59:51.664Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta property="article:tag" content="AIGC">
+<meta property="article:tag" content="stable diffusion">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/lora.png">
+  
+  
+  
+  <title>[Stable Diffusion]训练你的LoRA(Linux) - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/stable-diffusion/lora.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[Stable Diffusion]训练你的LoRA(Linux)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-21 17:08" pubdate>
+          2023年6月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          80 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[Stable Diffusion]训练你的LoRA(Linux)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="简介">简介</h2>
+<p>LoRA 是一种参数高效微调方法（PEFT），最早由 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.09685">LoRA: Low-Rank Adaptation of Large Language Models</a> 提出并应用于微调语言大模型之中，后来由 <a target="_blank" rel="noopener" href="https://github.com/cloneofsimo/lora">Low-rank Adaptation for Fast Text-to-Image Diffusion Fine-tuning</a> 引入到对 Stable Diffusion 模型的微调之中。LoRA 并不改变原模型的权重，而是在线性层旁边新增一个下采样-上采样的支路，通过训练这个支路来完成微调。因此，同一个基底 Stable Diffusion 模型可以搭载不同的 LoRA 使用，具有很高的灵活性。由于 LoRA 支路网络的参数量小，相比微调整个模型，对算力的需求更加友好，并且也能达到不错的效果，因此很快受到大家的热烈欢迎，成为了目前最流行的微调 Stable Diffusion 的方法之一。</p>
+<p>网络上有非常多训练 LoRA 的脚本和 GUI 界面，B 站上也有很多视频教程，但它们大多是面向 Windows 用户和 GUI 用户。由于我本人使用的是 Linux，因此选择 <a target="_blank" rel="noopener" href="https://github.com/kohya-ss">kohya-ss</a>/<a target="_blank" rel="noopener" href="https://github.com/kohya-ss/sd-scripts">sd-scripts</a> 在终端中使用命令进行训练。事实上，该代码库不仅支持训练 LoRA，还支持训练 DreamBooth、直接微调、训练 Textual Inversion 以及转换模型格式（ckpt、safetensors、Diffusers 格式互相转换）等，且训练出来的模型可以直接加载到 webui 中使用，是最广为使用的代码库之一（目前 2.2k stars）。由于该代码库的文档是用日文书写的，所以有人 fork 了一份并用 ChatGPT-4 将其翻译为了英文：<a target="_blank" rel="noopener" href="https://github.com/darkstorm2150/sd-scripts/blob/main/docs">英文文档链接</a>. 本文有大量内容参考自英文文档。</p>
+<p>特别说明：本文所用 sd-scripts 版本的 commit hash 为 c7fd336，后续代码更新后可能会出现与本文讲解不一致的地方。</p>
+<h2 id="环境配置">环境配置</h2>
+<ol type="1">
+<li><p><strong>下载代码</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/kohya-ss/sd-scripts.git<br>cd sd-scripts<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>新建并激活 conda 环境</strong>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">conda create -n sd-scripts python=3.10<br>conda activate sd-scripts<br></code></pre></td></tr></table></figure></li>
+<li><p><strong>安装依赖包</strong>：</p>
+<p>先在 <code>requirements.txt</code> 中把 <code>bitsandbytes==0.35.0</code> 改成 <code>bitsandbytes-cuda111==0.26.0.post2</code>，然后：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple<br>pip install xformers -i https://pypi.tuna.tsinghua.edu.cn/simple<br></code></pre></td></tr></table></figure></li>
+<li><p>代码库会使用 huggingface transformers 库集成的 CLIP 模型，但由于众所周知的网络原因，我们很可能在自动下载权重的时候卡住。为了解决这个问题，可以先手动把 CLIP 模型下载下来：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git lfs install<br>git clone https://huggingface.co/openai/clip-vit-large-patch14<br></code></pre></td></tr></table></figure>
+<p>然后更改 <code>library/model_util.py</code> 文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">text_model = CLIPTextModel.from_pretrained(<span class="hljs-string">&quot;openai/clip-vit-large-patch14&quot;</span>).to(device)  <span class="hljs-comment"># 删掉或者注释掉</span><br>text_model = CLIPTextModel.from_pretrained(<span class="hljs-string">&#x27;./clip-vit-large-patch14&#x27;</span>).to(device)       <span class="hljs-comment"># 改成这个</span><br></code></pre></td></tr></table></figure>
+<p>再更改 <code>library/train_util.py</code> 文件：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python">TOKENIZER_PATH = <span class="hljs-string">&quot;openai/clip-vit-large-patch14&quot;</span>  <span class="hljs-comment"># 删掉或者注释掉</span><br>TOKENIZER_PATH = <span class="hljs-string">&#x27;./clip-vit-large-patch14&#x27;</span>       <span class="hljs-comment"># 改成这个</span><br></code></pre></td></tr></table></figure>
+<p>改动这两个文件后代码就会直接加载本地下载好的模型而非去联网下载。</p></li>
+</ol>
+<h2 id="数据准备">数据准备</h2>
+<p>准备数据是训练 LoRA 过程中非常重要的一环，甚至可能是用时最长的环节。数据质量非常重要，如果是人物角色，应尽可能多地包含各种角度、姿态和背景，否则模型的输出将过于单一。譬如，如果训练集里没有角色的背面，那模型自然也无法学会生成其背面。好消息是，15~20 张图片足以训练出一个还不错的 LoRA，所以人工检查训练集的质量并不是件难事。当然，在保证质量的前提下，数据肯定是越多越好。</p>
+<p>为了训练 LoRA，sd-scripts 支持三种不同的数据准备方式：</p>
+<ol type="1">
+<li><p><strong>DreamBooth, class+identifier 方法</strong></p>
+<p>第一种方法启发自 DreamBooth，不过只微调 LoRA 网络而非微调整个模型。这种方法会把一个特殊的词汇（标识符）与训练目标（人物/动物/物体）绑定起来，于是在使用这个标识符时就能够生成对应目标的图片。该方法<strong>不需要为每张图片准备文字描述</strong>，因此较为<strong>简单直接</strong>，但缺点是会将训练集中出现的各种特征硬编码进模型，<strong>缺乏灵活性</strong>。例如，假设要训练一个格温蜘蛛侠，由于素材图片中其头发都是（或绝大部分是）金色，所以模型会认为金发是格温的固有属性（换句话说，不是金发就不是格温），因此训练好之后想改变发色会比较困难。另外，该方法支持正则化图片来防止模型过拟合，例如，素材是我自己养的猫，那么正则化图片就是其他各种猫，防止训练之后模型在生成猫的时候只会生成自己的猫，不会生成其他猫了。</p></li>
+<li><p><strong>DreamBooth, caption 方法</strong></p>
+<p>该方法<strong>要求对每张训练图片提供对应的文本描述</strong>，因此准备过程比第一种方法麻烦一些，但<strong>可以将特征与目标解耦</strong>。例如，对金发格温的图片，我们在描述词中加入「金发」，那么模型就会知道金发是由文本描述决定的、而不是格温的固有属性，于是当描述词改成红发时，模型就会根据描述词去改变发色；反过来，如果希望生成的角色一定包含某种属性，比如蓝色眼睛，那么描述词中就不能有「蓝眼」，这样蓝眼才会与模型绑定起来。另外，该方法也支持正则化图片。</p></li>
+<li><p><strong>Fine-tuning 方法</strong></p>
+<p>文本描述需要提前收集到一个元数据文件之中，不支持正则化图片。这种方法对于训练 LoRA 而言似乎不是很重要。</p></li>
+</ol>
+<p>sd-scripts 使用 TOML 配置文件来指示数据的配置，官方示例如下：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-section">[general]</span><br><span class="hljs-attr">shuffle_caption</span> = <span class="hljs-literal">true</span><br><span class="hljs-attr">caption_extension</span> = <span class="hljs-string">&#x27;.txt&#x27;</span><br><span class="hljs-attr">keep_tokens</span> = <span class="hljs-number">1</span><br><br><span class="hljs-comment"># This is a DreamBooth-style dataset</span><br><span class="hljs-section">[[datasets]]</span><br><span class="hljs-attr">resolution</span> = <span class="hljs-number">512</span><br><span class="hljs-attr">batch_size</span> = <span class="hljs-number">4</span><br><span class="hljs-attr">keep_tokens</span> = <span class="hljs-number">2</span><br><br>  <span class="hljs-section">[[datasets.subsets]]</span><br>  <span class="hljs-attr">image_dir</span> = <span class="hljs-string">&#x27;C:\hoge&#x27;</span><br>  <span class="hljs-attr">class_tokens</span> = <span class="hljs-string">&#x27;hoge girl&#x27;</span><br>  <span class="hljs-comment"># This subset has keep_tokens = 2 (using the value of the parent datasets)</span><br><br>  <span class="hljs-section">[[datasets.subsets]]</span><br>  <span class="hljs-attr">image_dir</span> = <span class="hljs-string">&#x27;C:\fuga&#x27;</span><br>  <span class="hljs-attr">class_tokens</span> = <span class="hljs-string">&#x27;fuga boy&#x27;</span><br>  <span class="hljs-attr">keep_tokens</span> = <span class="hljs-number">3</span><br><br>  <span class="hljs-section">[[datasets.subsets]]</span><br>  <span class="hljs-attr">is_reg</span> = <span class="hljs-literal">true</span><br>  <span class="hljs-attr">image_dir</span> = <span class="hljs-string">&#x27;C:\reg&#x27;</span><br>  <span class="hljs-attr">class_tokens</span> = <span class="hljs-string">&#x27;human&#x27;</span><br>  <span class="hljs-attr">keep_tokens</span> = <span class="hljs-number">1</span><br><br><span class="hljs-comment"># This is a fine-tuning-style dataset</span><br><span class="hljs-section">[[datasets]]</span><br><span class="hljs-attr">resolution</span> = [<span class="hljs-number">768</span>, <span class="hljs-number">768</span>]<br><span class="hljs-attr">batch_size</span> = <span class="hljs-number">2</span><br><br>  <span class="hljs-section">[[datasets.subsets]]</span><br>  <span class="hljs-attr">image_dir</span> = <span class="hljs-string">&#x27;C:\piyo&#x27;</span><br>  <span class="hljs-attr">metadata_file</span> = <span class="hljs-string">&#x27;C:\piyo\piyo_md.json&#x27;</span><br>  <span class="hljs-comment"># This subset has keep_tokens = 1 (using the general value)</span><br></code></pre></td></tr></table></figure>
+<p>可以看见，<code>[general]</code> 下是通用的配置项，每个配置文件可以包含多个 <code>[[datasets]]</code>，每个 dataset 可以包含多个 <code>[[datasets.subsets]]</code>. 这些不同的数据集会一起被训练。代码会根据是否有 <code>metadata_file</code> 这一项来判断对应数据集配置是 DreamBooth-style 还是 fine-tuning-style. 所有参数列表可以参见<a target="_blank" rel="noopener" href="https://github.com/darkstorm2150/sd-scripts/blob/main/docs/config_README-en.md">文档</a>，一些常用的参数如下所示。</p>
+<p><strong>所有方法都可使用的参数</strong>：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>Option Name</th>
+<th>Example Setting</th>
+<th><code>[general]</code></th>
+<th><code>[[datasets]]</code></th>
+<th><code>[[dataset.subsets]]</code></th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>batch_size</code></td>
+<td><code>1</code></td>
+<td>o</td>
+<td>o</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>enable_bucket</code></td>
+<td><code>true</code></td>
+<td>o</td>
+<td>o</td>
+<td></td>
+<td>开启 bucket 来支持不同长宽比的训练图片</td>
+</tr>
+<tr class="odd">
+<td><code>resolution</code></td>
+<td><code>256</code>, <code>[512, 512]</code></td>
+<td>o</td>
+<td>o</td>
+<td></td>
+<td>训练时的图片分辨率</td>
+</tr>
+<tr class="even">
+<td><code>flip_aug</code></td>
+<td><code>true</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>水平翻转数据增强，要求训练目标对左右方向不敏感</td>
+</tr>
+<tr class="odd">
+<td><code>random_crop</code></td>
+<td><code>false</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>随机裁剪数据增强</td>
+</tr>
+<tr class="even">
+<td><code>color_aug</code></td>
+<td><code>false</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>颜色数据增强，要求训练目标对颜色不敏感</td>
+</tr>
+<tr class="odd">
+<td><code>shuffle_caption</code></td>
+<td><code>true</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>打乱文本描述</td>
+</tr>
+<tr class="even">
+<td><code>keep_tokens</code></td>
+<td><code>2</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>保持前多少个 token 顺序不被打乱</td>
+</tr>
+<tr class="odd">
+<td><code>num_repeats</code></td>
+<td><code>10</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>每张图片在一个 epoch 内重复多少次</td>
+</tr>
+</tbody>
+</table>
+<p><strong>DreamBooth-style 特有的参数</strong>：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>Option name</th>
+<th>Example</th>
+<th><code>[general]</code></th>
+<th><code>[[datasets]]</code></th>
+<th><code>[[dataset.subsets]]</code></th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>image_dir</code></td>
+<td><code>‘C:\hoge’</code></td>
+<td>-</td>
+<td>-</td>
+<td>o (required)</td>
+<td>图片目录路径，必需项，图片应直接存在该目录下</td>
+</tr>
+<tr class="even">
+<td><code>caption_extension</code></td>
+<td><code>".txt"</code></td>
+<td>o</td>
+<td>o</td>
+<td>o</td>
+<td>文本描述文件的扩展名</td>
+</tr>
+<tr class="odd">
+<td><code>class_tokens</code></td>
+<td><code>“sks girl”</code></td>
+<td>-</td>
+<td>-</td>
+<td>o</td>
+<td>标识符+类别</td>
+</tr>
+<tr class="even">
+<td><code>is_reg</code></td>
+<td><code>false</code></td>
+<td>-</td>
+<td>-</td>
+<td>o</td>
+<td>是否是正则化图片</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Fine-tuning-style 特有的参数</strong>：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>Option name</th>
+<th>Example</th>
+<th><code>[general]</code></th>
+<th><code>[[datasets]]</code></th>
+<th><code>[[dataset.subsets]]</code></th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>image_dir</code></td>
+<td><code>‘C:\hoge’</code></td>
+<td>-</td>
+<td>-</td>
+<td>o</td>
+<td>图片目录路径，图片应直接存在该目录下</td>
+</tr>
+<tr class="even">
+<td><code>metadata_file</code></td>
+<td><code>'C:\piyo\piyo_md.json'</code></td>
+<td>-</td>
+<td>-</td>
+<td>o (required)</td>
+<td>元数据文件路径，必需项</td>
+</tr>
+</tbody>
+</table>
+<p>值得一提的是，网上有些教程让把图片目录按照 <code>number_identifier class</code> 的格式命名，这是旧版本的做法，最新版本改用上述 TOML 配置文件来配置数据，不必再依此命名。</p>
+<h2 id="训练脚本">训练脚本</h2>
+<p>训练 LoRA 的脚本是 <code>train_network.py</code>. sd-scripts 使用 huggingface 的 accelerate 库来启动脚本，可以先执行 <code>accelerate config</code> 进行基本配置。训练脚本包含很多参数，可以参见<a target="_blank" rel="noopener" href="https://github.com/darkstorm2150/sd-scripts/blob/main/docs/train_README-en.md#commonly-used-options-across-scripts">文档</a>和<a target="_blank" rel="noopener" href="https://github.com/darkstorm2150/sd-scripts/blob/main/docs/train_network_README-en.md#execute-learning">文档</a>，一些常用的参数如下所示：</p>
+<ul>
+<li><code>--pretrained_model_name_or_path</code>：指向基底模型的路径，支持 <code>.ckpt</code>、<code>.safetensors</code> 和 Diffusers 格式。可以考虑使用与数据集画风接近的基底模型。</li>
+<li><code>--output_dir</code>：指定模型保存的路径。</li>
+<li><code>--output_name</code>：指定模型保存的文件名（不含扩展名）。</li>
+<li><code>--save_model_as</code>：模型保存格式，<code>ckpt, safetensors, diffusers, diffusers_safetensors</code>.</li>
+<li><code>--dataset_config</code>：指向 TOML 配置文件的路径。</li>
+<li><code>--max_train_steps</code> / <code>--max_train_epochs</code>：指定训练的 steps 数或者 epochs 数。</li>
+<li><code>--save_every_n_steps</code> / <code>--save_every_n_epochs</code>：每隔多少 steps 或者 epochs 保存模型。</li>
+<li><code>--mixed_precision</code>：使用混合精度来节省显存。</li>
+<li><code>--gradient_checkpointing</code>：用于节省显存，但是会增加训练时间。</li>
+<li><code>--xformers</code> / <code>--mem_eff_attn</code>：用于节省显存。</li>
+<li><code>--clip_skip</code>：使用 CLIP 的倒数第几层特征，最好与基底模型保持一致。</li>
+<li><code>--network_dim</code>: 指定 LoRA 的秩（即网络维度），默认为 4. 值越大网络越大、参数越多、能力越强，但是不应盲目增大。训练人物可以考虑设为 16/32/64.</li>
+<li><code>--network_alpha</code>: 用于保证训练过程的数值稳定性，防止下溢，默认为 1.</li>
+<li><code>--network_weights</code>: 加载预训练的 LoRA 模型并继续训练。</li>
+<li><code>--network_train_unet_only</code>: 只训练 U-Net 的 LoRA. 也许对 fine-tuning-style 有用。</li>
+<li><code>--network_train_text_encoder_only</code>: 只训练 Text Encoder 的 LoRA. 类似于 Textual Inversion 的效果。</li>
+<li><code>--optimizer_type</code>：选择优化器。</li>
+<li><code>--learning_rate</code>：设置学习率。</li>
+<li><code>--unet_lr</code>: 对 U-Net 的 LoRA 单独设置学习率，一般可以设为 1e-4，覆盖 <code>--learning rate</code> 的设置。</li>
+<li><code>--text_encoder_lr</code>: 为 Text Encoder 的 LoRA 单独设置学习率，一般可以设为 5e-5，覆盖 <code>--learning rate</code> 的设置。</li>
+<li><code>--lr_scheduler</code> / <code>--lr_warmup_steps</code> / <code>--lr_scheduler_num_cycles</code> / <code>--lr_scheduler_power</code>：设置学习率 scheduler、warmup.</li>
+</ul>
+<h2 id="示例">示例</h2>
+<p>凭空讲解还是太过抽象，这一节我们用两个示例来详细阐述训练过程。两个示例分别使用前文介绍的两种数据准备方式（class+identifier 与 caption），供读者参考。</p>
+<h3 id="角色-lorajudy-zootopia">角色 LoRA：Judy-Zootopia</h3>
+<p>我们用疯狂动物城的 Judy 来演示<strong>第一种方法（DreamBooth, class+identifier）</strong>。这种方法不需要准备文本描述，只需要在配置文件中设置 <code>class_tokens</code> 为标识符+类别即可。首先，我在网上找了 27 张 Judy 的图片放在 <code>./data/Judy-Zootopia</code> 下：</p>
+<p><img src="judy.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p>这些图片的分辨率最好在 512x512 及以上，因为大部分基底模型都是在这个分辨率上训练的。图片的长宽比并不一定要保持一致，因为 sd-scripts 支持 bucketing，即会自动按照长宽比分组训练。</p>
+<p>接下来创建一个数据配置文件 <code>./configs/Judy-Zootopia.toml</code>，仿照前文的官方示例，填写如下内容：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-section">[general]</span><br><span class="hljs-attr">enable_bucket</span> = <span class="hljs-literal">true</span><br><br><span class="hljs-section">[[datasets]]</span><br><span class="hljs-attr">resolution</span> = <span class="hljs-number">512</span><br><span class="hljs-attr">batch_size</span> = <span class="hljs-number">4</span><br><br>  <span class="hljs-section">[[datasets.subsets]]</span><br>  <span class="hljs-attr">image_dir</span> = <span class="hljs-string">&#x27;./data/Judy-Zootopia&#x27;</span><br>  <span class="hljs-attr">class_tokens</span> = <span class="hljs-string">&#x27;Judy bunny&#x27;</span><br>  <span class="hljs-attr">num_repeats</span> = <span class="hljs-number">20</span><br></code></pre></td></tr></table></figure>
+<p>其中，<code>enable_bucket=true</code> 让我们能够用不同长宽比的训练图片；<code>class_tokens</code> 填写「标识符+类别」Judy bunny，如果省略类别效果可能会差一点；<code>num_repeats</code> 表示在一个 epoch 里每张训练图片重复出现的次数，例如，我有 27 张图片，<code>num_repeats=20</code>，所以一个 epoch 会过 540 张图片，又因为 <code>batch_size=4</code>，所以（在不进行梯度累积的情况下）一个 epoch 包含 135 个 iterations (steps)；另外，我也没有使用正则化图片。</p>
+<p>最后选择训练参数，运行训练脚本即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs shell">accelerate launch --num_cpu_threads_per_process 8 train_network.py \<br>    --pretrained_model_name_or_path=../stable-diffusion-webui/models/Stable-diffusion/revAnimated_v122.safetensors \<br>    --dataset_config=./configs/Judy-Zootopia.toml \<br>    --output_dir=./output/Judy-Zootopia/ \<br>    --output_name=Judy-Zootopia \<br>    --save_model_as=safetensors  \<br>    --max_train_steps=2000  \<br>    --learning_rate=1e-4  \<br>    --unet_lr=1e-4 \<br>    --text_encoder_lr=5e-5 \<br>    --optimizer_type=&quot;AdamW8bit&quot;  \<br>    --lr_scheduler=&quot;constant_with_warmup&quot; \<br>    --lr_warmup_steps=135 \<br>    --xformers  \<br>    --mixed_precision=&quot;fp16&quot;  \<br>    --cache_latents  \<br>    --gradient_checkpointing \<br>    --save_every_n_steps=500  \<br>    --network_module=networks.lora \<br>    --network_dim 8<br></code></pre></td></tr></table></figure>
+<p>单卡 3080Ti 用时约 15min 完成训练，显存占用近 5GB.</p>
+<p>训练结束后将 LoRA 放入 webui 测试。使用 LoRA 时可以指定权重，权重越高 LoRA 效果越明显，但高到一定程度后会导致图片失真。不同 LoRA 模型适宜的权重范围并不一样，需要人工测试。</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="judy-lora.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<p>以下展示一些挑选后的结果：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="judy-1.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="judy-4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-6.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<p><br/></p>
+<h3 id="姿态-lorasuperhero-landing">姿态 LoRA：Superhero-Landing</h3>
+<blockquote>
+<p>死侍表示很赞😎</p>
+</blockquote>
+<p>除了训练人物角色/物体，我们还可以训练一些抽象的概念，比如人物的姿态。这里我们尝试训练一个超级英雄落地式姿态。要想 LoRA 只学会姿态而不是训练集中的人物特征，我们必须把姿态与其他特征解耦开，因此<strong>选择第二种方法（Dreambooth, caption）</strong>。</p>
+<p>首先还是收集数据。我在网上找了 25 张超级英雄落地图放在 <code>./data/Superhero-Landing</code> 下：</p>
+<p><img src="superhero-landing.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<p>接下来为每张图片写文本描述，可以分为三个小步：</p>
+<ol type="1">
+<li><p><strong>利用工具自动生成</strong>：webui 和 sd-scripts 都提供了相应的功能，可以任选一种。</p>
+<ul>
+<li><p>使用 webui：点击 Train 选项卡，点击 Process images 子选项卡，输入 source directory 和 destination directory，勾选 Keep original size，勾选 Use deepbooru for caption 或 Use BLIP for caption，点击 Preprocess 按钮即可，处理结束的图片文本对将存储在目标文件夹下。BLIP 生成的是自然语言，而 deepbooru 生成的是许多词汇的集合，大家可以酌情选择。</p>
+<p><img src="captioning.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p></li>
+<li><p>使用 sd-scripts（仅支持 BLIP)：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">python finetune/make_captions.py &lt;data_folder&gt; --batch_size &lt;batch_size&gt;<br></code></pre></td></tr></table></figure>
+<p>更多参数可以通过 <code>--help</code> 查看。</p></li>
+</ul></li>
+<li><p><strong>逐个检查、修改这些文本描述</strong>：特别要保证人物姿态没有被写入描述，这样才能让姿态绑定到模型之中；而其他针对人物的描述应该尽可能详细，这样才能让这些特征与模型解耦开。</p></li>
+<li><p><strong>添加触发词</strong>：在所有图片的文本描述前添加一个或多个词汇，那么这些词汇就起到了类似于触发 LoRA 的作用。比如我设置的触发词为 "superhero landing". 这一步并不是必需的。</p></li>
+</ol>
+<p>数据准备完成后，创建配置文件 <code>./configs/Superhero-Landing.toml</code>，填写如下配置：</p>
+<figure class="highlight toml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs toml"><span class="hljs-section">[general]</span><br><span class="hljs-attr">enable_bucket</span> = <span class="hljs-literal">true</span><br><span class="hljs-attr">shuffle_caption</span> = <span class="hljs-literal">true</span><br><span class="hljs-attr">caption_extension</span> = <span class="hljs-string">&#x27;.txt&#x27;</span><br><span class="hljs-attr">keep_tokens</span> = <span class="hljs-number">0</span><br><br><span class="hljs-section">[[datasets]]</span><br><span class="hljs-attr">resolution</span> = <span class="hljs-number">512</span><br><span class="hljs-attr">batch_size</span> = <span class="hljs-number">4</span><br><br>  <span class="hljs-section">[[datasets.subsets]]</span><br>  <span class="hljs-attr">flip_aug</span> = <span class="hljs-literal">true</span><br>  <span class="hljs-attr">image_dir</span> = <span class="hljs-string">&#x27;./data/Superhero-Landing-Processed&#x27;</span><br>  <span class="hljs-attr">num_repeats</span> = <span class="hljs-number">20</span><br></code></pre></td></tr></table></figure>
+<p>由于超级英雄落地姿势是水平对称的，所以这里开启了 <code>flip_aug</code> 水平翻转增强。</p>
+<p>最后选择训练参数，运行训练脚本即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs shell">accelerate launch --num_cpu_threads_per_process 8 train_network.py \<br>    --pretrained_model_name_or_path=../stable-diffusion-webui/models/Stable-diffusion/v1-5-pruned.safetensors \<br>    --dataset_config=./configs/Superhero-Landing.toml \<br>    --output_dir=./output/Superhero-Landing/ \<br>    --output_name=Superhero-Landing \<br>    --save_model_as=safetensors  \<br>    --max_train_steps=5000  \<br>    --learning_rate=1e-4  \<br>    --unet_lr=1e-4 \<br>    --text_encoder_lr=5e-5 \<br>    --optimizer_type=&quot;AdamW8bit&quot;  \<br>    --lr_scheduler=&quot;cosine&quot; \<br>    --lr_warmup_steps=200 \<br>    --xformers  \<br>    --mixed_precision=&quot;fp16&quot;  \<br>    --cache_latents  \<br>    --gradient_checkpointing \<br>    --save_every_n_steps=500  \<br>    --network_module=networks.lora \<br>    --network_dim 4<br></code></pre></td></tr></table></figure>
+<p>单卡 3080Ti 用时约 30min 完成训练，显存占用近 5GB.</p>
+<p>训练结束后将 LoRA 放入 webui 测试。姿态 LoRA 可以与人物 LoRA（比如刚才训练的 Judy）一起使用，但可能更容易带来肢体的扭曲。以下展示一些挑选后的结果：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="superhero-1.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="superhero-2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="superhero-3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="superhero-4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="superhero-5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>https://github.com/kohya-ss/sd-scripts <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>https://github.com/darkstorm2150/sd-scripts/blob/main/docs <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>[Guide] Make your own Loras, easy and free. https://civitai.com/models/22530 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Stable Diffusion Lora locon loha训练参数设置 - 凌璃的文章 - 知乎 https://zhuanlan.zhihu.com/p/618758020 <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/AIGC/" class="category-chain-item">AIGC</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+        <a href="/blog-main/tags/AIGC/" class="print-no-link">#AIGC</a>
+      
+        <a href="/blog-main/tags/stable-diffusion/" class="print-no-link">#stable diffusion</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[Stable Diffusion]训练你的LoRA(Linux)</div>
+      <div>https://xyfjason.github.io/blog-main/2023/06/21/Stable-Diffusion-训练你的LoRA-Linux/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/" title="扩散模型中的信噪比">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型中的信噪比</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/16/Stable-Diffusion-%E6%A8%A1%E5%9E%8B%E6%A6%82%E8%A7%88/" title="[Stable Diffusion]模型概览">
+                        <span class="hidden-mobile">[Stable Diffusion]模型概览</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

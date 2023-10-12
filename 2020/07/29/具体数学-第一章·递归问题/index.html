@@ -1,0 +1,986 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="为了记录学习过的《具体数学》的内容，同时也为了激励自己肝完它，特开一栏记录学习笔记第一章·递归问题分3节，主要包括 $\textbf{Hanoi}$ 塔问题、平面上直线分割问题、约瑟夫问题。其中，个人认为约瑟夫问题的讨论相当具有启发性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[具体数学]第一章·递归问题">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2020/07/29/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E4%B8%80%E7%AB%A0%C2%B7%E9%80%92%E5%BD%92%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="为了记录学习过的《具体数学》的内容，同时也为了激励自己肝完它，特开一栏记录学习笔记第一章·递归问题分3节，主要包括 $\textbf{Hanoi}$ 塔问题、平面上直线分割问题、约瑟夫问题。其中，个人认为约瑟夫问题的讨论相当具有启发性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_study1.jpg">
+<meta property="article:published_time" content="2020-07-29T13:07:02.000Z">
+<meta property="article:modified_time" content="2023-10-12T10:14:46.550Z">
+<meta property="article:author" content="xyfJASON">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_study1.jpg">
+  
+  
+  
+  <title>[具体数学]第一章·递归问题 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_study1.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[具体数学]第一章·递归问题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-07-29 21:07" pubdate>
+          2020年7月29日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          58 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[具体数学]第一章·递归问题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>第一章·递归问题分 3 节，主要包括 <span class="math inline">\(\textbf{Hanoi}\)</span> 塔问题、平面上直线分割问题、约瑟夫问题。其中，个人认为约瑟夫问题的讨论相当具有启发性。</p>
+</blockquote>
+<h2 id="hanoi-塔问题">Hanoi 塔问题</h2>
+<h3 id="notes">Notes</h3>
+<p>这是个超级经典的递归问题了，不多做解释。设 <span class="math inline">\(T_n\)</span> 是 <span class="math inline">\(n\)</span> 个圆盘的移动次数，那么有递归式： <span class="math display">\[
+\begin{cases}T_0=0\\T_n=2T_{n-1}+1\end{cases}
+\]</span> 两边同时加一转化成等比数列，或者用数学归纳法，最后解得： <span class="math display">\[
+T_n=2^n-1
+\]</span></p>
+<h3 id="习题">习题</h3>
+<p>书上的习题有一些 <span class="math inline">\(\textbf{Hanoi}\)</span> 塔问题的变式，在此挑一些记录一下：</p>
+<ul>
+<li><p>不允许在最左边的 <span class="math inline">\(A\)</span> 柱和最右边的 <span class="math inline">\(B\)</span> 柱之间直接移动： <span class="math display">\[
+T_n=T_{n-1}+1+T_{n-1}+1+T_{n-1}=3T_{n-1}+2\implies T_n=3^n-1
+\]</span> 证明：这种移动规则下，<span class="math inline">\(3\)</span> 根柱子上都会出现 <span class="math inline">\(n\)</span> 个圆盘的每一种正确叠放。</p>
+<p>证：宏观来看，一共就 <span class="math inline">\(3^n\)</span> 种可能，而 <span class="math inline">\(T_n=3^n-1\)</span>，一定遍历了所有可能的叠放方式。<span class="math inline">\(\square\)</span></p>
+<blockquote>
+<p>批注：这问题问得很玄学，转换角度思考就变简单了。</p>
+</blockquote></li>
+<li><p>是否存在某种初始情形和结束情形，使得需要多于 <span class="math inline">\(2^n-1\)</span> 的移动？</p>
+<p>不存在，<strong>归纳</strong>：如果最大盘不动，最多 <span class="math inline">\(2^{n-1}-1\)</span> 次；否则，最多 <span class="math inline">\((2^{n-1}-1)+1+(2^{n-1}-1)=2^n-1\)</span> 次。<span class="math inline">\(\square\)</span></p>
+<blockquote>
+<p>批注：不知道咋整就归纳，哈哈</p>
+</blockquote></li>
+<li><p>要求移动必须是顺时针方向（只能 <span class="math inline">\(A\to B,B\to C,C\to A\)</span>），设 <span class="math inline">\(Q_n\)</span> 是 <span class="math inline">\(A\to B\)</span> 的最少移动次数，<span class="math inline">\(R_n\)</span> 是 <span class="math inline">\(B\to A\)</span> 的最少移动次数，求证： <span class="math display">\[
+Q_n=\begin{cases}0&amp;,n=0\\2R_{n-1}+1&amp;,n&gt;0\end{cases}\quad\quad R_n=\begin{cases}0&amp;,n=0\\Q_n+Q_{n-1}+1&amp;,n&gt;0\end{cases}
+\]</span> 证：意思就是 <span class="math inline">\(Q_n\)</span> 是跨一步，<span class="math inline">\(R_n\)</span> 是跨两步。</p>
+<p>跨一步这样完成：<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(A\to C\)</span>，<span class="math inline">\(1\)</span> 个盘 <span class="math inline">\(A\to B\)</span>，<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(C\to B\)</span>，故 <span class="math inline">\(Q_n=R_{n-1}+1+R_{n-1}=2R_{n-1}+1\)</span>；</p>
+<p>跨两步这样完成：<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(A\to C\)</span>，<span class="math inline">\(1\)</span> 个盘 <span class="math inline">\(A\to B\)</span>，<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(C\to A\)</span>，<span class="math inline">\(1\)</span> 个盘 <span class="math inline">\(B\to C\)</span>，<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(A\to C\)</span>，故 <span class="math inline">\(R_n=R_{n-1}+1+Q_{n-1}+1+R_{n-1}=(2R_{n-1}+1)+Q_{n-1}+1=Q_n+Q_{n-1}+1\)</span>. <span class="math inline">\(\square\)</span></p>
+<blockquote>
+<p>注：遗留问题：为什么跨两步不能这样：<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(A\to C\)</span>，<span class="math inline">\(1\)</span> 个盘 <span class="math inline">\(A\to B\)</span>，<span class="math inline">\(n-1\)</span> 个盘 <span class="math inline">\(C\to B\)</span>，<span class="math inline">\(n\)</span> 个盘 <span class="math inline">\(B\to C\)</span>。这样是 <span class="math inline">\(R_n=R_{n-1}+1+R_{n-1}+Q_n=2Q_n\)</span>. 可以验证答案更差，但是怎样才能避免这样想？</p>
+</blockquote></li>
+<li><p><span class="math inline">\(n\)</span> 种尺寸，第 <span class="math inline">\(k\)</span> 种有 <span class="math inline">\(m_k\)</span> 个圆盘，求最少移动次数 <span class="math inline">\(A(m_1,\cdots,m_k)\)</span>. <span class="math display">\[
+A(m_1,\cdots,m_n)=2A(m_1,\cdots,m_{n-1})+m_n=4A(m_1,\cdots,m_{n-2})+2m_{n-1}+m_n=\cdots=\sum\limits_{i=0}^{n-1}2^im_{n-i}
+\]</span></p></li>
+</ul>
+<h2 id="平面上的直线">平面上的直线</h2>
+<h3 id="notes-1">Notes</h3>
+<p>也是一个经典问题了，一条新的直线和原来的 <span class="math inline">\(n-1\)</span> 条直线最多有 <span class="math inline">\(n-1\)</span> 个交点，就最多增加 <span class="math inline">\(n\)</span> 个面。</p>
+<blockquote>
+<p>为什么？注意这条直线被划分成了 <span class="math inline">\(n\)</span> 段，每一段两侧是两个现在不同、但是之前相同的面，所以净增加了 <span class="math inline">\(n\)</span> 个面。</p>
+</blockquote>
+<p>由此，我们有递归式： <span class="math display">\[
+\begin{cases}L_0=1\\L_n=L_{n-1}+n\end{cases}
+\]</span> 累和，或者数学归纳法，解得： <span class="math display">\[
+L_n=\frac{n(n+1)}{2}+1
+\]</span></p>
+<h3 id="变式">变式</h3>
+<ul>
+<li><p>把直线改成折线：</p>
+<p><img src="http://acm.hdu.edu.cn/data/images/C40-1008-1.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="图片来源：http://acm.hdu.edu.cn/showproblem.php?pid=2050" style="zoom:67%;" /></p>
+<p>注意到，一条折线相当于两条直线相交后抹掉一半，抹掉一半后平面数减 <span class="math inline">\(2\)</span>，所以 <span class="math inline">\(Z_n=L_{2n}-2n\)</span>.</p>
+<blockquote>
+<p>可能还是不好理解（至少我理解了很久），这么考虑：新加一条折线进来，从它的顶点向被抹掉的那个方向看去，抹掉的直线本应该把这个区域分成 <span class="math inline">\(3\)</span> 部分，但现在它是 <span class="math inline">\(1\)</span> 部分，所以少了 <span class="math inline">\(2\)</span>。</p>
+<p>基于此我们也可以得到递归式：加入新折线的一条边，有 <span class="math inline">\(2n-2\)</span> 个新交点，增加 <span class="math inline">\(2n-1\)</span> 个面，再加入另一条边，有 <span class="math inline">\(2n-1\)</span> 个新交点（包括新折线的顶点），增加 <span class="math inline">\(2n\)</span> 个面，但是顶点那个交点不争气要减 <span class="math inline">\(2\)</span>，所以总共新增 <span class="math inline">\(4n-3\)</span> 个面，即 <span class="math inline">\(Z_n=Z_{n-1}+4n-3\)</span>.</p>
+</blockquote></li>
+<li><p><span class="math inline">\(\text{Z}\)</span> 字型（两平行半直线加一条直线段）划分平面：沿用上面的思路可得递归式：<span class="math inline">\(Z_n=Z_{n-1}+(3n-3+1)+(3n-3+1)+(3n-1+1)-2-2=Z_{n-1}+9n-8\)</span>，解得：<span class="math inline">\(Z_n=\frac{9}{2}n^2-\frac{7}{2}n+1\)</span>.</p></li>
+<li><p>厚奶酪上划直切痕，得到的三维区域最大个数：新增一个面，前 <span class="math inline">\(n-1\)</span> 个面在这个新平面上最多得到 <span class="math inline">\(L_{n-1}\)</span> 个区域，考虑每个区域两侧可以知道新增了 <span class="math inline">\(L_{n-1}\)</span> 个块，所以 <span class="math inline">\(P_n=P_{n-1}+L_{n-1}\)</span>.</p>
+<blockquote>
+<p>这波降维打击实在有趣！</p>
+</blockquote></li>
+</ul>
+<h2 id="约瑟夫问题">约瑟夫问题</h2>
+<p>重点来了！</p>
+<h3 id="基础问题">基础问题</h3>
+<p><span class="math inline">\(n\)</span> 个人围圈，隔一个死一个，问最后剩下的人的编号 <span class="math inline">\(J(n)\)</span>.</p>
+<ul>
+<li>偶数情况：<span class="math inline">\(2n\)</span> 个人，死了一圈之后，剩下 <span class="math inline">\(n\)</span> 个人编号是：<span class="math inline">\(1,3,5,\cdots,2n-1\)</span>，这就是个把原编号 <span class="math inline">\(k\)</span> 改成 <span class="math inline">\(2k-1\)</span> 之后的 <span class="math inline">\(n\)</span> 人约瑟夫问题，所以 <span class="math inline">\(J(2n)=2J(n)-1\)</span>；</li>
+<li>奇数情况：<span class="math inline">\(2n+1\)</span> 个人，死了一圈之后，剩下 <span class="math inline">\(n\)</span> 个人编号是：<span class="math inline">\(3,5,7,\cdots,2n+1\)</span>，这就是个把原编号 <span class="math inline">\(k\)</span> 改成 <span class="math inline">\(2k+1\)</span> 之后的 <span class="math inline">\(n\)</span> 人约瑟夫问题，所以 <span class="math inline">\(J(2n+1)=2J(n)+1\)</span>.</li>
+</ul>
+<p>综上，再加上初始条件，有递归式： <span class="math display">\[
+\begin{cases}J(1)=1\\J(2n)=2J(n)-1\\J(2n+1)=2J(n)+1\end{cases}
+\]</span> 至于怎么解这个递归式……我们可以<strong>打表</strong>（OIer &amp; ACMer 狂喜）：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;">n</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">8</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;">10</th>
+<th style="text-align: center;">11</th>
+<th style="text-align: center;">12</th>
+<th style="text-align: center;">13</th>
+<th style="text-align: center;">14</th>
+<th style="text-align: center;">15</th>
+<th style="text-align: center;">16</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">J(n)​</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">13</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+<p>观察得到： <span class="math display">\[
+J(n)=2\left(n-2^{\lfloor\lg n\rfloor}\right)+1
+\]</span> 或者按书上的写法，是 <span class="math inline">\(J(2^m+l)=2l+1,\quad m\geqslant0,\quad 0\leqslant l&lt;2^m\)</span>. 证明数学归纳法即可。</p>
+<h3 id="二进制视角">二进制视角</h3>
+<p>这一部分是我觉得最 Amazing 的地方了。</p>
+<p>把上表写成二进制：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;">n​</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">10</th>
+<th style="text-align: center;">11</th>
+<th style="text-align: center;">100</th>
+<th style="text-align: center;">101</th>
+<th style="text-align: center;">110</th>
+<th style="text-align: center;">111</th>
+<th style="text-align: center;">1000</th>
+<th style="text-align: center;">1001</th>
+<th style="text-align: center;">1010</th>
+<th style="text-align: center;">1011</th>
+<th style="text-align: center;">1100</th>
+<th style="text-align: center;">1101</th>
+<th style="text-align: center;">1110</th>
+<th style="text-align: center;">1111</th>
+<th style="text-align: center;">10000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">J(n)​</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">001</td>
+<td style="text-align: center;">011</td>
+<td style="text-align: center;">101</td>
+<td style="text-align: center;">111</td>
+<td style="text-align: center;">0001</td>
+<td style="text-align: center;">0011</td>
+<td style="text-align: center;">0101</td>
+<td style="text-align: center;">0111</td>
+<td style="text-align: center;">1001</td>
+<td style="text-align: center;">1011</td>
+<td style="text-align: center;">1101</td>
+<td style="text-align: center;">1111</td>
+<td style="text-align: center;">00001</td>
+</tr>
+</tbody>
+</table>
+<p>发现一个神奇的现象：把 <span class="math inline">\(n\)</span> 的二进制<strong>向左循环滚动一位</strong>，就得到了 <span class="math inline">\(J(n)\)</span>！</p>
+<blockquote>
+<p>其实看看通项公式，<span class="math inline">\(n-2^{\lfloor\lg n\rfloor}\)</span> 就是删掉最高位的剩下的部分，乘 <span class="math inline">\(2\)</span> 就是左移一位，加一就是把最高位加到最低位去——所以一通操作下来，就是向左循环一位。</p>
+</blockquote>
+<p>如果我们进行套娃式迭代——不停地向左循环，但是注意前导 <span class="math inline">\(0\)</span> 会消失掉，所以足够多次迭代下去后得到的数就是由所有 <span class="math inline">\(1\)</span> 组成的二进制数，即 <span class="math inline">\(J(J(J(\cdots J(n))))=2^{\nu(n)}-1\)</span>，其中 <span class="math inline">\(\nu(n)\)</span> 是 <span class="math inline">\(n\)</span> 在二进制下 <span class="math inline">\(1\)</span> 的个数。</p>
+<h3 id="成套方法求解递归式-repertoire-method">成套方法求解递归式 Repertoire Method</h3>
+<p>我们把 <span class="math inline">\(J(n)\)</span> 的递归式给推广一下： <span class="math display">\[
+\begin{cases}f(1)=\alpha\\f(2n)=2f(n)+\beta\\f(2n+1)=2f(n)+\gamma\end{cases}
+\]</span> （<span class="math inline">\(J(n)\)</span> 是 <span class="math inline">\(\alpha=1,\beta=-1,\gamma=1\)</span> 的特殊情况）。我们仍然可以打表找规律，但是可以用<strong>成套方法</strong>（这名字好奇怪）解它。</p>
+<p>注意到决定上式结果的是 <span class="math inline">\(3\)</span> 个参数 <span class="math inline">\(\alpha,\beta,\gamma\)</span>，所以我们可以设 <span class="math inline">\(f(n)=\alpha A(n)+\beta B(n)+\gamma C(n)\)</span> 是它的解（充分利用已知条件嘛）。下面我们找 <span class="math inline">\(3\)</span> 个特解：</p>
+<ul>
+<li>令 <span class="math inline">\(f(n)=1\)</span>，解得：<span class="math inline">\(\alpha=1,\beta=-1,\gamma=-1\)</span>，得到：<span class="math inline">\(A(n)-B(n)-C(n)=1\)</span>；</li>
+<li>令 <span class="math inline">\(f(n)=n\)</span>，解得：<span class="math inline">\(\alpha=1,\beta=0,\gamma=1\)</span>，得到：<span class="math inline">\(A(n)+C(n)=n\)</span>；</li>
+<li>令 <span class="math inline">\(\alpha=1,\beta=0,\gamma=0\)</span>，有 <span class="math inline">\(f(n)=A(n)\)</span>，得到：<span class="math inline">\(\begin{cases}A(1)=1\\A(2n)=2A(n)\\A(2n+1)=2A(n)\end{cases}\)</span>，解得：<span class="math inline">\(A(n)=2^{\lfloor\lg n\rfloor}\)</span>.</li>
+</ul>
+<p>联立上述 <span class="math inline">\(3\)</span> 式，解得：<span class="math inline">\(C(n)=n-2^{\lfloor\lg n\rfloor},\;B(n)=2^{\lfloor\lg n\rfloor+1}-n-1\)</span>. 所以我们得到了递归式的解： <span class="math display">\[
+f(n)=2^{\lfloor\lg n\rfloor}\alpha+\left(2^{\lfloor\lg n\rfloor+1}-n-1\right)\beta+\left(n-2^{\lfloor\lg n\rfloor}\right)\gamma
+\]</span> 或者用书上的写法（ <span class="math inline">\(n=2^m+l\)</span> ），就是：<span class="math inline">\(f(n)=2^m\alpha+\left(2^m-1-l\right)\beta+l\gamma\)</span>.</p>
+<blockquote>
+<p>有木有感觉很玄学！这三个特解咋冒出来的～特别是第三个特解，好生奇怪！</p>
+<p>如果我们把函数 <span class="math inline">\(f(n)\)</span> 看作一个向量，那它就是 <span class="math inline">\(A(n),B(n),C(n)\)</span> 的线性组合，我们找到了三个特解，得到线性方程组： <span class="math display">\[
+\begin{bmatrix}1&amp;-1&amp;-1\\1&amp;0&amp;1\\1&amp;0&amp;0\end{bmatrix}\begin{bmatrix}A(n)\\B(n)\\C(n)\end{bmatrix}=\begin{bmatrix}1\\n\\2^m\end{bmatrix}
+\]</span> 理论上，给定三个线性无关的向量 <span class="math inline">\([\alpha,\beta,\gamma]\)</span> 和分别对应的的 <span class="math inline">\(f(n)\)</span>，那么就可以解出 <span class="math inline">\([A(n),B(n),C(n)]\)</span>。但是问题的关键就在于，任给一个 <span class="math inline">\([\alpha,\beta,\gamma]\)</span>，解 <span class="math inline">\(f(n)\)</span> 不一定简单。反过来，给定 <span class="math inline">\(f(n)\)</span> 解 <span class="math inline">\([\alpha,\beta,\gamma]\)</span> 倒是简单，但是给定的 <span class="math inline">\(f(n)\)</span> 可能不合法，即根本就不是原递归式的解。所以我感觉这个“成套方法”有很多凑的成分……</p>
+</blockquote>
+<h3 id="推广递归式的进制视角">推广递归式的进制视角</h3>
+<p>对于推广的递归式，改写为： <span class="math display">\[
+\begin{cases}f(1)=\alpha\\f(2n+j)=2f(n)+\beta_j&amp;j=0,1,\;n\geqslant1\end{cases}
+\]</span> 我们用二进制展开： <span class="math display">\[
+\begin{align}
+f\Big({(b_mb_{m-1}\cdots b_1b_0)}_2\Big)&amp;=2f\Big({(b_mb_{m-1}\cdots b_1)}_2\Big)+\beta_{b_0}
+\\&amp;=4f\Big({(b_mb_{m-1}\cdots b_2)}_2\Big)+2\beta_{b_1}+\beta_{b_0}\\&amp;=\cdots
+\\&amp;=2^m\cdot1+2^{m-1}\beta_{b_{m-1}}+\cdots+2\beta_{b_1}+\beta_{b_0}
+\\&amp;={(\alpha\beta_{b_{m-1}}\cdots\beta_{b_1}\beta_{b_0})}_2
+\end{align}
+\]</span> 当然，这里不要求二进制的每一位必须是 <span class="math inline">\(0,1\)</span>，而是任意数字都行。</p>
+<blockquote>
+<p>怎么理解？把 <span class="math inline">\(n\)</span> 写作二进制，其中 <span class="math inline">\(0\)</span> 改成 <span class="math inline">\(\beta_0\)</span>，<span class="math inline">\(1\)</span> 改成 <span class="math inline">\(\beta_1\)</span>，最高位改成 <span class="math inline">\(\alpha\)</span>，就得到了 <span class="math inline">\(f(n)\)</span>.</p>
+</blockquote>
+<p><br></p>
+<p>我们还可以推广，如果递归式长这样： <span class="math display">\[
+\begin{cases}f(j)=\alpha_j&amp;1\leqslant j&lt;d\\f(dn+j)=cf(n)+\beta_j&amp;0\leqslant j&lt;d,\;n\geqslant1\end{cases}
+\]</span> 那么用 <span class="math inline">\(d\)</span> 进制展开： <span class="math display">\[
+\begin{align}
+f\Big({(b_mb_{m-1}\cdots b_1b_0)}_d\Big)&amp;=cf\Big({(b_mb_{m-1}\cdots b_1)}_d\Big)+\beta_{b_0}\\
+&amp;=c^2f\Big({(b_mb_{m-1}\cdots b_2)}_d\Big)+c\beta_{b_1}+\beta_{b_0}\\&amp;=\cdots\\
+&amp;=c^m\cdot\alpha_{b_m}+c^{m-1}\beta_{b_{m-1}}+\cdots+c\beta_{b_1}+\beta_{b_0}\\
+&amp;={(\alpha_{b_m}\beta_{b_{m-1}}\cdots\beta_{b_1}\beta_{b_0})}_c
+\end{align}
+\]</span> 发现得到一个 <span class="math inline">\(c\)</span> 进制结果！实在是妙呀！</p>
+<h3 id="习题-1">习题</h3>
+<ul>
+<li><p>用成套方法解四参数递归式： <span class="math display">\[
+\begin{cases}g(1)=\alpha\\g(2n+j)=3g(n)+\gamma n+\beta_j&amp;j=0,1,\; n\geqslant 1\end{cases}
+\]</span> 解：设 <span class="math inline">\(g(n)=\alpha A(n)+\gamma B(n)+\beta_0C(n)+\beta_1D(n)\)</span> 是它的解。这是四参数递归式，我们需要找到四个特解。</p>
+<ul>
+<li>令 <span class="math inline">\(\gamma=0\)</span>，问题转化成了之前解决的问题，有解：<span class="math inline">\(g\Big({(b_mb_{m-1}\cdots b_1b_0)}_2\Big)={(\alpha\beta_{b_{m-1}}\cdots\beta_{b_1}\beta_{b_0})}_3\)</span>. 随便取 <span class="math inline">\(3\)</span> 个线性无关的 <span class="math inline">\([\alpha,\beta_0,\beta_1]\)</span>，就能确定下 <span class="math inline">\(A(n),C(n),D(n)\)</span>；</li>
+<li>令 <span class="math inline">\(g(n)=n\)</span>，解得：<span class="math inline">\((\alpha,\gamma,\beta_0,\beta_1)=(1,-1,0,1)\)</span>，得到：<span class="math inline">\(A(n)-B(n)+D(n)=n\)</span>.</li>
+</ul>
+<p>于是我们解决了这个问题（虽然没有写出显式的表达式）。</p></li>
+<li><p>用成套方法解五参数递归式： <span class="math display">\[
+\begin{cases}h(1)=\alpha\\h(2n+j)=4h(n)+\gamma_j n+\beta_j&amp;j=0,1,\; n\geqslant 1\end{cases}
+\]</span> 解：设 <span class="math inline">\(h(n)=\alpha A(n)+\gamma_0 B(n)+\gamma_1C(n)+\beta_0D(n)+\beta_1E(n)\)</span> 是它的解。这是五参数递归式，我们需要找到五个特解。</p>
+<ul>
+<li>令 <span class="math inline">\(\gamma_0=\gamma_1=0\)</span>，问题转化成了之前解决的问题，可以确定 <span class="math inline">\(A(n),D(n),E(n)\)</span>；</li>
+<li>令 <span class="math inline">\(h(n)=n\)</span>，解得：<span class="math inline">\((\alpha,\gamma_0,\gamma_1,\beta_0,\beta_1)=(1,-2,-2,0,1)\)</span>，得到：<span class="math inline">\(A(n)-2B(n)-2C(n)+E(n)=n\)</span>；</li>
+<li>令 <span class="math inline">\(h(n)=n^2\)</span>（注意观察，平方项正好抵消，所以这么设又解），解得：<span class="math inline">\((\alpha,\gamma_0,\gamma_1,\beta_0,\beta_1)=(1,0,4,0,1)\)</span>，得到：<span class="math inline">\(A(n)+4C(n)+E(n)=n^2\)</span>.</li>
+</ul>
+<p>联立，问题解决。</p></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6/" class="category-chain-item">具体数学</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[具体数学]第一章·递归问题</div>
+      <div>https://xyfjason.github.io/blog-main/2020/07/29/具体数学-第一章·递归问题/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年7月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2020/07/31/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E4%BA%8C%E7%AB%A0%C2%B7%E5%92%8C%E5%BC%8F%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/" title="[具体数学]第二章·和式（第一部分）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[具体数学]第二章·和式（第一部分）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2020/03/15/%E5%A4%A9%E4%BC%9A%E6%99%B4-%E5%BF%83%E4%BC%9A%E6%9A%96-%E9%98%B3%E5%85%89%E5%9C%A8%E6%89%8B%E6%8C%87%E9%97%B4/" title="天会晴 心会暖 阳光在手指间">
+                        <span class="hidden-mobile">天会晴 心会暖 阳光在手指间</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,917 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \]  封面来自 CivitAI.  GLIDE OpenAI 2021.12.20 GLIDE[1] 是 OpenAI 在 2021 年底推出的文本引导图像生成的扩散模型。GLIDE 沿用了 ADM[2] 架构，但是更大，有 2.3 billion 参数。为了向其中注入文本条件，作者首先将输入文本通过 BPE tokenizer 编码成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型应用·文生图大模型">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E6%96%87%E7%94%9F%E5%9B%BE%E5%A4%A7%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \]  封面来自 CivitAI.  GLIDE OpenAI 2021.12.20 GLIDE[1] 是 OpenAI 在 2021 年底推出的文本引导图像生成的扩散模型。GLIDE 沿用了 ADM[2] 架构，但是更大，有 2.3 billion 参数。为了向其中注入文本条件，作者首先将输入文本通过 BPE tokenizer 编码成">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-txt2img.png">
+<meta property="article:published_time" content="2023-01-05T13:08:43.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:17:01.448Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="computer vision">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-txt2img.png">
+  
+  
+  
+  <title>扩散模型应用·文生图大模型 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-application-txt2img.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="扩散模型应用·文生图大模型"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-01-05 21:08" pubdate>
+          2023年1月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          70 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">扩散模型应用·文生图大模型</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\x}{\mathbf x}
+\]</span></p>
+<blockquote>
+<p>封面来自 <a target="_blank" rel="noopener" href="https://civitai.com/images/1347346?modelVersionId=107343&amp;prioritizedUserIds=941582&amp;period=AllTime&amp;sort=Most+Reactions&amp;limit=20">CivitAI</a>.</p>
+</blockquote>
+<h2 id="glide">GLIDE</h2>
+<p><span class="label label-primary">OpenAI</span> <span class="label label-default">2021.12.20</span></p>
+<p>GLIDE<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Nichol, Alex, Prafulla Dhariwal, Aditya Ramesh, Pranav Shyam, Pamela Mishkin, Bob McGrew, Ilya Sutskever, and Mark Chen. Glide: Towards photorealistic image generation and editing with text-guided diffusion models. *arXiv preprint arXiv:2112.10741* (2021).">[1]</span></a></sup> 是 OpenAI 在 2021 年底推出的文本引导图像生成的扩散模型。GLIDE 沿用了 ADM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dhariwal, Prafulla, and Alexander Nichol. Diffusion models beat gans on image synthesis. *Advances in Neural Information Processing Systems* 34 (2021): 8780-8794.">[2]</span></a></sup> 架构，但是更大，有 2.3 billion 参数。为了向其中注入文本条件，作者首先将输入文本通过 BPE tokenizer 编码成了 <span class="math inline">\(K\)</span> 个 tokens，然后经由一个有 1.2 billion 参数的 Transformer 得到 <span class="math inline">\(K\)</span> 个 token embeddings，它们被融入了 UNet 的每一个 Attention Block 之中（如下图所示）；另外，取最后一个 token embedding 经过维度映射后与 time embedding 相加，融入 UNet 的每一个 ResBlock 之中，相当于替换了 ADM 中的 class embedding. 更多细节可参阅<a target="_blank" rel="noopener" href="https://github.com/openai/glide-text2im/blob/main/glide_text2im/text2im_model.py#L89">官方代码</a>。</p>
+<p>简而言之，除了使用 AdaGN，GLIDE 还在每个注意力层融入了文本条件。另外，上述 3.5 billion 参数（2.3+1.2=3.5）的模型只生成 64x64 图像，作者还构建了另一个类似的、有 1.5 billion 参数的模型把图像上采样至 256x256.</p>
+<p><img src="glide.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% alt="Text encoder and attention block in GLIDE. Green dots are text token embeddings and blue dots are image features. Drawn by me based on the official code." /></p>
+<p>关于文本引导，作者尝试了两种方法——CLIP guidance 和 classifier-free guidance，实验发现后者效果更好。</p>
+<ul>
+<li><p><strong>CLIP guidance</strong> 其实就是将 classifier guidance 技巧中的分类器换做 CLIP 图像文本的匹配分数： <span class="math display">\[
+F_\phi(\x_t,y,t)=\text{E}_\text{I}(\x_t)\cdot\text{E}_\text{L}(y)
+\]</span> 其中 <span class="math inline">\((\x_t,y)\)</span> 是图像文本对，<span class="math inline">\(\text{E}_\text{I}\)</span> 和 <span class="math inline">\(\text{E}_\text{L}\)</span> 分别是 CLIP 的图像和文本编码器。同样的，CLIP 需要在 noised data 上训练，作者应该并没有像 SDG 那样设计自监督微调方式，而是直接训练的（毕竟 OpenAI 不差这点算力）。</p></li>
+<li><p><strong>Classifier-free guidance</strong>：作者首先训练了支持文本条件的模型，然后在此基础上以 20% 的概率丢弃文本条件微调，从而使模型也具有了无条件生成能力。</p></li>
+</ul>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 GLIDE 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="glide-ex1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="glide-ex2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div><div class="group-image-wrap"><img src="glide-ex3.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div></div></div></details>
+          </div>
+<h2 id="dalle-2-unclip">DALL·E 2 (unCLIP)</h2>
+<p><span class="label label-primary">OpenAI</span> <span class="label label-default">2022.04.13</span></p>
+<p>虽然有了 GLIDE，但 OpenAI 还不满足，四个月后又推出了另一个文本引导图像生成模型 unCLIP<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ramesh, Aditya, Prafulla Dhariwal, Alex Nichol, Casey Chu, and Mark Chen. Hierarchical text-conditional image generation with clip latents. *arXiv preprint arXiv:2204.06125* (2022).">[3]</span></a></sup>，也称作 DALL·E 2.</p>
+<p>DALL·E 2 是一个 two-stage 模型：首先使用一个 prior 从 text embedding 生成对应的 image embedding；然后使用一个 decoder 根据 image embedding 生成图像，如下图虚线以下部分所示：</p>
+<p><img src="dalle2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>下面我们分别就 prior 和 decoder 做进一步的说明。</p>
+<ul>
+<li><p><strong>Decoder</strong></p>
+<p>Decoder 是一个以 CLIP image embedding 为条件的扩散模型，其融入条件的方式是在 GLIDE 的基础上修改而来：</p>
+<ol type="1">
+<li>将 image embedding 投影后与 time embedding 相加；</li>
+<li>将 image embedding 投影为四个额外的 tokens，concatenate 到 GLIDE text encoder 的输出序列之后。作者保留了 GLIDE 的 text conditioning pathway，希望能为模型带来 CLIP 不具备的性质（如 variable binding），但实验发现这并没有发挥作用。</li>
+</ol>
+<p>另外，作者也采取了 classifier-free guidance，在训练时以 10% 的概率将 image embedding 置零（或置为一个可学习的 embedding），并以 50% 的概率丢弃 text caption.</p>
+<p>为了生成高分辨率图像，作者还用了两个上采样扩散模型，64x64 → 256x256 → 1024x1024. 同 SR3<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Saharia, Chitwan, Jonathan Ho, William Chan, Tim Salimans, David J. Fleet, and Mohammad Norouzi. Image super-resolution via iterative refinement. *IEEE Transactions on Pattern Analysis and Machine Intelligence* (2022).">[4]</span></a></sup> 和 CDM<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Chitwan Saharia, William Chan, David J. Fleet, Mohammad Norouzi, and Tim Salimans. Cascaded Diffusion Models for High Fidelity Image Generation. *J. Mach. Learn. Res.* 23 (2022): 47-1.">[5]</span></a></sup> 一样，作者先将低分辨率图略微退化后再给到超分模型。具体而言，作者对第一个上采样阶段使用高斯模糊，对第二个上采样阶段使用更多样的 BSR 退化。值得注意的是，这两个超分模型只用了纯卷积而没用 attention layers，所以训练时可以只对 1/4 大小的 random crops 训练来减小计算量并保证数值稳定性，推断时改用完整大小。</p>
+<p>由于 decoder 可以看作是从 image embedding 得到图像，和 CLIP 从图像得到 image embedding 正好是相反的过程，所以作者将整个文生图模型命名为 unCLIP.</p></li>
+<li><p><strong>Prior</strong></p>
+<p>用户输入文本（text caption）后，我们可以通过 pretrained CLIP 得到 text embedding，但是由于 decoder 的输入是 image embedding，所以我们需要训练一个 prior 模型从 text embedding 预测 image embedding.</p>
+<p>作者尝试了两种方案：</p>
+<ol type="1">
+<li>自回归模型：将 image embedding 转换为一列离散编码，然后用自回归的方式逐个预测；</li>
+<li>扩散模型：以 text embedding 为条件，用扩散模型对 image embedding 建模。</li>
+</ol>
+<p>实验发现使用扩散模型效果更佳。关于如何融入条件的具体细节有亿些繁琐，感兴趣的读者直接看论文吧。</p>
+<p>一个自然的问题是，prior 是否是必要的？我们为什么不直接把 CLIP text embedding、甚至是 text caption 给到 decoder 做生成呢？其实这样做也没毛病，不过作者做了一个 ablation study，发现用 prior 来预测 image embedding 效果更好。</p></li>
+</ul>
+<p>论文列举了许多有趣的 image manipulations 应用，不过在介绍这些应用之前，我们先要明确一件事：每一张图像 <span class="math inline">\(\x\)</span> 都对应着一个二元组 <span class="math inline">\((z_i,\x_T)\)</span>，其中 <span class="math inline">\(z_i\)</span> 是 CLIP 给出的 image embedding，也是 decoder 的条件；<span class="math inline">\(\x_T\)</span> 是 decoder 给出的隐变量表示，可以通过 DDIM inversion 获得。换句话说，<span class="math inline">\((z_i,\x_T)\)</span> 共同组成了一张图像的隐变量。</p>
+<ul>
+<li><p><strong>Variations</strong></p>
+<p>第一个应用称作 variations，指给定一张图像 <span class="math inline">\(\x\)</span>，生成与之类似但不同的图像。我们首先根据 CLIP 和 DDIM inversion 得到 <span class="math inline">\(\x\)</span> 对应的 <span class="math inline">\((z_i,\x_T)\)</span>，然后取 DDIM 中的逆向方差非零采样，即可赋予采样结果多样性。结果请查看节末截图的 Figure 3.</p></li>
+<li><p><strong>Interpolations</strong></p>
+<p>给定两张图像 <span class="math inline">\(\x_1,\x_2\)</span>，我们首先对 <span class="math inline">\({z_i}_1\)</span> 和 <span class="math inline">\({z_i}_2\)</span> 做球面插值：<span class="math inline">\({z_i}_\theta=\text{slerp}({z_i}_1,{z_i}_2,\theta)\)</span>. 接下来有两种选择：在 <span class="math inline">\({\x_T}_1\)</span> 和 <span class="math inline">\({\x_T}_2\)</span> 之间也做插值，或随机选定一个新的隐变量 <span class="math inline">\(\hat\x_T\)</span>. 前者能够保证插值的两个端点能够重构出给定的图像，而后者能够带来更多的随机性和可能性。作者在论文中展示了第二种选择的结果，见节末截图的 Figure 4.</p></li>
+<li><p><strong>Text Diffs</strong></p>
+<p>上面两个应用都是基于图像，但作为一个文本生成图像模型，怎么能缺少基于文本的图像编辑呢！受益于 CLIP 将文本和图像编码到了同一个隐空间之中，我们对 text embedding 的修改也能比较好地反映在 image embedding 上，从而让我们操纵图像。具体而言，给定两段文本，我们可以计算二者 text embedding 的差 <span class="math inline">\(z_d=\text{norm}({z_t}_1-{z_t}_2)\)</span>，然后在 <span class="math inline">\(z_i\)</span> 和 <span class="math inline">\(z_d\)</span> 之间插值得到新的 image embedding：<span class="math inline">\(z_\theta=\text{slerp}(z_i,z_d,\theta)\)</span>. 把 <span class="math inline">\(z_\theta\)</span> 给到 decoder 就能生成对应语义的图像了。结果请查看节末截图的 Figure 5.</p></li>
+</ul>
+<p>最后，作者也发现 DALL·E 2 的一些问题，比如在物体-属性的对应关系上往往不如 GLIDE. 例如，输入文本为“一个红色方块在一个蓝色方块之上”，DALL·E 2 生成的结果不是把位置搞错，就是把颜色搞错，但 GLIDE 就靠谱很多。作者推测这与 CLIP embedding 本身没有显式地绑定物体与属性有关。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 DALL·E 2 的生成样例（摘自<a target="_blank" rel="noopener" href="https://openai.com/dall-e-2/">官网</a>和论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://cdn.openai.com/dall-e-2/demos/text2im/astronaut/horse/photo/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://cdn.openai.com/dall-e-2/demos/text2im/soup/portal/digital_art/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://cdn.openai.com/dall-e-2/demos/text2im/teddy_bears/mad_scientists/steampunk/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://cdn.openai.com/dall-e-2/demos/inpainting/flamingo_pool/a/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://cdn.openai.com/dall-e-2/demos/inpainting/flamingo_pool/b/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://cdn.openai.com/dall-e-2/demos/inpainting/flamingo_pool/c/0.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="dalle2-fig3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="dalle2-fig4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="dalle2-fig5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="imagen">Imagen</h2>
+<p><span class="label label-primary">Google</span> <span class="label label-default">2022.05.23</span></p>
+<blockquote>
+<p>这里有一篇关于 Imagen 的很细致的<a target="_blank" rel="noopener" href="https://www.assemblyai.com/blog/how-imagen-actually-works/">博客</a>。</p>
+</blockquote>
+<p>看到 OpenAI 又是 GLIDE 又是 DALL·E 2 的，Google 这边终于坐不住了，推出了更强的文本生成图像大模型——Imagen<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Saharia, Chitwan, William Chan, Saurabh Saxena, Lala Li, Jay Whang, Emily Denton, Seyed Kamyar Seyed Ghasemipour et al. Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding. *arXiv preprint arXiv:2205.11487* (2022).">[6]</span></a></sup>. 相比 DALL·E 2，Imagen 的整体思路更简单一些：先用一个大语言模型将输入文本编码为 text embedding，然后以此为条件并利用 classifier-free guidance 指导一个扩散模型生成 64x64 大小的图像，随后用两个上采样扩散模型（也加入了文本条件并使用了 classifier-free guidance）将图像上采样至 256x256 和 1024x1024，如下图所示：</p>
+<p><img src="imagen.png" srcset="/blog-main/logo/imageloading.png" lazyload width=90% /></p>
+<p>下面我们分别对各个组成部分做进一步说明：</p>
+<ol type="1">
+<li><p><strong>Pretrained text encoders</strong></p>
+<p>与 GLIDE 不同的是，Imagen 采用预训练好且固定不动的文本编码器而非从头训练。常见的 LLM，包括 BERT、CLIP、T5 都是可行的选择，作者发现 T5 效果最佳。有趣的是，作者发现<strong>扩大 text encoder 的规模比扩大 image diffusion model 的规模显著更有效</strong>。</p></li>
+<li><p><strong>Dynamic thresholding</strong></p>
+<p>我们知道，增加 classifier-free guidance weight 能够让模型更加符合条件——也就是生成的图像和文本更加贴合，但 weight 过大会导致图像失真，主要体现在过饱和的颜色上。这是因为 guidance 只用在 inference 阶段，与训练阶段存在 gap，导致预测的 <span class="math inline">\(\hat\x_0\)</span> 往往不在理论的范围 <span class="math inline">\([-1,1]\)</span> 内。我们知道即便是最早的 DDPM，实现时也会人为把 <span class="math inline">\(\hat\x_0\)</span> clip 到 <span class="math inline">\([-1,1]\)</span> 内，作者称这种做法为 static thresholding. 然而，static thresholding 不足以弥补 guidance 引入的 gap，因此作者提出了 dynamic thresholding：我们选择一个百分位，当发现位于该百分位的像素值 <span class="math inline">\(s\)</span> 大于 <span class="math inline">\(1\)</span> 后，就把所有像素都 clip 到 <span class="math inline">\([-s,s]\)</span> 之间，然后整体除以 <span class="math inline">\(s\)</span>. 与 static thresholding 相比，dynamic thresholding 让百分位以内的所有像素都有所减小，因此能缓解颜色饱和问题。</p>
+<p><img src="imagen-thresholding.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p></li>
+<li><p><strong>Cascaded diffusion models</strong></p>
+<p>同 SR3、CDM、DALL·E 2 等一样，Imagen 作者也发现对超分模型而言，将低分辨率图像做一定的增强（高斯噪声）后作为超分模型的条件，能让模型更鲁棒。</p></li>
+<li><p><strong>Network architecture</strong></p>
+<p>对于第一个扩散模型，作者除了将 text embedding 与 time embedding 相加来融入条件，还采用了 cross attention.</p>
+<p>对于两个上采样扩散模型，作者提出了更简单、收敛更快、更 memory efficient 的 <strong>Efficient U-Net</strong>. 相比常用的 U-Net，Efficient U-Net 做了如下改变：</p>
+<ul>
+<li>在小分辨率添加更多的 residual blocks（如 8 个），将模型参数从大分辨率 blocks 转移到小分辨率 blocks.</li>
+<li>在使用了很多 residual blocks 的小分辨率 blocks 中，将残差连接放缩到 <span class="math inline">\(1/\sqrt{2}\)</span>，能显著加快收敛。</li>
+<li>在传统 U-Net 下采样 block 中，下采样操作在卷积之后；而上采样 block 中，上采样操作在卷积之前。Efficient U-Net 调换了二者的顺序，显著加快了前向传播的速度，并且没有性能损失。</li>
+</ul>
+<p>与 DALL·E 2 类似，第二个超分模型是在 image crops 上训练的，因此没有使用 self-attention layers，但是保留了 text cross-attention layers. 更多细节可以在论文的 Appendix F 中找到。</p></li>
+</ol>
+<p>以上就是 Imagen 的基本内容，更多细节请参阅原论文。事实上，作者还在论文中还提出了 DrawBench 评测指标，这里按下不表。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Imagen 的生成样例（摘自<a target="_blank" rel="noopener" href="https://imagen.research.google/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-robot-couple-fine-dining.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-dog-looking-curiously.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/the-toronto-skyline-with-google-brain-logo.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-photo-of-a-corgi-dog-riding-a-bike-in-times-square.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/an-extreme-angry-bird.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/sprouts-in-the-shape-of-text-imagen.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/cactus.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-single-beam-of.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-dragon-fruit-wearing-karate-belt.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-blue-jay-standing-on-a-large-basket-of-rainbow-macarons.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-chrome-plated-duck-with-a-golden-beak-arguing-with-an-angry-turtle.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-transparent-sculpture-of-a-duck-made-out-of-glass.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-bucket-bag.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-brain-riding-a-rocketship.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/corn-snake-on-farm.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div><div class="group-image-wrap"><img src="https://imagen.research.google/main_gallery_images/a-bald-eagle-made-of-chocolate-powder.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></div></div></div></details>
+          </div>
+<h2 id="ediff-i">eDiff-I</h2>
+<p><span class="label label-primary">NVIDIA</span> <span class="label label-default">2022.11.02</span></p>
+<p>在 OpenAI 和 Google 打得有来有回之际，NVIDIA 终于也参与了进来，推出了 eDiff-I<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Balaji, Yogesh, Seungjun Nah, Xun Huang, Arash Vahdat, Jiaming Song, Karsten Kreis, Miika Aittala et al. ediffi: Text-to-image diffusion models with an ensemble of expert denoisers. *arXiv preprint arXiv:2211.01324* (2022).">[7]</span></a></sup>. 通过分析文生图模型的去噪过程，作者发现：在去噪前期，模型非常依赖于文本条件来生成符合描述的图像；而在去噪后期，模型会几乎忽略文本，关注于生成高质量图像。因此，现有的方法在不同去噪阶段都使用同一个 UNet 模型也许并不好（尽管 time embedding 指示了去噪时间步）。于是，eDiff-I 对不同去噪阶段采用了多个专家去噪模型。为了训练效率的考虑，作者先只训练一个模型，然后逐渐将其分解为各个阶段的专家模型。值得注意的是，尽管模型多了，但推理时间还是不变的。另外，作者还研究了不同条件的作用，包括 T5 text embedding、CLIP text embedding 和 CLIP image embedding. 其中，CLIP image embedding 可以用来迁移参考图像的风格。最后，作者还展示了 “paint-with-words” 功能，即在画布上标注区域和文字，那么模型能在指定区域上依照对应文字作图。</p>
+<p><img src="ediffi.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>如图所示，eDiff-I 由一个基础模型和两个超分模型构成，这一点与 Imagen 完全一致。每个分辨率下的模型都由多个专家模型组成。</p>
+<p>为了训练专家模型，作者的主要思路是采用二叉树的方式：首先训练一个适用于全部噪声强度分布 <span class="math inline">\(p(\sigma)\)</span> 的基础模型，然后将噪声强度平均分成两份 <span class="math inline">\(p_0^1(\sigma),p_1^1(\sigma)\)</span>，均以基础模型初始化并分别在各自的噪声分布上微调；反复这个过程，最终 <span class="math inline">\(p(\sigma)\)</span> 被分成了 <span class="math inline">\(2^l\)</span> 个区间 <span class="math inline">\(\{p_i^l(\sigma)\}_{i=0}^{2^l-1}\)</span>，每个区间上有一个专家模型 <span class="math inline">\(E_i\)</span>. 然而，这样要训练的模型成指数级增加，并不现实，所以作者只重点考虑 <span class="math inline">\(E_0^l\)</span> 和 <span class="math inline">\(E_{2^l-1}^l\)</span> 这两端的模型及它们的父节点，最后再用一个模型补齐中间的噪声区间。</p>
+<p>由于文本并不好描述物体的位置，作者提出了 “paint-with-words” 技术，通过指定区域和对应文本来控制位置。这个方法并不需要训练，主要思路是修改 attention map，这其实与很多图像编辑工作（如 Prompt-to-Prompt<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="Hertz, Amir, Ron Mokady, Jay Tenenbaum, Kfir Aberman, Yael Pritch, and Daniel Cohen-Or. Prompt-to-prompt image editing with cross attention control. *arXiv preprint arXiv:2208.01626* (2022).">[8]</span></a></sup>）的做法相同，具体如下图所示：</p>
+<p><img src="ediffi-paint-with-words.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 eDiff-I 的生成样例（摘自<a target="_blank" rel="noopener" href="https://research.nvidia.com/labs/dir/eDiff-I/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/teaser/portal.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/teaser/cat_witch.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/teaser/landscape.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/comparison_multiple_entitles/ediffi/ours_teapots.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/comparison_multiple_entitles/ediffi/ours_grizzly.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/comparison_text/ediffi/ours_nvidia_rocks.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/comparison_text/ediffi/ours_two_monkeys.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/comparison_long/ediffi/ours_restaurant.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://research.nvidia.com/labs/dir/eDiff-I/images/comparison_long/ediffi/ours_cat_scooter.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="raphael">RAPHAEL</h2>
+<h2 id="deepfloyd-if">DeepFloyd IF</h2>
+<p><span class="label label-primary">DeepFloyd</span> <span class="label label-primary">StabilityAI</span> <span class="label label-default">2023.04.27</span></p>
+<p>DeepFloyd IF 是 <a target="_blank" rel="noopener" href="https://deepfloyd.ai/">DeepFloyd Lab</a> 和 <a target="_blank" rel="noopener" href="https://stability.ai/">StabilityAI</a> 开源的文生图大模型，整体沿用 Imagen 的技术路线，<strong>可以看作是 Imagen 的开源版本</strong>。因此本身没有什么值得多说的。</p>
+<p><img src="https://raw.githubusercontent.com/deep-floyd/IF/develop/pics/deepfloyd_if_scheme.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=90% /></p>
+<p>可以看到确实与 Imagen 是差不多的，不过 DeepFloyd IF 在每个阶段都有不同大小的模型可以选择。</p>
+<p><img src="https://images.squarespace-cdn.com/content/v1/63a454eb31a56e23b7c98380/ababd1c5-1299-4a9e-b3a2-3229bf158170/fid_table.png?format=1500w" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>官方声称要发布论文，然而目前看来恐怕希望不大。在官网给出的定量指标中 IF-4.3B 表现非常优异，甚至超过了 Imagen.</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 DeepFloyd IF 的生成样例（摘自<a target="_blank" rel="noopener" href="https://github.com/deep-floyd/IF">官方 repo</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://raw.githubusercontent.com/deep-floyd/IF/develop/pics/nabla.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="dalle-3">DALL·E 3</h2>
+<p><span class="label label-primary">OpenAI</span> <span class="label label-default">2023.09.21</span></p>
+<p>DALL·E 3 建立在 DALL·E 2 的基础之上，结合了 GPT-4 超强的文本理解能力，将作为新的图像生成组件加入 ChatGPT. 受益于 GPT-4 强大的自然语言理解能力，DALL·E 3 生成的图像显著比其他模型更加符合用户的描述，并且能够借助 ChatGPT 实现交互式生成——只需要用聊天一样的自然语言，再也不用费劲做 prompt engineering 了！</p>
+<p>遗憾的是，OpenAI 并没有详细描述技术细节，只在 <a target="_blank" rel="noopener" href="https://cdn.openai.com/papers/DALL_E_3_System_Card.pdf">System Card</a> 中粗略地带了一句实现原理：用 GPT-4 将用户的自然语言描述转化为 DALL·E 3 的 prompt 输入。当用户的输入相对模糊时，GPT-4 会自动补全细节。</p>
+<p>OpenAI 团队非常注重不当信息的处理，包括涩涩、偏见（种族、性别、文化）、带有误导性的拟真图片、公众人物、生化武器、版权商标、艺术家风格等。OpenAI 在 System Card 中着重阐述了对这些不当信息的发现与处理。</p>
+<p>总的来说，DALL·E 3 大幅提高了文生图模型遵循文本描述的能力，是一个非常大的突破。不过，从官方或民间展示的图像来看，其生成质量本身并没有达到业界最顶尖（Midjourney）的水准。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 DALL·E 3 的生成样例（摘自<a target="_blank" rel="noopener" href="https://openai.com/dall-e-3">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/heart.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/coffee.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/monster.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/crab.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.openai.com/blob/0303dc78-1b1c-4bbe-a24f-cb5f0ac95565/avocado-square.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/b196df3a-6fea-4d86-87b2-f9bb50be64c7/leaf.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/0303dc78-1b1c-4bbe-a24f-cb5f0ac95565/blackbackdrop-square.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/b196df3a-6fea-4d86-87b2-f9bb50be64c7/lychee.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/captain.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/fc03c354-2b1f-4d35-b2a3-9516f8f42a9f/IMG_9605.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/hedgehog.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/piano.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Nichol, Alex, Prafulla Dhariwal, Aditya Ramesh, Pranav Shyam, Pamela Mishkin, Bob McGrew, Ilya Sutskever, and Mark Chen. Glide: Towards photorealistic image generation and editing with text-guided diffusion models. <em>arXiv preprint arXiv:2112.10741</em> (2021). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Dhariwal, Prafulla, and Alexander Nichol. Diffusion models beat gans on image synthesis. <em>Advances in Neural Information Processing Systems</em> 34 (2021): 8780-8794. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Ramesh, Aditya, Prafulla Dhariwal, Alex Nichol, Casey Chu, and Mark Chen. Hierarchical text-conditional image generation with clip latents. <em>arXiv preprint arXiv:2204.06125</em> (2022). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Saharia, Chitwan, Jonathan Ho, William Chan, Tim Salimans, David J. Fleet, and Mohammad Norouzi. Image super-resolution via iterative refinement. <em>IEEE Transactions on Pattern Analysis and Machine Intelligence</em> (2022). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Ho, Jonathan, Chitwan Saharia, William Chan, David J. Fleet, Mohammad Norouzi, and Tim Salimans. Cascaded Diffusion Models for High Fidelity Image Generation. <em>J. Mach. Learn. Res.</em> 23 (2022): 47-1. <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Saharia, Chitwan, William Chan, Saurabh Saxena, Lala Li, Jay Whang, Emily Denton, Seyed Kamyar Seyed Ghasemipour et al. Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding. <em>arXiv preprint arXiv:2205.11487</em> (2022). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Balaji, Yogesh, Seungjun Nah, Xun Huang, Arash Vahdat, Jiaming Song, Karsten Kreis, Miika Aittala et al. ediffi: Text-to-image diffusion models with an ensemble of expert denoisers. <em>arXiv preprint arXiv:2211.01324</em> (2022). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Hertz, Amir, Ron Mokady, Jay Tenenbaum, Kfir Aberman, Yael Pritch, and Daniel Cohen-Or. Prompt-to-prompt image editing with cross attention control. <em>arXiv preprint arXiv:2208.01626</em> (2022). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>扩散模型应用·文生图大模型</div>
+      <div>https://xyfjason.github.io/blog-main/2023/01/05/扩散模型应用·文生图大模型/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年1月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9F%BA%E4%BA%8E%E6%96%87%E6%9C%AC%E7%9A%84%E5%9B%BE%E5%83%8F%E7%BC%96%E8%BE%91/" title="扩散模型应用·基于文本的图像编辑">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型应用·基于文本的图像编辑</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9B%BE%E7%94%9F%E5%9B%BE%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%81%A2%E5%A4%8D/" title="扩散模型应用·图生图与图像恢复">
+                        <span class="hidden-mobile">扩散模型应用·图生图与图像恢复</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

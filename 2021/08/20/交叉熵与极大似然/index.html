@@ -1,0 +1,805 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 交叉熵这玩意儿，最开始接触是在 Andrew Ng 的机器学习课程中讲二分类问题的时候，当时并没有觉得有多难，用极大似然对其进行推导也非常的顺畅。后来直接用到多分类问题中，我也没细想，毕竟在 pytorch 中就是调用一个 CrossEntropyLoss() 的事儿。不过昨天我又重新想了想怎么从极大似然法推导交叉熵，这一想，就把整个人给绕进去了，困扰了大半天，终于想通了之前的理解哪里出了问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="交叉熵与极大似然">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/08/20/%E4%BA%A4%E5%8F%89%E7%86%B5%E4%B8%8E%E6%9E%81%E5%A4%A7%E4%BC%BC%E7%84%B6/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="前言 交叉熵这玩意儿，最开始接触是在 Andrew Ng 的机器学习课程中讲二分类问题的时候，当时并没有觉得有多难，用极大似然对其进行推导也非常的顺畅。后来直接用到多分类问题中，我也没细想，毕竟在 pytorch 中就是调用一个 CrossEntropyLoss() 的事儿。不过昨天我又重新想了想怎么从极大似然法推导交叉熵，这一想，就把整个人给绕进去了，困扰了大半天，终于想通了之前的理解哪里出了问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_cat.jpg">
+<meta property="article:published_time" content="2021-08-20T05:27:53.000Z">
+<meta property="article:modified_time" content="2023-09-09T01:11:52.592Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_cat.jpg">
+  
+  
+  
+  <title>交叉熵与极大似然 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_cat.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="交叉熵与极大似然"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-08-20 13:27" pubdate>
+          2021年8月20日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          26 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">交叉熵与极大似然</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言">前言</h2>
+<p>交叉熵这玩意儿，最开始接触是在 Andrew Ng 的机器学习课程中讲二分类问题的时候，当时并没有觉得有多难，用极大似然对其进行推导也非常的顺畅。后来直接用到多分类问题中，我也没细想，毕竟在 pytorch 中就是调用一个 <code>CrossEntropyLoss()</code> 的事儿。不过昨天我又重新想了想怎么从极大似然法推导交叉熵，这一想，就把整个人给绕进去了，困扰了大半天，终于想通了之前的理解哪里出了问题，遂写下这篇文章记录一下。</p>
+<h2 id="交叉熵定义">交叉熵定义</h2>
+<p>假设 <span class="math inline">\(X\)</span> 是离散的随机变量，我们有两个分布列 <span class="math inline">\(p(x),q(x)\)</span>，交叉熵定义如下： <span class="math display">\[
+H(q, p)=-\sum_xq(x)\log p(x)\tag{1}
+\]</span> 我们常说交叉熵能衡量两个分布之间的相似程度，也即交叉熵越小，<span class="math inline">\(p,q\)</span> 两个分布越相似。事实上，如果我们固定 <span class="math inline">\(q\)</span>，那么可以证明：<span class="math inline">\(H(q,p)\)</span> 在 <span class="math inline">\(p=q\)</span> 时达到最小。（详见参考资料<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="为什么交叉熵（cross-entropy）可以用于计算代价？ - 灵剑的回答 - 知乎 https://www.zhihu.com/question/65288314/answer/849294209">[2]</span></a></sup>）</p>
+<h2 id="极大似然法推导交叉熵">极大似然法推导交叉熵</h2>
+<p>交叉熵能用极大似然法解释。回忆极大似然法：我们有若干未知的参数 <span class="math inline">\(\theta\)</span>，现在想对其进行估计，那么抽取一个样本 <span class="math inline">\(\{x^{(1)},\ldots,x^{(n)}\}\)</span>，计算在参数 <span class="math inline">\(\theta\)</span> 下这个样本被抽取出来的概率。这个概率是参数 <span class="math inline">\(\theta\)</span> 的函数，称之为似然函数，当似然函数（或对数似然函数）取到最大值时，对应的参数值就是我们的估计值。</p>
+<p>欲用极大似然法解释交叉熵，我们可以把 <span class="math inline">\(p(x)\)</span> 视为想去估计的「参数」，<span class="math inline">\(q(x)\)</span> 视为样本的真实概率分布。为方便，假设 <span class="math inline">\(X\)</span> 是离散的随机变量。我们现在抽取一个容量为 <span class="math inline">\(n\)</span> 的样本，设其中 <span class="math inline">\(X=k\)</span> 出现了 <span class="math inline">\(n_k\)</span> 次，那么<strong>在参数 <span class="math inline">\(p(x)\)</span>下</strong>，这个样本被抽取出来的概率是 <span class="math inline">\(L(p)=\prod\limits_k p(k)^{n_k}\)</span>，对数似然为：<span class="math inline">\(\log L(p)=\sum\limits_kn_k\log p(k)\)</span>。除以样本量再取个负号，得到： <span class="math display">\[
+-\frac{1}{n}\log L(p)=-\sum_k\frac{n_k}{n}\log p(k)\approx-\sum_k q(k)\log p(k)\tag{2}
+\]</span> 其中，<span class="math inline">\(\frac{n_k}{n}\approx q(k)\)</span> 是因为 <span class="math inline">\(q\)</span> 才是样本的真实分布。这样我们就得到了交叉熵的形式，让交叉熵最小，就是让似然函数最大，也就是让 <span class="math inline">\(p(x)\)</span> 更接近真实分布 <span class="math inline">\(q(x)\)</span>。</p>
+<h2 id="分类问题中的交叉熵损失函数">分类问题中的交叉熵损失函数</h2>
+<p>现在在分类问题的背景下看交叉熵与极大似然。</p>
+<p><strong>考虑一个特定的输入</strong> <span class="math inline">\(x\)</span>，不妨设是一只猫咪吧。其类别的真实分布是一个 <span class="math inline">\(\text{onehot}\)</span> 向量（仅在“猫”那一维为 <span class="math inline">\(1\)</span>，其余为 <span class="math inline">\(0\)</span>），预测分布为 pred 向量。正如前文所述，交叉熵衡量两个分布的相似程度，因而我们可以用交叉熵 <span class="math display">\[
+H(\text{onehot},\text{pred})=-\sum_{c\in\text{classes}}\text{onehot}_c\cdot\log(\text{pred}_c)=-\log(\text{pred}_{猫})\tag{3}
+\]</span> 作损失函数。可以发现，交叉熵用在分类问题中形式变得很简单，这归功于 <span class="math inline">\(\text{onehot}\)</span> 这个其实完全没有随机性的概率分布。<strong>换句话说，我们常常用的交叉熵损失函数，其实是特殊的、指定了其中一个分布为 <span class="math inline">\(\text{one-hot}\)</span> 形式的交叉熵</strong>。</p>
+<p>在分类问题的背景下，用极大似然法解释上述交叉熵，其实是一件很无聊的事，主要是因为真实分布是 <span class="math inline">\(\text{onehot}\)</span>。极大似然法需要我们抽一个样本出来（设样本量为 <span class="math inline">\(n\)</span>），这里的样本空间就是所有类别，但由于我们现在考虑的是一个特定的输入 <span class="math inline">\(x\)</span>（猫咪），所以我们的样本一定是：猫、猫、……、猫。于是似然函数就是 <span class="math inline">\(L(\text{pred})=(\text{pred}_{猫})^n\)</span>，对数似然就是 <span class="math inline">\(\log L(\text{pred})=n\log(\text{pred}_猫)\)</span>，除以样本量取个负，就得到了 <span class="math display">\[
+-\frac{1}{n}\log L(\text{pred})=-\frac{n\log(\text{pred}_猫)}{n}=-\log(\text{pred}_猫)\tag{4}
+\]</span> <br></p>
+<p>如果只考虑<strong>二分类问题</strong>，上文依旧是成立的，但是二分类嘛，我们没必要输出一个大小为 <span class="math inline">\(2\)</span> 的向量，只用输出一个概率值 <span class="math inline">\(p\)</span> 就 OK 了。所以可以对上文的交叉熵形式做一个改写： <span class="math display">\[
+\begin{align}
+\text{BCE}(y,p)&amp;=\begin{cases}-\log p&amp;\text{if }y=1\\-\log(1-p)&amp;\text{if }y=0\end{cases}
+\\
+&amp;=-y\log p-(1-y)\log(1-p)\tag{5}
+\end{align}
+\]</span> 其中 <span class="math inline">\(y\in\{0, 1\},\,p\in(0, 1)\)</span>，就得到了我们非常熟悉的 Binary Cross-Entropy 的形式。</p>
+<p><br></p>
+<p>那为什么我之前被困扰了大半天呢？因为我把样本空间弄混了。极大似然法<strong>这个方法本身</strong>要求我们做一个采样，而这里采样的对象，其实是某一个特定输入的真实标签，然后颇为无聊地反复采若干次……我之前以为是训练模型的过程中采出的 minibatch，结果当然就死活想不通。<strong>所以一定要注意「训练过程中对数据集采样得到 minibatch」 和「极大似然法中的采样」是不同的。</strong></p>
+<p><br></p>
+<p>不过，前者也有值得一说的地方，设 minibatch 是 <span class="math inline">\(\{(x^{(i)},y^{(i)})\mid i=1,\ldots,m\}\)</span>，用 <span class="math inline">\(M\)</span> 表示模型（<span class="math inline">\(M(x)\)</span> 为输入 <span class="math inline">\(x\)</span> 时模型的输出），则在训练过程中，计算一个 iteration 的平均 <span class="math inline">\(\text{Loss}\)</span> 是这样的： <span class="math display">\[
+\text{Loss}=\frac{1}{m}\sum_{i=1}^mH\left(y^{(i)},M(x^{(i)})\right)=\frac{1}{m}\sum_{i=1}^m-\log\left(M(x^{(i)})_{y^{(i)}}\right)\tag{6}
+\]</span> 由于采样再求平均，其实是在近似一个期望，所以更通用的，上式可以写作： <span class="math display">\[
+\text{Loss}=\mathbb E_{x,y\sim p_\text{data}(x,y)}\left[-\log\left(M(x)_{y}\right)\right]\tag{7}
+\]</span> 其中 <span class="math inline">\(p_\text{data}(x,y)\)</span> 表示数据集的分布。这个样子好像在哪里见过？没错，GAN 的论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Generative Adversarial Nets https://arxiv.org/abs/1406.2661">[1]</span></a></sup>中作者就是写了这么个期望：</p>
+<p><span class="math display">\[
+V(D, G)=\mathbb E_{x\sim p_\text{data}(x)}[-\log(D(x))]+\mathbb E_{z\sim p_\text{z}(z)}[-\log(1-D(G(z)))]\tag{8}
+\]</span> 只不过 GAN 中判别网络 D 只需要二分类，所以把两类拆开分别写出来罢了。</p>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Generative Adversarial Nets https://arxiv.org/abs/1406.2661 <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>为什么交叉熵（cross-entropy）可以用于计算代价？ - 灵剑的回答 - 知乎 https://www.zhihu.com/question/65288314/answer/849294209 <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>交叉熵与极大似然</div>
+      <div>https://xyfjason.github.io/blog-main/2021/08/20/交叉熵与极大似然/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年8月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2021/08/25/%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%88%86%E5%B8%83/" title="什么是数据集的分布">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">什么是数据集的分布</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2021/07/03/%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E5%83%8F/" title="什么是图像">
+                        <span class="hidden-mobile">什么是图像</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

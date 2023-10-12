@@ -1,0 +1,1059 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\KL}{\mathrm{KL}} \newcommand{\calN}{\mathcal N} \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从VAE到DDPM">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\KL}{\mathrm{KL}} \newcommand{\calN}{\mathcal N} \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddpm.png">
+<meta property="article:published_time" content="2022-09-29T15:56:27.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:05:02.912Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddpm.png">
+  
+  
+  
+  <title>从VAE到DDPM - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/ddpm.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="从VAE到DDPM"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-29 23:56" pubdate>
+          2022年9月29日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          21k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          172 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">从VAE到DDPM</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\calN}{\mathcal N}
+\newcommand{\x}{\mathbf x}
+\newcommand{\z}{\mathbf z}
+\newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
+\]</span></p>
+<h2 id="vae-回顾">VAE 回顾</h2>
+<p>在<a href="/blog-main/2022/09/17/VAE%E6%A2%B3%E7%90%86/" title="VAE梳理">之前的文章</a>中，我们详细地梳理了一遍 VAE，这里做一个简单回顾。</p>
+<p><img src="1vae.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Angus Turner. Diffusion Models as a kind of VAE" width=20% /></p>
+<p>在 VAE 中，为了最大化对数似然 <span class="math display">\[
+L(\theta)=\log p_\theta(x)=\log\left(\int_zp_\theta(x\vert z)p(z)\mathrm dz\right)
+\]</span> 我们引入变分后验 <span class="math inline">\(q_\phi(z\vert x)\)</span>： <span class="math display">\[
+\begin{align}
+L(\theta)&amp;=\log p_\theta(x)\\
+&amp;=\E_{z\sim q_\phi(z\vert x)}\left[\log p_\theta(x)\right]\\
+&amp;=\E_{z\sim q_\phi(z\vert x)}\left[\log\frac{p_\theta(x,z)}{p_\theta(z\vert x)}\right]\\
+&amp;=\E_{z\sim q_\phi(z\vert x)}\left[\log\left(\frac{p_\theta(x,z)}{p_\theta(z\vert x)}\cdot\frac{q_\phi(z\vert x)}{q_\phi(z\vert x)}\right)\right]\\
+&amp;=\underbrace{\E_{z\sim q_\phi(z\vert x)}\left[\log\frac{p_\theta(x,z)}{q_\phi(z\vert x)}\right]}_\text{ELBO}+\underbrace{\E_{z\sim q_\phi(z\vert x)}\left[\log\frac{q_\phi(z\vert x)}{p_\theta(z\vert x)}\right]}_{\KL(q_\phi(z\vert x)\| p_\theta(z\vert x))}\\
+&amp;\geq \text{ELBO}
+\end{align}\tag{1}\label{vae}
+\]</span> 得到证据下界 ELBO，通过最大化 ELBO 来最大化对数似然。进一步地，ELBO 还可以拆写成重构项和 KL 正则项： <span class="math display">\[
+\begin{align}
+\text{ELBO}&amp;=\E_{z\sim q_\phi(z\vert x)}\left[\log\frac{p_\theta(x,z)}{q_\phi(z\vert x)}\right]\label{elbo-vae}\tag{2}\\
+&amp;=\E_{z\sim q_\phi(z\vert x)}\left[\log\frac{p_\theta(x\vert z)p(z)}{q_\phi(z\vert x)}\right]\\
+&amp;=\underbrace{\E_{z\sim q_\phi(z\vert x)}[\log p_\theta(x\vert z)]}_{\text{reconstruction}}-\underbrace{\KL(q_\phi(z\vert x)\| p(z))}_{\text{regularization}}\\
+\end{align}
+\]</span> 为了计算上的方便，实践中常将 <span class="math inline">\(p(z),q_\phi(z\vert x),p_\theta(x\vert z)\)</span> 都取为正态分布，具体而言，它们分别是： <span class="math display">\[
+\begin{align}
+&amp;p(z)\coloneqq \calN(z;0,I)\\
+&amp;q_\phi(z\vert x)\coloneqq\calN\left(z;\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x))\right)\\
+&amp;p_\theta(x\vert z)\coloneqq \calN(\mu_\theta(z),\sigma^2 I)&amp;&amp;\sigma\text{ is a constant}\\
+\end{align}
+\]</span> 代入 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式即可得到损失函数： <span class="math display">\[
+\mathcal L=\underbrace{\frac{1}{2\sigma^2}\|x-\mu_\theta(z)\|^2}_\text{reconstruction}+\underbrace{\frac{1}{2}\sum_{i=1}^d\left(\mu_\phi^2(x)_i+\sigma_\phi^2(x)_i-\log \sigma_\phi^2(x)_i-1\right)}_\text{KL regularization}
+\]</span> 正态分布的假设虽然便于计算，但也限制了 VAE 的表达能力，导致生成的图片很模糊。毕竟，从隐变量一步到位映射到数据分布确实不是一件容易的事，那我们能不能把这个过程拆解成若干步呢？</p>
+<h2 id="双层-vae">双层 VAE</h2>
+<p>把 VAE 中的单个隐变量 <span class="math inline">\(z\)</span> 换成两个隐变量 <span class="math inline">\(z_1,z_2\)</span>，形成如下马尔可夫链：</p>
+<p><img src="2vae.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Angus Turner. Diffusion Models as a kind of VAE" width=30% /></p>
+<p>虽然有两个隐变量，但如果把它们视为一个整体，那证据下界 ELBO 的推导过程与 <span class="math inline">\(\eqref{vae}\)</span> 式没有什么本质不同，因此我们只需将 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式中的 <span class="math inline">\(z\)</span> 换做 <span class="math inline">\(z_1,z_2\)</span> 就得到了双层 VAE 的 ELBO： <span class="math display">\[
+\begin{align}
+\text{ELBO}_\text{2-layers}&amp;=\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(x,z_1,z_2)}{q_\phi(z_1,z_2\vert x)}\right]\\
+&amp;=\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(x\vert z_1)p_\theta(z_1\vert z_2)p(z_2)}{q_\phi(z_2\vert z_1)q_\phi(z_1\vert x)}\right]&amp;&amp;\text{Markov chain}\label{elbo-2}\tag{3}
+\end{align}
+\]</span></p>
+<p>我们依旧希望把 ELBO 拆解成重构项和正则项，为此需要做一些 fancy 的数学推导。重构项比较简单，只需要把 <span class="math inline">\(p_\theta(x\vert z_1)\)</span> 拆出来就是了，问题在于剩下的一坨应该如何处理。破局的关键在于利用马尔可夫性质把分母上的 <span class="math inline">\(q_\phi(z_2\vert z_1)\)</span> 改写作 <span class="math inline">\(q_\phi(z_2\vert z_1,x)\)</span>，然后用贝叶斯公式： <span class="math display">\[
+q_\phi(z_2\vert z_1)=q_\phi(z_2\vert z_1,x)=\frac{q_\phi(z_1\vert z_2,x)q_\phi(z_2\vert x)}{q_\phi(z_1\vert x)}
+\]</span> 代回 <span class="math inline">\(\eqref{elbo-2}\)</span> 式得： <span class="math display">\[
+\begin{align}
+\text{ELBO}_\text{2-layers}&amp;=\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(x\vert z_1)p_\theta(z_1\vert z_2)p(z_2)}{q_\phi(z_2\vert z_1)q_\phi(z_1\vert x)}\right]\\
+&amp;=\E_{z_1\sim q_\phi(z_1\vert x)}[p_\theta(x\vert z_1)]+\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(z_1\vert z_2)p(z_2)}{\frac{q_\phi(z_1\vert z_2,x)q_\phi(z_2\vert x)}{q_\phi(z_1\vert x)}q_\phi(z_1\vert x)}\right]\\
+&amp;=\E_{z_1\sim q_\phi(z_1\vert x)}[p_\theta(x\vert z_1)]+\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(z_1\vert z_2)p(z_2)}{q_\phi(z_1\vert z_2,x)q_\phi(z_2\vert x)}\right]\\
+&amp;=\E_{z_1\sim q_\phi(z_1\vert x)}[p_\theta(x\vert z_1)]+\E_{z_2\sim q_\phi(z_2\vert x)}\left[\log\frac{p(z_2)}{q_\phi(z_2\vert x)}\right]+\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(z_1\vert z_2)}{q_\phi(z_1\vert z_2,x)}\right]\\
+&amp;=\underbrace{\E_{z_1\sim q_\phi(z_1\vert x)}[p_\theta(x\vert z_1)]}_{\text{reconstruction}}-\underbrace{\KL(q_\phi(z_2\vert x)\| p(z_2))}_{\text{regularization}}-\underbrace{\E_{z_2\sim q_\phi(z_2\vert x)}[\KL(q_\phi(z_1\vert z_2,x)\|p_\theta(z_1\vert z_2))]}_{\text{matching}}\\
+\end{align}
+\]</span> 我们发现，除了重构项和正则项以外，双层 VAE 多了一个匹配项，用于匹配 <span class="math inline">\(q_\phi\)</span> 和 <span class="math inline">\(p_\theta\)</span> 在两个隐变量之间的关系。另外，式子中出现了 <span class="math inline">\(q_\phi(z_2\vert x)\)</span> 这种跳过了中间步的条件概率分布，对我们选取正态分布进行简便计算带来了一定的难度。在下一节中我们将看到，DDPM 将 <span class="math inline">\(q_\phi\)</span> 设计成了一种巧妙的形式解决了这个问题。</p>
+<h2 id="ddpm">DDPM</h2>
+<p>在双层 VAE 的基础上，我们能再多加几层吗？</p>
+<p><img src="diffusion.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Angus Turner. Diffusion Models as a kind of VAE" width=40% /></p>
+<p>如图所示，<span class="math inline">\(\x_1,\ldots,\x_T\)</span> 整体可以看作 VAE 中的隐变量 <span class="math inline">\(z\)</span>，<span class="math inline">\(\x_0\)</span> 是 VAE 中的 <span class="math inline">\(x\)</span>. 我们称从 <span class="math inline">\(\x_0\)</span> 到 <span class="math inline">\(\x_T\)</span> 的马尔可夫链为<strong>前向过程（forward process）</strong>，从 <span class="math inline">\(\x_T\)</span> 到 <span class="math inline">\(\x_0\)</span> 的马尔可夫链为<strong>逆向过程（reverse process）</strong>。换句话说，前向过程对应 VAE 的“后验概率”，逆向过程对应“生成模型”。</p>
+<p>为方便表示，下文将 <span class="math inline">\(\x_l,\cdots,\x_r\)</span> 简写为 <span class="math inline">\(\x_{l:r}\)</span>.</p>
+<h3 id="前向过程">前向过程</h3>
+<p>在双层 VAE 一节中，我们面临着一个问题——选取怎样的分布形式能够简便地表示出 <span class="math inline">\(q_\phi(z_2\vert x)\)</span> 和 <span class="math inline">\(q_\phi(z_1\vert z_2,x)\)</span>？这个问题自然也延续到了 DDPM 之中。作者给出了如下巧妙的设计： <span class="math display">\[
+q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},\beta_t\mathbf{I})\tag{4}\label{q}
+\]</span> 其中 <span class="math inline">\(\beta_t\in(0,1)\)</span> 是事先指定的常量，代表从 <span class="math inline">\(\x_{t-1}\)</span> 到 <span class="math inline">\(\x_t\)</span> 这一步的方差。直观上理解，如果 <span class="math inline">\(\beta_t\)</span> 比较小，那么 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 均值依旧在 <span class="math inline">\(\x_{t-1}\)</span> 附近，方差也不大，故 <span class="math inline">\(\x_t\)</span> 看起来就是在 <span class="math inline">\(\x_{t-1}\)</span> 的基础上加了一些噪声，所以前向过程就是“加噪过程”。值得注意的是，这个 <span class="math inline">\(q\)</span> <strong>不带可学习参数</strong>——这是 DDPM 与 VAE 不一样的地方。</p>
+<p><img src="forward.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://cvpr2022-tutorial-diffusion-models.github.io/" width=90% /></p>
+<p><span class="math inline">\(\eqref{q}\)</span> 式的巧妙之处在于—— <span class="math inline">\(q(\x_t\vert\x_0)\)</span> 能写作封闭形式。换句话说，如果我们想知道 <span class="math inline">\(\x_0\)</span> 在第 <span class="math inline">\(t\)</span> 步加噪后变成什么样了，我们不需要真的一步一步采样走 <span class="math inline">\(t\)</span> 步，而是能直接得到结果。为了看得更清楚，记 <span class="math inline">\(\alpha_t=1-\beta_t,\,\bar\alpha_t=\prod_{i=1}^t\alpha_i\)</span>，那么根据 <span class="math inline">\(q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{\alpha_t}\x_{t-1},(1-\alpha_t)\mathbf{I})\)</span>，我们可以用如下方式从 <span class="math inline">\(\x_{t-1}\)</span> 得到 <span class="math inline">\(\x_t\)</span>：</p>
+<p><span class="math display">\[
+\x_t=\sqrt{\alpha_t}\x_{t-1}+\sqrt{1-\alpha_t}\epsilon_{t-1},\quad \epsilon_{t-1}\sim\calN(\mathbf 0,\mathbf{I})
+\]</span> 类似地，我们可以用如下方式从 <span class="math inline">\(\x_{t-2}\)</span> 得到 <span class="math inline">\(\x_{t-1}\)</span>：</p>
+<p><span class="math display">\[
+\x_{t-1}=\sqrt{\alpha_{t-1}}\x_{t-2}+\sqrt{1-\alpha_{t-1}}\epsilon_{t-2},\quad \epsilon_{t-2}\sim\calN(\mathbf 0,\mathbf{I})
+\]</span> 合并上面两个式子，从 <span class="math inline">\(\x_{t-2}\)</span> 直接得到 <span class="math inline">\(\x_t\)</span> 写作： <span class="math display">\[
+\x_t=\sqrt{\alpha_t\alpha_{t-1}}\x_{t-2}+{\color{green}\sqrt{\alpha_t(1-\alpha_{t-1})}\epsilon_{t-2}+\sqrt{1-\alpha_t}\epsilon_{t-1}}
+\]</span> 由于两个正态随机变量之和服从均值方差分别相加的正态分布，即： <span class="math display">\[
+{\color{green}\sqrt{\alpha_t(1-\alpha_{t-1})}\epsilon_{t-2}+\sqrt{1-\alpha_t}\epsilon_{t-1}}\sim\calN(\mathbf 0,(1-\alpha_t\alpha_{t-1})\mathbf{I})
+\]</span> 所以只用一个正态随机变量即可： <span class="math display">\[
+\x_t=\sqrt{\alpha_t\alpha_{t-1}}\x_{t-2}+\sqrt{1-\alpha_t\alpha_{t-1}}\epsilon_{t-2},\quad \epsilon_{t-2}\sim\calN(\mathbf 0,\mathbf{I})
+\]</span> 以此类推，我们可以得到从 <span class="math inline">\(\x_0\)</span> 直接计算 <span class="math inline">\(\x_t\)</span> 的公式： <span class="math display">\[
+\x_t=\sqrt{\bar\alpha_t}\x_0+\sqrt{1-\bar\alpha_t}\epsilon,\quad \epsilon\sim\calN(\mathbf 0,\mathbf{I}) \tag{5}\label{xtx0}
+\]</span> 也就是说： <span class="math display">\[
+q(\x_t\vert \x_0)=\calN\left(\x_t;\sqrt{\bar\alpha_t}\x_0,(1-\bar\alpha_t)\mathbf{I}\right)\tag{6}\label{qxtx0}
+\]</span> <img src="forward2.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://cvpr2022-tutorial-diffusion-models.github.io/" width=90% /></p>
+<p>我们希望无论输入什么，前向过程最后得到的分布都趋近于各分量独立的标准正态分布，即 <span class="math inline">\(p(\x_\infty)=q(\x_\infty\vert\x_0)=\calN(\x_\infty;\mathbf 0,\mathbf{I})\)</span>，因此要求： <span class="math display">\[
+\lim_{t\to\infty}\sqrt{\bar\alpha_t}=0,\quad\lim_{t\to\infty}\sqrt{1-\bar\alpha_t}=1
+\]</span> 为满足这个要求，只需 <span class="math inline">\(\alpha_1&gt;\alpha_2&gt;\cdots&gt;\alpha_T\)</span>，也即 <span class="math inline">\(\beta_1&lt;\beta_2&lt;\cdots&lt;\beta_T\)</span> 即可。从加噪的角度来看，这意味着初期加噪较弱，后期加噪变强。在 DDPM 中，作者取 <span class="math inline">\(\beta_1,\ldots,\beta_T\)</span> 为从 <span class="math inline">\(0.0001\)</span> 到 <span class="math inline">\(0.02\)</span> 的线性递增序列。</p>
+<p><br/></p>
+<p>看到这里，不知读者心中是否有疑惑——为什么人为设置后验分布（即前向过程）是合理的？VAE 中 <span class="math inline">\(q\)</span> 不是要去拟合真实后验分布吗，现在人为设置好了怎么去拟合啊？私以为，这个问题揭示了 VAE 和 DDPM 出发点的不同。VAE 先定义生成模型 <span class="math inline">\(p_\theta(x\vert z)\)</span>，在这个定义下，存在所谓的“真实”后验分布 <span class="math inline">\(p_\theta(z\vert x)\)</span>，但是它不可解，所以拿一个 <span class="math inline">\(q_\phi(z\vert x)\)</span> 去近似。DDPM 则是反过来，先定义后验分布（即前向过程），然后根据后验去学习生成模型（即逆向过程）。</p>
+<h3 id="逆向过程">逆向过程</h3>
+<p>前向过程把输入图像一步步地加噪变成了高斯噪声，逆向过程就是把噪声转换回图像，也就是我们想要的生成模型。上一小节说过，我们可以直接从 <span class="math inline">\(\x_0\)</span> 得到 <span class="math inline">\(\x_T\)</span>，那反过来，我们可以直接从 <span class="math inline">\(\x_T\)</span> 得到 <span class="math inline">\(\x_0\)</span> 吗？有人可能要说，把 <span class="math inline">\(\eqref{xtx0}\)</span> 式移个项不就行了吗： <span class="math display">\[
+\x_0=\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t-\sqrt{1-\bar\alpha_t}\epsilon\right)
+\]</span> 但是小心，<span class="math inline">\(\eqref{xtx0}\)</span> 式中的 <span class="math inline">\(\epsilon\)</span> 是随机变量，意味着 <span class="math inline">\(\x_t\)</span> 也是随机<strong>变量</strong>，其具体取值由 <span class="math inline">\(\epsilon\)</span> 实际取值决定。现在我们有一个具体的 <span class="math inline">\(\x_T\)</span>，它对应着 <span class="math inline">\(\epsilon\)</span> 的某个取值，但是什么值我们并不知道（如果仅看逆向过程）！所以我们只能以前向过程的 <span class="math inline">\(\epsilon\)</span> 取值为标签，训练一个模型去估计它，即： <span class="math display">\[
+\x_\theta(\x_t,t)\coloneqq\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(\x_t,t)\right)\tag{7}\label{x0xt}
+\]</span> 其中 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 就是所谓的模型，用来近似真实的（即前向过程采样出来的） <span class="math inline">\(\epsilon\)</span>；相应地，<span class="math inline">\(\x_\theta(\x_t,t)\)</span> 就是 <span class="math inline">\(\x_0\)</span> 的近似。或者，你也可以无视 <span class="math inline">\(\epsilon\)</span>，直接把 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 视为模型去近似 <span class="math inline">\(\x_0\)</span>. 为了训练它，最直接的想法就是用 L2 损失 <span class="math inline">\(\Vert \epsilon-\epsilon_\theta(\x_t,t)\Vert^2\)</span>（或者 <span class="math inline">\(\Vert \x_0-\x_\theta(\x_t,t)\Vert^2\)</span>），虽然 DDPM 的损失函数还真就是这个，但是现在未免有点想当然了，下一小节我们会推导出这个 L2 损失。</p>
+<p><img src="epsilon.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>现在，假设我们已经训练完模型了，那是不是按照 <span class="math inline">\(\eqref{x0xt}\)</span> 式生成 <span class="math inline">\(\x_\theta(\x_T,T)\approx \x_0\)</span> 就完事儿了呢？理论上没问题，但是实际效果很差，为什么呢？如果直接用 <span class="math inline">\(\x_\theta(\x_T,T)\)</span>，那么中间的 <span class="math inline">\(\x_2,\x_3,\ldots,\x_{T-1}\)</span> 都没用了，整个 DDPM 就退化成了 VAE 的结构。但是 VAE 的生成模型和后验都是自己学习出来的，二者双向奔赴共同优化去寻找最优解；而 DDPM 的后验是人为指定的（即 <span class="math inline">\(\eqref{qxtx0}\)</span> 式），并且由于 <span class="math inline">\(\bar\alpha_T\to 0\)</span>，<span class="math inline">\(q(\x_T\vert\x_0)\)</span> 基本上就是一个标准正态分布，磨灭掉了几乎所有的输入信息，生成模型根本无法一下恢复出 <span class="math inline">\(\x_0\)</span>！</p>
+<p>如果我们一点一点来，先生成 <span class="math inline">\(\x_{T-1}\)</span>、然后 <span class="math inline">\(\x_{T-2}\)</span>……由于每一步的变化都比较小，保留了上一步足够的信息，生成模型的负担就轻了很多。所以现在我们希望求解 <span class="math inline">\(q(\x_{t-1}\vert \x_t)\)</span>. 因为我们知道前向过程 <span class="math inline">\(q(\x_t\vert \x_{t-1})\)</span>，所以自然想到使用贝叶斯公式：</p>
+<p><span class="math display">\[
+q(\x_{t-1}\vert \x_t)=\frac{q(\x_t\vert\x_{t-1})q(\x_{t-1})}{q(\x_t)}
+\]</span></p>
+<p>可惜 <span class="math inline">\(q(\x_t)\)</span> 和 <span class="math inline">\(q(\x_{t-1})\)</span> 是未知的。事情到这里似乎走入了僵局，但是我们敏锐地发现 <span class="math inline">\(q(\x_t\vert \x_0)\)</span> 和 <span class="math inline">\(q(\x_{t-1}\vert \x_0)\)</span> 是已知的，如果给上式加上 <span class="math inline">\(\x_0\)</span> 为条件，可以得到： <span class="math display">\[
+\begin{align}
+q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert \x_0)}{q(\x_t\vert\x_0)}\\
+&amp;=\frac{q(\x_t\vert \x_{t-1})q(\x_{t-1}\vert \x_0)}{q(\x_t\vert \x_0)}\\
+&amp;\propto\exp\left(-\frac{1}{2}\left(\frac{(\x_t-\sqrt{\alpha_t}\x_{t-1})^2}{\beta_t}+\frac{(\x_{t-1}-\sqrt{\bar\alpha_{t-1}}\x_0)^2}{1-\bar\alpha_{t-1}}-\frac{(\x_t-\sqrt{\alpha_t}\x_0)^2}{1-\bar\alpha_t}\right)\right)\\
+&amp;=\exp\left(-\frac{1}{2}\left(\underbrace{\frac{1-\bar\alpha_t}{\beta_t(1-\bar\alpha_{t-1})}}_A\x_{t-1}^2+\underbrace{\left(-\frac{2\sqrt{\alpha_t}\x_t}{\beta_t}-\frac{2\sqrt{\bar\alpha_{t-1}}\x_{0}}{1-\bar\alpha_{t-1}}\right)}_B\x_{t-1}+C(\x_t,\x_0)\right)\right)
+\end{align}
+\]</span> 也就是说，<span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)\)</span> 是一个正态分布，并且均值和方差分别为： <span class="math display">\[
+\begin{align}
+&amp;\mu_t(\x_t,\x_0)=\frac{-B}{2A}=\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\x_t+\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_0\\
+&amp;\tilde\beta_t=\frac{1}{A}=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t\\
+\end{align}
+\]</span></p>
+<div class="note note-warning">
+            <p><strong>注意</strong>：<span class="math inline">\(t&gt;1\)</span> 时上面的式子没问题，但需要特别考虑 <span class="math inline">\(t=1\)</span> 的情形。当 <span class="math inline">\(t=1\)</span> 时，<span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)=q(\x_0\vert\x_1,\x_0)\)</span> 其实是一个确定性的分布，即一定取 <span class="math inline">\(\x_0\)</span>；如果我们合理地补充定义 <span class="math inline">\(\bar\alpha_0=1\)</span>（因为 <span class="math inline">\(\bar\alpha_i\)</span> 代表累乘，第零项设置为 <span class="math inline">\(1\)</span> 很合理），会发现 <span class="math inline">\(\mu_1(\x_1,\x_0)=\x_0,\,\tilde\beta_1=0\)</span>，正好符合预期，所以上面 <span class="math inline">\(\mu_t(\x_t,\x_0)\)</span> 和 <span class="math inline">\(\tilde\beta_t\)</span> 的表达式对 <span class="math inline">\(t\geq 1\)</span> 都适用。</p>
+          </div>
+<p>那么 <span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)\)</span> 和 <span class="math inline">\(q(\x_{t-1}\vert\x_t)\)</span> 有什么关系呢？DDPM 认为： <span class="math display">\[
+q(\x_{t-1}\vert\x_t,\x_0)\approx q(\x_{t-1}\vert\x_t,\x_\theta(\x_t,t))\coloneqq p_\theta(\x_{t-1}\vert\x_t)
+\]</span> 即用模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 代替 <span class="math inline">\(\x_0\)</span>，这样就摆脱了对 <span class="math inline">\(\x_0\)</span> 的依赖。由于 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 是用来近似 <span class="math inline">\(\mathbf x_0\)</span> 的，所以 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 其实就是在近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>. 鉴于 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)=\calN(\x_{t-1};\mu_t(\x_t,\x_0),\tilde\beta_t\mathbf{I})\)</span>，我们可以将 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 也写作类似的形式：</p>
+<p><span class="math display">\[
+p_\theta(\x_{t-1}\vert\x_t)=\calN(\x_{t-1};\mu_\theta(\x_t,t),\sigma_t^2\mathbf{I})
+\]</span> 其中：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">真实式</th>
+<th style="text-align: center;">近似式</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">概率记号</td>
+<td style="text-align: center;"><span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)=q(\x_{t-1}\vert\x_t,\x_\theta(\x_t,t))\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">正态分布表达式</td>
+<td style="text-align: center;"><span class="math inline">\(\calN(\x_{t-1};\mu_t(\x_t,\x_0),\tilde\beta_t)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\calN\left(\x_{t-1};\ \mu_\theta(\x_t,t),{\sigma_t^2}\mathbf{I}\right)\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">正态分布均值</td>
+<td style="text-align: center;"><span class="math inline">\(\mu_t(\x_t,\x_0)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\mu_\theta(\x_t,t)=\mu_t(\x_t,\x_\theta(\x_t,t))\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">正态分布方差</td>
+<td style="text-align: center;"><span class="math inline">\(\tilde\beta_t\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\sigma_t^2=\tilde\beta_t\text{ or }\beta_t\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>并且 <span class="math inline">\(\mu_\theta(\x_t,t),\,\x_\theta(\x_t,t),\,\epsilon_\theta(\x_t,t)\)</span> 之间有线性关系： <span class="math display">\[
+\begin{align}
+&amp;\mu_\theta(\x_t,t)=\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\x_t+\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_\theta(\x_t,t)\\
+&amp;\x_\theta(\x_t,t)=\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(\x_t,t)\right)\\
+&amp;\mu_\theta(\x_t,t)=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\right)
+\end{align}
+\]</span> 所以它们中的任一个都可以定义为我们真正用于训练的模型。在训练结束之后，我们就能根据 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 逆向采样了。</p>
+<div class="note note-success">
+            <p><strong>关于 <span class="math inline">\(p_\theta(\x_{t-1}\vert \x_t)=\calN(\x_{t-1};\mu_\theta(\x_t,t),\sigma_t^2\mathbf{I})\)</span> 中方差 <span class="math inline">\(\sigma_t^2\)</span> 的注解</strong></p><p>读过论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. *Advances in Neural Information Processing Systems* 33 (2020): 6840-6851.">[1]</span></a></sup>的朋友可能注意到了这么一句话：</p><blockquote><p>Experimentally, both <span class="math inline">\(\sigma_t^2=\beta_t\)</span> and <span class="math inline">\(\sigma_t^2 = \tilde\beta_t =\frac{1−\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t\)</span> had similar results. The first choice is optimal for <span class="math inline">\(\x_0\sim\calN(\mathbf 0,\mathbf{I})\)</span>, and the second is optimal for <span class="math inline">\(\x_0\)</span> deterministically set to one point.</p></blockquote><p>这里的第二个方差选择不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差。但是第一个方差选择是怎么回事？论文甚至还说方差可以是可学习的，又是怎么回事？</p><p>实话实说，我被这个问题困扰了很久，后来终于想通了。<span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)\)</span> 的方差确实就是 <span class="math inline">\(\tilde\beta_t\)</span>，我们现在想用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 来近似它。最直观的选择就是让后者沿用前者的方差，这样我们只需要近似均值就行了。但是这样做不一定最合理，毕竟均值的近似存在误差，我们也许可以通过改变方差来对均值的预测误差进行弥补。因此，两种方差的选择都不算“错”。</p><p>现在让我们追根溯源一下：为什么有误差？因为近似。哪里有近似？<span class="math inline">\(\x_\theta(\x_t,t)\to \x_0\)</span>. 为什么要近似 <span class="math inline">\(\x_0\)</span>？因为要计算 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>. 为什么算它？因为 <span class="math inline">\(q(\x_{t-1}\vert \x_t)=\frac{q(\x_t\vert\x_{t-1})q(\x_{t-1})}{q(\x_t)}\)</span> 算不了。为什么算不了？因为不知道 <span class="math inline">\(q(\x_t)\)</span> 和 <span class="math inline">\(q(\x_{t-1})\)</span>！</p><p>如果我们引入一些假设让 <span class="math inline">\(q(\x_t)\)</span> 是可计算的，那不就不用近似了吗？</p><ul><li><p>假设一：<span class="math inline">\(\x_0\sim\calN(\mathbf 0,\mathbf{I})\)</span>，那么根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式，容易知道： <span class="math display">\[q(\x_t)=\calN(\x_t;\mathbf 0,\mathbf{I})\]</span> 于是 <span class="math inline">\(q(\x_{t-1}\vert \x_t)=q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},\beta_t\mathbf{I})\)</span>. 这告诉我们，此时的方差应该取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span>.</p></li><li><p>假设二：<span class="math inline">\(\x_0\sim \delta(\mathbf 0)\)</span>，即数据集只有一个样本 <span class="math inline">\(\x_0=\mathbf 0\)</span>，那么根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式，容易知道： <span class="math display">\[q(\x_t)=\calN(\x_t;\mathbf 0,(1-\bar\alpha_t)\mathbf{I})\]</span> 后续的推导和上文其实没有什么区别，只要把所有的 <span class="math inline">\(\x_0\)</span> 换成 <span class="math inline">\(\mathbf 0\)</span> 即可。所以最后的结论是：<span class="math inline">\(\sigma_t^2=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t\)</span>.</p></li></ul><p>通过这两个极端的假设，我们得到了论文里说的两种选择。实验发现，二者效果无显著差异。</p><p>当然，<strong>这些假设本身也不合理</strong>——谁的数据是一堆高斯噪声啊！只是为了寻找方差可能的选择而做的一些试验性假设罢了。所以我们也看到了 DDPM 的改进空间——有没有办法不依赖于这些奇怪的假设而找到<strong>最优</strong>的方差呢？根据前文的讨论，我们甚至能猜到这样的方差一定与均值存在某种关系。事实上，ICLR 2022 的 Analytic-DPM 就给出了答案，不过相关内容只能留到以后的文章了。</p>
+          </div>
+<p><img src="reverse.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://cvpr2022-tutorial-diffusion-models.github.io/" width=90% /></p>
+<p>纵观整个过程，我们说 <span class="math inline">\(\eqref{x0xt}\)</span> 式不能直接拿来生成，但是在每一小步中又用到了 <span class="math inline">\(\eqref{x0xt}\)</span> 式，这怎么理解？其实 <span class="math inline">\(\eqref{x0xt}\)</span> 式可以理解为大方向，我们沿着大方向走一小步，然后重新看看大方向在哪里，再走下一小步。打个比方，我想从成都走到深圳，我知道大致要朝东南 45° 方向走，但是“差之毫厘，谬以千里”，直接走可能一不小心就登陆台湾了，所以我先走一小步到重庆；然后再看地图，大方向变成了东南 50°，于是又走一小步，但是拐弯过猛到了贵阳；没关系，再看地图，大方向变成了东南 30°……这样每走一小步都对大方向做一点修正，最后就能平稳地到达目的地了。</p>
+<h3 id="损失函数">损失函数</h3>
+<p>上一小节提到过，损失函数其实就是 <span class="math inline">\(\Vert \epsilon-\epsilon_\theta(\x_t,t)\Vert^2\)</span>，这一小节我们来详细推导一下。（其实上一小节多少有点马后炮，是在 DDPM 出来之后尝试去理解它，因此有些地方显得比较奇怪。要做真正的研究，还得直接从 ELBO 下手。）</p>
+<p>同双层 VAE 一样的道理，直接改写 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式（<span class="math inline">\(\z\)</span> 换成 <span class="math inline">\(\x_{1:T}\)</span>，<span class="math inline">\(\x\)</span> 换成 <span class="math inline">\(\x_0\)</span>）就可以得到 DDPM 的 ELBO： <span class="math display">\[
+\begin{align}
+\text{ELBO}&amp;=\E_{\x_{1:T}\sim q(\x_{1:T}\vert \x_0)}\left[\log\frac{p_\theta(\x_{0:T})}{q(\x_{1:T}\vert \x_0)}\right]\\
+&amp;=\E_{\x_{1:T}\sim q(\x_{1:T}\vert \x_0)}\left[\log\frac{p(\x_T)\prod_{t=1}^Tp_\theta(\x_{t-1}\vert\x_t)}{\prod_{t=1}^T q(\x_t\vert \x_{t-1})}\right]\\
+\end{align}\tag{8}\label{obj}
+\]</span> 接下来的推导技巧和双层 VAE 如出一辙，即将分母中的 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 写作 <span class="math inline">\(q(\x_t\vert\x_{t-1},\x_0)\)</span>，然后使用贝叶斯公式，即可进行<strong>大量的消元</strong>： <span class="math display">\[
+\begin{align}
+\prod_{t=1}^T q(\x_t\vert \x_{t-1})&amp;=q(\x_1\vert\x_0)\prod_{t=2}^T q(\x_t\vert \x_{t-1})\\
+&amp;=q(\x_1\vert\x_0)\prod_{t=2}^T q(\x_t\vert \x_{t-1},\x_0)\\
+&amp;=q(\x_1\vert\x_0)\prod_{t=2}^T \frac{q(\x_t\vert\x_0) q(\x_{t-1}\vert\x_t,\x_0)}{q(\x_{t-1}\vert\x_0)}\\
+&amp;=q(\x_T\vert\x_0)\prod_{t=2}^T q(\x_{t-1}\vert\x_t,\x_0)
+\end{align}
+\]</span> 代回 <span class="math inline">\(\eqref{obj}\)</span> 式得： <span class="math display">\[
+\begin{align}
+\text{ELBO}&amp;=\E_{\x_{1:T}\sim q(\x_{1:T}\vert \x_0)}\left[\log\frac{p(\x_T)\prod_{t=1}^Tp_\theta(\x_{t-1}\vert\x_t)}{\prod_{t=1}^T q(\x_t\vert \x_{t-1})}\right]\\
+&amp;=\E_{\x_{1:T}\sim q(\x_{1:T}\vert \x_0)}\left[\log\frac{p(\x_T)p_\theta(\x_0\vert\x_1)\prod_{t=2}^Tp_\theta(\x_{t-1}\vert\x_t)}{q(\x_T\vert\x_0)\prod_{t=2}^T q(\x_{t-1}\vert\x_t,\x_0)}\right]\\
+&amp;=\E_{\x_1\sim q(\x_1\vert\x_0)}[\log p_\theta(\x_0\vert\x_1)]+\E_{\x_T\sim q(\x_T\vert \x_0)}\left[\log\frac{p(\x_T)}{q(\x_T\vert\x_0)}\right]+\sum_{t=2}^T\E_{\x_{t-1},\x_t\sim q(\x_{t-1},\x_t\vert \x_0)}\left[\log\frac{p_\theta(\x_{t-1}\vert\x_t)}{q(\x_{t-1}\vert\x_t,\x_0)}\right]\\
+&amp;=
+\underbrace{\E_{\x_1\sim q(\x_1\vert\x_0)}[\log p_\theta(\x_0\vert\x_1)]}_{\text{reconstruction}}-
+\underbrace{\KL(q(\x_T\vert \x_0)\|p(\x_T))}_{\text{regularization}}-
+\sum_{t=2}^T\underbrace{\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\KL(q(\x_{t-1}\vert\x_t,\x_0)\|p_\theta(\x_{t-1}\vert\x_t))\right]}_{\text{matching}}
+\end{align}
+\]</span> 出现了重构项、正则项和匹配项。直观上，匹配项的意义是让 <span class="math inline">\(p_\theta(\x_{t-1}\vert \x_t)\)</span> 逼近“真实标签” <span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)\)</span>，这也证实了上一节我们的讨论。特别地，由于我们的 <span class="math inline">\(q\)</span> 是特殊设计的，<span class="math inline">\(q(\x_T\vert\x_0)\)</span> 在 <span class="math inline">\(T\)</span> 较大时趋近于标准正态分布，所以正则项可以忽略。对于匹配项而言，由于 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)=\calN(\x_{t-1};\mu_t(\x_t,\x_0),\tilde\beta_t\mathbf{I})\)</span>、<span class="math inline">\(p_\theta(\x_{t-1}\vert \x_t)=\calN(\x_{t-1};\mu_\theta(\x_t,t),\sigma^2_t\mathbf{I})\)</span>，根据两个正态分布的 KL 散度计算公式，<strong>假设取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span></strong>，那么有： <span class="math display">\[
+\mathrm{KL}(q(\x_{t-1}\vert \x_t,\x_0)\ \|\ p_\theta(\x_{t-1}\vert\x_t))=\frac{1}{2\sigma_t^2}\|\mu_t(\x_t,\x_0)-\mu_\theta(\x_t,t)\|^2
+\]</span> 类似的，把正态分布代入重构项： <span class="math display">\[
+\log p_\theta(\x_0\vert\x_1)=\text{constant}-\frac{1}{2\sigma_1^2}\|\x_0-\mu_\theta(\x_1,1)\|^2
+\]</span> 其中 <span class="math inline">\(\x_0\)</span> 可以统一格式写作 <span class="math inline">\(\mu_1(\x_1,\x_0)\)</span>，因此总的损失函数为： <span class="math display">\[
+\mathcal L(\theta)=\sum_{t=1}^T\frac{1}{2\sigma_t^2}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\|\mu_t(\x_t,\x_0)-\mu_\theta(\x_t,t)\|^2\right]
+\]</span> 这就出现了 L2 损失。</p>
+<p>基于 <span class="math inline">\(\mu_\theta,\x_\theta,\epsilon_\theta\)</span> 之间的线性关系，如果以 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 为模型，那么代入关系式，对应的损失函数为： <span class="math display">\[
+\mathcal L(\theta)=\sum_{t=1}^T\frac{\bar\alpha_{t-1}\beta_t^2}{2\sigma_t^2(1-\bar\alpha_t)^2}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\left\|\x_0-\x_\theta(\x_t,t)\right\|^2\right]
+\]</span> 如果以 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 为模型，那么代入关系式，对应的 KL 散度为： <span class="math display">\[
+\mathcal L(\theta)=\sum_{t=1}^T\frac{\beta_t^2}{2\sigma_t^2{\alpha_t}(1-\bar\alpha_t)}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\left\|{\epsilon}-\epsilon_\theta(\x_t,t)\right\|^2\right]
+\]</span> DDPM 作者发现 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 的实践效果最好并且系数可以丢掉，所以最终的简化版损失函数为： <span class="math display">\[
+\begin{align}
+\mathcal L_\text{simple}(\theta)&amp;=\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta(\x_t,t)\right\|^2\right]\\&amp;=\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta({\sqrt{\bar\alpha_t}\x_0+\sqrt{1-\bar\alpha_t}\epsilon},t)\right\|^2\right]
+\end{align}
+\]</span> 相应算法流程如下：</p>
+<p><img src="DDPM-algo.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:[Ho et al. 2020](https://arxiv.org/abs/2006.11239)" width=100% /></p>
+<p>可见 DDPM 虽然推导有些复杂，但最后得到的算法流程却异常简单，效果也很好，难怪很快成为了研究的热点。</p>
+<h2 id="代码实现">代码实现</h2>
+<p>Github repo: <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/Diffusion-Models-Implementations" class="uri">https://github.com/xyfJASON/Diffusion-Models-Implementations</a></p>
+<h3 id="结果展示">结果展示</h3>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="result-mnist.png" srcset="/blog-main/logo/imageloading.png" lazyload width=300 /></div><div class="group-image-wrap"><img src="result-cifar10.png" srcset="/blog-main/logo/imageloading.png" lazyload width=300 /></div></div></div>
+<p>更多内容请查看代码仓库。</p>
+<h3 id="关于-clipping-的注解">关于 Clipping 的注解</h3>
+<p>在官方代码<sup id="fnref:16" class="footnote-ref"><a href="#fn:16" rel="footnote"><span class="hint--top hint--rounded" aria-label="https://github.com/hojonathanho/diffusion">[16]</span></a></sup>和若干其他实现中，我发现大家普遍喜欢使用 clipping，即对于逆向过程的<strong>每一步</strong>，在预测 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 之后，不直接算 <span class="math inline">\(\mu_\theta(\x_t,t)\)</span>，而是先算 <span class="math inline">\(\x_\theta(\x_t,t)\)</span>，然后 clip 到 <span class="math inline">\([-1,1]\)</span> 之间，再算 <span class="math inline">\(\mu_\theta(\x_t,t)\)</span>. 这样做为什么合理呢？Clipping 本质上是对模型误差的人工修正——<span class="math inline">\(\x_\theta(\x_t,t)\)</span> 是用来估计 <span class="math inline">\(\x_0\)</span> 的，本就应该在 <span class="math inline">\([-1,1]\)</span> 之间，只是出于模型误差而跳脱了这个范围，所以强行把它 clip 回来并不违背理论；另外，clipping 只影响逆向过程，并不需要重新训练模型。</p>
+<h3 id="色调偏移问题">色调偏移问题</h3>
+<p>早期的实现版本在 MNIST 上 work 得很好，但是在 CelebA-HQ 上训练时出现了<strong>色调偏移</strong>（color shifting）问题。具体而言，我发现各个 epoch 之间的图片色调会发生明显偏移，比如前一个 epoch 图片都偏红，后一个 epoch 图片都偏蓝，有时候甚至亮/暗得根本看不清人脸，如下图所示：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="result-red.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="result-blue.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="result-oversaturate.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="result-undersaturate.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<p>本以为是模型还没收敛，但是 300 多个 epochs 之后仍然是这样，这就不得不重视起来。一番排查后，发现是我偷懒没有实现 EMA 导致的，特别是原作者把 decay rate 设置为 0.9999，意味着参数更新其实是很慢的。EMA 的本质是对历史权重做了加权平均，可以看作若干历史模型的集成。从这个角度来说，那些色调发生不同偏移的模型互相“抵消”，从而缓解了色调偏移问题。（注意只是缓解，并没有消除！）</p>
+<p>后来我读到其实宋飏在论文<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[3]</span></a></sup>里面就提到了这一现象，这也是他引入 EMA 的原因。说到底，色调偏移就是模型还没有收敛到真实分布的一个表现而已，只不过视觉上给人的冲击比较强烈罢了。</p>
+<p>[update 2022.11.27] 虽然 EMA 的 decay rate 设置为 0.9999，但 tensorflow 的官方实现其实是这样的： <span class="math display">\[
+\text{decay}=\min\left(\text{decay}_\max,\frac{1+\text{num_updates}}{10+\text{num_updates}}\right)
+\]</span> 随着 num_updates 增加，对应的 decay 序列是 <span class="math inline">\(0.1818,0.2500,0.3077,0.3571,0.4000,\ldots\)</span>，一直到 90000 步左右 decay 才会固定在 0.9999. 这样做能减小初始化的随机权重对整体权重的影响，模型见效更快。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. <em>Advances in Neural Information Processing Systems</em> 33 (2020): 6840-6851. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. Deep unsupervised learning using nonequilibrium thermodynamics. In <em>International Conference on Machine Learning</em>, pp. 2256-2265. PMLR, 2015. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. <em>Advances in neural information processing systems</em> 33 (2020): 12438-12448. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Luo, Calvin. Understanding diffusion models: A unified perspective. <em>arXiv preprint arXiv:2208.11970</em> (2022). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Lilian Weng. What are Diffusion Models?. https://lilianweng.github.io/posts/2021-07-11-diffusion-models/. <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Angus Turner. Diffusion Models as a kind of VAE. https://angusturner.github.io/generative_models/2021/06/29/diffusion-probabilistic-models-I.html <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Denoising Diffusion-based Generative Modeling: Foundations and Applications. https://cvpr2022-tutorial-diffusion-models.github.io <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>苏剑林. (Jul. 06, 2022). 《生成扩散模型漫谈（二）：DDPM = 自回归式VAE 》[Blog post]. Retrieved from https://kexue.fm/archives/9152 <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>苏剑林. (Jul. 19, 2022). 《生成扩散模型漫谈（三）：DDPM = 贝叶斯 + 去噪 》[Blog post]. Retrieved from https://kexue.fm/archives/9164 <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:10" class="footnote-text"><span>由浅入深了解Diffusion Model - ewrfcas的文章 - 知乎 https://zhuanlan.zhihu.com/p/525106459 <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:11" class="footnote-text"><span>扩散模型之DDPM - 小小将的文章 - 知乎 https://zhuanlan.zhihu.com/p/563661713 <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:12" class="footnote-text"><span>【54、Probabilistic Diffusion Model概率扩散模型理论与完整PyTorch代码详细解读】 https://www.bilibili.com/video/BV1b541197HX?share_source=copy_web&amp;vd_source=a43b4442e295a96065c7ae919b4866d3 <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:13" class="footnote-text"><span>【Diffusion Model：比“GAN”还要牛逼的图像生成模型！公式推导+论文精读，迪哥打你从零详解扩散模型！】 https://www.bilibili.com/video/BV1pD4y1179T?share_source=copy_web&amp;vd_source=a43b4442e295a96065c7ae919b4866d3 <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:14" class="footnote-text"><span>https://huggingface.co/blog/annotated-diffusion <a href="#fnref:14" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:15" class="footnote-text"><span>https://github.com/lucidrains/denoising-diffusion-pytorch <a href="#fnref:15" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:16" class="footnote-text"><span>https://github.com/hojonathanho/diffusion <a href="#fnref:16" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:17" class="footnote-text"><span>https://github.com/openai/improved-diffusion <a href="#fnref:17" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:18" class="footnote-text"><span>https://github.com/lucidrains/imagen-pytorch <a href="#fnref:18" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:19" class="footnote-text"><span>【炼丹技巧】指数移动平均（EMA）的原理及PyTorch实现 - Nicolas的文章 - 知乎 https://zhuanlan.zhihu.com/p/68748778 <a href="#fnref:19" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:20" class="footnote-text"><span>https://github.com/tqch/ddpm-torch <a href="#fnref:20" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:21" class="footnote-text"><span>https://github.com/abarankab/DDPM <a href="#fnref:21" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:22" class="footnote-text"><span>https://github.com/w86763777/pytorch-ddpm <a href="#fnref:22" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>从VAE到DDPM</div>
+      <div>https://xyfjason.github.io/blog-main/2022/09/29/从VAE到DDPM/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Score-Based Generative Models</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/09/17/VAE%E6%A2%B3%E7%90%86/" title="VAE梳理">
+                        <span class="hidden-mobile">VAE梳理</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,918 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 随机变量函数的分布 1.1 随机变量的函数 设 \(X\) 是一随机变量且累积分布函数为 \(F_X(x)\)，则 \(Y&#x3D;g(X)\) 也是随机变量。 设 \(g(x):\mathcal X\to\mathcal Y\)，定义逆映射： \[ g^{-1}(A)&#x3D;\{x\in\mathcal X:g(x)\in A\} \] 注意这个定义将集合映射到集合。即便 \(g(x)\) 不是单调函数，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[统计推断]第二章·变换和期望">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/02/24/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%BA%8C%E7%AB%A0%C2%B7%E5%8F%98%E6%8D%A2%E5%92%8C%E6%9C%9F%E6%9C%9B/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="1 随机变量函数的分布 1.1 随机变量的函数 设 \(X\) 是一随机变量且累积分布函数为 \(F_X(x)\)，则 \(Y&#x3D;g(X)\) 也是随机变量。 设 \(g(x):\mathcal X\to\mathcal Y\)，定义逆映射： \[ g^{-1}(A)&#x3D;\{x\in\mathcal X:g(x)\in A\} \] 注意这个定义将集合映射到集合。即便 \(g(x)\) 不是单调函数，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+<meta property="article:published_time" content="2022-02-24T06:00:28.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:40:50.138Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="statistics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+  
+  
+  
+  <title>[统计推断]第二章·变换和期望 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/statistics.jpeg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[统计推断]第二章·变换和期望"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-02-24 14:00" pubdate>
+          2022年2月24日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          74 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[统计推断]第二章·变换和期望</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="随机变量函数的分布">1 随机变量函数的分布</h2>
+<h3 id="随机变量的函数">1.1 随机变量的函数</h3>
+<p>设 <span class="math inline">\(X\)</span> 是一随机变量且累积分布函数为 <span class="math inline">\(F_X(x)\)</span>，则 <span class="math inline">\(Y=g(X)\)</span> 也是随机变量。</p>
+<p>设 <span class="math inline">\(g(x):\mathcal X\to\mathcal Y\)</span>，定义逆映射： <span class="math display">\[
+g^{-1}(A)=\{x\in\mathcal X:g(x)\in A\}
+\]</span> <strong>注意这个定义将集合映射到集合</strong>。即便 <span class="math inline">\(g(x)\)</span> 不是单调函数，<span class="math inline">\(g^{-1}\)</span> 也有定义。</p>
+<p>在上述定义下，任给集合 <span class="math inline">\(A\subset \mathcal Y\)</span>，则有：<span class="math inline">\(P(Y\in A)=P(\{x\in\mathcal X:g(x)\in A\})=P(X\in g^{-1}(A))\)</span>.</p>
+<p><br/></p>
+<p>若 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Y\)</span> 都是连续随机变量，则常用的推导 <span class="math inline">\(Y\)</span> 的 cdf 的方式是： <span class="math display">\[
+F_Y(y)=P(Y\leq y)=P(g(X)\leq y)=P(\{x\in X:g(x)\leq y\})=\int_{\{x\in X:g(x)\leq y\}}p_X(x)\mathrm dx
+\]</span></p>
+<div class="note note-success">
+            <p>例【伽玛概率密度函数和逆伽玛概率密度函数】设 <span class="math inline">\(f_X(x)\)</span> 为伽玛概率密度函数： <span class="math display">\[f_X(x)=\frac{1}{(n-1)!\beta^n}x^{n-1}e^{-x/\beta},\quad 0&lt;x&lt;+\infty\]</span> 其中 <span class="math inline">\(\beta\)</span> 是某大于零的常数，<span class="math inline">\(n\)</span> 是一正整数。现求 <span class="math inline">\(Y=g(X)=\frac{1}{X}\)</span> 的概率密度函数。那么： <span class="math display">\[F_Y(y)=P(Y\leq y)=P\left(X\geq 1/y\right)=1-P\left(X\leq1/y\right)=1-F_X(1/y)\]</span> 故： <span class="math display">\[f_Y(y)=\frac{\mathrm dF_Y(y)}{\mathrm dy}=\frac{f_X(1/y)}{y^2}=\frac{1}{(n-1)!\beta^n}\left(\frac{1}{y}\right)^{n+1}e^{-1/(\beta y)}\]</span> 这就是逆伽玛概率密度函数（的一个特例）。</p>
+          </div>
+<p>在对随机变量进行变换时，需要明确随机变量的样本空间，常取： <span class="math display">\[
+\mathcal X=\{x:f_X(x)&gt;0\}\quad \mathcal Y=\{y:\exists x,\,y=g(x)\}
+\]</span> 上述 <span class="math inline">\(\mathcal X\)</span> 也称作随机变量 <span class="math inline">\(X\)</span> 的分布的<strong>支撑集（support set）</strong>，即 <span class="math inline">\(f_X(x)\)</span> 取值为正的地方。</p>
+<h3 id="随机变量的单调函数">1.2 随机变量的单调函数</h3>
+<p>单调情形非常常见，因此特意拿出来推导一下。设 <span class="math inline">\(f_X(x)\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的连续函数，<span class="math inline">\(g^{-1}(y)\)</span> 在 <span class="math inline">\(\mathcal Y\)</span> 上有连续导数，则： <span class="math display">\[
+F_Y(y)=P(Y\leq y)=\begin{cases}P(X\leq g^{-1}(y))=F_X(g^{-1}(y))&amp;&amp;\text{若 }g\text{ 是增函数}\\P(X\geq g^{-1}(y))=1-F_X(g^{-1}(y))&amp;&amp;\text{若 }g\text{ 是减函数}\end{cases}
+\]</span> 求导可以得到： <span class="math display">\[
+f_Y(y)=f_X(g^{-1}(y))\left|\frac{\mathrm d}{\mathrm dy}g^{-1}(y)\right|,\quad y\in\mathcal Y
+\]</span></p>
+<div class="note note-success">
+            <p>例【均匀分布与指数分布的联系】设 <span class="math inline">\(X\)</span> 服从 <span class="math inline">\((0,1)\)</span> 上的均匀分布，<span class="math inline">\(Y=g(X)=-\log X\)</span>，则 <span class="math inline">\(g^{-1}(y)=e^{-y}\)</span>，于是 <span class="math display">\[F_Y(y)=1-F_X(g^{-1}(y))=1-F_X(e^{-y})=1-e^{-y}\]</span> 或直接计算 pdf： <span class="math display">\[f_Y(y)=f_X(g^{-1}(y))\left|\frac{\mathrm d}{\mathrm dy}g^{-1}(y)\right|=e^{-y}f_X(e^{-y})=e^{-y}\]</span> 因而 <span class="math inline">\(Y\)</span> 服从参数为 <span class="math inline">\(1\)</span> 的指数分布。</p>
+          </div>
+<h3 id="概率积分变换">1.3 概率积分变换</h3>
+<p><strong>定理</strong>：设随机变量 <span class="math inline">\(X\)</span> 有连续累积分布函数 <span class="math inline">\(F_X(x)\)</span>。令 <span class="math inline">\(Y=F_X(X)\)</span>，则 <span class="math inline">\(Y\sim U(0, 1)\)</span>，即 <span class="math inline">\(P(Y\leq y)=y,0&lt;y&lt;1\)</span>.</p>
+<p>在证明前，首先定义 <span class="math inline">\(F_X\)</span> 的逆 <span class="math inline">\(F_X^{-1}\)</span>。鉴于 <span class="math inline">\(F_X\)</span> 不一定严格单调递增，我们定义累积分布函数的逆如下： <span class="math display">\[
+F^{-1}_X(y)=\inf\{x:F_X(x)\geq y\}
+\]</span> 如此，在下图的情况下，有 <span class="math inline">\(F_X^{-1}(y)=x_1\)</span>。</p>
+<p><img src="F_X.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+<p>接下来我们完成证明： <span class="math display">\[
+\begin{align}
+P(Y\leq y)&amp;=P(F_X(X)\leq y)\\
+&amp;=P(F_X^{-1}(F_X(X))\leq F_X^{-1}(y))&amp;&amp;\text{因为 }F_X^{-1}\text{ 是增函数}\\
+&amp;=P(X\leq F_X^{-1}(y))&amp;&amp;\text{理由见下文}\\
+&amp;=F_X(F_X^{-1}(y))&amp;&amp;F_X\text{ 的定义}\\
+&amp;=y
+\end{align}
+\]</span> 对于第三个等号，如果 <span class="math inline">\(F_X\)</span> 严格递增，那么 <span class="math inline">\(F_X^{-1}(F_X(x))=x\)</span>，等式显然成立；如果不是严格递增，例如上面图中对于 <span class="math inline">\(x\in[x_1,x_2]\)</span> 一段，都有 <span class="math inline">\(F_X^{-1}(F_X(x))=x_1\)</span>，但由于 <span class="math inline">\(P(X\leq x)=P(X\leq x_1)\)</span>，所以等式依旧成立。</p>
+<p><strong>利用概率积分变换定理，我们可以根据给定的概率分布构造相应的随机样本</strong>。如果我们想构造 <span class="math inline">\(X\)</span> 使其具有累积分布函数 <span class="math inline">\(F_X\)</span>，则只需要首先构造 <span class="math inline">\((0,1)\)</span> 上的均匀分布，再从 <span class="math inline">\(F_X(x)=U\)</span> 中解出 <span class="math inline">\(x\)</span>。这是一种能广泛应用的构造方法。</p>
+<div class="note note-info">
+            <p>注记：这个定理叫做概率积分变换，但上文没看到积分呢？其实“积分”出现在：<span class="math inline">\(Y=F_X(X)=\int_{-\infty}^{X}f_X(t)\mathrm dt\)</span>。直观来说，<span class="math inline">\(Y\)</span> 是 <span class="math inline">\((-\infty,X)\)</span> 上 pdf 曲线下的面积。</p><p>该定理在图像处理领域的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Histogram_equalization">直方图均衡化/规定化</a>中也有应用，只不过应用的是这个定理的离散形式，详见《数字图像处理》3.3 节。</p>
+          </div>
+<h2 id="期望">2 期望</h2>
+<h3 id="期望-1">2.1 期望</h3>
+<p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\mathrm{Var}}
+\E g(X)=\begin{cases}
+\int_{-\infty}^{+\infty}g(x)f_X(x)\mathrm dx&amp;&amp;X\text{ 连续}\\
+\sum_{x\in\mathcal X}g(x)f_X(x)\mathrm dx&amp;&amp;X\text{ 离散}\\
+\end{cases}
+\]</span></p>
+<p>如果 <span class="math inline">\(\E |g(X)|=+\infty\)</span>，称 <span class="math inline">\(\E g(X)\)</span> 不存在。<strong>注意这有个绝对值</strong>。一个经典的期望不存在的随机变量是柯西(Cauchy)随机变量。</p>
+<p>为什么有个绝对值？因为在期望的定义式中，为了避免由于求和（积分）顺序的改变而导致结果改变，应要求期望是<strong>绝对收敛</strong>而非条件收敛的。</p>
+<div class="note note-success">
+            <p>指数期望：<span class="math inline">\(f_X(x)=\frac{1}{\lambda}e^{-x/\lambda},\,0\leq x&lt;\infty,\,\lambda&gt;0\implies \E X=\lambda\)</span></p><p>二项期望：<span class="math inline">\(f_X(x)=\binom{n}{x}p^x(1-p)^{n-x}\implies \E X=np\)</span></p><p>柯西期望：<span class="math inline">\(f_X(x)=\frac{1}{\pi}\frac{1}{1+x^2}\implies \E |X|=+\infty\)</span></p>
+          </div>
+<h3 id="距离最小化">2.2 距离最小化</h3>
+<p>如果我们用 <span class="math inline">\((X-b)^2\)</span> 来度量随机变量 <span class="math inline">\(X\)</span> 与常数 <span class="math inline">\(b\)</span> 之间的距离，则可以通过求使得 <span class="math inline">\(\E(X-b)^2\)</span> 最小的 <span class="math inline">\(b\)</span> 作为 <span class="math inline">\(X\)</span> 的估计。由于： <span class="math display">\[
+\begin{align}
+\E(X-b)^2&amp;=\E(X-\E X+\E X-b)^2\\
+&amp;=\E(X-\E X)^2+2\E[(X-\E X)(\E X-b)]+\E(\E X-b)^2\\
+&amp;=\E(X-\E X)^2+2(\E X-b)\E(X-\E X)+(\E X-b)^2\\
+&amp;=\E(X-\E X)^2+(\E X-b)^2
+\end{align}
+\]</span> 其中第一项与 <span class="math inline">\(b\)</span> 无关，第二项非负且当 <span class="math inline">\(\E X=b\)</span> 时取到 <span class="math inline">\(0\)</span>，因此： <span class="math display">\[
+\min_b\E(X-b)^2=\E(X-\E X)^2
+\]</span> 这意味着我们应取 <span class="math inline">\(b=\E X\)</span>.</p>
+<p><br/></p>
+<p>但是如果用 <span class="math inline">\(|X-b|\)</span> 来作为距离的度量，结论还会一样吗？下面假设 <span class="math inline">\(X\)</span> 是连续随机变量。 <span class="math display">\[
+\begin{align}
+\E|X-b|&amp;=\int_{-\infty}^{+\infty}|X-b|f(x)\mathrm dx\\
+&amp;=\int_{-\infty}^{b}(b-x)f(x)\mathrm dx+\int_{b}^{+\infty}(x-b)f(x)\mathrm dx\\
+&amp;=\left(\int_{b}^{+\infty}xf(x)\mathrm dx-\int_{-\infty}^{b}xf(x)\mathrm dx\right)+b\left(\int_{-\infty}^{b}f(x)\mathrm dx-\int_{b}^{+\infty}f(x)\mathrm dx\right)
+\end{align}
+\]</span> 对 <span class="math inline">\(b\)</span> 求导得： <span class="math display">\[
+\begin{align}
+\frac{\mathrm d\E|X-b|}{\mathrm db}&amp;=-bf(b)-bf(b)+\int_{-\infty}^b f(x)\mathrm dx-\int_b^{+\infty}f(x)\mathrm dx+b(f(b)+f(b))\\
+&amp;=\int_{-\infty}^b f(x)\mathrm dx-\int_b^{+\infty}f(x)\mathrm dx
+\end{align}
+\]</span> 令其为零： <span class="math display">\[
+\int_{-\infty}^b f(x)\mathrm dx=\int_b^{+\infty}f(x)\mathrm dx
+\]</span> 又因为二者相加为 <span class="math inline">\(1\)</span>，所以最优的 <span class="math inline">\(b\)</span> 是随机变量 <span class="math inline">\(X\)</span> 的<strong>中位数</strong> <span class="math inline">\(m\)</span>： <span class="math display">\[
+\int_{-\infty}^m f(x)\mathrm dx=\int_m^{+\infty}f(x)\mathrm dx=\frac{1}{2}
+\]</span></p>
+<h2 id="矩和矩母函数">3 矩和矩母函数</h2>
+<h3 id="矩">3.1 矩</h3>
+<p>概率分布的矩是一类重要的期望。对任意整数 <span class="math inline">\(n\)</span>，<span class="math inline">\(X\)</span> 的 <strong><span class="math inline">\(n\)</span> 阶矩</strong>和<strong><span class="math inline">\(n\)</span> 阶中心矩</strong>分别为： <span class="math display">\[
+\mu_n&#39;=\E X^n,\quad \mu_n=\E(X-\E X)^n
+\]</span> 其中二阶中心矩即是方差 <span class="math inline">\(\Var X=\E(X-\E X)^2\)</span>.</p>
+<div class="note note-success">
+            <p>指数方差：<span class="math inline">\(\Var X=\lambda^2\)</span></p><p>二项方差：<span class="math inline">\(\Var X=np(1-p)\)</span></p>
+          </div>
+<h3 id="矩母函数">3.2 矩母函数</h3>
+<p>设随机变量 <span class="math inline">\(X\)</span> 的 cdf 为 <span class="math inline">\(F_X\)</span>，则<strong>矩母函数（moment generating function, mgf）</strong>定义为： <span class="math display">\[
+M_X(t)=\E[e^{tX}]=\begin{cases}
+\int_{-\infty}^{+\infty}e^{tx}f_X(x)\mathrm dx&amp;&amp;X\text{ 连续}\\
+\sum_x e^{tx}f_X(x)&amp;&amp;X\text{ 离散}
+\end{cases}
+\]</span> 这里假设 <span class="math inline">\(t\)</span> 在 <span class="math inline">\(0\)</span> 的某邻域内时上式中的期望存在。如果在 <span class="math inline">\(0\)</span> 的任意邻域内该期望都不存在，称矩母函数不存在。</p>
+<p><strong>从矩母函数可以计算矩</strong>： <span class="math display">\[
+\E X^n=\left.\frac{\mathrm d^n}{\mathrm d t^n}M_X(t)\right|_{t=0}
+\]</span> 以连续随机变量为例证明：假设求导可放入积分（下一节叙述），则： <span class="math display">\[
+\frac{\mathrm d^n}{\mathrm d t^n}M_X(t)=\int_{-\infty}^{+\infty} \frac{\mathrm d^n e^{tx}}{\mathrm d t^n}f_X(x)\mathrm dx=\int_{-\infty}^{+\infty}x^n e^{tx}f_X(x)\mathrm dx=\E[X^ne^{tX}]
+\]</span> 于是易得上述结论。</p>
+<div class="note note-success">
+            <p>例【伽玛矩母函数】一般的伽玛概率密度函数的形式如下： <span class="math display">\[f_X(x)=\frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha-1}e^{-x/\beta},\quad0&lt;x&lt;+\infty,\,\alpha&gt;0,\,\beta&gt;0\]</span> 则矩母函数为： <span class="math display">\[\begin{align}M_X(t)&amp;=\E[e^{tX}]=\frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^{+\infty}x^{\alpha-1}e^{-x/\frac{\beta}{1-\beta t}}\mathrm dx\\&amp;=\left(\frac{1}{1-\beta t}\right)^\alpha\int_0^{+\infty}\frac{1}{\Gamma(\alpha)(\frac{\beta}{1-\beta t})^\alpha}x^{\alpha-1}e^{-x/\frac{\beta}{1-\beta t}}\mathrm dx\\&amp;=\left(\frac{1}{1-\beta t}\right)^\alpha\end{align}\]</span> 最后一个等式成立是因为积分内是另一个伽玛概率密度函数的积分。</p><p>根据矩母函数，容易知道伽玛分布的期望是： <span class="math display">\[\E X=\left.\frac{\mathrm d M_X(t)}{\mathrm dt}\right|_{t=0}=\alpha\beta\]</span></p>
+          </div>
+<p><strong>矩母函数的主要作用并不是求矩，而是在大多数情况下它唯一地确定了一个概率分布。与之相对的，仅确定了全部（无数个）矩并不能唯一确定概率分布。</strong>换句话说，存在两个不同的概率分布，它们所有的矩都相等。</p>
+<p>但是当随机变量的支撑集有界时，全部矩就能唯一确定概率分布了。总结来说：</p>
+<ol type="1">
+<li>若 <span class="math inline">\(X,Y\)</span> 的支撑集有界，则 <span class="math inline">\(\forall u,\,F_X(u)=F_Y(u)\)</span> 当且仅当 <span class="math inline">\(\forall r=0,1,2,\ldots,\,\E X^r=\E Y^r\)</span></li>
+<li>若 <span class="math inline">\(X,Y\)</span> 矩母函数都存在，且对 <span class="math inline">\(0\)</span> 的某邻域内的任意 <span class="math inline">\(t\)</span>，都有 <span class="math inline">\(M_X(t)=M_Y(t)\)</span>，则 <span class="math inline">\(\forall u, F_X(u)=F_Y(u)\)</span></li>
+</ol>
+<h2 id="积分号下的求导">4 积分号下的求导</h2>
+<p>统计学中经常会遇到交换积分与求导的顺序。</p>
+<h3 id="leibnitz-法则">4.1 Leibnitz 法则</h3>
+<p>若 <span class="math inline">\(f(x,\theta),a(\theta),b(\theta)\)</span> 都对 <span class="math inline">\(\theta\)</span> 可导，则： <span class="math display">\[
+\frac{\mathrm d}{\mathrm d\theta}\int_{a(\theta)}^{b(\theta)} f(x,\theta)\mathrm dx=f(b(\theta),\theta)\cdot\frac{\mathrm d}{\mathrm d\theta}b(\theta)-f(a(\theta),\theta)\cdot\frac{\mathrm d}{\mathrm d\theta}a(\theta)+\int_{a(\theta)}^{b(\theta)}\frac{\partial}{\partial\theta}f(x,\theta)\mathrm dx
+\]</span> 特别的，如果 <span class="math inline">\(a(\theta),b(\theta)\)</span> 是常函数，得到 Leibnitz 法则的一个特例： <span class="math display">\[
+\frac{\mathrm d}{\mathrm d\theta}\int_a^bf(x,\theta)\mathrm dx=\int_a^b\frac{\partial}{\partial \theta}f(x,\theta)\mathrm dx
+\]</span></p>
+<h3 id="求导与积分互换的相关定理">4.2 求导与积分互换的相关定理</h3>
+<p>将求导写作定义式，则： <span class="math display">\[
+\begin{align}
+&amp;\int_{-\infty}^{+\infty}\frac{\partial}{\partial \theta}f(x,\theta)\mathrm dx=\int_{-\infty}^{+\infty}\lim_{\delta\to0}\left[\frac{f(x,\theta+\delta)-f(x,\theta)}{\delta}\right]\mathrm dx\\
+&amp;\frac{\mathrm d}{\mathrm d\theta}\int_{-\infty}^{+\infty}f(x,\theta)\mathrm dx=\lim_{\delta\to0}\int_{-\infty}^{+\infty}\left[\frac{f(x,\theta+\delta)-f(x,\theta)}{\delta}\right]\mathrm dx
+\end{align}
+\]</span> 因此要证明求导和积分可以互换，只需证明求极限与积分可以互换。解决这个问题要用到超纲知识，因此这里直接给出结论。</p>
+<p><strong>定理</strong>：设对于任意 <span class="math inline">\(x\)</span>，<span class="math inline">\(h(x,y)\)</span> 在 <span class="math inline">\(y_0\)</span> 处连续，并且存在函数 <span class="math inline">\(g(x)\)</span> 满足：</p>
+<ol type="1">
+<li>对任意 <span class="math inline">\(x,y\)</span> 有 <span class="math inline">\(|h(x,y)|\leq g(x)\)</span>【<span class="math inline">\(g(x)\)</span> 将 <span class="math inline">\(h(x,y)\)</span> 控制住】</li>
+<li><span class="math inline">\(\int_{-\infty}^{+\infty}g(x)\mathrm dx&lt;+\infty\)</span>【<span class="math inline">\(g(x)\)</span> 有有限积分】</li>
+</ol>
+<p>则： <span class="math display">\[
+\lim_{y\to y_0}\int_{-\infty}^{+\infty}h(x,y)\mathrm dx=\int_{-\infty}^{+\infty}\lim_{y\to y_0}h(x,y)\mathrm dx
+\]</span> <br/></p>
+<p>将这个定理套用到求导与积分互换问题中：假设 <span class="math inline">\(f(x,\theta)\)</span> 在 <span class="math inline">\(\theta=\theta_0\)</span> 处可导，那么把 <span class="math inline">\((f(x,\theta_0+\delta)-f(x,\theta_0))/\delta\)</span> 视作 <span class="math inline">\(h(x,\delta)\)</span>，得到求导与积分互换的条件是：存在函数 <span class="math inline">\(g(x,\theta_0)\)</span> 和常数 <span class="math inline">\(\delta_0&gt;0\)</span>，使得</p>
+<ol type="1">
+<li>对任意 <span class="math inline">\(x\)</span> 以及 <span class="math inline">\(|\delta|\leq\delta_0\)</span>，有 <span class="math inline">\(\left|\frac{f(x,\theta_0+\delta)-f(x,\theta_0)}{\delta}\right|\leq g(x,\theta_0)\)</span></li>
+<li><span class="math inline">\(\int_{-\infty}^{+\infty}g(x,\theta_0)\mathrm dx&lt;+\infty\)</span></li>
+</ol>
+<p>注意我们现在取 <span class="math inline">\(\theta\)</span> 为某定值 <span class="math inline">\(\theta_0\)</span>；另外，<span class="math inline">\(\delta_0\)</span> 的引入是因为我们考虑的是导数，只需要足够小的 <span class="math inline">\(\delta\)</span> 而不需要对所有 <span class="math inline">\(\delta\)</span> 都成立。</p>
+<p>上面第一个条件类似于 Lipschitz 条件，通过给出一阶导函数的界来约束函数的光滑性。</p>
+<p>假若 <span class="math inline">\(f(x,\theta)\)</span> 在任意 <span class="math inline">\(\theta\)</span> 处可导，那么上述定理中的 <span class="math inline">\(\theta_0\)</span> 可以全部换成 <span class="math inline">\(\theta\)</span>。并且在这种情形下，条件 1 可以根据拉格朗日中值定理进一步改写为：对任意满足 <span class="math inline">\(|\theta&#39;-\theta|\leq \delta_0\)</span> 的 <span class="math inline">\(\theta&#39;\)</span> 有 <span class="math display">\[
+\left|\left.\frac{\partial}{\partial \theta}f(x,\theta)\right|_{\theta=\theta&#39;}\right|\leq g(x,\theta)
+\]</span></p>
+<h3 id="求导与求和互换的相关定理">4.3 求导与求和互换的相关定理</h3>
+<p><strong>定理</strong>：设级数 <span class="math inline">\(\sum_{x=0}^{+\infty}h(\theta,x)\)</span> 对任意实数区间 <span class="math inline">\((a,b)\)</span> 内的 <span class="math inline">\(\theta\)</span> 都收敛，并且：</p>
+<ol type="1">
+<li>对任意 <span class="math inline">\(x\)</span>，<span class="math inline">\(\frac{\partial}{\partial \theta}h(\theta,x)\)</span> 都是 <span class="math inline">\(\theta\)</span> 的连续函数</li>
+<li><span class="math inline">\(\sum_{x=0}^{+\infty}\frac{\partial}{\partial \theta}h(\theta,x)\)</span> 在 <span class="math inline">\((a,b)\)</span> 的任意闭有界子区间上都<strong>一致收敛</strong></li>
+</ol>
+<p>则： <span class="math display">\[
+\frac{\mathrm d}{\mathrm d\theta}\sum_{x=0}^{+\infty}h(\theta,x)=\sum_{x=0}^{+\infty}\frac{\partial}{\partial\theta}h(\theta,x)
+\]</span></p>
+<h3 id="求和与积分互换的相关定理">4.4 求和与积分互换的相关定理</h3>
+<p><strong>定理</strong>：设级数 <span class="math inline">\(\sum_{x=0}^{+\infty}h(\theta,x)\)</span> 在 <span class="math inline">\([a,b]\)</span> 上一致收敛，且对任意 <span class="math inline">\(x\)</span>，<span class="math inline">\(h(\theta,x)\)</span> 都是 <span class="math inline">\(\theta\)</span> 的连续函数，则： <span class="math display">\[
+\int_a^b\sum_{x=0}^{+\infty}h(\theta,x)\mathrm d\theta=\sum_{x=0}^{+\infty}\int_a^bh(\theta,x)\mathrm d\theta
+\]</span></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="category-chain-item">统计推断</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/statistics/" class="print-no-link">#statistics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[统计推断]第二章·变换和期望</div>
+      <div>https://xyfjason.github.io/blog-main/2022/02/24/统计推断-第二章·变换和期望/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年2月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/02/28/Useful-commands/" title="Useful commands">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Useful commands</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/02/24/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%80%E7%AB%A0%C2%B7%E6%A6%82%E7%8E%87%E8%AE%BA/" title="[统计推断]第一章·概率论">
+                        <span class="hidden-mobile">[统计推断]第一章·概率论</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

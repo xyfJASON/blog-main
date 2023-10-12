@@ -1,0 +1,1334 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="第六章·特殊的数分7节，包括斯特林数、欧拉数、调和数、调和求和法、伯努利数、斐波那契数和连项式的内容。这是笔记第一部分，包括斯特林数、欧拉数，它们可以构成类似杨辉三角的三角形。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[具体数学]第六章·特殊的数（第一部分）">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2020/08/26/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E5%85%AD%E7%AB%A0%C2%B7%E7%89%B9%E6%AE%8A%E7%9A%84%E6%95%B0%EF%BC%88%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%89/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="第六章·特殊的数分7节，包括斯特林数、欧拉数、调和数、调和求和法、伯努利数、斐波那契数和连项式的内容。这是笔记第一部分，包括斯特林数、欧拉数，它们可以构成类似杨辉三角的三角形。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_study1.jpg">
+<meta property="article:published_time" content="2020-08-26T10:30:01.000Z">
+<meta property="article:modified_time" content="2023-10-12T11:54:43.895Z">
+<meta property="article:author" content="xyfJASON">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_study1.jpg">
+  
+  
+  
+  <title>[具体数学]第六章·特殊的数（第一部分） - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_study1.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[具体数学]第六章·特殊的数（第一部分）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-08-26 18:30" pubdate>
+          2020年8月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[具体数学]第六章·特殊的数（第一部分）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>第六章·特殊的数分7节，包括斯特林数、欧拉数、调和数、调和求和法、伯努利数、斐波那契数和连项式的内容。这是笔记第一部分，包括斯特林数、欧拉数，它们可以构成类似杨辉三角的三角形。</p>
+</blockquote>
+<p><span class="math display">\[
+\newcommand{\stra}[2]{\begin{bmatrix}#1\\#2\end{bmatrix}}
+\newcommand{\strb}[2]{\begin{Bmatrix}#1\\#2\end{Bmatrix}}
+\newcommand{\elr}[2]{\left\langle\begin{matrix}#1\\#2\end{matrix}\right\rangle}
+\newcommand{\elrdb}[2]{\left\langle\left\langle\begin{matrix}#1\\#2\end{matrix}\right\rangle\right\rangle}
+\]</span></p>
+<h2 id="斯特林数">斯特林数</h2>
+<p>符号表示：</p>
+<p><strong>第一类斯特林数（斯特林轮换数）</strong>：<span class="math inline">\(\stra{n}{k}\)</span>；</p>
+<p><strong>第二类斯特林数（斯特林子集数）</strong>：<span class="math inline">\(\strb{n}{k}\)</span>.</p>
+<blockquote>
+<p>注：自定义 <span class="math inline">\(\LaTeX\)</span> 运算符号，以上述两个斯特林数为例：</p>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs latex"><span class="hljs-keyword">\newcommand</span>&#123;<span class="hljs-keyword">\stra</span>&#125;[2]&#123;<span class="hljs-keyword">\begin</span>&#123;bmatrix&#125;<span class="hljs-params">#1</span><span class="hljs-keyword">\\</span><span class="hljs-params">#2</span><span class="hljs-keyword">\end</span>&#123;bmatrix&#125;&#125;<br><span class="hljs-keyword">\newcommand</span>&#123;<span class="hljs-keyword">\strb</span>&#125;[2]&#123;<span class="hljs-keyword">\begin</span>&#123;Bmatrix&#125;<span class="hljs-params">#1</span><span class="hljs-keyword">\\</span><span class="hljs-params">#2</span><span class="hljs-keyword">\end</span>&#123;Bmatrix&#125;&#125;<br></code></pre></td></tr></table></figure>
+<p><code>\newcommand&#123;运算符&#125;[参数数量]&#123;运算符长什么样&#125;</code>，其中 <code>#1</code>,<code>#2</code> 标注参数位置。</p>
+</blockquote>
+<h3 id="第二类斯特林数">第二类斯特林数</h3>
+<p>我们先来考虑第二类斯特林数。<span class="math inline">\(\strb{n}{k}\)</span> 表示将一个有 <span class="math inline">\(n\)</span> 件物品的集合划分成 <span class="math inline">\(k\)</span> 个非空子集的方案数。</p>
+<blockquote>
+<p>花括号也用来表示集合，这一雷同有助于让我们记住 <span class="math inline">\(\strb{n}{k}\)</span> 的意义。</p>
+</blockquote>
+<p>我们可以推导 <span class="math inline">\(\strb{n}{k}\)</span> 的递归式：把 <span class="math inline">\(n\)</span> 件物品分成 <span class="math inline">\(k\)</span> 个部分，要么是最后一件物品单独一类，这一共有 <span class="math inline">\(\strb{n-1}{k-1}\)</span> 种方案；要么是最后一件物品加入前 <span class="math inline">\(n-1\)</span> 件物品划分出的 <span class="math inline">\(k\)</span> 个部分之一去，共有 <span class="math inline">\(k\strb{n-1}{k}\)</span> 种方案。所以我们有： <span class="math display">\[
+\color{purple}{\strb{n}{k}=k\strb{n-1}{k}+\strb{n-1}{k-1}}
+\]</span> （如果系数 <span class="math inline">\(k\)</span> 是 <span class="math inline">\(1\)</span> 就是二项式系数了）</p>
+<p>基于此，我们可以生成第二类斯特林数的三角形：</p>
+<table style="width:100%;">
+
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(n\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{0}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{1}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{2}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{3}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{4}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{5}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{6}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{7}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{8}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\strb{n}{9}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(4\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(7\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(6\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(15\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(25\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(10\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(6\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(31\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(90\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(65\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(15\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(7\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(63\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(301\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(350\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(140\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(21\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(8\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(127\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(966\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1701\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1050\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(266\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(28\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(9\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(255\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3025\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(7770\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(6951\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2646\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(462\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(36\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="第一类斯特林数">第一类斯特林数</h3>
+<p>现在讨论第一类斯特林数。<span class="math inline">\(\stra{n}{k}\)</span> 表示将 <span class="math inline">\(n\)</span> 个元素排成 <span class="math inline">\(k\)</span> 个<strong>轮换</strong>的方案数。这里，<strong>轮换</strong>是指环形排列，可以转动而相等，例如 <span class="math inline">\([A,B,C,D]=[B,C,D,A]=[C,D,A,B]=[D,A,B,C]\)</span>，但是 <span class="math inline">\([A,B,C,D]\neq[A,B,D,C]\)</span>.</p>
+<p>先看几个特殊的值，<span class="math inline">\(n\)</span> 个元素的 <span class="math inline">\(n\)</span> 轮换有 <span class="math inline">\(\frac{n!}{n}\)</span> 种，所以 <span class="math inline">\(\stra{n}{1}=(n-1)!\)</span>；当所有轮换都是单元素或者双元素时，轮换和子集没有差别，所以 <span class="math inline">\(\stra{n}{n}=\strb{n}{n}=1,\,\stra{n}{n-1}=\strb{n}{n-1}=\binom{n}{2}\)</span>.</p>
+<p>我们也可以推导 <span class="math inline">\(\stra{n}{k}\)</span> 的递归式：考虑最后一件物品，要么单独放在自己的轮换里，有 <span class="math inline">\(\stra{n-1}{k-1}\)</span> 种方式；要么加入前 <span class="math inline">\(n-1\)</span> 件物品分成的 <span class="math inline">\(\stra{n-1}{k}\)</span> 个轮换中的一个，而方法有 <span class="math inline">\(n-1\)</span> 种（插入任何一个轮换的任何一个位置都行）。所以我们有： <span class="math display">\[
+\color{purple}{\stra{n}{k}=(n-1)\stra{n-1}{k}+\stra{n-1}{k-1}}
+\]</span></p>
+<blockquote>
+<p>记忆是很方便的，第一类斯特林数是在二项式系数的递归式中乘上了<strong>上指标</strong> <span class="math inline">\(n-1\)</span> 作为系数，第二类斯特林数是乘上了<strong>下指标</strong> <span class="math inline">\(k\)</span> 作为系数。</p>
+</blockquote>
+<p>基于此，我们也可以生成第一类斯特林数的三角形：</p>
+<table style="width:100%;">
+
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(n\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{0}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{1}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{2}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{3}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{4}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{5}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{6}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{7}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{8}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\stra{n}{9}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(4\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(6\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(11\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(6\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(24\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(50\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(35\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(10\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(6\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(120\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(274\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(225\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(85\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(15\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(7\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(720\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1764\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1624\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(735\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(175\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(21\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(8\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(5040\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(13068\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(13132\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(6769\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1960\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(322\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(28\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(9\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(40320\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\small{109584}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\small{118124}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(67284\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(22449\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(4536\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(546\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(36\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="一些恒等式">一些恒等式</h3>
+<p>我们知道，每一种排列都和一个轮换等价——例如 <span class="math inline">\(15234\)</span>，从下标向数值连边，就构成了若干个环 <span class="math inline">\([1][2543]\)</span>，也即形成了一个轮换（这一点在竞赛中也经常使用）。所以，所有轮换方案加起来就是所有排列数，即： <span class="math display">\[
+\color{blue}{\sum_{k=0}^n\stra{n}{k}=n!\quad,整数\;n\geqslant 0}
+\]</span> 之前说过，普通的幂次和下降幂之间可以通过斯特林数建立起联系，我们观察前几个关系： <span class="math display">\[
+\begin{align}
+&amp;x^0=x^{\underline 0}\\
+&amp;x^1=x^{\underline 1}\\
+&amp;x^2=x^{\underline 2}+x^{\underline 1}\\
+&amp;x^3=x^{\underline 3}+3x^{\underline 2}+x^{\underline 1}\\
+&amp;x^4=x^{\underline 4}+6x^{\underline 3}+7x^{\underline 2}+x^{\underline 1}
+\end{align}
+\]</span> 会发现这系数不就是第二类斯特林数吗？也就是说，我们可以猜想： <span class="math display">\[
+\color{blue}{x^n=\sum_k\strb{n}{k}x^{\underline k}}
+\]</span> 数学归纳法证明： <span class="math display">\[
+\begin{align}
+x^n=x\cdot x^{n-1}&amp;=x\sum_k\strb{n-1}{k}x^{\underline k}\\
+&amp;=\sum_k\strb{n-1}{k}x^{\underline {k+1}}+\sum_k\strb{n-1}{k}kx^{\underline k}&amp;&amp;x\cdot x^{\underline k}=x^{\underline{k+1}}+kx^{\underline k}\\
+&amp;=\sum_k\left(\strb{n-1}{k-1}+k\strb{n-1}{k}\right)x^{\underline k}\\
+&amp;=\sum_k\strb{n}{k}x^{\underline k}
+\end{align}
+\]</span> 证毕。</p>
+<p>同样的，上升阶乘幂与普通的幂次之间也有类似关系： <span class="math display">\[
+\color{blue}{x^{\overline n}=\sum_k\stra{n}{k}x^k}
+\]</span> 数学归纳法证明： <span class="math display">\[
+\begin{align}
+x^{\overline n}=(x+n-1)x^{\overline {n-1}}&amp;=(x+n-1)\sum_k\stra{n-1}{k}x^k\\
+&amp;=\sum_k\stra{n-1}{k}x^{k+1}+\sum_k\stra{n-1}{k}(n-1)x^k&amp;&amp;(x+n-1)x^k=x^{k+1}+(n-1)x^k\\
+&amp;=\sum_k\left(\stra{n-1}{k-1}+(n-1)\stra{n-1}{k}\right)x^k\\
+&amp;=\sum_k\stra{n}{k}x^k
+\end{align}
+\]</span> 证毕。</p>
+<p>上面是用下降幂表示了普通幂，普通幂表示了上升幂。但如果我们想用普通幂表示下降幂，上升幂表示普通幂呢？只需要应用 <span class="math inline">\(x^{\underline n}=(-1)^n(-x)^{\overline n}\)</span>，把 <span class="math inline">\(x\)</span> 取相反值就得到： <span class="math display">\[
+\color{blue}{\begin{align}
+&amp;x^{n}=\sum_k\strb{n}{k}(-1)^{n-k}x^{\overline k}\\
+&amp;x^{\underline n}=\sum_k\stra{n}{k}(-1)^{n-k}x^k
+\end{align}}
+\]</span> 如果我们把普通幂表示上升幂的式子代入上升幂表示普通幂的式子，那么得到： <span class="math display">\[
+x^n=\sum_k\strb{n}{k}(-1)^{n-k}\sum_m\stra{k}{m}x^m=\sum_{k,m}(-1)^{n-k}\strb{n}{k}\stra{k}{m}x^m
+\]</span> 由于这是一个恒等式，所以 <span class="math inline">\(x\)</span> 对应系数相等，于是我们得到： <span class="math display">\[
+\color{blue}{\sum_{k,m}(-1)^{n-k}\strb{n}{k}\stra{k}{m}=[m=n]}
+\]</span> <br></p>
+<p>更多的实践总结出了一大堆斯特林数恒等式： <span class="math display">\[
+\begin{align}
+&amp;\stra{n}{k}=(n-1)\stra{n-1}{k}+\stra{n-1}{k-1}&amp;&amp;递归式\\
+&amp;\strb{n}{k}=k\strb{n-1}{k}+\strb{n-1}{k-1}&amp;&amp;递归式\\
+&amp;x^{n}=\sum_k\strb{n}{k}x^{\underline k}=\sum_k\strb{n}{k}(-1)^{n-k}x^{\overline k}&amp;&amp;在幂之间转换\\
+&amp;x^{\overline n}=\sum_k\stra{n}{k}x^k&amp;&amp;在幂之间转换\\
+&amp;x^{\underline n}=\sum_k\stra{n}{k}(-1)^{n-k}x^k&amp;&amp;在幂之间转换\\
+&amp;\sum_k\stra{n}{k}\strb{k}{m}(-1)^{n-k}=[m=n]&amp;&amp;反转公式\\
+&amp;\sum_{k,m}\strb{n}{k}\stra{k}{m}(-1)^{n-k}=[m=n]&amp;&amp;反转公式\\
+&amp;\stra{n}{k}=\strb{-k}{-n}&amp;&amp;对偶性\\
+\\
+&amp;\strb{n+1}{m+1}=\sum_k\binom{n}{k}\strb{k}{m}\\
+&amp;\stra{n+1}{m+1}=\sum_k\stra{n}{k}\binom{k}{m}\\
+&amp;\strb{n}{m}=\sum_k\binom{n}{k}\strb{k+1}{m+1}(-1)^{n-k}\\
+&amp;\stra{n}{m}=\sum_k\stra{n+1}{k+1}\binom{k}{m}(-1)^{m-k}\\
+&amp;m!\strb{n}{m}=\sum_k\binom{m}{k}k^n(-1)^{m-k}\\
+&amp;\strb{n+1}{m+1}=\sum_{k=0}^{n}\strb{k}{m}(m+1)^{n-k}\\
+&amp;\stra{n+1}{m+1}=\sum_{k=0}^n\stra{k}{m}n^{\underline{n-k}}=n!\sum_{k=0}^n\stra{k}{m}/k!\\
+&amp;\strb{m+n+1}{m}=\sum_{k=0}^mk\strb{n+k}{k}\\
+&amp;\stra{m+n+1}{m}=\sum_{k=0}^m(n+k)\stra{n+k}{k}\\
+&amp;\binom{n}{m}=\sum_k\strb{n+1}{k+1}\stra{k}{m}(-1)^{m-k}\\
+&amp;n^{\underline{n-m}}[n\geqslant m]=\sum_k\stra{n+1}{k+1}\strb{k}{m}(-1)^{m-k}\\
+&amp;\strb{n}{n-m}=\sum_k\binom{m-n}{m+k}\binom{m+n}{n+k}\stra{m+k}{k}\\
+&amp;\stra{n}{n-m}=\sum_k\binom{m-n}{m+k}\binom{m+n}{n+k}\strb{m+k}{k}\\
+&amp;\strb{n}{l+m}\binom{l+m}{l}=\sum_k\binom{k}{l}\strb{n-k}{m}\binom{n}{k}\\
+&amp;\stra{n}{l+m}\binom{l+m}{l}=\sum_k\stra{k}{l}\stra{n-k}{m}\binom{n}{k}
+\end{align}
+\]</span></p>
+<h2 id="欧拉数">欧拉数</h2>
+<h3 id="定义和递归式">定义和递归式</h3>
+<p><span class="math inline">\(\elr{n}{k}\)</span> 表示 <span class="math inline">\(\{1,2,\cdots,n\}\)</span> 的有 <span class="math inline">\(k\)</span> 个<strong>升高</strong>的排列 <span class="math inline">\(\pi_1\pi_2\cdots\pi_n\)</span> 的个数。也即，有 <span class="math inline">\(k\)</span> 个地方 <span class="math inline">\(\pi_j&lt;\pi_{j+1}\)</span>.</p>
+<p>推导欧拉数的递归式：尝试插入数 <span class="math inline">\(n\)</span>，如果它插在某个上升段的最后，那么升高数 <span class="math inline">\(+1\)</span>，这样的位置有 <span class="math inline">\(n-k\)</span> 个；如果它插在某个上升段的中间，升高数不变，这样的位置有 <span class="math inline">\(k+1\)</span> 个。所以我们有： <span class="math display">\[
+\color{purple}{\elr{n}{k}=(k+1)\elr{n-1}{k}+(n-k)\elr{n-1}{k-1}}
+\]</span> 初始条件：<span class="math inline">\(\elr{0}{k}=[k=0]\)</span>，并假定 <span class="math inline">\(k&lt;0\)</span> 时 <span class="math inline">\(\elr{n}{k}=0\)</span>.</p>
+<p>由此我们可以得到欧拉数的三角形：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(n\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{0}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{1}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{2}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{3}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{4}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{5}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{6}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{7}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{8}\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\elr{n}{9}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(3\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(4\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(4\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(11\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(11\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(5\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(26\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(66\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(26\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(6\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(57\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(302\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(302\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(57\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(7\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(120\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1191\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(2416\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1191\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(120\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(8\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(247\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(4293\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(15619\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(15619\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(4293\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(247\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(9\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(502\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(14608\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(88234\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\small{156190}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(88234\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(14608\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(502\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="性质和恒等式">性质和恒等式</h3>
+<p>从表中可以看出，欧拉数具有对称性： <span class="math display">\[
+\color{blue}{\elr{n}{k}=\elr{n}{n-1-k}}
+\]</span> 因为 <span class="math inline">\(\pi_1\cdots\pi_n\)</span> 有 <span class="math inline">\(k\)</span> 个升高当且仅当 <span class="math inline">\(\pi_n\cdots\pi_1\)</span> 有 <span class="math inline">\(n-1-k\)</span> 个升高。</p>
+<p><span class="math inline">\(\textbf{Worpitzky}\)</span> 恒等式： <span class="math display">\[
+\color{blue}{x^n=\sum_k\elr{n}{k}\binom{x+k}{n}}
+\]</span> 证明：数学归纳法。首先 <span class="math inline">\(n=0\)</span> 时，<span class="math inline">\(1=\sum\limits_k\langle\begin{smallmatrix}0\\k\end{smallmatrix}\rangle\binom{x+k}{0}=1\)</span> 成立；假设 <span class="math inline">\(\leqslant n\)</span> 均成立，则： <span class="math display">\[
+\begin{align}
+x^{n+1}&amp;=x\cdot x^n\\
+&amp;=x\sum\limits _k\elr{n}{k}\binom{x+k}{n}\\
+&amp;=\sum_k\elr{n}{k}\left[(k+1)\binom{x+k}{n+1}+(n-k)\binom{x+k+1}{n+1}\right]\\
+&amp;=\sum_k\left(\elr{n+1}{k}-(n+1-k)\elr{n}{k-1}\right)\binom{x+k}{n+1}+\sum_k\elr{n}{k}(n-k)\binom{x+k+1}{n+1}\\
+&amp;=\sum_k\elr{n+1}{k}\binom{x+k}{n+1}+\sum_k\elr{n}{k}(n-k)\binom{x+k+1}{n+1}-\sum_k(n+1-k)\elr{n}{k-1}\binom{x+k}{n+1}\\
+&amp;=\sum_k\elr{n+1}{k}\binom{x+k}{n+1}
+\end{align}
+\]</span> 证毕。（注：上述推导用了恒等式：<span class="math inline">\(x\binom{x+k}{n}=(k+1)\binom{x+k}{n+1}+(n-k)\binom{x+k+1}{n+1}\)</span>. ）</p>
+<p>还有一些其他性质： <span class="math display">\[
+\begin{align}
+&amp;\elr{n}{m}=\sum_{k=0}^m\binom{n+1}{k}(m+1-k)^n(-1)^k\\
+&amp;m!\strb{n}{m}=\sum_k\elr{n}{k}\binom{k}{n-m}\\
+&amp;\elr{n}{m}=\sum_k\strb{n}{k}\binom{n-k}{m}(-1)^{n-k-m}k!
+\end{align}
+\]</span></p>
+<p>（二阶欧拉数和斯特林多项式目前跳过）</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6/" class="category-chain-item">具体数学</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[具体数学]第六章·特殊的数（第一部分）</div>
+      <div>https://xyfjason.github.io/blog-main/2020/08/26/具体数学-第六章·特殊的数（第一部分）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年8月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2020/08/29/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E5%85%AD%E7%AB%A0%C2%B7%E7%89%B9%E6%AE%8A%E7%9A%84%E6%95%B0%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/" title="[具体数学]第六章·特殊的数（第二部分）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[具体数学]第六章·特殊的数（第二部分）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2020/08/23/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E4%BA%94%E7%AB%A0%C2%B7%E4%BA%8C%E9%A1%B9%E5%BC%8F%E7%B3%BB%E6%95%B0%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/" title="[具体数学]第五章·二项式系数（第二部分）">
+                        <span class="hidden-mobile">[具体数学]第五章·二项式系数（第二部分）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

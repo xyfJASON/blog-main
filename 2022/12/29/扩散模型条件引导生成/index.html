@@ -1,0 +1,888 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] Preface 我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型条件引导生成">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E6%9D%A1%E4%BB%B6%E5%BC%95%E5%AF%BC%E7%94%9F%E6%88%90/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] Preface 我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-guidance.png">
+<meta property="article:published_time" content="2022-12-29T10:08:30.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:16:40.068Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-guidance.png">
+  
+  
+  
+  <title>扩散模型条件引导生成 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-guidance.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="扩散模型条件引导生成"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-12-29 18:08" pubdate>
+          2022年12月29日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          11k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          94 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">扩散模型条件引导生成</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\x}{\mathbf x}
+\newcommand{\calN}{\mathcal N}
+\newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
+\]</span></p>
+<h2 id="preface">Preface</h2>
+<p>我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量也会得到完全不同的结果。但是，有条件的生成（受控生成）却又非常重要：以类别标签为条件可以让我们控制生成的类别；图像恢复、图像填充、图像编辑等任务可以视为以已知图像为条件的生成任务；另外，以文本为条件来跨模态地指导图像生成更是给予了我们无限的发挥创造力的空间。本文就梳理一下为扩散模型加入条件的一些方法。</p>
+<h2 id="class-embeddings">Class Embeddings</h2>
+<p>最简单的加入类别条件的方法就是给模型输入 class embeddings. 在论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dhariwal, Prafulla, and Alexander Nichol. Diffusion models beat gans on image synthesis. *Advances in Neural Information Processing Systems* 34 (2021): 8780-8794.">[1]</span></a></sup>中，作者将 class embeddings 连同 time embeddings 一起给到了 AdaGN 层： <span class="math display">\[
+\text{AdaGN}(h,y)=y_s\ \text{GroupNorm}(h)+y_b
+\]</span> 其中 <span class="math inline">\(h\)</span> 是各个 residual block 第一个卷积之后的激活输出，<span class="math inline">\(y=[y_s,y_b]\)</span> 由 timestep 和 class embeddings 经过一个全连接层得到。相比 DDPM 把 time embeddings 直接加到激活上再做 GroupNorm，作者发现使用 AdaGN 能得到更好的效果。</p>
+<h2 id="classifier-guidance">Classifier Guidance</h2>
+<p>顾名思义，classifier guidance 引入额外的分类器 <span class="math inline">\(p(y\vert \x_t)\)</span> 来实现条件生成，其思想在论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>中其实已经提出了，但在论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dhariwal, Prafulla, and Alexander Nichol. Diffusion models beat gans on image synthesis. *Advances in Neural Information Processing Systems* 34 (2021): 8780-8794.">[1]</span></a></sup>中得到了进一步的研究。为了引入分类器，作者实际上做了两种推导，分别适用于 DDPM 和 DDIM（虽然我觉得后一种也可以用于 DDPM）。</p>
+<ul>
+<li><p><strong>Conditional Reverse Noising Process</strong></p>
+<p>对于带条件的扩散模型，其逆向过程可以写作： <span class="math display">\[
+\begin{align}
+&amp;p(\x_t\vert\x_{t+1},y)=Z p(\x_t\vert\x_{t+1})p(y\vert \x_t) \tag{1}\label{conditional-markov}\\
+&amp;\log{p}(\x_t\vert\x_{t+1},y)=\log{p}(\x_t\vert\x_{t+1})+\log{p}(y\vert \x_t)\\
+\end{align}
+\]</span> 其中 <span class="math inline">\(Z\)</span> 是与 <span class="math inline">\(\x_t\)</span> 无关的常数项。这个式子看着简单，但其实并不是那么显然，证明过程见本节末尾。</p>
+<p>上式右边包含两项，其中 <span class="math inline">\(p(\x_t\vert\x_{t+1})\)</span> 与无条件的逆向过程相同： <span class="math display">\[
+\begin{align}
+&amp;p(\x_t\vert\x_{t+1})=\calN(\x_t;\mu,\Sigma)\\
+&amp;\log{p}(\x_t\vert\x_{t+1})=-\frac{1}{2}(\x_t-\mu)^T\Sigma^{-1}(\x_t-\mu)+C
+\end{align}
+\]</span> 而 <span class="math inline">\(\log{p}(y\vert\x_t)\)</span> 一项可以在 <span class="math inline">\(\mu\)</span> 处进行一阶泰勒展开： <span class="math display">\[
+\begin{align}
+\log{p}(y\vert\x_t)&amp;\approx\log{p}(y\vert\x)\big|_{\x=\mu}+(\x_t-\mu)\nabla_{\x}\log{p}(y\vert\x)\big|_{\x=\mu}\\
+&amp;=(\x_t-\mu)g+C_1
+\end{align}
+\]</span> 其中 <span class="math inline">\(g=\nabla_{\x}\log{p}(y\vert \x)\big|_{\x=\mu}\)</span>. 于是， <span class="math display">\[
+\begin{align}
+\log{p}(\x_t\vert\x_{t+1},y)&amp;\approx-\frac{1}{2}(\x_t-\mu)^T\Sigma^{-1}(\x_t-\mu)+(\x_t-\mu)g+C_2\\
+&amp;=-\frac{1}{2}(\x_t-\mu-\Sigma g)^{-1}\Sigma^{-1}(\x_t-\mu-\Sigma g)+C_3\\
+\end{align}
+\]</span> 即： <span class="math display">\[
+p(\x_t\vert \x_{t+1},y)\sim\calN(\x_t;\mu+\Sigma g,\Sigma)
+\]</span> 这意味着有条件的逆向过程与无条件的唯一差别在于：<strong>前者的均值在后者的基础上偏移了一个 <span class="math inline">\(\Sigma g\)</span></strong>. 直观上，由于偏移的方向沿着分类器提供的梯度 <span class="math inline">\(g\)</span>，而这个梯度恰恰反映了应该如何移动才能让指定类别概率最大，所以偏移后的分布更能体现给定的类别条件，这就是分类器的引导作用。算法总结如下（其中 gradient scale 在后文解释）：</p>
+<p><img src="classifier-alg1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source: Diffusion models beat gans on image synthesis" /></p>
+<div class="note note-danger">
+            <p>注意！根据我们的推导，我们应该在 <span class="math inline">\(\mu\)</span> 处取梯度，但是算法截图和<a target="_blank" rel="noopener" href="https://github.com/openai/guided-diffusion/blob/main/guided_diffusion/gaussian_diffusion.py#L365">官方代码</a>却是在 <span class="math inline">\(\x_t\)</span> 处求的梯度。为验证这确实是一个 bug，我 google 了许久，最后看到有个老哥提了相关的 <a target="_blank" rel="noopener" href="https://github.com/openai/guided-diffusion/issues/51">issue</a>，并得到了原作者的肯定答复：</p><blockquote><p>Yes, this is indeed a slight bug, which we noticed shortly after releasing our work. However, we did try ablating using the correct formula, and found that it didn't noticeably change results.</p></blockquote><p>另外，这老哥还发了一个 <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=hAp7Lk7W4QQ">YouTube video</a> 讲这篇论文，挺不错的，推荐观看。</p>
+          </div></li>
+<li><p><strong>Conditional Sampling for DDIM</strong></p>
+<p>上述推导并不适用于 DDIM 的确定性采样过程（<span class="math inline">\(\Sigma=\mathbf 0\)</span>），因此我们需要另一种推导方式。</p>
+<p>我们知道扩散模型的本质是在拟合 score function. 在无条件的扩散模型中，score function 为 <span class="math inline">\(\nabla_{\x_t}\log{p}(\x_t)\)</span>；那么若以类别标签 <span class="math inline">\(y\)</span> 为条件，则 score function 为： <span class="math display">\[
+\begin{align}
+\nabla_{\x_t}\log{p}(\x_t\vert y)&amp;=\nabla_{\x_t} \log\left(\frac{p(\x_t)p(y\vert\x_t)}{p(y)}\right)\\
+&amp;=\nabla_{\x_t}\log{p}(\x_t)+\nabla_{\x_t}\log{p}(y\vert \x_t)-\nabla_{\x_t}\log{p}(y)\\
+&amp;=\underbrace{\nabla_{\x_t}\log{p}(\x_t)}_{\text{unconditional score}}+\underbrace{\nabla_{\x_t}\log{p}(y\vert \x_t)}_\text{classifier guidance} \tag{2}\label{classifier-guidance}
+\end{align}
+\]</span> 可以看见，<strong>有条件的 score function，等于无条件的 score function 加上分类器关于输入的梯度</strong>。由于我们知道扩散模型的采样其实就是沿着 score function 的方向走，所以 unconditional score 一项是在增大 <span class="math inline">\(p(\x_t)\)</span>，即让样本越来越真实；classifier guidance 一项是在增大 <span class="math inline">\(p(y\vert \x_t)\)</span>，即让样本更能匹配上输入的条件 <span class="math inline">\(y\)</span>，从而实现条件生成。</p>
+<p>由于 DDPM / DDIM 中的噪声 <span class="math inline">\(\epsilon(\x_t)\)</span> 和 score function 有如下联系（详见 <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score Based Generative Models</a> 一文）： <span class="math display">\[
+\nabla_{\x_t}\log{p}(\x_t)=-\frac{1}{\sqrt{1-\bar\alpha_t}}\epsilon(\x_t)
+\]</span> 所以我们只需要定义一个新的噪声： <span class="math display">\[
+\hat\epsilon(\x_t)=\epsilon(\x_t)-\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log{p}(y\vert\x_t)
+\]</span> 那么把原本的所有 <span class="math inline">\(\epsilon\)</span> 换做 <span class="math inline">\(\hat\epsilon\)</span> 就可以实现条件生成了。</p>
+<p><img src="classifier-alg2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source: Diffusion models beat gans on image synthesis" /></p></li>
+</ul>
+<div class="note note-info">
+            <p><strong>两种推导的区别和联系</strong></p><p>不知道是否有人有和我一样的疑问，为什么作者要做两种推导，或者说，为什么不在第一种情形中也用第二种推导的结论？</p><p>如果我们把第二种推导也应用在 DDPM 里，由于原本的无条件 DDPM 的逆向过程是： <span class="math display">\[\begin{align}&amp;p(\x_{t-1}\vert\x_t)=\calN(\x_{t};\mu(\x_t),\sigma^2_t\mathbf I)\\\text{where}\quad&amp;\mu(\x_t)=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon(\x_t)\right)\end{align}\]</span> 代入新的噪声，那么新的均值为： <span class="math display">\[\begin{align}\hat\mu(\x_t)&amp;=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\hat\epsilon(\x_t)\right)\\&amp;=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\left(\epsilon(\x_t)-\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log{p}(y\vert\x_t)\right)\right)\\&amp;=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon(\x_t)\right)+\frac{1-\alpha_t}{\sqrt{\alpha_t}}\nabla_{\x_t}\log{p}(y\vert\x_t)\\&amp;=\mu(\x_t)+\frac{1-\alpha_t}{\sqrt{\alpha_t}}\nabla_{\x_t}\log{p}(y\vert\x_t)\end{align}\]</span></p><p>对比 Algorithm 1，可见主要区别是均值的偏移量从 <span class="math inline">\(\Sigma g\)</span> 变成了 <span class="math inline">\(\frac{1-\alpha_t}{\sqrt{\alpha_t}}\nabla_{\x_t}\log{p}(y\vert\x_t)\)</span>. 注意，前者是在 <span class="math inline">\(\mu(\x_t)\)</span> 处取的梯度，而后者是在 <span class="math inline">\(\x_t\)</span> 处取的梯度。考虑到 <span class="math inline">\(\mu(\x_t)\)</span> 和 <span class="math inline">\(\x_t\)</span> 差别不大，且 <span class="math inline">\(\Sigma\)</span>（常取 <span class="math inline">\(\beta_t\)</span> 或者 <span class="math inline">\(\tilde\beta_t\)</span>）与 <span class="math inline">\(\frac{1-\alpha_t}{\sqrt{\alpha_t}}=\frac{1}{\sqrt{1-\beta_t}}\beta_t\)</span> 的差别也不大，所以二者的性能可能相近吧，有待实验验证。</p>
+          </div>
+<p>在实验中，作者发现直接按上述结论做条件生成的效果并不理想，如下左图所示：</p>
+<p><img src="classifier-guidance.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source: Diffusion models beat gans on image synthesis" /></p>
+<p>于是作者给分类器梯度项添加了一个权重系数 <span class="math inline">\(s\)</span>，权重越大，则生成的图像越靠近指定类别，但代价是多样性下降： <span class="math display">\[
+\nabla_{\x_t}\log{p}_s(\x_t\vert y)=\nabla_{\x_t}\log{p}(\x_t)+s \nabla_{\x_t}\log{p}(y\vert \x_t) \tag{3}\label{classifier-s}
+\]</span> 对应的噪声表示变成： <span class="math display">\[
+\hat\epsilon_{0t}=\epsilon_{0t}-s\cdot\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log{p}(y\vert\x_t)
+\]</span> 怎么理解权重系数发挥的作用呢？注意到 <span class="math inline">\(s\nabla_{\x_t}\log{p}(y\vert \x_t)=\nabla_{\x_t}\log \frac{1}{Z}p(y\vert \x_t)^s\)</span>，所以我们其实是人为把分类器的输出分布 <span class="math inline">\(p(y\vert\x_t)\)</span> 重新归一化成了正比于 <span class="math inline">\(p(y\vert\x_t)^s\)</span> 的分布。当 <span class="math inline">\(s&gt;1\)</span> 时，分布变得更加陡峭，也就让生成结果更靠近指定类别，但同时损失一定的多样性。所以对 <span class="math inline">\(s\)</span> 的调整体现出了 diversity-fidelity trade-off（类似 BigGAN 中的 truncation trick），其中 diversity 可以用 FID 来衡量，而 fidelity 用 IS 来衡量。</p>
+<p>需要说明的是，classifier guidance 与输入 class embeddings 并不矛盾，二者共同作用能达到更好的效果。后者是加入条件的最基本做法，而无论模型是否带有条件，都可以用分类器做引导。<strong>也就是说，条件（condition）和引导（guidance）是两种不同但相辅相成的方法</strong>。</p>
+<p>最后，虽然我们是视 <span class="math inline">\(y\)</span> 为类别标签来阐释的，但该方法也可以扩展到文本指导图像等其他条件生成场景之中。该方法还有一个好处是我们可以先在无标签的数据集上训练生成模型，事后再灵活地适应到有标签的场景下，鉴于无标签数据集往往比有标签数据集大很多，这有助于我们更好地训练模型。</p>
+<div class="note note-secondary">
+            <details><summary><b>附录：关于 <span class="math inline">\(\eqref{conditional-markov}\)</span> 式的推导（原论文 Appendix H）</b></summary><br/>对标<b>无条件</b>马尔可夫链，我们用 <span class="math inline">\(\hat{q}\)</span> 来表示<b>带条件</b>马尔可夫链中的概率分布，包括： <span class="math display">\[\begin{align}\hat{q}(\x_0)&amp;\coloneqq q(\x_0)\\\hat{q}(y\vert \x_0)&amp;\coloneqq\text{Known labels per sample}\\\hat{q}(\x_{t+1}\vert \x_t,y) &amp;\coloneqq q(\x_{t+1}\vert \x_t)\\\hat{q}(\x_{1:T}\vert \x_0,y) &amp;\coloneqq \prod_{t=1}^T \hat{q}(\x_t\vert \x_{t-1},y)\end{align}\]</span> 其中最关键的是第三个式子，表示条件与扩散过程无关。在上述定义下，我们发现<b>当没有 <span class="math inline">\(y\)</span> 作为条件时，<span class="math inline">\(\hat{q}\)</span> 和 <span class="math inline">\(q\)</span> 其实是完全相同的。</b>具体而言，我们有： <span class="math display">\[\begin{align}\hat{q}(\x_{t+1}\vert \x_t)&amp;=\int_y \hat{q}(\x_{t+1},y\vert \x_t)\mathrm{d}y\\&amp;=\int_y \hat{q}(\x_{t+1}\vert \x_t,y)\hat{q}(y\vert \x_t)\mathrm{d}y\\&amp;=\int_y q(\x_{t+1}\vert \x_t)\hat{q}(y\vert \x_t)\mathrm{d}y\\&amp;=q(\x_{t+1}\vert \x_t)=\hat{q}(\x_{t+1}\vert \x_t,y)\end{align}\]</span> 即每一步转移概率分布都是相同的。类似的，有： <span class="math display">\[\begin{align}\hat{q}(\x_{1:T}\vert \x_0)&amp;=\int_y \hat{q}(\x_{1:T},y\vert \x_0)\mathrm{d}y\\&amp;=\int_y \hat{q}(\x_{1:T}\vert \x_0,y)\hat{q}(y\vert\x_0)\mathrm{d}y\\&amp;=\int_y \hat{q}(y\vert\x_0)\prod_{t=1}^T\hat{q}(\x_t\vert \x_{t-1},y)\mathrm{d}y\\&amp;=\int_y \hat{q}(y\vert\x_0)\prod_{t=1}^T q(\x_t\vert \x_{t-1})\mathrm{d}y\\&amp;=\prod_{t=1}^T q(\x_t\vert \x_{t-1})\int_y \hat{q}(y\vert\x_0)\mathrm{d}y\\&amp;=q(\x_{1:T}\vert \x_0)\end{align}\]</span> 结合 <span class="math inline">\(\hat{q}(\x_0)=q(\x_0)\)</span>，我们知道联合分布也是相同的。进一步： <span class="math display">\[\begin{align}\hat{q}(\x_t)&amp;=\int_{\x_{0:t-1}}\hat{q}(\x_0,\ldots,\x_t)\mathrm{d}\x_{0:t-1}\\&amp;=\int_{\x_{0:t-1}}\hat{q}(\x_1,\ldots,\x_t\vert\x_0)\hat{q}(\x_0)\mathrm{d}\x_{0:t-1}\\&amp;=\int_{\x_{0:t-1}} q(\x_1,\ldots,\x_t\vert\x_0)q(\x_0)\mathrm{d}\x_{0:t-1}\\&amp;=\int_{\x_{0:t-1}} q(\x_0,\ldots,\x_t)\mathrm{d}\x_{0:t-1}\\&amp;=q(\x_t)\end{align}\]</span> 即边缘分布也都是相同的。有了边缘分布和转移概率，根据贝叶斯公式： <span class="math display">\[\hat{q}(\x_t\vert \x_{t+1})=\frac{\hat{q}(\x_{t+1}\vert \x_t)\hat{q}(\x_t)}{\hat{q}(\x_{t+1})}=\frac{q(\x_{t+1}\vert \x_t)q(\x_t)}{q(\x_{t+1})}=q(\x_t\vert \x_{t+1})\]</span> 我们知道逆向过程的每一步也是相同的。另外，我们还有： <span class="math display">\[\begin{align}\hat{q}(y\vert \x_t,\x_{t+1})&amp;=\frac{\hat{q}(\x_{t+1}\vert \x_t,y)\hat{q}(y\vert \x_t)}{\hat{q}(\x_{t+1}\vert\x_t)}\\&amp;=\frac{q(\x_{t+1}\vert \x_t)\hat{q}(y\vert \x_t)}{q(\x_{t+1}\vert\x_t)}\\&amp;=\hat{q}(y\vert \x_t)\end{align}\]</span> 那么，加入条件后的逆向过程为： <span class="math display">\[\begin{align}\hat{q}(\x_t\vert \x_{t+1},y)&amp;=\frac{\hat{q}(y\vert\x_t,\x_{t+1})\hat{q}(\x_t\vert \x_{t+1})}{\hat{q}(y\vert \x_{t+1})}\\&amp;=\frac{\hat{q}(y\vert\x_{t})\hat{q}(\x_t\vert \x_{t+1})}{\hat{q}(y\vert \x_{t+1})}\\&amp;=\frac{\hat{q}(y\vert\x_{t})q(\x_t\vert \x_{t+1})}{\hat{q}(y\vert \x_{t+1})}\\&amp;=Z\hat{q}(y\vert\x_{t})q(\x_t\vert \x_{t+1})\end{align}\]</span> 其中 <span class="math inline">\(Z=\hat{q}(y\vert\x_{t+1})\)</span> 是与 <span class="math inline">\(\x_t\)</span> 无关的常数项。我们已经用 <span class="math inline">\(p(\x_t\vert\x_{t+1})\)</span> 来近似了 <span class="math inline">\(q(\x_t\vert\x_{t+1})\)</span>，所以只需要再训练一个分类器 <span class="math inline">\(p(y\vert \x_t)\)</span> 来近似 <span class="math inline">\(\hat{q}(y\vert\x_t)\)</span>，就得到了 <span class="math inline">\(\eqref{conditional-markov}\)</span> 式。</details>
+          </div>
+<h2 id="classifier-free-guidance">Classifier-Free Guidance</h2>
+<p>Classifier guidance 虽然成功地为扩散模型提供了引导，并引入了 diversity-fidelity tradeoff，但是其劣势也很明显：我们必须额外训练一个分类器，而且该分类器需要对所有 noise scale 都有分类能力，所以还不能直接加载常见的预训练模型。因此，classifier-free guidance<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, and Tim Salimans. Classifier-Free Diffusion Guidance. In *NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications*. 2021.">[3]</span></a></sup> 应运而生。</p>
+<p>首先，我们重新排列 <span class="math inline">\(\eqref{classifier-guidance}\)</span> 式得到： <span class="math display">\[
+\nabla_{\x_t}\log{p}(y\vert \x_t)=\nabla_{\x_t}\log{p}(\x_t\vert y)-\nabla_{\x_t}\log{p}(\x_t)
+\]</span> 代入 <span class="math inline">\(\eqref{classifier-s}\)</span> 式得： <span class="math display">\[
+\begin{align}
+\nabla_{\x_t}\log{p}_s(\x_t\vert y)&amp;=\nabla_{\x_t}\log{p}(\x_t)+s\left(\nabla_{\x_t}\log{p}(\x_t\vert y)-\nabla_{\x_t}\log{p}(\x_t)\right)\\
+&amp;=\nabla_{\x_t}\log{p}(\x_t)+s\nabla_{\x_t}\log{p}(\x_t\vert y)-s\nabla_{\x_t}\log{p}(\x_t)\\
+&amp;=(1-s)\underbrace{\nabla_{\x_t}\log{p}(\x_t)}_\text{unconditional score}+s\underbrace{\nabla_{\x_t}\log{p}(\x_t\vert y)}_\text{conditional score}
+\end{align}
+\]</span> 这是无条件和有条件的 score function 的线性组合，<span class="math inline">\(s\)</span> 同样是控制条件引导力度的系数。当 <span class="math inline">\(s=0\)</span> 时，就是无条件模型；当 <span class="math inline">\(s=1\)</span> 时，就是标准的有条件模型；而当 <span class="math inline">\(s&gt;1\)</span> 时，不仅 conditional score 被进一步加强，而且 unconditional score 甚至变成了负向！同 classifier guidance 一样，我们可以通过调节 <span class="math inline">\(s\)</span> 实现 diversity-fidelity trade-off，<span class="math inline">\(s\)</span> 越大，条件指向性越强，生成结果越真实，但是多样性下降。</p>
+<blockquote>
+<p>注：上述权重记号与原论文有所不同，原论文写作： <span class="math display">\[
+\nabla_{\x_t}\log{p}_w(\x_t\vert y)=(1+w)\nabla_{\x_t}\log{p}(\x_t\vert y)-w\nabla_{\x_t}\log{p}(\x_t)
+\]</span> 即本文和原论文的记号有如下关系：<span class="math inline">\(w=s-1\)</span>.</p>
+</blockquote>
+<p><img src="free-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="source: Classifier-Free Diffusion Guidance" /></p>
+<p>在实现上，我们用 <span class="math inline">\(p(\x_t\vert y)\)</span> 表示有条件模型，同时用 null token <span class="math inline">\(\varnothing\)</span> 表示无条件限制，即 <span class="math inline">\(p(\x_t\vert\varnothing)\)</span> 表示无条件模型。这样就可以只训练一个模型，同时处理有条件和无条件两种情况了。训练时随机以 <span class="math inline">\(p_\text{uncond}\)</span> 的概率去掉输入条件（换成 <span class="math inline">\(\varnothing\)</span>），即相当于同时训练了有条件和无条件情形，实验发现取 <span class="math inline">\(p_\text{uncond}\in\{0.1,0.2\}\)</span> 效果最好。</p>
+<p>由于 classifier-free guidance 的效果非常优秀且训练方便，后续许多著名的模型，包括 GLIDE、DALL-E 2 (unCLIP)、Imagen 等都应用了 classifier-free guidance. 而至于这些让扩散模型火出圈的应用，我们留到以后的文章吧。</p>
+<h2 id="summary">Summary</h2>
+<p>在本文中，我们说明了为模型加入条件其实包括两方面：</p>
+<ol type="1">
+<li><strong>Condition</strong>：我们可以直接把条件输入给模型，使之从 unconditional model 变成 conditional model；针对条件的不同形式，把条件融入模型架构的方式也不同，比如用 AdaGN 来融合 class embedding；</li>
+<li><strong>Guidance</strong>：我们可以用显式或隐式的分类器为生成过程加入条件引导，即 classifier guidance 或 classifier-free guidance.</li>
+</ol>
+<p>需要注意的是，condition 和 guidance 是两种不同的技术，我们可以只用 conditional model 而没有 guidance，也可以对 unconditional model 做显式的 guidance，它们都能达到条件生成的目的。当然，二者同时使用往往能取得更好的效果。</p>
+<p>在之后的文章中，我们将聚焦基于扩散模型的应用。这些应用几乎都离不开条件生成，譬如，超分、去模糊、填充等图像恢复任务可以视为<strong>以退化图像为条件</strong>的生成任务，图像编辑、图像翻译等任务可以视为<strong>以源图像/参考图像为条件</strong>的生成任务，根据文本描述生成或编辑图像显然是<strong>以文本为条件</strong>的生成任务……那么，针对这些任务，<strong>许多工作就是在如何加入 condition 和如何施加 guidance 两方面下功夫</strong>。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Dhariwal, Prafulla, and Alexander Nichol. Diffusion models beat gans on image synthesis. <em>Advances in Neural Information Processing Systems</em> 34 (2021): 8780-8794. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In <em>International Conference on Learning Representations</em>. 2020. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Ho, Jonathan, and Tim Salimans. Classifier-Free Diffusion Guidance. In <em>NeurIPS 2021 Workshop on Deep Generative Models and Downstream Applications</em>. 2021. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Luo, Calvin. Understanding diffusion models: A unified perspective. <em>arXiv preprint arXiv:2208.11970</em> (2022). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>扩散模型与受控图像生成-脉络梳理 - 中森的文章 - 知乎 https://zhuanlan.zhihu.com/p/585938939 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Sander Dieleman. Guidance: a cheat code for diffusion models. https://benanne.github.io/2022/05/26/guidance.html <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>扩散模型条件引导生成</div>
+      <div>https://xyfjason.github.io/blog-main/2022/12/29/扩散模型条件引导生成/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年12月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9B%BE%E7%94%9F%E5%9B%BE%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%81%A2%E5%A4%8D/" title="扩散模型应用·图生图与图像恢复">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型应用·图生图与图像恢复</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/12/17/%E4%B8%8D%E6%AD%A2%E5%8E%BB%E5%99%AA%EF%BC%81%E4%BB%BB%E6%84%8F%E9%80%80%E5%8C%96%E6%A8%A1%E5%BC%8F%E4%B8%8A%E7%9A%84%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" title="不止去噪！任意退化模式上的扩散模型">
+                        <span class="hidden-mobile">不止去噪！任意退化模式上的扩散模型</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

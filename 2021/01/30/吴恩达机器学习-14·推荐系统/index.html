@@ -1,0 +1,803 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="吴恩达机器学习系列课程：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV164411b7dx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[吴恩达机器学习]14·推荐系统">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/01/30/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-14%C2%B7%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="吴恩达机器学习系列课程：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV164411b7dx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_walle.jpg">
+<meta property="article:published_time" content="2021-01-30T14:16:47.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:42:31.189Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_walle.jpg">
+  
+  
+  
+  <title>[吴恩达机器学习]14·推荐系统 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_walle.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[吴恩达机器学习]14·推荐系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-01-30 22:16" pubdate>
+          2021年1月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          47 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[吴恩达机器学习]14·推荐系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>吴恩达机器学习系列课程：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV164411b7dx" class="uri">https://www.bilibili.com/video/BV164411b7dx</a></p>
+<span id="more"></span>
+<h2 id="基于内容的推荐算法">基于内容的推荐算法</h2>
+<p>以向用户推荐电影为例，假设我们对每部电影构建了一个特征向量，并且已知每个用户对某些电影的评分，那么对于某个用户而言，我们可以将电影的特征向量看作自变量 <span class="math inline">\(x\)</span>，他的评分看作因变量 <span class="math inline">\(y\)</span>，然后做<strong>线性回归</strong>。</p>
+<p>具体地，设一共有 <span class="math inline">\(n_u\)</span> 个用户，<span class="math inline">\(n_m\)</span> 部电影，第 <span class="math inline">\(i\)</span> 部电影的特征向量为 <span class="math inline">\(x^{(i)}\in\mathbb R^{n+1}\)</span>（包含偏置项），<span class="math inline">\(r(i,j)\)</span> 表示用户 <span class="math inline">\(j\)</span> 是否对第 <span class="math inline">\(i\)</span> 部电影进行了评分，如果评了分，设评分为 <span class="math inline">\(y^{(i,j)}\)</span>. 那么对于第 <span class="math inline">\(j\)</span> 个用户，线性回归的目标就是学习一个参数 <span class="math inline">\(\theta^{(j)}\)</span>，使得： <span class="math display">\[
+\min_{\theta^{(j)}}\frac{1}{2}\sum_{i:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)^2+\frac{\lambda}{2}\sum_{k=1}^{n}(\theta_k^{(j)})^2
+\]</span> 由于每个用户的线性回归都是独立的，所以我们可以放在一起训练： <span class="math display">\[
+\min_{\theta^{(1)},\ldots,\theta^{(n_u)}}J(\theta^{(1)},\ldots,\theta^{(n_u)}):=\frac{1}{2}\sum_{j=1}^{n_u}\sum_{i:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)^2+\frac{\lambda}{2}\sum_{j=1}^{n_u}\sum_{k=1}^{n}(\theta_k^{(j)})^2
+\]</span> 训练过程可能用到导函数： <span class="math display">\[
+\frac{\partial J}{\partial\theta^{(j)}_k}=\sum_{i:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)\theta^{(j)}_k+\lambda\theta_k^{(j)}[k&gt;0]
+\]</span> 那么对于一个特征向量为 <span class="math inline">\(x\)</span> 的电影，用户 <span class="math inline">\(j\)</span> 对它的评分的预测值就是：<span class="math inline">\((\theta^{(j)})^Tx\)</span>.</p>
+<p>基于内容的推荐算法的缺点在于，我们需要知道每部电影的特征向量，然而这一点通常很难做到。所以我们需要不是基于内容的推荐算法。</p>
+<h2 id="协同过滤算法">协同过滤算法</h2>
+<h3 id="初始版本">初始版本</h3>
+<p>现在我们不知道每部电影的特征向量，但是我们可以询问用户以得到用户的参数 <span class="math inline">\(\theta^{(j)}\)</span>（譬如用户对不同类型电影的偏好），然后反过来，用 <span class="math inline">\(\theta^{(j)}\)</span> 去训练出 <span class="math inline">\(x^{(i)}\)</span>，得到每部电影的特征。具体地，对于第 <span class="math inline">\(i\)</span> 部电影，我们可以学习它的特征 <span class="math inline">\(x^{(i)}\)</span>，使得： <span class="math display">\[
+\min_{\theta^{(j)}}\frac{1}{2}\sum_{j:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)^2+\frac{\lambda}{2}\sum_{k=1}^{n}(x_k^{(i)})^2
+\]</span> 由于每部电影的线性回归是独立的，所以我们可以放在一起训练： <span class="math display">\[
+\min_{x^{(1)},\ldots,x^{(n_m)}}J(x^{(1)},\ldots,x^{(n_m)}):=\frac{1}{2}\sum_{i=1}^{n_m}\sum_{j:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)^2+\frac{\lambda}{2}\sum_{i=1}^{n_m}\sum_{k=1}^{n}(x_k^{(i)})^2
+\]</span> 训练过程可能用到导函数： <span class="math display">\[
+\frac{\partial J}{\partial x^{(i)}_k}=\sum_{j:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)\theta^{(i)}_k+\lambda x_k^{(i)}[k&gt;0]
+\]</span> <br></p>
+<p>总结一下，已知 <span class="math inline">\(\theta^{(j)}\)</span>，我们可以学习 <span class="math inline">\(x^{(i)}\)</span>；已知 <span class="math inline">\(x^{(i)}\)</span>，我们可以学习 <span class="math inline">\(\theta^{(j)}\)</span>. 于是我们有了一个大胆的想法——随机化一个 <span class="math inline">\(\theta^{(j)}\)</span>，学习出 <span class="math inline">\(x^{(i)}\)</span>，再用学习出的 <span class="math inline">\(x^{(i)}\)</span> 去学习 <span class="math inline">\(\theta^{(j)}\)</span>，再用新的 <span class="math inline">\(\theta^{(j)}\)</span> 去学习 <span class="math inline">\(x^{(i)}\)</span>……如此<strong>反复迭代</strong>，最终得到稳定的电影特征和用户参数。这就是最初始版本的协同过滤算法。</p>
+<h3 id="改进版本">改进版本</h3>
+<p>事实上，我们没有反复迭代的必要。观察用 <span class="math inline">\(\theta^{(j)}\)</span> 训练 <span class="math inline">\(x^{(i)}\)</span> 的优化目标和用 <span class="math inline">\(x^{(i)}\)</span> 训练 <span class="math inline">\(\theta^{(j)}\)</span> 的优化目标，我们可以发现，它们的非正则化项其实是相同的，都是：<span class="math inline">\(\sum\limits_{(i,j):r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)^2\)</span>. 所以，我们将两个优化目标综合起来，优化以下函数即可： <span class="math display">\[
+\begin{align}
+&amp;\min_{x^{(1)},\ldots,x^{(n_m)}\\\theta^{(1)},\ldots,\theta^{(n_u)}}J(x^{(1)},\ldots,x^{(n_m)},\theta^{(1)},\ldots,\theta^{(n_u)})\\
+=&amp;\frac{1}{2}\sum_{(i,j):r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i)}\right)^2+\frac{\lambda}{2}\sum_{i=1}^{n_m}\sum_{k=1}^n(x^{(i)}_k)^2+\frac{\lambda}{2}\sum_{j=1}^{n_u}\sum_{k=1}^n(\theta^{(j)}_k)^2
+\end{align}
+\]</span> 值得注意的是，在综合起来之前，<span class="math inline">\(n\)</span> 是我们人为选定的特征维度数，是一个定值；而现在，<span class="math inline">\(n\)</span> 变成了一个超参数，因此我们也<strong>没有必要加上偏置项</strong>，所以这里 <span class="math inline">\(x^{(i)}\in\mathbb R^n,\theta^{(j)}\in\mathbb R^n\)</span>.</p>
+<p>上式的导函数为： <span class="math display">\[
+\begin{align}
+&amp;\frac{\partial J}{\partial\theta^{(j)}_k}=\sum_{i:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)\theta^{(j)}_k+\lambda\theta_k^{(j)}\\
+&amp;\frac{\partial J}{\partial x^{(i)}_k}=\sum_{j:r(i,j)=1}\left((\theta^{(j)})^Tx^{(i)}-y^{(i,j)}\right)x^{(i)}_k+\lambda x_k^{(i)}
+\end{align}
+\]</span> 我们现在可以梯度下降或者用其他算法（如 <span class="math inline">\(\text{LBFGS}\)</span> 等）完成优化了。</p>
+<h3 id="向量化版本">向量化版本</h3>
+<p>为了代码的运行效率，将该算法向量化是必要的。</p>
+<p>构建矩阵 <span class="math inline">\(Y:=\begin{bmatrix}y^{(i,j)}\end{bmatrix}\in\mathbb R^{n_m\times n_u}\)</span>，即第 <span class="math inline">\(i\)</span> 行第 <span class="math inline">\(j\)</span> 列表示用户 <span class="math inline">\(j\)</span> 对电影 <span class="math inline">\(i\)</span> 的评分；矩阵 <span class="math inline">\(X:=\begin{bmatrix}(x^{(1)})^T\\ \vdots\\ (x^{(n_m)})^T\end{bmatrix}\in\mathbb R^{n_m\times n}\)</span>，即第 <span class="math inline">\(i\)</span> 行表示电影 <span class="math inline">\(i\)</span> 的特征向量；矩阵 <span class="math inline">\(\Theta:=\begin{bmatrix}(\theta^{(1)})^T\\ \vdots\\ (\theta^{(n_u)})^T\end{bmatrix}\in\mathbb R^{n_u\times n}\)</span>，即第 <span class="math inline">\(j\)</span> 行表示用户 <span class="math inline">\(j\)</span> 的参数向量。如此，线性回归的预测值可以构成矩阵： <span class="math display">\[
+X\Theta^T\in\mathbb R^{n_m\times n_u}
+\]</span> 利用 <code>numpy</code> 的语法可以简单地写出代价函数及其导函数的向量化版本，详见代码。</p>
+<h2 id="实现">实现</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">from</span> scipy.io <span class="hljs-keyword">import</span> loadmat<br><span class="hljs-keyword">from</span> scipy.optimize <span class="hljs-keyword">import</span> minimize<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">J</span>(<span class="hljs-params">Y, R, X, Theta, lamb</span>):<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0.5</span> * (np.<span class="hljs-built_in">sum</span>(((X @ Theta.T - Y) * R) ** <span class="hljs-number">2</span>) + \<br>		lamb * np.<span class="hljs-built_in">sum</span>(X ** <span class="hljs-number">2</span>) + lamb * np.<span class="hljs-built_in">sum</span>(Theta ** <span class="hljs-number">2</span>))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">partJ</span>(<span class="hljs-params">Y, R, X, Theta, lamb</span>):<br>	<span class="hljs-keyword">return</span> np.concatenate((<br>		( ((X @ Theta.T - Y) * R) @ Theta + lamb * X ).flatten(), <br>		( ((X @ Theta.T - Y) * R).T @ X + lamb * Theta ).flatten()<br>	))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">train</span>(<span class="hljs-params">Y, R, lamb, n</span>):<br>	(n_m, n_u) = Y.shape<br>	xt = np.empty(n*n_m+n*n_u)<br>	<span class="hljs-keyword">return</span> minimize(fun = <span class="hljs-keyword">lambda</span> xt, Y, R, lamb : J(Y, R, xt[:n*n_m].reshape((n_m, n)), \<br>													xt[n*n_m:].reshape((n_u, n)), lamb), <br>					x0 = np.random.randn(n*n_m+n*n_u), <br>					args = (Y, R, lamb), <br>					method = <span class="hljs-string">&#x27;TNC&#x27;</span>, <br>					jac = <span class="hljs-keyword">lambda</span> xt, Y, R, lamb: partJ(Y, R, xt[:n*n_m].reshape((n_m, n)), \<br>													xt[n*n_m:].reshape((n_u, n)), lamb)<br>					)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">predict</span>(<span class="hljs-params">Y, R, xt, n</span>):<br>	(n_m, n_u) = Y.shape<br>	X, Theta = xt[:n*n_m].reshape((n_m, n)), xt[n*n_m:].reshape((n_u, n))<br>	<span class="hljs-keyword">return</span> X @ Theta.T<br><br>data = loadmat(<span class="hljs-string">&#x27;ex8_movies.mat&#x27;</span>)<br>Y = data[<span class="hljs-string">&#x27;Y&#x27;</span>]<br>R = data[<span class="hljs-string">&#x27;R&#x27;</span>]<br>Ymean = Y.mean(axis=<span class="hljs-number">1</span>, keepdims=<span class="hljs-literal">True</span>)<br>res = train(Y-Ymean, R, lamb=<span class="hljs-number">1</span>, n=<span class="hljs-number">50</span>)<br><span class="hljs-built_in">print</span>(res)<br>np.save(<span class="hljs-string">&#x27;xt.npy&#x27;</span>, res.x)<br>xt = res.x<br></code></pre></td></tr></table></figure>
+<p>优化结果为：</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs subunit">    fun: 11078.825074101991<br>    jac: array([ 4.75273039e<span class="hljs-string">-07</span>, <span class="hljs-string">-8</span>.33595791e<span class="hljs-string">-07</span>, <span class="hljs-string">-4</span>.85091646e<span class="hljs-string">-07</span>, ...,<br>       9.67607422e<span class="hljs-string">-07</span>,  3.80539749e<span class="hljs-string">-06</span>,  1.86386969e<span class="hljs-string">-06</span>])<br>message: &#x27;Converged (|f_n-f_(n<span class="hljs-string">-1</span>)| ~= 0)&#x27;<br>   nfev: 14671<br>    nit: 463<br> status: 1<br><span class="hljs-keyword">success: </span>True<br>      x: array([ 0.30269431, <span class="hljs-string">-1</span>.3577984 , <span class="hljs-string">-0</span>.19821756, ...,  0.12718836,<br>      <span class="hljs-string">-0</span>.40793964, <span class="hljs-string">-0</span>.60753772])<br></code></pre></td></tr></table></figure>
+<p>用该参数找到第一个用户预测评分最高的 <span class="math inline">\(10\)</span> 部电影：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python">xt = np.load(<span class="hljs-string">&#x27;xt.npy&#x27;</span>)<br>pred = predict(Y, R, xt, n=<span class="hljs-number">50</span>) + Ymean<br>movie_list = []<br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;movie_ids.txt&#x27;</span>, encoding=<span class="hljs-string">&#x27;latin-1&#x27;</span>) <span class="hljs-keyword">as</span> file:<br>	<span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> file:<br>		movie_list.append(<span class="hljs-string">&#x27; &#x27;</span>.join(line.strip().split(<span class="hljs-string">&#x27; &#x27;</span>)[<span class="hljs-number">1</span>: ]))<br>movie_list = np.array(movie_list)<br>idx = np.argsort(pred[:, <span class="hljs-number">0</span>])[::-<span class="hljs-number">1</span>]<br><span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Top 10 movies for user 1:&#x27;</span>)<br><span class="hljs-keyword">for</span> movie <span class="hljs-keyword">in</span> movie_list[idx][:<span class="hljs-number">10</span>]:<br>	<span class="hljs-built_in">print</span>(movie)<br></code></pre></td></tr></table></figure>
+<p>结果为：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Top</span> <span class="hljs-number">10</span> movies for user <span class="hljs-number">1</span>:<br><span class="hljs-attribute">Titanic</span> (<span class="hljs-number">1997</span>)<br><span class="hljs-attribute">In</span> the Name of the Father (<span class="hljs-number">1993</span>)<br><span class="hljs-attribute">Philadelphia</span> (<span class="hljs-number">1993</span>)<br><span class="hljs-attribute">Duck</span> Soup (<span class="hljs-number">1933</span>)<br><span class="hljs-attribute">Ice</span> Storm, The (<span class="hljs-number">1997</span>)<br><span class="hljs-attribute">Saint</span>, The (<span class="hljs-number">1997</span>)<br><span class="hljs-attribute">William</span> Shakespeare&#x27;s Romeo and Juliet (<span class="hljs-number">1996</span>)<br><span class="hljs-attribute">Boot</span>, Das (<span class="hljs-number">1981</span>)<br><span class="hljs-attribute">People</span> vs. Larry Flynt, The (<span class="hljs-number">1996</span>)<br><span class="hljs-attribute">Manhattan</span> (<span class="hljs-number">1979</span>)<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/Andrew-Ng/" class="category-chain-item">Andrew Ng</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[吴恩达机器学习]14·推荐系统</div>
+      <div>https://xyfjason.github.io/blog-main/2021/01/30/吴恩达机器学习-14·推荐系统/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年1月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2021/02/01/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%80%BB%E7%BB%93%E4%B8%8E%E4%BD%BF%E7%94%A8scikit-learn/" title="[吴恩达机器学习]总结与使用scikit-learn ">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[吴恩达机器学习]总结与使用scikit-learn </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2021/01/29/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-13%C2%B7%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B/" title="[吴恩达机器学习]13·异常检测">
+                        <span class="hidden-mobile">[吴恩达机器学习]13·异常检测</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

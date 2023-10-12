@@ -1,0 +1,846 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="StyleGAN 如果要说 StyleGAN 的最大的贡献，无疑是改变了传统的生成器架构，通过把隐变量分层引入到 backbone 网络，揭示了网络的各层能够控制生成图像的不同抽象程度的语义，从而在一定程度上实现了无监督特征解耦。另外，作者提出的 FFHQ 数据集也是一个很大的贡献，在之后的生成模型研究乃至 low-level vision 领域中都经常用到。 网络架构设计  在 StyleGAN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="StyleGAN 系列">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/06/08/StyleGAN-%E7%B3%BB%E5%88%97/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="StyleGAN 如果要说 StyleGAN 的最大的贡献，无疑是改变了传统的生成器架构，通过把隐变量分层引入到 backbone 网络，揭示了网络的各层能够控制生成图像的不同抽象程度的语义，从而在一定程度上实现了无监督特征解耦。另外，作者提出的 FFHQ 数据集也是一个很大的贡献，在之后的生成模型研究乃至 low-level vision 领域中都经常用到。 网络架构设计  在 StyleGAN">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/stylegan.png">
+<meta property="article:published_time" content="2023-06-08T10:01:32.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:58:55.771Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/stylegan.png">
+  
+  
+  
+  <title>StyleGAN 系列 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/stylegan.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="StyleGAN 系列"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-08 18:01" pubdate>
+          2023年6月8日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          67 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">StyleGAN 系列</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="stylegan">StyleGAN</h2>
+<p>如果要说 StyleGAN 的最大的贡献，无疑是改变了传统的生成器架构，通过把隐变量分层引入到 backbone 网络，揭示了网络的各层能够控制生成图像的不同抽象程度的语义，从而在一定程度上实现了无监督特征解耦。另外，作者提出的 FFHQ 数据集也是一个很大的贡献，在之后的生成模型研究乃至 low-level vision 领域中都经常用到。</p>
+<h3 id="网络架构设计">网络架构设计</h3>
+<p><img src="stylegan-arch.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>在 StyleGAN 以前，传统生成器的网络架构通常如上左图所示——隐变量 <span class="math inline">\(\mathbf z\)</span> 输入给网络的第一层，经过分辨率逐渐增大网络模块后输出最终结果；而 StyleGAN 将隐变量 <span class="math inline">\(\mathbf w\)</span> 给到了生成器的各层，网络第一层的输入仅仅是一个（可学习的）常数向量，如上右图所示。这里，有三个问题需要详细说明：</p>
+<ol type="1">
+<li><p><strong>为什么要用一个 mapping network（8 层 MLP）把隐变量 <span class="math inline">\(z\)</span> 映射成 <span class="math inline">\(w\)</span>，再给到生成器网络？</strong></p>
+<p>一般而言，隐变量 <span class="math inline">\(\mathbf z\in\mathcal Z\)</span> 采样自标准高斯分布或者均匀分布，这些分布都是各向同性的。然而，图像的属性之间可能并非如此。例如，在头发长度与性别这两个属性的组合之中，长发男子的出现频率较低。极端情况下，也许数据集中并没有长发男子，那么模型为了在各向同性的隐空间中编码这两个属性，势必会引起较大的扭曲，增加学习难度。为此，作者引入 mapping network 对 <span class="math inline">\(\mathbf z\)</span> 做非线性变换，让模型自己学习一个隐空间 <span class="math inline">\(\mathcal W\)</span>，那么 <span class="math inline">\(\mathcal W\)</span> 的扭曲程度就可以得到缓解，如下图所示：</p>
+<p><img src="stylegan-w.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>实验证明，mapping network 确实能提高生成图像的质量，也能帮助更好的解耦。</p>
+<p>值得注意的是，论文中作者对 <span class="math inline">\(\mathbf w\)</span> 采用了 truncation trick 来提高可视化的图像质量。而且，受益于 StyleGAN 的设计，我们可以只对低分辨率阶段（<span class="math inline">\(4^2\sim32^2\)</span>）使用 truncation trick，从而保留高频细节的丰富性。具体而言，由于 <span class="math inline">\(\mathcal W\)</span> 是学习出来的，我们无法直接对其截断，因此作者首先计算 <span class="math inline">\(\mathbf w\)</span> 的平均值：<span class="math inline">\(\bar{\mathbf w}=\mathbb E_{\mathbf z\sim \mathcal P(\mathbf z)}[f(\mathbf z)]\)</span>，然后对于采样出的 <span class="math inline">\(\mathbf w\)</span>，将其与 <span class="math inline">\(\bar{\mathbf w}\)</span> 做插值来实现类似于截断的效果：<span class="math inline">\(\mathbf w&#39;=\bar{\mathbf w}+\psi(\mathbf w-\bar{\mathbf w})\)</span>.</p></li>
+<li><p><strong><span class="math inline">\(w\)</span> 是如何融入生成器网络的（即图中的 AdaIN 具体是怎么操作的）？</strong></p>
+<p>AdaIN，即 Adaptive InstanceNorm，源自于风格迁移工作，这也是 StyleGAN 名字中 "Style" 的来源。我们首先需要明确 InstanceNorm (IN) 是在哪些维度上做归一化的，这里借用 GroupNorm 论文的图：</p>
+<p><img src="norm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>可以看到，InstanceNorm 是在每张图片的<strong>每个单通道特征图内</strong>做归一化的，注意与 LayerNorm 区分开。</p>
+<p>回到 StyleGAN，从上文的架构图中可以看到，<span class="math inline">\(\mathbf w\)</span> 会被<strong>复制多份</strong>送到生成器网络的各个层次之中。在每个层次里，<span class="math inline">\(\mathbf w\)</span> 会先经过一个可学习的仿射变换（图中的 A 框，其实就是一个全连接层），得到所谓的“风格” <span class="math inline">\(\mathbf y\)</span>： <span class="math display">\[
+\mathbf y=A(\mathbf w)=(\mathbf y_s,\mathbf y_b)
+\]</span> 其中 <span class="math inline">\(\mathbf y_s,\mathbf y_b\in\mathbb R^C\)</span>，<span class="math inline">\(C\)</span> 是当前特征图的通道数。然后以 <span class="math inline">\(\mathbf y_s\)</span> 为 scale、<span class="math inline">\(\mathbf y_b\)</span> 为 bias 逐通道<strong>调制（modulate）</strong>归一化后的结果： <span class="math display">\[
+\text{AdaIN}(\mathbf x_i,\mathbf y)=\mathbf y_{s,i}\frac{\mathbf x_i−\mu(\mathbf x_i)}{\sigma(\mathbf x_i)}+\mathbf y_{b,i}\quad(\text{for the }i\text{&#39;th channel})
+\]</span> 换句话说，就是把原本第 <span class="math inline">\(i\)</span> 个通道的特征图 <span class="math inline">\(\mathbf x_i\)</span> 的均值和标准差强行赋值为 <span class="math inline">\(\mathbf y_{b,i}\)</span> 和 <span class="math inline">\(\mathbf y_{s,i}\)</span>.</p></li>
+<li><p><strong>最右侧的 noise 是什么？有什么作用？</strong></p>
+<p>Noise 的添加是为了给生成的结果引入一些随机微小扰动，这些扰动会改变发丝、皱纹、胡子、毛孔等细节。与 <span class="math inline">\(\mathbf w\)</span> 不同的是，给到不同层次的 noise 是单独采样、互相独立的。这些 noise 是单通道的高斯噪声，通过可学习的逐通道缩放系数广播（broadcast）为对应特征图的 shape（图中的 B 框），加到卷积后的特征图上。</p>
+<p>一个自然的问题是，为什么 noise 不会上升到与 <span class="math inline">\(\mathbf w\)</span> 一样的地位，大幅度地影响生成结果呢？作者认为，这与风格迁移文献观察到的现象有关——具有空间不变性的统计量，如 Gram 矩阵、逐通道均值、逐通道方差等，能很好地编码一张图片的风格；相反，对空间位置敏感的特征编码具体的实体。在 StyleGAN 中，风格 <span class="math inline">\(\mathbf y\)</span> 通过 AdaIN 操作调制了特征图的均值和方差，因而能控制生成图像的姿态、光照等全局信息；而 noise 是各像素独立的，因此自然而然地被用来控制局部的随机变化。</p></li>
+</ol>
+<h3 id="style-mixing">Style Mixing</h3>
+<p>虽然我们现在清楚了 StyleGAN 的设计细节，但更重要的是要明白这样设计的动机，换句话说，StyleGAN 的设计有什么优势？其实在文章开头已经提到了，这样的设计使得不同抽象程度的语义与网络不同层次的隐变量形成了对应关系，在一定程度上实现了特征解耦，我们能够通过控制网络内部的各个层级来控制生成结果的各种语义。</p>
+<p>文章用 <strong>style mixing</strong> 展示了这一点。所谓 style mixing，即随机选择网络的一个层次，在这之前使用 <span class="math inline">\(\mathbf w_1\)</span>、之后使用 <span class="math inline">\(\mathbf w_2\)</span>，那么生成的图像就会服从对应于 <span class="math inline">\(\mathbf w_1\)</span> 的粗糙语义（如人物姿态、发型、是否戴眼镜等）和对应于 <span class="math inline">\(\mathbf w_2\)</span> 的精细语义（如颜色、一些脸部特征等）。</p>
+<p><img src="style-mixing.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>如上图所示，source A 和 source B 都是 StyleGAN 生成的图片。前三行是在 source A 的基础上，把粗糙层次（<span class="math inline">\(4^2\sim8^2\)</span>）的 <span class="math inline">\(\mathbf w\)</span> 换成 source B，于是交叉得到的图片在姿态、发型、脸型、眼镜上与 source B 保持一致，而色调和细节脸部特征像 source A；中间两行是把中间分辨率（<span class="math inline">\(16^2\sim32^2\)</span>）的 <span class="math inline">\(\mathbf w\)</span> 换成 source B；最后一行是把精细层次（<span class="math inline">\(64^2\sim1024^2\)</span>）的 <span class="math inline">\(\mathbf w\)</span> 换成 source B.</p>
+<p>事实上，style mixing 并不只是一个可视化技巧，作者也将其作为一种正则化技巧用在了训练之中并取名为 mixing regularization，以避免网络认为相邻的两个 style 是相关的。</p>
+<h3 id="解耦性能指标">解耦性能指标</h3>
+<p>我们知道，评价生成模型的常用指标有 FID、Inception Score 等，但对一个生成模型的完整评价不应仅仅关注于结果，还应该关注网络内部的特征表示。一方面，我们希望网络从隐变量到图像的映射是足够“平滑”的，在隐空间中插值能够导致生成图像的平滑变化；另一方面 ，如果能找到隐空间的一些线性子空间，分别独立地控制图像的某种属性的变化，那便是更好的。因此，论文提出了两个指标——perceptual path length (PPL) 用于衡量生成器的映射是否平滑、linear separability 用于衡量隐空间的解耦程度。</p>
+<p><strong>Perceptual path length</strong>：PPL 的思想非常简单，当我们在隐空间中插值时，相邻两个隐变量生成的图像应该比较相似，这种相似性可以使用感知距离 lpips 衡量。因此，当我们沿着隐空间 <span class="math inline">\(\mathcal Z\)</span> 的一条路径走时，这条路径总的长度可以定义为每一小段的 lpips 之和，再取段长趋近于 0. 实际操作中，我们取步长 <span class="math inline">\(\epsilon=10^{-4}\)</span> 将积分离散化为求和进行计算。平均 PPL 就是对所有路径端点对求平均，即： <span class="math display">\[
+l_{\mathcal Z}=\mathbb E_{\mathbf z_1,\mathbf z_2\sim P(\mathbf z),t\sim U(0,1)}\left[\frac{1}{\epsilon^2}d(G(\text{slerp}(\mathbf z_1,\mathbf z_2;t)),G(\text{slerp}(\mathbf z_1,\mathbf z_2;t+\epsilon)))\right]
+\]</span> 类似地，也可以在 <span class="math inline">\(\mathcal W\)</span> 空间做计算： <span class="math display">\[
+l_{\mathcal Z}=\mathbb E_{\mathbf z_1,\mathbf z_2\sim P(\mathbf z),t\sim U(0,1)}\left[\frac{1}{\epsilon^2}d(G(\text{lerp}(f(\mathbf z_1),f(\mathbf z_2);t)),G(\text{lerp}(f(\mathbf z_1),f(\mathbf z_2);t+\epsilon)))\right]
+\]</span> 一个细节是 <span class="math inline">\(\mathcal Z\)</span> 空间的插值用的是球面线性插值（slerp），而 <span class="math inline">\(\mathcal W\)</span> 空间是线性插值（lerp）。</p>
+<p><strong>Linear separability</strong>：如果一个隐空间不是纠缠起来的，那么我们应该能够在其中找到一个方向，这个方向对应着某个属性的变化。换句话说，我们可以找到一个线性超平面，能根据对该属性做二分类（例如是否微笑、性别等）。</p>
+<p>因此，作者首先使用 CelebA 数据集提供的 40 个属性标签在 CelebA-HQ 数据集上训练了分类网络，然后随机采样了 200000 张图像并用分类器对它们分类，保留置信度最高的一半，得到 100000 个有标签的隐向量。</p>
+<p>对每个属性，作者拟合一个线性 SVM 来预测隐向量的标签。那么，条件熵 <span class="math inline">\(H(Y|X)\)</span> 就可以用来反映隐空间与生成图像对于这个属性表示的一致程度，其中 <span class="math inline">\(X\)</span> 是 SVM 预测的类别、<span class="math inline">\(Y\)</span> 是分类器打的标签类别。最终的得分为： <span class="math display">\[
+\exp\left(\sum_i H(Y_i|X_i)\right)
+\]</span> 其中 <span class="math inline">\(\exp\)</span> 将条件熵从对数域变换到线性域以方便比较。</p>
+<h2 id="stylegan2">StyleGAN2</h2>
+<h3 id="从-adain-到调制卷积">从 AdaIN 到调制卷积</h3>
+<p>StyleGAN2 的主要动机是作者发现 StyleGAN 生成的图像（以及中间的特征图）中常常伴有“水滴”状的 artifact：</p>
+<p><img src="stylegan2-artifact.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>经过排查，作者发现这是 AdaIN 的锅——AdaIN 的逐通道归一化和调制破坏了它们之间的相对大小信息，于是网络试图用一个局部的尖峰来主导统计量，进而帮助判断各通道信号的相对大小。</p>
+<p>然而，AdaIN 是 StyleGAN 将输入 <span class="math inline">\(\mathbf w\)</span> 融入网络 backbone 的手段，是非常重要的组件。为此，我们首先回顾一下 StyleGAN 的生成器架构：</p>
+<p><img src="stylegan2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>图 (a) 即我们熟悉的 StyleGAN，由于问题在 AdaIN 上，为了更好地说明，我们把 AdaIN 拆成两部分——normalization 归一化和 modulation 调制，同时把卷积层的 weight 和 bias 显式地画出来，得到图 (b). 特别地，在拆分 AdaIN 后，我们可以把 「Mod-Conv-Add-Norm」视作一个 style block，如图 (b) 的灰色框框所示。</p>
+<p>观察图 (b)，作者发现一个不协调之处——StyleGAN 的 bias 和 noise 都加在归一化层的前面，导致它们的影响受制于当前 style 的大小。因此，作者把 bias 和 noise 移动到了 style block 后面。进一步地，作者发现只需要对标准差做归一化和调制就足够了，因此去除了对均值的归一化和调制。最后，作者觉得没有必要对输入到第一层的那个常量做归一化和加 bias 与 noise，于是把它们去掉，最终得到了图 (c).</p>
+<p>现在，为了解决 AdaIN 带来的问题，最直接的方案就是把归一化层（Norm）去掉，但是作者提出了一个更好的方案，其主要思想是让归一化操作基于特征图的期望的统计量、而非真实的统计量。首先，「Mod std」块可以融入卷积核之中——因为对特征图乘上 <span class="math inline">\(s_i\)</span>（即上一节的 <span class="math inline">\(\mathbf y_{s,i}\)</span>）再做卷积等价于直接对卷积核乘上 <span class="math inline">\(s_i\)</span>： <span class="math display">\[
+w&#39;_{ijk}=s_i\cdot w_{ijk}
+\]</span> 其中 <span class="math inline">\(i\)</span> 表示某输入通道、<span class="math inline">\(j\)</span> 表示某输出通道、<span class="math inline">\(k\)</span> 表示卷积核的某空间位置。接下来，不考虑当前特征图真实的统计量，而是假设特征图的各像素是独立同分布的单位方差随机变量，那么在卷积操作之后，第 <span class="math inline">\(j\)</span> 个通道的标准差为： <span class="math display">\[
+\sigma_j=\sqrt{\sum_{i,k}{w&#39;_{ijk}}^2}
+\]</span> 因此，「Norm std」块变成了基于这个假设的标准差的归一化。同理，其等价于直接将卷积核除以 <span class="math inline">\(\sigma_j\)</span>： <span class="math display">\[
+w&#39;&#39;_{ijk}=\frac{w&#39;_{ijk}}{\sqrt{\sum_{i,k}{w&#39;_{ijk}}^2+\epsilon}}
+\]</span> 作者称之为<strong>解调（demodulation）</strong>操作。</p>
+<p>综上所述，图 (c) 变成了图 (d) 的形式，即是 StyleGAN2 网络的基本模块。实验证明，将 AdaIN 的归一化换成解调后，生成的图像以及特征图都没有了“水滴” artifact.</p>
+<h3 id="正则化">正则化</h3>
+<p>作者探索了两个正则化技巧：</p>
+<p><strong>Lazy regularization</strong>：StyleGAN 采用的对抗损失是原始 GAN 的损失配合 <span class="math inline">\(R_1\)</span> 正则化。作者发现，并不需要每个 iteration 都计算正则项并与对抗损失一同优化，每 <span class="math inline">\(k=16\)</span> 个 minibatches 计算一次正则项即可，性能不会损失但减少了计算和内存开销。值得注意的是，由于我们实际上是用了 <span class="math inline">\(k+1\)</span> 个 iteration 完成原本的 <span class="math inline">\(k\)</span> 个 iteration，所以 Adam 优化器的参数要做相应调整： <span class="math display">\[
+\lambda&#39;=c\cdot\lambda,\quad\beta&#39;_1=(\beta_1)^c,\quad\beta&#39;_2=(\beta_2)^c
+\]</span> 其中 <span class="math inline">\(c=k/(k+1)\)</span>. 另外，正则项也乘上 <span class="math inline">\(k\)</span> 来保持总的梯度数量级不变。</p>
+<p><strong>Path length regularization</strong>：在 StyleGAN 中作者提出了 PPL 来衡量生成器映射的平滑程度，然而这个指标并不能直接用作优化目标帮助训练，否则网络显然会坍缩到一个点上。因此，作者提出了一个新的正则化方法来鼓励生成器的平滑性。</p>
+<p>作者希望在 <span class="math inline">\(\mathcal W\)</span> 中朝不同方向走相同距离的步长时，生成图像也会产生固定量级的变化，而这样的变化可以反映在回传到 <span class="math inline">\(\mathbf w\)</span> 的梯度上。因此，记生成器为 <span class="math inline">\(g(\mathbf w):\mathcal W\mapsto\mathcal Y\)</span>，这是一个向量到向量的映射，所以其 Jacobian 矩阵 <span class="math inline">\(\mathbf J_\mathbf w=\partial g(\mathbf w)/\partial\mathbf w\)</span> 就包含了 <span class="math inline">\(\mathbf w\)</span> 处的所有梯度。作者将正则化项定义为： <span class="math display">\[
+\mathbb E_{\mathbf w,\mathbf y\sim\mathcal N(\mathbf 0,\mathbf I)}\left(\Vert\mathbf J_{\mathbf w}^T\mathbf y\Vert_2-a\right)^2
+\]</span> 其中 <span class="math inline">\(\mathbf y\)</span> 是一张随机高斯噪声图像。为了避免显式的计算 Jacobian 矩阵，利用等式 <span class="math inline">\(\mathbf J_{\mathbf w}^T\mathbf y=\nabla_\mathbf w(g(\mathbf w)\cdot\mathbf y)\)</span>，我们可以通过反向传播方便地计算。<span class="math inline">\(a\)</span> 被设置为 <span class="math inline">\(\Vert\mathbf J_{\mathbf w}^T\mathbf y\Vert_2\)</span> 的指数移动平均，使得网络能够自适应地调整其大小。</p>
+<h3 id="网络整体架构">网络整体架构</h3>
+<p>第一节讲的是网络的基本模块，而这一节讲 StyleGAN2 的整体架构。StyleGAN 使用的是简单的 feedforward 设计，没有跳跃连接、残差块等。因此，作者决定探索更复杂的网络架构。</p>
+<p><img src="stylegan2-arch.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>如图 (a) 所示，MSG-GAN 在生成器与判别器相同分辨率的层之间加入了跳跃连接，其中 tRGB 表示把特征图变为 RGB 图像，fRGB 反之。StyleGAN2 作者受其启发，将其简化为了图 (b)，最终输出图像是各个分辨率层转换的 RGB 图之和。另外，作者也设计了带残差连接的网络 (c)，类似于 LAPGAN. 生成器和判别器分别都有这三种设计，一共 9 种组合，作者在两个数据集上一一测试了它们的效果（有钱就是任性啊），最后发现 output skips 式生成器（图 (b)）与残差连接式判别器（图 (c)）的组合最好。</p>
+<h2 id="stylegan2-ada">StyleGAN2-ADA</h2>
+<h2 id="stylegan3">StyleGAN3</h2>
+<h2 id="eigengan">EigenGAN</h2>
+<p>前文介绍 StyleGAN 时说到，StyleGAN 揭示了生成器网络各层具有不同抽象程度的语义，并通过 style mixing 的方式进行了可视化。但是它毕竟没有<strong>显式</strong>地解耦出来——即没有显式地给出对应某个语义的隐空间方向。当然，我们能事后通过有监督的分类或其他手段来分析隐空间，从而找到一些语义对应的方向。但我们能不能在训练网络的同时就无监督地完成解耦呢？</p>
+<p><img src="eigengan.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>EigenGAN 的网络架构如上图所示，可以看见它与 StyleGAN 一样采用的是分层加入隐变量的设计，不过每一层的隐空间都显示地表达了出来——<span class="math inline">\(\mathbf U_i\)</span> 由一组标准正交基向量构成，每个基向量方向被用来指示一种语义；对角矩阵 <span class="math inline">\(\mathbf L_i\)</span> 拉伸基向量的长度，即决定各个基向量的权重，也可视为一种维度选择；<span class="math inline">\(\mu_i\)</span> 是这个隐空间的原点。<span class="math inline">\(\mathbf U_i\)</span>、<span class="math inline">\(\mathbf L_i\)</span> 和 <span class="math inline">\(\mu_i\)</span> 以及卷积核都是可学习的，其中 <span class="math inline">\(\mathbf U_i\)</span> 的正交性由正则化项 <span class="math inline">\(\Vert\mathbf U_i^{\mathrm T}\mathbf U_i-\mathbf I\Vert_F^2\)</span> 来做约束。</p>
+<p>在这样的设计下，随机采样的 <span class="math inline">\(\mathbf z_i\sim\mathcal N(\mathbf 0,\mathbf I)\)</span> 其实就是这个隐空间的相对坐标，即基向量的线性组合。因此，每个样本都对应着各层级隐空间的基向量的一种组合方式，因此我们有理由相信，在训练完成后不同基向量就会编码着各种不同的语义。事实上，一个更有力的证据是，只有一层的线性 EigenGAN 的解与 PCA 完全相同，相关推导可查看论文 Appendix A.</p>
+<p>虽然都是分层设计，但与 StyleGAN 采用 AdaIN 或调制卷积相比，EigenGAN 采用更直接的加法来融入隐变量，因此也有着更清晰的 manifold：</p>
+<p><img src="eigengan-manifold.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>通过改变某层某方向的隐变量大小并可视化出来，我们就能够知道这个方向代表的语义。实验显示不同层的不同方向确实学习到了不同的语义：</p>
+<p><img src="eigengan-result.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>更多的结果请参阅原论文。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/GANs/" class="category-chain-item">GANs</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>StyleGAN 系列</div>
+      <div>https://xyfjason.github.io/blog-main/2023/06/08/StyleGAN-系列/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/14/Stable-Diffusion-webui%E9%83%A8%E7%BD%B2(Linux)/" title="[Stable Diffusion]webui部署(Linux)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[Stable Diffusion]webui部署(Linux)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/03/Midjourney-%E8%B0%83%E7%A0%94/" title="Midjourney 调研">
+                        <span class="hidden-mobile">Midjourney 调研</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

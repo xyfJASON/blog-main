@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="封面来自 CivitAI.  个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某物体的照片，模型生成该物体其他图像。 Textual Inversion Tel Aviv University NVIDIA 2022.08.02 顾名思义，Textual Inversion">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型应用·个性化生成">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E4%B8%AA%E6%80%A7%E5%8C%96%E7%94%9F%E6%88%90/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="封面来自 CivitAI.  个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某物体的照片，模型生成该物体其他图像。 Textual Inversion Tel Aviv University NVIDIA 2022.08.02 顾名思义，Textual Inversion">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-personalized.png">
+<meta property="article:published_time" content="2023-02-11T05:36:49.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:17:34.193Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="computer vision">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-personalized.png">
+  
+  
+  
+  <title>扩散模型应用·个性化生成 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-application-personalized.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="扩散模型应用·个性化生成"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-11 13:36" pubdate>
+          2023年2月11日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">扩散模型应用·个性化生成</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>封面来自 <a target="_blank" rel="noopener" href="https://civitai.com/images/1058118?modelVersionId=90854&amp;prioritizedUserIds=262917&amp;period=AllTime&amp;sort=Most+Reactions&amp;limit=20">CivitAI</a>.</p>
+</blockquote>
+<p>个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某物体的照片，模型生成该物体其他图像。</p>
+<h2 id="textual-inversion">Textual Inversion</h2>
+<p><span class="label label-primary">Tel Aviv University</span> <span class="label label-primary">NVIDIA</span> <span class="label label-default">2022.08.02</span></p>
+<p>顾名思义，Textual Inversion<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Gal, Rinon, Yuval Alaluf, Yuval Atzmon, Or Patashnik, Amit H. Bermano, Gal Chechik, and Daniel Cohen-Or. An image is worth one word: Personalizing text-to-image generation using textual inversion. *arXiv preprint arXiv:2208.01618* (2022).">[1]</span></a></sup> 采用类似于 GAN Inversion 的方式——在 text embedding 空间中寻找一个向量来重建原图。具体而言，给定 3-5 张描述某概念的图像，通过如下优化目标找到 word embedding <span class="math inline">\(v_\ast\)</span>，使得提示词 <span class="math inline">\(\text{A photo of }S_\ast\)</span> 能够重建输入图像： <span class="math display">\[
+v_\ast=\arg\min_v \mathbb E_{z\sim\mathcal E(x),\,y,\,\epsilon\sim\mathcal N(0,1),\,t}\left[\Vert\epsilon-\epsilon_\theta(z_t,t,c_\theta(y,v_\ast))\Vert_2^2\right]
+\]</span> 流程图如下：</p>
+<p><img src="textual-inversion.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>Textual Inversion 的主体内容就是这些，简单有效，并且最后只需要保存 embedding vector，所以文件非常小；但是效果会比微调整个模型的 DreamBooth（见下文）和微调额外网络的 LoRA 更差一些。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Textual Inversion 的生成样例（摘自<a target="_blank" rel="noopener" href="https://textual-inversion.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://textual-inversion.github.io/static/images/editing/fluffy.JPG" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://textual-inversion.github.io/static/images/editing/elephant.JPG" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://textual-inversion.github.io/static/images/style/style.JPG" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="dreambooth">DreamBooth</h2>
+<p><span class="label label-primary">Google</span> <span class="label label-default">2022.08.25</span></p>
+<p>与 Textual Inversion 几乎同时，DreamBooth<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ruiz, Nataniel, Yuanzhen Li, Varun Jampani, Yael Pritch, Michael Rubinstein, and Kfir Aberman. Dreambooth: Fine tuning text-to-image diffusion models for subject-driven generation. *arXiv preprint arXiv:2208.12242* (2022).">[2]</span></a></sup> 也想到了让预训练模型学习用户指定的概念来进行个性化生成。为此，作者考虑将用户给出的物体与一个特殊的 identifier 绑定，然后用包含这个特殊 identifier 的 prompt 和用户的图像来<strong>微调整个 UNet</strong>. 微调结束后，只要用户输入的 prompt 中包含这个 identifier，那么模型就能生成用户想要的物体。整体思路清晰易懂，但是实现上有些小细节需要说明。</p>
+<p>首先，这个 identifier 要与描述其类别的词一起使用，即 a [identifier] [class noun]，这样预训练模型能借用其已有的关于那个类别的知识，训练更快速稳定、生成的效果也更好。</p>
+<p>其次，identifier 的选取也有讲究，应该尽可能避免使用常用的单词（如 "unique"、"special" 等），否则模型还得学会分辨什么时候这个词是原来的意思，什么时候是新的意思。然而，直接用随机的字符串也不是一个好的选择，因为 tokenizer 可能会把它拆散，变成常见的 tokens. 因此，作者先查找罕见的 tokens，再把它们映射回 text space 来得到 identifier.</p>
+<p>最后，直接微调可能会导致 language drift 问题，即模型遗忘了预训练时的知识；模型还可能失去多样性，即生成的物体都有类似的姿态、视角。为此，作者提出了 prior preservation loss，在微调的同时用模型自己生成的样例监督它自己，相当于一个正则项，如下图所示：</p>
+<p><img src="dreambooth.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 DreamBooth 的生成样例（摘自<a target="_blank" rel="noopener" href="https://dreambooth.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://dreambooth.github.io/DreamBooth_files/results.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="dreambooth-lora">DreamBooth + LoRA</h2>
+<p>LoRA<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Hu, Edward J., Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. Lora: Low-rank adaptation of large language models. *arXiv preprint arXiv:2106.09685* (2021).">[3]</span></a></sup> 是一种参数高效微调方法（PEFT），最早应用于微调语言大模型之中，后来由 <a target="_blank" rel="noopener" href="https://github.com/cloneofsimo/lora">cloneofsimo</a> 引入到对 Stable Diffusion 模型的微调之中。LoRA 并不改变原模型的权重，而是在线性层旁边新增一个下采样-上采样的支路，通过训练这个支路来完成微调。因此，同一个基底 Stable Diffusion 模型可以搭载不同的 LoRA 使用，具有很高的灵活性。由于 LoRA 支路网络的参数量小，相比微调整个模型，对算力的需求更加友好，并且也能达到不错的效果，因此很快受到大家的热烈欢迎，成为了目前最流行的微调 Stable Diffusion 的方法之一。</p>
+<p>特别地，我们可以按照 DreamBooth 的方式（即使用 a [identifier] [class noun] 的描述词 + 正则化图像）来训练 LoRA，相比原始 DreamBooth 微调整个模型，资源消耗大大减小并且灵活性更高。</p>
+<h2 id="custom-diffusion">Custom Diffusion</h2>
+<p><span class="label label-primary">CMU</span> <span class="label label-primary">THU</span> <span class="label label-primary">Adobe</span> <span class="label label-success">CVPR 2023</span> <span class="label label-default">2022.12.08</span></p>
+<p>不同于 DreamBooth 微调整个模型，Custom Diffusion<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kumari, Nupur, Bingliang Zhang, Richard Zhang, Eli Shechtman, and Jun-Yan Zhu. Multi-concept customization of text-to-image diffusion. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 1931-1941. 2023.">[4]</span></a></sup> 只微调 cross-attention 层中的 K、V 投影矩阵以及一个输入 text token（如下图所示），微调时间大大减小的同时能取得与 DreamBooth 相当的效果。并且，Custom Diffusion 还支持合并两个微调的模型，实现<strong>多概念生成</strong>。</p>
+<p><img src="custom-diffusion.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>为什么选择 K、V 投影矩阵微调呢？因为作者分析了微调整个模型后各模块权重的相对变化量，发现 cross-attention 层的 K、V 投影矩阵变化最大。进一步地，这部分参数只占全部参数的 5%，说明了它们在微调中的重要性。具体到微调过程，其实与 DreamBooth 区别不大，也是使用特殊标识符，并且也使用了正则化图像。</p>
+<p>关于多概念生成，作者尝试了两种方法，都达到了比 DreamBooth 更优的结果：</p>
+<ol type="1">
+<li>合并两个数据集同时训练两个概念；</li>
+<li>分别训练之后合并模型。</li>
+</ol>
+<p>第一种方法没什么好说的。对于第二种方法，作者将其形式化为了一个优化问题。设一共有 <span class="math inline">\(N\)</span> 个概念，<span class="math inline">\(\mathbf c_i\in\mathbb R^{s_i\times d}\)</span> 表示描述第 <span class="math inline">\(i\)</span> 个概念的词汇 embeddings. 记原投影矩阵为 <span class="math inline">\(W_0\)</span>，微调后的投影矩阵为 <span class="math inline">\(W_i\)</span>，那么优化问题为： <span class="math display">\[
+\begin{align}
+&amp;\hat W=\mathop{\arg\min}_W\Vert WC_\text{reg}^{\mathsf T}-W_0 C_\text{reg}^{\mathsf T}\Vert_F\\
+\text{s.t.}\quad&amp;WC^{\mathsf T}=V
+\end{align}
+\]</span> 其中 <span class="math inline">\(C=[\mathbf c_1\cdots \mathbf c_N]^{\mathsf T}\in\mathbb R^{s\times d}\)</span> 包含了所有 <span class="math inline">\(N\)</span> 个概念一共 <span class="math inline">\(s\)</span> 个目标词汇 embeddings，<span class="math inline">\(V=[W_1\mathbf c_1^{\mathsf T}\cdots W_N\mathbf c_N^{\mathsf T}]^{\mathsf T}\)</span>. 直观而言，我们希望优化后的投影矩阵在个性化概念上的输出与分别微调的模型保持一致，同时在正则化图像上与原模型的输出差异最小。这个优化问题具有封闭解： <span class="math display">\[
+\hat W=W_0+\mathbf v^{\mathsf T}\mathbf d
+\]</span> 其中 <span class="math inline">\(\mathbf d=C(C^{\mathsf T}_\text{reg}C_\text{reg})^{-1},\,\mathbf v^{\mathsf T}=(V-W_0C^{\mathsf T})(\mathbf dC^{\mathsf T})^{-1}\)</span>.</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Custom Diffusion 的生成样例（摘自<a target="_blank" rel="noopener" href="https://www.cs.cmu.edu/~custom-diffusion/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="custom-diffusion-ex.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="suti">SuTI</h2>
+<p><span class="label label-primary">Google</span> <span class="label label-default">2023.04.01</span></p>
+<p>DreamBooth 等方法需要为每种个性化主体分别微调出一个专家模型，比较麻烦。SuTI<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Wenhu, Hexiang Hu, Yandong Li, Nataniel Rui, Xuhui Jia, Ming-Wei Chang, and William W. Cohen. Subject-driven text-to-image generation via apprenticeship learning. *arXiv preprint arXiv:2304.00186* (2023).">[5]</span></a></sup> 希望只使用一个模型，输入若干张主体图片，就能够生成该主体的其他图片，这样的模型被称作 apprentice model. 为了训练这个 apprentice model，我们需要一个大规模的个性化主体数据集，而数据的获取方式极其粗暴——从网络上爬几百万张图像，训练大量的专家模型，用这些专家模型来产生数据，如下图所示。虽然 SuTI 的训练消耗极大，但推断的时候能比基于逐主体优化的方法快 20 倍，相当于把时间开销从推断转移到了训练，因此如果模型能够开源出来，对普通用户无疑是一个好消息。不过嘛，考虑到这是 Google，而且 SuTI 基于的是未开源的 Imagen……恐怕是“可远观而不可亵玩焉”。</p>
+<p><img src="suti-pipeline.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>可以看出，SuTI 非常偏工程，比如怎么收集数据集、怎么把同一个主体聚在一起、怎么生成文本描述、怎么过滤质量差的图片等，对普通课题组没有太多的参考意义（而且也玩不起啊），这里便不再赘述。</p>
+<h2 id="svdiff">SVDiff</h2>
+<p><span class="label label-primary">Rutgers University</span> <span class="label label-primary">Google</span> <span class="label label-default">2023.05.20</span></p>
+<p>SVDiff<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Han, Ligong, Yinxiao Li, Han Zhang, Peyman Milanfar, Dimitris Metaxas, and Feng Yang. Svdiff: Compact parameter space for diffusion fine-tuning. *arXiv preprint arXiv:2303.11305* (2023).">[6]</span></a></sup> 的动机与 LoRA、Custom Diffusion 类似，依旧是希望避免微调整个模型的所有参数，试图寻找一个更为紧凑的参数空间。具体而言，SVDiff 微调的是<strong>权重矩阵的奇异值</strong>，在 Stable Diffusion（全部参数占 3.66GB）上只需要微调 1.7MB 的参数，并且能够实现多概念生成。</p>
+<p>微调权重矩阵的奇异值这一想法其实来自于 FSGAN<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Robb, Esther, Wen-Sheng Chu, Abhishek Kumar, and Jia-Bin Huang. Few-shot adaptation of generative adversarial networks. *arXiv preprint arXiv:2010.11943* (2020).">[7]</span></a></sup>。对于卷积网络而言，我们首先将卷积层改写作全连接层：设卷积核为 <span class="math inline">\(W_\text{conv}\in\mathbb R^{c_\text{out}\times c_\text{in}\times h\times w}\)</span>，输入的图像 patch 为 <span class="math inline">\(\mathbf x_\text{conv}\in\mathbb R^{c_\text{in}\times h\times w}\)</span>，那么： <span class="math display">\[
+W_\text{conv}\otimes \mathbf x_\text{conv}\implies W\mathbf x
+\]</span> 其中 <span class="math inline">\(W=\text{reshape}(W_\text{tensor})\in\mathbb R^{c_\text{out}\times(c_\text{in}\times h\times w)}\)</span>，<span class="math inline">\(\mathbf x=\text{reshape}(\mathbf x_\text{conv})\in\mathbb R^{(c_\text{in}\times h\times w)\times 1}\)</span>. 对 <span class="math inline">\(W\)</span> 进行奇异值分解： <span class="math display">\[
+W=U\Sigma_\sigma V^{\mathsf T}\quad \text{where}\;\Sigma_\sigma=\text{diag}(\sigma),\;\sigma=[\sigma_1,\sigma_2,\ldots]
+\]</span> 我们通过训练 spectral shift <span class="math inline">\(\delta\)</span> 来微调权重矩阵 <span class="math inline">\(W\)</span>： <span class="math display">\[
+W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag}(\text{ReLU}(\sigma+\delta))
+\]</span> 对于两次微调的 spectral shift <span class="math inline">\(\delta_1,\delta_2\)</span>，我们可以设计一些方式将它们融合起来： <span class="math display">\[
+\begin{align}
+&amp;\Sigma_{\delta&#39;}=\text{diag}(\text{ReLU}(\sigma+\delta_1+\delta_2))&amp;&amp;\text{addition}\\
+&amp;\Sigma_{\delta&#39;}=\text{diag}(\text{ReLU}(\sigma+\alpha\delta_1+(1-\alpha)\delta_2)),\quad 0&lt;\alpha&lt;1&amp;&amp;\text{interpolation}
+\end{align}
+\]</span> 至于多概念生成，作者提出了一种数据增强方法 Cut-Mix-Unmix，通过左右拼接两个概念的图像作为数据来训练模型。另外，作者还通过只在一个图像文本对上微调的方式实现了单图像编辑。私以为这两点的做法并不优雅，这里就不赘述了。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 SVDiff 的生成样例（摘自<a target="_blank" rel="noopener" href="https://svdiff.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://svdiff.github.io/images/teaser_large.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Gal, Rinon, Yuval Alaluf, Yuval Atzmon, Or Patashnik, Amit H. Bermano, Gal Chechik, and Daniel Cohen-Or. An image is worth one word: Personalizing text-to-image generation using textual inversion. <em>arXiv preprint arXiv:2208.01618</em> (2022). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Ruiz, Nataniel, Yuanzhen Li, Varun Jampani, Yael Pritch, Michael Rubinstein, and Kfir Aberman. Dreambooth: Fine tuning text-to-image diffusion models for subject-driven generation. <em>arXiv preprint arXiv:2208.12242</em> (2022). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Hu, Edward J., Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. Lora: Low-rank adaptation of large language models. <em>arXiv preprint arXiv:2106.09685</em> (2021). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Kumari, Nupur, Bingliang Zhang, Richard Zhang, Eli Shechtman, and Jun-Yan Zhu. Multi-concept customization of text-to-image diffusion. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 1931-1941. 2023. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Chen, Wenhu, Hexiang Hu, Yandong Li, Nataniel Rui, Xuhui Jia, Ming-Wei Chang, and William W. Cohen. Subject-driven text-to-image generation via apprenticeship learning. <em>arXiv preprint arXiv:2304.00186</em> (2023). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Han, Ligong, Yinxiao Li, Han Zhang, Peyman Milanfar, Dimitris Metaxas, and Feng Yang. Svdiff: Compact parameter space for diffusion fine-tuning. <em>arXiv preprint arXiv:2303.11305</em> (2023). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Robb, Esther, Wen-Sheng Chu, Abhishek Kumar, and Jia-Bin Huang. Few-shot adaptation of generative adversarial networks. <em>arXiv preprint arXiv:2010.11943</em> (2020). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>扩散模型应用·个性化生成</div>
+      <div>https://xyfjason.github.io/blog-main/2023/02/11/扩散模型应用·个性化生成/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%8F%AF%E6%8E%A7%E7%94%9F%E6%88%90/" title="扩散模型应用·可控生成">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型应用·可控生成</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%AF%BB%E6%89%BE%E8%AF%AD%E4%B9%89%E7%A9%BA%E9%97%B4/" title="扩散模型应用·寻找语义空间">
+                        <span class="hidden-mobile">扩散模型应用·寻找语义空间</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

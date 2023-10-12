@@ -1,0 +1,832 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在 k-means 聚类中，每一个数据点隶属于一个类，这是一种 hard 的模式。与之相对的，soft clustering 不把一个数据点硬分给一类，而是给出它属于各个类的“置信度”，表示它属于各个类的程度。在有些场景下，我们也许更希望使用 soft 模式。本文试从两种角度推导 soft 版本的 k-means 算法。 角度 1：hard k-means → soft k-means 在之前的文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k-means探究（二）soft k-means">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/04/k-means%E6%8E%A2%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89soft-k-means/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="在 k-means 聚类中，每一个数据点隶属于一个类，这是一种 hard 的模式。与之相对的，soft clustering 不把一个数据点硬分给一类，而是给出它属于各个类的“置信度”，表示它属于各个类的程度。在有些场景下，我们也许更希望使用 soft 模式。本文试从两种角度推导 soft 版本的 k-means 算法。 角度 1：hard k-means → soft k-means 在之前的文">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/kmeans-soft.png">
+<meta property="article:published_time" content="2022-09-04T08:34:45.000Z">
+<meta property="article:modified_time" content="2023-10-02T07:26:44.673Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/kmeans-soft.png">
+  
+  
+  
+  <title>k-means探究（二）soft k-means - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/kmeans-soft.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="k-means探究（二）soft k-means"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-04 16:34" pubdate>
+          2022年9月4日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">k-means探究（二）soft k-means</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在 k-means 聚类中，每一个数据点隶属于一个类，这是一种 hard 的模式。与之相对的，soft clustering 不把一个数据点硬分给一类，而是给出它属于各个类的“置信度”，表示它属于各个类的程度。在有些场景下，我们也许更希望使用 soft 模式。本文试从两种角度推导 soft 版本的 k-means 算法。</p>
+<h2 id="角度-1hard-k-means-soft-k-means">角度 1：hard k-means → soft k-means</h2>
+<p>在之前的文章<a href="/blog-main/2022/08/12/k-means%E6%8E%A2%E7%A9%B6/" title="k-means探究">k-means探究</a>中，我们知道 k-means 是用迭代的方式优化下述目标： <span class="math display">\[
+\quad\sum_{l=1}^k\sum_{C(i)=l}\|x_i-m_l\|^2
+\]</span></p>
+<p>其中 <span class="math inline">\(C\)</span> 表示划分，<span class="math inline">\(C(i)=l\)</span> 表示样本 <span class="math inline">\(x_i\)</span> 被划分到类 <span class="math inline">\(l\)</span> 中。我们定义指示变量： <span class="math display">\[
+\gamma_{il}=\begin{cases}1,&amp;\text{if }C(i)=l\\0,&amp;\text{otherwise}\end{cases}
+\]</span> 那么优化目标可以改写为： <span class="math display">\[
+\quad\sum_{l=1}^k\sum_{i=1}^n\gamma_{il}\|x_i-m_l\|^2\tag{1}\label{target}
+\]</span> K-means 硬就硬在 <span class="math inline">\(\gamma_{il}\)</span> 是一个 0/1 变量。<span class="math inline">\(\gamma_{il}=1\)</span> 表示样本 <span class="math inline">\(x_i\)</span> 被划分给了类 <span class="math inline">\(l\)</span>，这意味着在 <span class="math inline">\(x_i\)</span> 到所有聚类中心的距离里面，它到 <span class="math inline">\(m_l\)</span> 最近，写作数学语言即： <span class="math display">\[
+l=\arg\min_{j}\|x_i-m_j\|^2
+\]</span> 进而 <span class="math inline">\(\gamma_{il}\)</span> 可以写作： <span class="math display">\[
+\gamma_{il}=\text{onehot}\left(\arg\min_j \|x_i-m_j\|^2\right)_l=\text{onehot}\left(\arg\max_j \left(-\|x_i-m_j\|^2\right)\right)_l
+\]</span> 根据<a href="/blog-main/2022/07/25/%E5%90%84%E7%A7%8D%E5%87%BD%E6%95%B0%E7%9A%84hard%E4%B8%8Esoft%E5%BD%A2%E5%BC%8F/" title="各种函数的hard与soft形式">各种函数的hard与soft形式</a>一文，<span class="math inline">\(\text{onehot}(\arg\max)\)</span> 的平滑近似是 <span class="math inline">\(\text{softmax}\)</span>，所以： <span class="math display">\[
+\gamma_{il}\approx\hat\gamma_{il}=\text{softmax}\left(-\|x_i-m_j\|^2;\tau\right)_l=\frac{e^{-\|x_i-m_l\|^2/\tau}}{\sum_{j=1}^ke^{-\|x_i-m_j\|^2/\tau}}
+\]</span> 并且 <span class="math inline">\(\hat\gamma_{il}\)</span> 可以解释为 <span class="math inline">\(x_i\)</span> 属于第 <span class="math inline">\(l\)</span> 类的概率。将其代回 <span class="math inline">\(\eqref{target}\)</span> 式就得到 soft 版本的优化目标： <span class="math display">\[
+\quad\sum_{l=1}^k\sum_{i=1}^n\hat\gamma_{il}\|x_i-m_l\|^2\tag{2}\label{target-soft}
+\]</span> 和 hard k-means 一样，我们用迭代的方式来优化 <span class="math inline">\(\eqref{target-soft}\)</span> 式：</p>
+<ol type="1">
+<li><p>随机选择 <span class="math inline">\(k\)</span> 个样本作为中心 <span class="math inline">\((m_1,\ldots,m_k)\)</span>.</p></li>
+<li><p>对给定的中心，计算样本属于各类的概率 <span class="math inline">\(\hat\gamma_{il}\)</span>： <span class="math display">\[
+\hat\gamma_{il}=\frac{e^{-\|x_i-m_l\|^2/\tau}}{\sum_{j=1}^ke^{-\|x_i-m_j\|^2/\tau}}\tag{3}\label{estep}
+\]</span></p></li>
+<li><p>固定 <span class="math inline">\(\hat\gamma_{il}\)</span>，求各类最优中心，即： <span class="math display">\[
+\min_{m_1,\ldots,m_k}\quad\sum_{l=1}^k\sum_{i=1}^n\hat\gamma_{il}\|x_i-m_l\|^2
+\]</span> 求偏导并令为零，容易解得： <span class="math display">\[
+m_l=\frac{\sum_{i=1}^n\hat\gamma_{il}x_i}{\sum_{j=1}^n\hat\gamma_{jl}}\tag{4}\label{mstep}
+\]</span> 即对 <span class="math inline">\(x_i\)</span> 计算加权平均（weighted means）。</p></li>
+<li><p>迭代执行 2、3 步直至收敛。</p></li>
+</ol>
+<h2 id="角度-2gmm-soft-k-means">角度 2：GMM → soft k-means</h2>
+<p>熟悉 GMM 的朋友可能已经发现了，soft k-means 和 GMM 的形式非常相似。我们先回顾一下 GMM 的优化步骤（详见<a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">EM算法</a>）：</p>
+<ol type="1">
+<li><p>随机初始化模型参数 <span class="math inline">\(\alpha_k,\mu_k,\Sigma_k,\,k=1,\ldots,K\)</span></p></li>
+<li><p><strong>E-step</strong>：计算隐变量的概率分布： <span class="math display">\[
+p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i\mid \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i\mid \mu_j^{(t)},\Sigma_j^{(t)})}
+\]</span> 其中 <span class="math inline">\(\phi(x\mid \mu,\Sigma)\)</span> 是高斯分布的 pdf： <span class="math display">\[
+\phi(x\mid \mu,\Sigma)=\frac{1}{ {(\sqrt{2\pi})}^d|\Sigma|^{1/2} }\exp\left(-\frac{(x-\mu)^T\Sigma^{-1}(x-\mu)}{2}\right)
+\]</span></p></li>
+<li><p><strong>M-step</strong>：计算新参数： <span class="math display">\[
+\begin{align}
+&amp;\alpha_k^{(t+1)}=\frac{\sum_{i=1}^np_{ik}}{n}&amp;&amp; k=1,\ldots,K\\
+&amp;\mu_k^{(t+1)}=\frac{\sum_{i=1}^np_{ik}x_i}{\sum_{i=1}^n p_{ik}}&amp;&amp; k=1,\ldots,K\\
+&amp;\Sigma_k^{(t+1)}=\frac{\sum_{i=1}^np_{ik}(x_i-\mu_k)^T(x_i-\mu_k)}{\sum_{i=1}^np_{ik}}&amp;&amp; k=1,\ldots,K
+\end{align}
+\]</span></p></li>
+<li><p>迭代执行第 2、3 步</p></li>
+</ol>
+<p>如果我们取： <span class="math display">\[
+\begin{align}
+&amp;\alpha_1=\cdots=\alpha_K=\frac{1}{K}\\
+&amp;\Sigma_k=I
+\end{align}
+\]</span> 那么 E-step 将简化为： <span class="math display">\[
+p_{ik}=\frac{e^{-(x_i-\mu_k)^T(x_i-\mu_k)/2}}{\sum_{j=1}^Ke^{-(x_i-\mu_j)^T(x_i-\mu_j)/2}}
+\]</span> 这不就是 <span class="math inline">\(\tau=2\)</span> 的 <span class="math inline">\(\eqref{estep}\)</span> 式嘛！如果 <span class="math inline">\(\tau\)</span> 是其他数也没关系，给协方差矩阵乘一个倍数即可。</p>
+<p>M-step 中只需要更新 <span class="math inline">\(\mu\)</span>： <span class="math display">\[
+\mu=\frac{\sum_{i=1}^np_{ik}x_i}{\sum_{i=1}^np_{ik}}
+\]</span> 与 <span class="math inline">\(\eqref{mstep}\)</span> 式完全一致！所以，<strong>soft k-means 是 GMM 在各高斯分布选择概率相同且协方差矩阵为单位矩阵（或单位矩阵的倍数）下的特殊情况</strong>。</p>
+<p><br/></p>
+<p>现在，让我们回过头来考虑 hard k-means。要从 soft 变回 hard，只需要让 <span class="math inline">\(\text{softmax}\)</span> 里的温度系数 <span class="math inline">\(\tau\)</span> 趋近于 <span class="math inline">\(0\)</span>。对应到 GMM 中，相当于让协方差矩阵 <span class="math inline">\(\Sigma\)</span> 趋近于 <span class="math inline">\(0\)</span>，即高斯分布趋近 Dirac delta 函数（分布）。因此，<strong>k-means 是 GMM 在各高斯分布趋近 Dirac delta 函数且选择概率相同下的特殊情况</strong>。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Bauckhage, Christian. <em>Lecture notes on data science: Soft k-means clustering</em>. Technical Report, Univ. Bonn, DOI: https://doi.org/10.13140/RG. 2.1. 3582.6643, 2015. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Hart, Peter E., David G. Stork, and Richard O. Duda. <em>Pattern classification</em>. Hoboken: Wiley, 2000. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Bishop, Christopher M., and Nasser M. Nasrabadi. <em>Pattern recognition and machine learning</em>. Vol. 4, no. 4. New York: springer, 2006. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>k-means探究（二）soft k-means</div>
+      <div>https://xyfjason.github.io/blog-main/2022/09/04/k-means探究（二）soft-k-means/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月4日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/09/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E9%9B%86/" title="计算机视觉常用数据集">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">计算机视觉常用数据集</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">
+                        <span class="hidden-mobile">EM算法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

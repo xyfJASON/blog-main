@@ -1,0 +1,794 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Lab: Copy-on-Write Fork for xv6 https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2020&#x2F;labs&#x2F;cow.html 代码：https:&#x2F;&#x2F;github.com&#x2F;xyfJASON&#x2F;xv6-mit-6.S081-2020&#x2F;tree&#x2F;cow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[xv6-mit-6.S081-2020]Lab6: cow">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab6-cow/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Lab: Copy-on-Write Fork for xv6 https:&#x2F;&#x2F;pdos.csail.mit.edu&#x2F;6.S081&#x2F;2020&#x2F;labs&#x2F;cow.html 代码：https:&#x2F;&#x2F;github.com&#x2F;xyfJASON&#x2F;xv6-mit-6.S081-2020&#x2F;tree&#x2F;cow">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/xv6.jpg">
+<meta property="article:published_time" content="2021-11-30T10:59:43.000Z">
+<meta property="article:modified_time" content="2023-09-09T01:08:59.945Z">
+<meta property="article:author" content="xyfJASON">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/xv6.jpg">
+  
+  
+  
+  <title>[xv6-mit-6.S081-2020]Lab6: cow - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/xv6.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[xv6-mit-6.S081-2020]Lab6: cow"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-30 18:59" pubdate>
+          2021年11月30日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[xv6-mit-6.S081-2020]Lab6: cow</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="lab-copy-on-write-fork-for-xv6">Lab: Copy-on-Write Fork for xv6</h1>
+<p>https://pdos.csail.mit.edu/6.S081/2020/labs/cow.html</p>
+<p>代码：https://github.com/xyfJASON/xv6-mit-6.S081-2020/tree/cow</p>
+<span id="more"></span>
+<p><br></p>
+<p>在 xv6 系统中，fork() 系统调用会复制父进程的所有用户空间内存给子进程（正如我们在 pgtbl 实验中看到过的那样）。可是，如果父进程很大，复制过程会消耗很长的时间。更糟糕的是，这可能是无用功，例如 fork() 后子进程紧接着 exec()，那么刚复制下来的内存根本不会用到。另一方面，如果父子进程都要用到这块内存，那么复制又是必须的。</p>
+<p>解决方法是 copy-on-write (COW)。COW fork() 只给子进程创建一个页表，其 PTE 指向父进程的物理页，然后给父子进程的 PTE 全部打上<strong>不可写</strong>的标记。于是，当父子进程之一试图写这些页面时会产生 page fault，内核的 page fault 处理程序检测到这种情况后，给产生异常的那个进程分配一个新的页面，把原页面复制过去，修改 PTE 并打上可写的标记。处理程序返回之后，进程就能继续正常执行了。</p>
+<p>COW fork() 让释放物理页面变得很 tricky，因为一个物理页面可能被多个进程的页表同时指向，因此只当最后一个指针撤去后才能释放。</p>
+<h2 id="implement-copy-on-write">Implement copy-on-write</h2>
+<p>任务：实现上述 copy-on-write 过程，要求通过 cowtest 和 usertests。</p>
+<p>这次实验给的评级是 hard，但是个人感觉比以前的 hard 要简单一点，一方面我们已经有了前面实验的基础，另一方面这次要完成的功能非常明确，步骤和需要注意的点也在指导网站上明确地列了出来。</p>
+<p><br></p>
+<p>RISC-V 的 PTE 有 10 个标志位，其中第 8、9 位是为用户保留的，因此我用第 8 位作为 PTE_COW 标志，表示该 PTE 是否需要 copy-on-write：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> PTE_COW (1L &lt;&lt; 8) <span class="hljs-comment">// copy-on-write</span></span><br></code></pre></td></tr></table></figure>
+<p><br></p>
+<p>我们查看 fork() 的代码，发现页表复制是由 uvmcopy() 实现的，因此我们需要改的地方其实是 uvmcopy()。（我顺便查了一下还有没有其他函数调用了 uvmcopy()，结果惊奇地发现只有 fork() 调用了它）我们将开辟内存并复制内容的代码注释掉，改为直接向原空间建立映射，并把 PTE_W 置零，把 PTE_COW 置一：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">uvmcopy</span><span class="hljs-params">(<span class="hljs-type">pagetable_t</span> old, <span class="hljs-type">pagetable_t</span> new, uint64 sz)</span><br>&#123;<br>  ...<br>    pa = PTE2PA(*pte);<br>    flags = PTE_FLAGS(*pte);<br><br>    flags = (flags | PTE_COW) &amp; (~PTE_W);<br>    *pte = PA2PTE(pa) | flags;<br>    <span class="hljs-keyword">if</span>(mappages(new, i, PGSIZE, pa, flags) != <span class="hljs-number">0</span>)<br>      <span class="hljs-keyword">goto</span> err;<br>    update_refcount(pa, <span class="hljs-number">1</span>);<br>    <span class="hljs-comment">/*</span><br><span class="hljs-comment">    if((mem = kalloc()) == 0)</span><br><span class="hljs-comment">      goto err;</span><br><span class="hljs-comment">    memmove(mem, (char*)pa, PGSIZE);</span><br><span class="hljs-comment">    if(mappages(new, i, PGSIZE, (uint64)mem, flags) != 0)&#123;</span><br><span class="hljs-comment">      kfree(mem);</span><br><span class="hljs-comment">      goto err;</span><br><span class="hljs-comment">    &#125;*/</span><br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>update_refcount(pa, 1) 的作用后文叙述。</p>
+<p><br></p>
+<p>现在，对于某个带有 PTE_COW 标记的 PTE 指向的页面，我们写它时会引起 page fault——因为它的 PTE_W 被置零了。和上一个实验（lazy allocation）一样，这个 page fault 在 usertrap() 中处理。当<strong>写</strong>页面发生异常时，scause 寄存器的值会被置为 15，stval 寄存器会存储导致异常的地址，所以我们根据这两个寄存器处理 copy-on-write：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span><br><span class="hljs-title function_">usertrap</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>  ...<br>  <span class="hljs-keyword">else</span> &#123;<br>    uint64 cause = r_scause();<br>    <span class="hljs-keyword">if</span>(cause == <span class="hljs-number">15</span>)&#123;<br>      <span class="hljs-comment">// page fault</span><br>      uint64 stval = r_stval();<br>      <span class="hljs-keyword">if</span>(handle_cow(p-&gt;pagetable, stval, <span class="hljs-number">0</span>) == <span class="hljs-number">0</span>)<br>        <span class="hljs-keyword">goto</span> brk;<br>    &#125;<br>    ...<br>  &#125;<br>brk:<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>其中 handle_cow() 函数处理 copy-on-write：它先解析虚拟地址，如果发现其 PTE 的 PTE_COW 被置位了，则开辟新的空间，并将 PTE 指向这个新的空间，同时把 PTE_W 置一、PTE_COW 置零。这样，当我们返回用户空间时，用户进程就能正常执行了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// Check if virtual address refers to a cow page and handle it.</span><br><span class="hljs-comment">// Store the physical address of the newly allocated page in parameter newpa.</span><br><span class="hljs-comment">// Return: -1 something wrong</span><br><span class="hljs-comment">//          0 copy-on-write success</span><br><span class="hljs-comment">//          1 no need to copy-on-write</span><br><span class="hljs-type">int</span><br><span class="hljs-title function_">handle_cow</span><span class="hljs-params">(<span class="hljs-type">pagetable_t</span> pagetable, uint64 va, uint64 *newpa)</span><br>&#123;<br>  <span class="hljs-type">pte_t</span> *pte = walk(pagetable, va, <span class="hljs-number">0</span>);<br>  <span class="hljs-keyword">if</span>(pte == <span class="hljs-number">0</span>)  <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>  <span class="hljs-keyword">if</span>(*pte &amp; PTE_COW)&#123;<br>    <span class="hljs-comment">// copy-on-write</span><br>    uint flags = (PTE_FLAGS(*pte) &amp; (~PTE_COW)) | PTE_W;<br>    uint64 pa = PTE2PA(*pte);<br>    <span class="hljs-type">char</span> *mem = kalloc();<br>    <span class="hljs-keyword">if</span>(mem == <span class="hljs-number">0</span>)  <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    memmove(mem, (<span class="hljs-type">char</span> *)pa, PGSIZE);<br>    *pte = PA2PTE((uint64)mem) | flags;<br>    kfree((<span class="hljs-type">void</span> *)pa);<br>    <span class="hljs-keyword">if</span>(newpa) *newpa = (uint64)mem;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>为了方便，我传入了一个指针以保存新的物理地址，待会儿会用到。</p>
+<p><br></p>
+<p>copy-on-write 之后，原来的页面怎么办呢？在上面的代码中，我调用了 kfree <strong>试图</strong>将其释放。但正如前文所述，只有当所有进程都不用一个页面时才能将其释放，所以我们需要开一个计数数组，对每一个页面统计有多少个进程指向了它。那一共有多少个页面呢？之前做第三个实验（page tables）的时候我们学习了，xv6（内核进程会用到）的内核空间是从 <code>KERNBASE</code> 到 <code>PHYSTOP</code> 的一段，所以一共有 <code>(PHYSTOP-KERNBASE)/PGSIZE</code> 页，并且物理地址 <code>pa</code> 在第 <code>(pa-KERNBASE)/PGSIZE</code> 页中，我们以此作为计数数组下标即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">define</span> idx(x) (((uint64)(x)-KERNBASE)/PGSIZE)</span><br><span class="hljs-type">int</span> refcount[idx(PHYSTOP)];<br></code></pre></td></tr></table></figure>
+<p>每次 kalloc() 时，设置当前计数为 1；kfree 时，计数自减，如果减到了零，才释放内存：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span><br><span class="hljs-title function_">kfree</span><span class="hljs-params">(<span class="hljs-type">void</span> *pa)</span><br>&#123;<br>  ...<br>  <span class="hljs-keyword">if</span>(((uint64)pa % PGSIZE) != <span class="hljs-number">0</span> || (<span class="hljs-type">char</span>*)pa &lt; end || (uint64)pa &gt;= PHYSTOP)<br>    panic(<span class="hljs-string">&quot;kfree&quot;</span>);<br>  <span class="hljs-comment">// Free only when the last reference goes away.</span><br>  <span class="hljs-keyword">if</span>((uint64)pa &gt;= KERNBASE)&#123;<br>    <span class="hljs-keyword">if</span>(refcount[idx(pa)] &lt;= <span class="hljs-number">0</span>)<br>      panic(<span class="hljs-string">&quot;kfree: refcount&quot;</span>);<br>    <span class="hljs-keyword">if</span>(--refcount[idx(pa)]) <span class="hljs-keyword">return</span>;<br>  &#125;<br>  ...<br>&#125;<br><br><span class="hljs-type">void</span> *<br><span class="hljs-title function_">kalloc</span><span class="hljs-params">(<span class="hljs-type">void</span>)</span><br>&#123;<br>  ...<br>  <span class="hljs-comment">// xyf</span><br>  <span class="hljs-keyword">if</span>(r)<br>    refcount[idx(r)] = <span class="hljs-number">1</span>;<br>  ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>值得注意的是，kinit() 初始化是调用 kfree() 实现的，所以为了把计数数组初始化为零，可以在 freerange 中把所有页的计数置为 1，这样调用一次 kfree()，就能把计数置零、加入 kmem.freelist：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span><br><span class="hljs-title function_">freerange</span><span class="hljs-params">(<span class="hljs-type">void</span> *pa_start, <span class="hljs-type">void</span> *pa_end)</span><br>&#123;<br>  <span class="hljs-type">char</span> *p;<br>  p = (<span class="hljs-type">char</span>*)PGROUNDUP((uint64)pa_start);<br>  <span class="hljs-keyword">for</span>(; p + PGSIZE &lt;= (<span class="hljs-type">char</span>*)pa_end; p += PGSIZE)&#123;<br>    refcount[idx(p)] = <span class="hljs-number">1</span>;<br>    kfree(p);<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><br></p>
+<p>为了让 kalloc.c 之外的函数方便地对 refcount 操作，我写了一个更新函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-comment">// Update refcount</span><br><span class="hljs-type">void</span><br><span class="hljs-title function_">update_refcount</span><span class="hljs-params">(uint64 pa, <span class="hljs-type">int</span> val)</span><br>&#123;<br>  <span class="hljs-keyword">if</span>((pa % PGSIZE) != <span class="hljs-number">0</span> || pa &lt; KERNBASE || pa &gt;= PHYSTOP)<br>    panic(<span class="hljs-string">&quot;update_refcount&quot;</span>);<br>  refcount[idx(pa)] += val;<br>  <span class="hljs-keyword">if</span>(refcount[idx(pa)] &lt; <span class="hljs-number">0</span>)<br>    panic(<span class="hljs-string">&quot;update_refcount: less than 0&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>上文 uvmcopy 就调用了它使得计数加一。</p>
+<p><br></p>
+<p>最后，我们还需要改 copyout，也用 handle_cow 函数即可，这里我设置的第三个参数就发挥了作用，当然不设置这个参数，之后 walkaddr 一下也行。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span><br><span class="hljs-title function_">copyout</span><span class="hljs-params">(<span class="hljs-type">pagetable_t</span> pagetable, uint64 dstva, <span class="hljs-type">char</span> *src, uint64 len)</span><br>&#123;<br>  ...<br>  <span class="hljs-keyword">while</span>(len &gt; <span class="hljs-number">0</span>)&#123;<br>    va0 = PGROUNDDOWN(dstva);<br>    pa0 = walkaddr(pagetable, va0);<br>    <span class="hljs-keyword">if</span>(pa0 == <span class="hljs-number">0</span>)<br>      <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    <span class="hljs-keyword">if</span>(handle_cow(pagetable, va0, &amp;pa0) == <span class="hljs-number">-1</span>)<br>      <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;<br>    ...<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>make grade 截图：</p>
+<p><img src="result.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" class="category-chain-item">操作系统</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/xv6-lab/" class="category-chain-item">xv6-lab</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[xv6-mit-6.S081-2020]Lab6: cow</div>
+      <div>https://xyfjason.github.io/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab6-cow/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月30日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab7-thread/" title="[xv6-mit-6.S081-2020]Lab7: thread">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[xv6-mit-6.S081-2020]Lab7: thread</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2021/11/30/xv6-mit-6-S081-2020-Lab5-lazy/" title="[xv6-mit-6.S081-2020]Lab5: lazy">
+                        <span class="hidden-mobile">[xv6-mit-6.S081-2020]Lab5: lazy</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

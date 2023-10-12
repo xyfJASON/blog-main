@@ -1,0 +1,797 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="吴恩达机器学习系列课程：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV164411b7dx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[吴恩达机器学习]1·梯度下降解一元线性回归">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2020/12/20/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-1%C2%B7%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%A7%A3%E4%B8%80%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="吴恩达机器学习系列课程：https:&#x2F;&#x2F;www.bilibili.com&#x2F;video&#x2F;BV164411b7dx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_walle.jpg">
+<meta property="article:published_time" content="2020-12-20T07:43:47.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:42:21.884Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_walle.jpg">
+  
+  
+  
+  <title>[吴恩达机器学习]1·梯度下降解一元线性回归 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_walle.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[吴恩达机器学习]1·梯度下降解一元线性回归"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2020-12-20 15:43" pubdate>
+          2020年12月20日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[吴恩达机器学习]1·梯度下降解一元线性回归</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>吴恩达机器学习系列课程：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV164411b7dx" class="uri">https://www.bilibili.com/video/BV164411b7dx</a></p>
+<span id="more"></span>
+<h2 id="一元线性回归">一元线性回归</h2>
+<p>给定数据集 <span class="math display">\[
+\left\{\left(x^{(i)},y^{(i)}\right),\;i=1,2,\cdots,m\right\}
+\]</span> 试用一线性函数 <span class="math inline">\(y=\theta_1x+\theta_0\)</span> 拟合之。当然，在数学上，我们熟知最小二乘法可以解决这个问题。</p>
+<h2 id="梯度下降法">梯度下降法</h2>
+<p>这是我自学机器学习中遇到的第一个算法，其基本思想很简单。对于代价函数 <span class="math inline">\(J(\theta_0,\theta_1)\)</span>，我们想得到它的一个极小值，只需要从任意点开始，选择函数 <span class="math inline">\(J\)</span> 的梯度方向的逆方向，也即方向导数最大的方向移动一点点，然后不断重复这个过程。</p>
+<p>我们知道梯度定义为： <span class="math display">\[
+\text{grad }J=\left\{\frac{\partial J}{\partial \theta_0},\frac{\partial J}{\partial \theta_1}\right\}
+\]</span> 所以不断迭代进行： <span class="math display">\[
+\theta_j:=\theta_j-\alpha\cdot\frac{\partial J}{\partial\theta_j}
+\]</span> 即可。其中，<span class="math inline">\(\alpha\)</span> 就是这一步的长度，也称为学习率。</p>
+<p>学习率的选取很重要，过小则梯度下降很慢，过大则有可能不收敛。</p>
+<h2 id="梯度下降解一元线性回归">梯度下降解一元线性回归</h2>
+<p>应用在解一元线性回归问题上，我们定义代价函数为： <span class="math display">\[
+J(\theta_0,\theta_1)=\frac{1}{2m}\sum_{i=1}^m\left(\theta_1x^{(i)}+\theta_0-y^{(i)}\right)^2
+\]</span> 也即是每个数据纵坐标的真实值与估计值的差的平方和的平均，除以 <span class="math inline">\(2\)</span> 仅是为了后续求导方便，没有什么本质的影响。</p>
+<p>由于： <span class="math display">\[
+\text{grad }J=\left\{\frac{\partial J}{\partial \theta_0},\frac{\partial J}{\partial \theta_1}\right\}=\left\{\frac{1}{m}\sum_{i=1}^m\left(\theta_1x^{(i)}+\theta_0-y^{(i)}\right),\frac{1}{m}\sum_{i=1}^mx_i\left(\theta_1x^{(i)}+\theta_0-y^{(i)}\right)\right\}
+\]</span> 于是每一次按照该方向的逆方向走一小步即可。</p>
+<h3 id="c-实现">C++ 实现</h3>
+<p>对于这个问题，我们可以通过预处理达到每次迭代 <span class="math inline">\(O(1)\)</span> 地更新。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-type">const</span> <span class="hljs-type">double</span> eps = <span class="hljs-number">1e-8</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">double</span> alpha = <span class="hljs-number">0.01</span>;<br><br><span class="hljs-type">int</span> m;<br><span class="hljs-type">double</span> sumx, sumy, sumxy, sumx2;<br><span class="hljs-type">double</span> th0, th1;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>	<span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;ex1data1.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>, stdin);<br>	<span class="hljs-type">double</span> x, y;<br>	<span class="hljs-keyword">while</span>(<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%lf,%lf&quot;</span>, &amp;x, &amp;y) != EOF)<br>		m++, sumx += x, sumy += y, sumx2 += x * x, sumxy += x * y;<br>	th0 = th1 = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)&#123;<br>		<span class="hljs-type">double</span> nth0, nth1;<br>		nth0 = th0 - alpha * <span class="hljs-number">1.0</span> / m * (th1 * sumx - sumy + m * th0);<br>		nth1 = th1 - alpha * <span class="hljs-number">1.0</span> / m * (th1 * sumx2 - sumxy + sumx * th0);<br>		<span class="hljs-keyword">if</span>(<span class="hljs-built_in">fabs</span>(th0 - nth0) &lt; eps &amp;&amp; <span class="hljs-built_in">fabs</span>(th1 - nth1) &lt; eps)	<span class="hljs-keyword">break</span>;<br>		th0 = nth0, th1 = nth1;<br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%f %f\n&quot;</span>, th0, th1);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>得到的结果是：<span class="math inline">\(\theta_0=-3.895775,\,\theta_1=1.193033\)</span>.</p>
+<p><br></p>
+<p>如果把 <span class="math inline">\(\alpha\)</span> 设为 <span class="math inline">\(0.1\)</span>，上面的程序无法得到结果，这是因为步长太大以至于无法收敛，除了人为调小 <span class="math inline">\(\alpha\)</span> 以外，我尝试了让程序自适应地调整 <span class="math inline">\(\alpha\)</span>. 具体地，如果 <span class="math inline">\(\alpha\)</span> 设置合理，我们的代价函数应该是一个随着迭代次数单调递减的函数，所以倘若代价函数出现了增加，我们就需要调小 <span class="math inline">\(\alpha\)</span>，基于这个思想，我写下了如下的程序：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span><br><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><br><span class="hljs-type">const</span> <span class="hljs-type">int</span> N = <span class="hljs-number">105</span>;<br><span class="hljs-type">const</span> <span class="hljs-type">double</span> eps = <span class="hljs-number">1e-8</span>;<br><span class="hljs-type">double</span> alpha = <span class="hljs-number">100</span>;<br><br><span class="hljs-type">int</span> m;<br><span class="hljs-type">double</span> x[N], y[N];<br><span class="hljs-type">double</span> th0, th1;<br><br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">double</span> <span class="hljs-title">gradJ</span><span class="hljs-params">(<span class="hljs-type">int</span> k)</span></span>&#123;<br>	<span class="hljs-type">double</span> res = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= m; i++)<br>		res += (th1 * x[i] + th0 - y[i]) * (k == <span class="hljs-number">1</span> ? x[i] : <span class="hljs-number">1</span>);<br>	<span class="hljs-keyword">return</span> res / m;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">double</span> <span class="hljs-title">calc</span><span class="hljs-params">()</span></span>&#123;<br>	<span class="hljs-type">double</span> res = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= m; i++)<br>		res += (th1 * x[i] + th0 - y[i]) * (th1 * x[i] + th0 - y[i]);<br>	<span class="hljs-keyword">return</span> res / m / <span class="hljs-number">2</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>&#123;<br>	<span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;ex1data1.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>, stdin);<br>	<span class="hljs-keyword">while</span>(<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%lf,%lf&quot;</span>, &amp;x[<span class="hljs-number">0</span>], &amp;y[<span class="hljs-number">0</span>]) != EOF)<br>		m++, x[m] = x[<span class="hljs-number">0</span>], y[m] = y[<span class="hljs-number">0</span>];<br>	th0 = th1 = <span class="hljs-number">0</span>;<br>	<span class="hljs-type">double</span> preJ = <span class="hljs-number">1e9</span>, J = <span class="hljs-number">0</span>;<br>	<span class="hljs-keyword">while</span>(<span class="hljs-number">1</span>)&#123;<br>		<span class="hljs-type">double</span> nth0, nth1;<br>		nth0 = th0 - alpha * <span class="hljs-built_in">gradJ</span>(<span class="hljs-number">0</span>);<br>		nth1 = th1 - alpha * <span class="hljs-built_in">gradJ</span>(<span class="hljs-number">1</span>);<br>		<span class="hljs-keyword">if</span>(<span class="hljs-built_in">fabs</span>(th0 - nth0) &lt; eps &amp;&amp; <span class="hljs-built_in">fabs</span>(th1 - nth1) &lt; eps)	<span class="hljs-keyword">break</span>;<br>		th0 = nth0, th1 = nth1;<br>		J = <span class="hljs-built_in">calc</span>();<br>		<span class="hljs-keyword">if</span>(J &gt; preJ)	alpha /= <span class="hljs-number">5</span>;<br>		preJ = J;<br>	&#125;<br>	<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%f\n%f %f\n&quot;</span>, alpha, th0, th1);<br>	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>最终得到的结果：<span class="math inline">\(\alpha=0.0064,\,\theta_0=-3.895772,\,\theta_1=1.193033\)</span>.</p>
+<h3 id="python-实现">Python 实现</h3>
+<p>Python可以更方便地作图，也是现在机器学习中最热门的语言。</p>
+<p>首先看一下原数据的散点图：</p>
+<p><img src="Figure_1.png" srcset="/blog-main/logo/imageloading.png" lazyload width="50%" height="50%" /></p>
+<p>如下是学习率设置为 <span class="math inline">\(0.01\)</span> 的 python 代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt<br><br>X = []<br>Y = []<br>m = <span class="hljs-number">0</span><br>alpha = <span class="hljs-number">0.01</span><br>eps = <span class="hljs-number">1e-8</span><br>th0, th1 = <span class="hljs-number">0</span>, <span class="hljs-number">0</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">gradJ</span>(<span class="hljs-params">k</span>):<br>	res = <span class="hljs-number">0</span><br>	<span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(X, Y):<br>		res += (th1 * x + th0 - y) * (x <span class="hljs-keyword">if</span> k == <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-number">1</span>)<br>	<span class="hljs-keyword">return</span> res / m<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">calc</span>():<br>	res = <span class="hljs-number">0</span><br>	<span class="hljs-keyword">for</span> x, y <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(X, Y):<br>		res += (th1 * x + th0 - y) * (th1 * x + th0 - y)<br>	<span class="hljs-keyword">return</span> res / <span class="hljs-number">2</span> / m<br><br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&quot;ex1data1.txt&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>) <span class="hljs-keyword">as</span> infile:<br>	data = infile.readlines()<br>	<span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> data:<br>		x, y = line.split(<span class="hljs-string">&#x27;,&#x27;</span>)<br>		X.append(<span class="hljs-built_in">float</span>(x))<br>		Y.append(<span class="hljs-built_in">float</span>(y))<br>		m += <span class="hljs-number">1</span><br><br><br><span class="hljs-keyword">while</span> <span class="hljs-number">1</span>:<br>	nth0 = th0 - alpha * gradJ(<span class="hljs-number">0</span>)<br>	nth1 = th1 - alpha * gradJ(<span class="hljs-number">1</span>)<br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">abs</span>(th0 - nth0) &lt; eps <span class="hljs-keyword">and</span> <span class="hljs-built_in">abs</span>(th1 - nth1) &lt; eps:<br>		<span class="hljs-keyword">break</span><br>	th0 = nth0<br>	th1 = nth1<br><span class="hljs-built_in">print</span>(th0, th1)<br>plt.scatter(X, Y)<br>plt.plot([<span class="hljs-built_in">min</span>(X), <span class="hljs-built_in">max</span>(X)], [th0+<span class="hljs-built_in">min</span>(X)*th1, th0+<span class="hljs-built_in">max</span>(X)*th1], c=<span class="hljs-string">&quot;magenta&quot;</span>)<br>plt.show()<br></code></pre></td></tr></table></figure>
+<p>得到的结果是：<span class="math inline">\(\theta_0=-3.895775334348606,\,\theta_1=1.193033087238351\)</span>，作图如下：</p>
+<p><img src="Figure_2.png" srcset="/blog-main/logo/imageloading.png" lazyload width="50%" height="50%" /></p>
+<p>洋红色的线条就是我们拟合的回归曲线。</p>
+<p><br></p>
+<p>之前说过，学习率过大会导致答案不收敛，也就是 <span class="math inline">\(J(\theta_0,\theta_1)\)</span> 可能会随着迭代次数的增加而增大，我们可以作图验证：</p>
+<p><img src="Figure_3.png" srcset="/blog-main/logo/imageloading.png" lazyload width="100%" height="100%" /></p>
+<p>可以看见，学习率在 <span class="math inline">\(0.025\)</span> 时 <span class="math inline">\(J\)</span> 发散，而 <span class="math inline">\(0.02\)</span> 和 <span class="math inline">\(0.01\)</span> 下是收敛的。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/Andrew-Ng/" class="category-chain-item">Andrew Ng</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[吴恩达机器学习]1·梯度下降解一元线性回归</div>
+      <div>https://xyfjason.github.io/blog-main/2020/12/20/吴恩达机器学习-1·梯度下降解一元线性回归/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2020年12月20日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2020/12/21/%E5%90%B4%E6%81%A9%E8%BE%BE%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-2%C2%B7%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E8%A7%A3%E5%A4%9A%E5%85%83%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" title="[吴恩达机器学习]2·梯度下降解多元线性回归">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[吴恩达机器学习]2·梯度下降解多元线性回归</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2020/08/29/%E5%85%B7%E4%BD%93%E6%95%B0%E5%AD%A6-%E7%AC%AC%E5%85%AD%E7%AB%A0%C2%B7%E7%89%B9%E6%AE%8A%E7%9A%84%E6%95%B0%EF%BC%88%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%89/" title="[具体数学]第六章·特殊的数（第二部分）">
+                        <span class="hidden-mobile">[具体数学]第六章·特殊的数（第二部分）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

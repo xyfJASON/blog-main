@@ -1,0 +1,1385 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文记录计算机视觉中常用的数据集，包括它们的官网、下载链接、目录结构、文件大小、加载方式等等。其中「本地目录结构」为我个人组织数据的方式，仅供参考。 AFHQ 官网 | Paper with Code | Dropbox 简要介绍：Animal FacesHQ (AFHQ) 是一个高质量动物面部图像的数据集，包含猫、狗和野生动物三个域。所有图像都已经过水平和垂直对齐，以确保将眼睛置于图像中心。低质">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机视觉常用数据集">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/14/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E5%B8%B8%E7%94%A8%E6%95%B0%E6%8D%AE%E9%9B%86/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="本文记录计算机视觉中常用的数据集，包括它们的官网、下载链接、目录结构、文件大小、加载方式等等。其中「本地目录结构」为我个人组织数据的方式，仅供参考。 AFHQ 官网 | Paper with Code | Dropbox 简要介绍：Animal FacesHQ (AFHQ) 是一个高质量动物面部图像的数据集，包含猫、狗和野生动物三个域。所有图像都已经过水平和垂直对齐，以确保将眼睛置于图像中心。低质">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/Computer_vision.jpg">
+<meta property="article:published_time" content="2022-09-14T15:19:21.000Z">
+<meta property="article:modified_time" content="2023-09-09T01:11:54.709Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="computer vision">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/Computer_vision.jpg">
+  
+  
+  
+  <title>计算机视觉常用数据集 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/Computer_vision.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="计算机视觉常用数据集"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-14 23:19" pubdate>
+          2022年9月14日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          35k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          294 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">计算机视觉常用数据集</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本文记录计算机视觉中常用的数据集，包括它们的官网、下载链接、目录结构、文件大小、加载方式等等。其中「本地目录结构」为我个人组织数据的方式，仅供参考。</p>
+<h2 id="afhq">AFHQ</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/clovaai/stargan-v2">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/afhq">Paper with Code</a> | <a target="_blank" rel="noopener" href="https://www.dropbox.com/s/vkzjokiwof5h8w6/afhq_v2.zip?dl=0">Dropbox</a></p>
+<p><strong>简要介绍</strong>：Animal FacesHQ (AFHQ) 是一个高质量动物面部图像的数据集，包含猫、狗和野生动物三个域。所有图像都已经过水平和垂直对齐，以确保将眼睛置于图像中心。低质量图像已由人工剔除。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：15,803</li>
+<li>划分（train / test）：
+<ul>
+<li>Total：14,336 / 1,467</li>
+<li>Cat：5,065 / 493</li>
+<li>Dog：4,678 / 491</li>
+<li>Wild：4,593 / 483</li>
+</ul></li>
+<li>分辨率：512×512</li>
+</ul>
+<p><strong>注意</strong>：上述信息对应第二个版本（AFHQv2），其在 v1 版本上更换了更好的重采样方式（Nearest neighbor =&gt; Lanczos）、删除了大约 2% 的图片、以及改用 png 格式保存。</p>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── AFHQ<br>    ├── afhq_v2.zip    (7.0 GB)<br>    ├── train          (extracted from afhq_v2.zip)<br>    │   ├── cat        (contains 5065 images)<br>    │   ├── dog        (contains 4678 images)<br>    │   └── wild       (contains 4593 images)<br>    └── test           (extracted from afhq_v2.zip)<br>        ├── cat        (contains 493 images)<br>        ├── dog        (contains 491 images)<br>        └── wild       (contains 483 images)<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>。</p>
+<p><br/></p>
+<h2 id="celeba">CelebA</h2>
+<p><a target="_blank" rel="noopener" href="http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/celeba">Papers with Code</a> | <a target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/0B7EVK8r0v71pWEZsZE9oNnFzTm8?resourcekey=0-5BR16BdXnb8hVj6CNHKzLg">Google drive</a> | <a target="_blank" rel="noopener" href="https://pan.baidu.com/share/init?surl=CRxxhoQ97A5qbsKO7iaAJg">Baidu drive</a> (password: rp0s)</p>
+<p><strong>简要介绍</strong>：CelebFaces Attribute (CelebA) 数据集包含来自 10,177 位名人的 202,599 张面部图像，每张图像的尺寸为 178×218 像素，并且用 40 个二进制标签进行注释，这些标签指示了面部属性，如头发颜色、性别和年龄。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：202,599</li>
+<li>划分：162,770 / 19,867 / 19,962 (train / valid / test)</li>
+<li>分辨率：
+<ul>
+<li>align 处理后：178×218</li>
+<li>原始图片：不一致，200+ 到 2000+ 都有</li>
+</ul></li>
+<li>标注：每张图像有
+<ul>
+<li>40 个 binary labels，指示发色、性别、年龄等信息</li>
+<li>人脸 bounding box</li>
+<li>5 个位置的 landmark（左眼、右眼、鼻尖、左嘴角、右嘴角）</li>
+<li>identity（名人身份 id，共 10,177 人）</li>
+</ul></li>
+</ul>
+<p><strong>官方目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── Anno<br>│   ├── identity_CelebA.txt<br>│   ├── list_attr_celeba.txt<br>│   ├── list_bbox_celeba.txt<br>│   ├── list_landmarks_align_celeba.txt<br>│   └── list_landmarks_celeba.txt<br>├── Eval<br>│   └── list_eval_partition.txt<br>├── Img<br>│   ├── img_align_celeba_png.7z<br>│   ├── img_celeba.7z<br>│   └── img_align_celeba.zip<br>└── README.txt<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：三个图片压缩包中，一般用 <code>img_align_celeba.zip</code> 即可.</p>
+</blockquote>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── CelebA<br>    └── celeba<br>        ├── identity_CelebA.txt<br>        ├── img_align_celeba.zip       (1.44 GB)<br>        ├── img_celeba.7z              (10.19 GB)<br>        ├── img_align_celeba           (extracted from img_align_celeba.zip)<br>        │   ├── 000001.jpg<br>        │   ├── ...<br>        │   └── 202599.jpg<br>        ├── img_celeba                 (extracted from img_celeba.7z)<br>        │   ├── 000001.jpg<br>        │   ├── ...<br>        │   └── 202599.jpg<br>        ├── list_attr_celeba.txt<br>        ├── list_bbox_celeba.txt<br>        ├── list_eval_partition.txt<br>        ├── list_landmarks_align_celeba.txt<br>        ├── list_landmarks_celeba.txt<br>        └── README.txt<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>celeba = dset.CelebA(root=<span class="hljs-string">&#x27;/data/CelebA&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(celeba)<br><span class="hljs-number">162770</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>celeba = dset.CelebA(root=<span class="hljs-string">&#x27;/data/CelebA&#x27;</span>, split=<span class="hljs-string">&#x27;valid&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(celeba)<br><span class="hljs-number">19867</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>celeba = dset.CelebA(root=<span class="hljs-string">&#x27;/data/CelebA&#x27;</span>, split=<span class="hljs-string">&#x27;test&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(celeba)<br><span class="hljs-number">19962</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>celeba = dset.CelebA(root=<span class="hljs-string">&#x27;/data/CelebA&#x27;</span>, split=<span class="hljs-string">&#x27;all&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(celeba)<br><span class="hljs-number">202599</span><br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="celeba-hq">CelebA-HQ</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/tkarras/progressive_growing_of_gans">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/celeba-hq">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：CelebA-HQ 数据集是 CelebA 数据集的高质量版本，由 30,000 张 1024×1024 分辨率的图像组成。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：30,000，是 CelebA 的子集</li>
+<li>遵从 CelebA 原始划分：24,183 / 2,993 / 2,824 (train / valid / test)</li>
+<li>分辨率：1024×1024</li>
+</ul>
+<p><strong>官方生成方式</strong>：下载 img_celeba.7z 和 delta 文件，使用 <code>dataset_tool.py</code> 生成高清图片。</p>
+<p><strong>其他生成方式</strong>：用网上其他人魔改的 <code>h5tool.py</code> 生成高清图片。问题：生成的图片可能有噪点或质量不高。</p>
+<p><strong>推荐方式</strong>：下载 <strong>CelebAMask-HQ</strong> 数据集（见下文），然后根据 <code>CelebA-HQ-to-CelebA-mapping.txt</code> 把文件名映射回原 id，例如，以下是一个简单的映射脚本 <code>map_index.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd<br><br><br>mapping = pd.read_table(<span class="hljs-string">&#x27;CelebA-HQ-to-CelebA-mapping.txt&#x27;</span>, sep=<span class="hljs-string">&#x27;\s+&#x27;</span>, index_col=<span class="hljs-number">0</span>)<br>mapping_dict = <span class="hljs-built_in">dict</span>()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">30000</span>):<br>	mapping_dict.update(&#123;<span class="hljs-string">f&#x27;<span class="hljs-subst">&#123;i&#125;</span>.jpg&#x27;</span>: mapping.iloc[i][<span class="hljs-string">&#x27;orig_file&#x27;</span>]&#125;)<br><br><span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> mapping_dict.items():<br>	<span class="hljs-keyword">assert</span> os.path.isfile(os.path.join(<span class="hljs-string">&#x27;CelebA-HQ-img&#x27;</span>, key))<br>	os.rename(os.path.join(<span class="hljs-string">&#x27;CelebA-HQ-img&#x27;</span>, key), os.path.join(<span class="hljs-string">&#x27;CelebA-HQ-img&#x27;</span>, value))<br></code></pre></td></tr></table></figure>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── CelebA-HQ<br>    ├── CelebA-HQ-img.zip     (2.74 GB)<br>    ├── CelebA-HQ-img         (extracted from CelebA-HQ-img.zip)<br>    │   ├── 000004.jpg<br>    │   ├── ...<br>    │   └── 202591.jpg<br>    ├── CelebA-HQ-to-CelebA-mapping.txt<br>    └── map_index.py<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">CelebA_HQ</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    The downloaded 30,000 images should be stored under `root/CelebA-HQ-img/`.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    The file names should be the same as their counterparts in the original CelebA dataset.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    The train/valid/test sets are split according to the original CelebA dataset,</span><br><span class="hljs-string">    resulting in 24,183 training images, 2,993 validation images, and 2,824 test images.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, root, split=<span class="hljs-string">&#x27;train&#x27;</span>, transform=<span class="hljs-literal">None</span></span>):<br>        image_root = os.path.join(os.path.expanduser(root), <span class="hljs-string">&#x27;CelebA-HQ-img&#x27;</span>)<br>        <span class="hljs-keyword">assert</span> os.path.isdir(image_root), <span class="hljs-string">f&#x27;<span class="hljs-subst">&#123;image_root&#125;</span> is not a valid directory&#x27;</span><br>        <span class="hljs-keyword">assert</span> split <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;train&#x27;</span>, <span class="hljs-string">&#x27;valid&#x27;</span>, <span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-string">&#x27;all&#x27;</span>]<br><br>        self.transform = transform<br><br>        img_ext = [<span class="hljs-string">&#x27;.png&#x27;</span>, <span class="hljs-string">&#x27;.jpg&#x27;</span>, <span class="hljs-string">&#x27;.jpeg&#x27;</span>]<br>        self.img_paths = []<br>        <span class="hljs-keyword">for</span> curdir, subdirs, files <span class="hljs-keyword">in</span> os.walk(image_root):<br>            <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> files:<br>                <span class="hljs-keyword">if</span> os.path.splitext(file)[<span class="hljs-number">1</span>].lower() <span class="hljs-keyword">in</span> img_ext:<br>                    self.img_paths.append(os.path.join(curdir, file))<br>        self.img_paths = <span class="hljs-built_in">sorted</span>(self.img_paths)<br><br>        celeba_splits = [<span class="hljs-number">1</span>, <span class="hljs-number">162771</span>, <span class="hljs-number">182638</span>, <span class="hljs-number">202600</span>]<br><br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">filter_func</span>(<span class="hljs-params">p</span>):<br>            <span class="hljs-keyword">if</span> split == <span class="hljs-string">&#x27;all&#x27;</span>:<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>            k = <span class="hljs-number">0</span> <span class="hljs-keyword">if</span> split == <span class="hljs-string">&#x27;train&#x27;</span> <span class="hljs-keyword">else</span> (<span class="hljs-number">1</span> <span class="hljs-keyword">if</span> split == <span class="hljs-string">&#x27;valid&#x27;</span> <span class="hljs-keyword">else</span> <span class="hljs-number">2</span>)<br>            <span class="hljs-keyword">return</span> celeba_splits[k] &lt;= <span class="hljs-built_in">int</span>(os.path.splitext(os.path.basename(p))[<span class="hljs-number">0</span>]) &lt; celeba_splits[k+<span class="hljs-number">1</span>]<br><br>        self.img_paths = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">filter</span>(filter_func, self.img_paths))<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.img_paths)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, item</span>):<br>        X = Image.<span class="hljs-built_in">open</span>(self.img_paths[item])<br>        <span class="hljs-keyword">if</span> self.transform <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>            X = self.transform(X)<br>        <span class="hljs-keyword">return</span> X<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    dataset = CelebA_HQ(root=<span class="hljs-string">&#x27;/data/CelebA-HQ/&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = CelebA_HQ(root=<span class="hljs-string">&#x27;/data/CelebA-HQ/&#x27;</span>, split=<span class="hljs-string">&#x27;valid&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = CelebA_HQ(root=<span class="hljs-string">&#x27;/data/CelebA-HQ/&#x27;</span>, split=<span class="hljs-string">&#x27;test&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = CelebA_HQ(root=<span class="hljs-string">&#x27;/data/CelebA-HQ/&#x27;</span>, split=<span class="hljs-string">&#x27;all&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="celebamask-hq">CelebAMask-HQ</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/switchablenorms/CelebAMask-HQ">官网</a> | <a target="_blank" rel="noopener" href="https://drive.google.com/open?id=1badu11NqxGf6qM3PTTooQDJvQbejgbTv">Google drive</a> | <a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1wN1E-B1bJ7mE1mrn9loj5g">Baidu drive</a></p>
+<p><strong>简要介绍</strong>：在 CelebA-HQ 数据集的基础上增加了对应 CelebA 面部属性的 segmentation mask.</p>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>├── CelebAMask-HQ.zip       (3.15 GB)<br>└── CelebAMask-HQ           (extracted from CelebAMask-HQ.zip)<br>    ├── CelebA-HQ-img<br>    │   ├── 0.jpg<br>    │   ├── ...<br>    │   └── 29999.jpg<br>    ├── CelebA-HQ-to-CelebA-mapping.txt<br>    ├── CelebAMask-HQ-attribute-anno.txt<br>    ├── CelebAMask-HQ-mask-anno<br>    │   ├── 0<br>    │   │   ├── 00000_hair.png<br>    │   │   └── ...<br>    │   └── ...<br>    ├── CelebAMask-HQ-pose-anno.txt<br>    └── README.txt<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>。</p>
+<p><br/></p>
+<h2 id="cifar-10">CIFAR-10</h2>
+<p><a target="_blank" rel="noopener" href="https://www.cs.toronto.edu/~kriz/cifar.html">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/cifar-10">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：CIFAR-10 数据集是 Tiny Images 数据集的子集，包括 60,000 张 32×32 像素的彩色图像。这些图像被标记为10个相互独立的类别：飞机、汽车（但不包括卡车或皮卡车）、鸟、猫、鹿、狗、青蛙、马、船和卡车（但不包括皮卡车）。每个类别有 6,000 张图像，每个类别包含 5,000 张训练图像和 1,000 张测试图像。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：60,000</li>
+<li>划分：50,000 / 10,000 (train / test)</li>
+<li>分辨率：32×32</li>
+<li>标注：10 类</li>
+</ul>
+<p><strong>存储为 png</strong>：原文件并非图片格式，如果有 png 格式的需求，可用以下脚本转换 <code>makepng.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm<br><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dsets<br><br><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>):<br>	os.makedirs(<span class="hljs-string">f&#x27;./png/train/<span class="hljs-subst">&#123;i&#125;</span>/&#x27;</span>, exist_ok=<span class="hljs-literal">True</span>)<br>	os.makedirs(<span class="hljs-string">f&#x27;./png/test/<span class="hljs-subst">&#123;i&#125;</span>/&#x27;</span>, exist_ok=<span class="hljs-literal">True</span>)<br><br>ids = &#123;k: <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>)&#125;<br>cifar10 = dsets.CIFAR10(root=<span class="hljs-string">&#x27;.&#x27;</span>, train=<span class="hljs-literal">True</span>)<br><span class="hljs-keyword">for</span> X, y <span class="hljs-keyword">in</span> tqdm(cifar10):<br>	X.save(<span class="hljs-string">f&#x27;./png/train/<span class="hljs-subst">&#123;y&#125;</span>/<span class="hljs-subst">&#123;ids[y]&#125;</span>.png&#x27;</span>)<br>	ids[y] += <span class="hljs-number">1</span><br><br>ids = &#123;k: <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>)&#125;<br>cifar10 = dsets.CIFAR10(root=<span class="hljs-string">&#x27;.&#x27;</span>, train=<span class="hljs-literal">False</span>)<br><span class="hljs-keyword">for</span> X, y <span class="hljs-keyword">in</span> tqdm(cifar10):<br>	X.save(<span class="hljs-string">f&#x27;./png/test/<span class="hljs-subst">&#123;y&#125;</span>/<span class="hljs-subst">&#123;ids[y]&#125;</span>.png&#x27;</span>)<br>	ids[y] += <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── CIFAR-10<br>    ├── cifar-10-python.tar.gz   (170.5 MB)<br>    └── cifar-10-batches-py      (extracted from cifar-10-python.tar.gz)<br>        ├── batches.meta<br>        ├── data_batch_1<br>        ├── data_batch_2<br>        ├── data_batch_3<br>        ├── data_batch_4<br>        ├── data_batch_5<br>        ├── readme.html<br>        └── test_batch<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>cifar10 = dset.CIFAR10(root=<span class="hljs-string">&#x27;/data/CIFAR-10&#x27;</span>, train=<span class="hljs-literal">True</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(cifar10)<br><span class="hljs-number">50000</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>cifar10 = dset.CIFAR10(root=<span class="hljs-string">&#x27;/data/CIFAR-10&#x27;</span>, train=<span class="hljs-literal">False</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(cifar10)<br><span class="hljs-number">10000</span><br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="cifar-100">CIFAR-100</h2>
+<p><a target="_blank" rel="noopener" href="https://www.cs.toronto.edu/~kriz/cifar.html">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/cifar-100">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：CIFAR-100 数据集是 Tiny Images 数据集的子集，包括 60,000 张 32×32 像素的彩色图像。CIFAR-100 的 100 个类别被分成 20 个超类别。每个图像都带有一个“细”标签（它所属的类别）和一个“粗”标签（它所属的超类别）。每个类别有 600 张图像——500 张训练图像和 100 张测试图像。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：60,000</li>
+<li>划分：50,000 / 10,000 (train / test)</li>
+<li>分辨率：32×32</li>
+<li>标注：100 类，分组为 20 个 superclass</li>
+</ul>
+<p><strong>存储为 png</strong>：原文件并非图片格式，如果有 png 格式的需求，可用以下脚本转换 <code>makepng.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm<br><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dsets<br><br><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>):<br>	os.makedirs(<span class="hljs-string">f&#x27;./png/train/<span class="hljs-subst">&#123;i&#125;</span>/&#x27;</span>, exist_ok=<span class="hljs-literal">True</span>)<br>	os.makedirs(<span class="hljs-string">f&#x27;./png/test/<span class="hljs-subst">&#123;i&#125;</span>/&#x27;</span>, exist_ok=<span class="hljs-literal">True</span>)<br><br>ids = &#123;k: <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>)&#125;<br>cifar100 = dsets.CIFAR100(root=<span class="hljs-string">&#x27;.&#x27;</span>, train=<span class="hljs-literal">True</span>)<br><span class="hljs-keyword">for</span> X, y <span class="hljs-keyword">in</span> tqdm(cifar100):<br>	X.save(<span class="hljs-string">f&#x27;./png/train/<span class="hljs-subst">&#123;y&#125;</span>/<span class="hljs-subst">&#123;ids[y]&#125;</span>.png&#x27;</span>)<br>	ids[y] += <span class="hljs-number">1</span><br><br>ids = &#123;k: <span class="hljs-number">0</span> <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>)&#125;<br>cifar100 = dsets.CIFAR100(root=<span class="hljs-string">&#x27;.&#x27;</span>, train=<span class="hljs-literal">False</span>)<br><span class="hljs-keyword">for</span> X, y <span class="hljs-keyword">in</span> tqdm(cifar100):<br>	X.save(<span class="hljs-string">f&#x27;./png/test/<span class="hljs-subst">&#123;y&#125;</span>/<span class="hljs-subst">&#123;ids[y]&#125;</span>.png&#x27;</span>)<br>	ids[y] += <span class="hljs-number">1</span><br><br></code></pre></td></tr></table></figure>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>├── cifar-100-python.tar.gz   (169 MB)<br>└── cifar-100-python          (extracted from cifar-100-python.tar.gz)<br>    ├── file.txt~<br>    ├── meta<br>    ├── test<br>    └── train<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>cifar100 = dset.CIFAR100(root=<span class="hljs-string">&#x27;/data/CIFAR-100&#x27;</span>, train=<span class="hljs-literal">True</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(cifar100)<br><span class="hljs-number">50000</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>cifar100 = dset.CIFAR100(root=<span class="hljs-string">&#x27;/data/CIFAR-100&#x27;</span>, train=<span class="hljs-literal">False</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(cifar100)<br><span class="hljs-number">10000</span><br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="fashion-mnist">Fashion-MNIST</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/zalandoresearch/fashion-mnist">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/fashion-mnist">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：Fashion-MNIST 是一个由 10 个类别、每个类别 7,000 张 28×28 像素的灰度图像组成数据集，总计70,000 张时尚产品图像。训练集包含 60,000 张图像，测试集包含 10,000 张图像。Fashion-MNIST 与原始的 MNIST 数据集具有相同的图像大小、数据格式以及训练和测试集的划分结构。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：70,000</li>
+<li>划分：60,000 / 10,000 (train / test)</li>
+<li>分辨率：28×28</li>
+<li>标注：10 类</li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── Fashion-MNIST<br>    └── FashionMNIST<br>        └── raw<br>            ├── t10k-images-idx3-ubyte<br>            ├── t10k-images-idx3-ubyte.gz<br>            ├── t10k-labels-idx1-ubyte<br>            ├── t10k-labels-idx1-ubyte.gz<br>            ├── train-images-idx3-ubyte<br>            ├── train-images-idx3-ubyte.gz<br>            ├── train-labels-idx1-ubyte<br>            └── train-labels-idx1-ubyte.gz<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>fashion = dset.FashionMNIST(root=<span class="hljs-string">&#x27;/data/Fashion-MNIST&#x27;</span>, train=<span class="hljs-literal">True</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(fashion)<br><span class="hljs-number">60000</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>fashion = dset.FashionMNIST(root=<span class="hljs-string">&#x27;/data/Fashion-MNIST&#x27;</span>, train=<span class="hljs-literal">False</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(fashion)<br><span class="hljs-number">10000</span><br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="ffhq">FFHQ</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/NVlabs/ffhq-dataset">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/ffhq">Papers with Code</a> | <a target="_blank" rel="noopener" href="https://drive.google.com/drive/folders/1u2xu7bSrWxrbUxk-dT-UvEJq8IjdmNTP">Google drive</a></p>
+<p><strong>简要介绍</strong>：Flickr-Faces-HQ (FFHQ) 由 70,000 张高质量 PNG 图像组成，分辨率为 1024×1024，具有年龄、种族和图像背景等方面的相当大的变化。它还涵盖了各种饰品，如眼镜、太阳镜、帽子等。这些图像是从 Flickr 爬取的，因此继承了该网站的所有偏见，并使用 dlib 自动对齐和裁剪。只收集了许可证宽松的图像。使用各种自动过滤器对数据集进行了修剪，最后使用 Amazon Mechanical Turk 删除了偶尔出现的雕像、绘画或照片等。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：70,000</li>
+<li>划分：60,000 / 10,000 (train / valid)</li>
+<li>分辨率：1024×1024</li>
+</ul>
+<p><strong>官方目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── LICENSE.txt<br>├── README.txt<br>├── ffhq-dataset-v2.json<br>├── images1024x1024         (89.1 GB)<br>├── in-the-wild-images      (955 GB)<br>├── tfrecords               (273 GB)<br>├── thumbnails128x128       (1.95 GB)<br>└── zips                    (1.28 TB)<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：一般而言，我们只需要用 images1024x1024 图片。</p>
+</blockquote>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── FFHQ<br>    ├── LICENSE.txt<br>    ├── README.txt<br>    ├── ffhq-dataset-v2.json<br>    ├── images1024x1024.zip      (95.73 GB)<br>    └── images1024x1024          (extracted from images1024x1024.zip)<br>        ├── LICENSE.txt<br>        ├── 00000<br>        │   ├── 00000.png<br>        │   ├── ...<br>        │   └── 00999.png<br>        ├── ...<br>        └── 69000<br>            ├── 69000.png<br>            ├── ...<br>            └── 69999.png<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FFHQ</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    The downloaded 70,000 images should be organized in the following structure:</span><br><span class="hljs-string"></span><br><span class="hljs-string">    - root/</span><br><span class="hljs-string">        - image1024x1024/</span><br><span class="hljs-string">            - 00000/</span><br><span class="hljs-string">                - 00000.png</span><br><span class="hljs-string">                - 00001.png</span><br><span class="hljs-string">                - ...</span><br><span class="hljs-string">                - 00999.png</span><br><span class="hljs-string">            - ...</span><br><span class="hljs-string">            - 69000/</span><br><span class="hljs-string">                - 69000.png</span><br><span class="hljs-string">                - 69001.png</span><br><span class="hljs-string">                - ...</span><br><span class="hljs-string">                - 69999.png</span><br><span class="hljs-string"></span><br><span class="hljs-string">    If `official_split` is True, the first 60,000 images will be the training set and the remaining 10,000 images will be the test set.</span><br><span class="hljs-string">    Otherwise, the 10,000 images in the test set are further divided into a 5,000-image validation set and a 5,000-image test set.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, root, split=<span class="hljs-string">&#x27;train&#x27;</span>, original_size=<span class="hljs-number">1024</span>, transform=<span class="hljs-literal">None</span>, official_split=<span class="hljs-literal">True</span></span>):<br>        image_root = os.path.join(os.path.expanduser(root), <span class="hljs-string">f&#x27;images<span class="hljs-subst">&#123;original_size&#125;</span>x<span class="hljs-subst">&#123;original_size&#125;</span>&#x27;</span>)<br>        <span class="hljs-keyword">assert</span> os.path.isdir(image_root), <span class="hljs-string">f&#x27;<span class="hljs-subst">&#123;image_root&#125;</span> is not a valid directory&#x27;</span><br>        <span class="hljs-keyword">assert</span> split <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;train&#x27;</span>, <span class="hljs-string">&#x27;valid&#x27;</span>, <span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-string">&#x27;all&#x27;</span>]<br><br>        self.transform = transform<br><br>        img_ext = [<span class="hljs-string">&#x27;.png&#x27;</span>, <span class="hljs-string">&#x27;.jpg&#x27;</span>, <span class="hljs-string">&#x27;.jpeg&#x27;</span>]<br>        self.img_paths = []<br>        <span class="hljs-keyword">for</span> curdir, subdirs, files <span class="hljs-keyword">in</span> os.walk(image_root):<br>            <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> files:<br>                <span class="hljs-keyword">if</span> os.path.splitext(file)[<span class="hljs-number">1</span>].lower() <span class="hljs-keyword">in</span> img_ext:<br>                    self.img_paths.append(os.path.join(curdir, file))<br>        self.img_paths = <span class="hljs-built_in">sorted</span>(self.img_paths)<br><br>        <span class="hljs-keyword">if</span> official_split:<br>            <span class="hljs-keyword">if</span> split == <span class="hljs-string">&#x27;train&#x27;</span>:<br>                self.img_paths = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-string">&#x27;00000&#x27;</span> &lt;= (os.path.dirname(p)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>] &lt; <span class="hljs-string">&#x27;60000&#x27;</span>, self.img_paths))<br>            <span class="hljs-keyword">elif</span> split == <span class="hljs-string">&#x27;test&#x27;</span>:<br>                self.img_paths = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-string">&#x27;60000&#x27;</span> &lt;= (os.path.dirname(p)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>] &lt; <span class="hljs-string">&#x27;70000&#x27;</span>, self.img_paths))<br>            <span class="hljs-keyword">elif</span> split == <span class="hljs-string">&#x27;valid&#x27;</span>:<br>                <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&#x27;FFHQ official split does not have a validation set.&#x27;</span>)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">if</span> split == <span class="hljs-string">&#x27;train&#x27;</span>:<br>                self.img_paths = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-string">&#x27;00000&#x27;</span> &lt;= (os.path.dirname(p)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>] &lt; <span class="hljs-string">&#x27;60000&#x27;</span>, self.img_paths))<br>            <span class="hljs-keyword">elif</span> split == <span class="hljs-string">&#x27;valid&#x27;</span>:<br>                self.img_paths = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-string">&#x27;60000&#x27;</span> &lt;= (os.path.dirname(p)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>] &lt; <span class="hljs-string">&#x27;65000&#x27;</span>, self.img_paths))<br>            <span class="hljs-keyword">elif</span> split == <span class="hljs-string">&#x27;test&#x27;</span>:<br>                self.img_paths = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">filter</span>(<span class="hljs-keyword">lambda</span> p: <span class="hljs-string">&#x27;65000&#x27;</span> &lt;= (os.path.dirname(p)).split(<span class="hljs-string">&#x27;/&#x27;</span>)[-<span class="hljs-number">1</span>] &lt; <span class="hljs-string">&#x27;70000&#x27;</span>, self.img_paths))<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.img_paths)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, item</span>):<br>        X = Image.<span class="hljs-built_in">open</span>(self.img_paths[item])<br>        <span class="hljs-keyword">if</span> self.transform <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>            X = self.transform(X)<br>        <span class="hljs-keyword">return</span> X<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>, official_split=<span class="hljs-literal">False</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;valid&#x27;</span>, official_split=<span class="hljs-literal">False</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;test&#x27;</span>, official_split=<span class="hljs-literal">False</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;all&#x27;</span>, official_split=<span class="hljs-literal">False</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    <span class="hljs-built_in">print</span>()<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>, official_split=<span class="hljs-literal">True</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;test&#x27;</span>, official_split=<span class="hljs-literal">True</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = FFHQ(root=<span class="hljs-string">&#x27;/data/FFHQ/&#x27;</span>, split=<span class="hljs-string">&#x27;all&#x27;</span>, official_split=<span class="hljs-literal">True</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="flare7k">Flare7K</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/ykdai/Flare7K">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/flare7k">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：Flare7K 是第一个夜间光晕去除数据集，它是基于真实世界夜间镜头光晕的观察和统计生成的。该数据集包括 5,000 张散射光晕图像和 2,000 张反射光晕图像，涵盖了 25 种散射光晕类型和 10 种反射光晕类型。这 7,000 个光晕图案可以随机添加到无光晕的图像中，形成光晕污染和无光晕的图像对。</p>
+<p><strong>下载</strong>：官方 github 页面包含了以下三个下载链接：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th>内容</th>
+<th>文件名</th>
+<th>说明</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Flares</td>
+<td><code>Flare7k.zip</code></td>
+<td>5,000 张散射光晕和 2,000 张反射光晕图像</td>
+<td>3.01 GB</td>
+</tr>
+<tr class="even">
+<td>Background Images</td>
+<td><code>Flickr24K.zip</code></td>
+<td>23,949 张背景图像</td>
+<td>1.12 GB</td>
+</tr>
+<tr class="odd">
+<td>Flare-corrupted images</td>
+<td><code>flare_corrupted_test_imgs.zip</code></td>
+<td>额外 645 张无 ground-truth 的有光晕图像</td>
+<td>212.4 MB</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── Flare7K<br>    ├── flare_corrupted_test_imgs.zip     (222.7 MB)<br>    ├── Flare7k.zip                       (3.24 GB)<br>    ├── Flickr24K.zip                     (1.2 GB)<br>    ├── flare_corrupted_test_imgs         (extracted from flare_corrupted_test_imgs.zip)<br>    │   ├── test_00000.png<br>    │   ├── ...<br>    │   └── test_00644.png<br>    ├── Flare7k                           (extracted Flare7k.zip)<br>    │   ├── Reflective_Flare              (contains 2000 png images)<br>    │   │   ├── reflective_img_000000.png<br>    │   │   ├── ...<br>    │   │   └── reflective_img_001999.png<br>    │   ├── Scattering_Flare<br>    │   │   ├── Compound_Flare            (contains 5000 png images)<br>    │   │   ├── Glare_with_shimmer        (contains 5000 png images)<br>    │   │   ├── Light_Source              (contains 5000 png images)<br>    │   │   └── Streak                    (contains 5000 png images)<br>    │   └── test_data<br>    │       ├── real<br>    │       │   ├── gt                    (contains 100 png images)<br>    │       │   └── input                 (contains 100 png images)<br>    │       └── synthetic<br>    │           ├── gt                    (contains 100 png images)<br>    │           └── input                 (contains 100 png images)<br>    └── Flickr24K                         (extracted from Flickr24K.zip, contains 23949 jpg images)<br>        ├── 2.jpg<br>        ├── ...<br>        └── r (13746).jpg<br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="imagenet-21k-imagenet-22k">ImageNet-21K (ImageNet-22K)</h2>
+<p><a target="_blank" rel="noopener" href="https://image-net.org/download-images.php">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/imagenet">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：完整的 ImageNet 数据集包含 14,197,122 张按 WordNet 层次结构注释的图像，共有 21,841 类，因此也被称作 ImageNet-21K 或 ImageNet-22K. 自 2010 年以来，该数据集被用于 ImageNet 大规模视觉识别挑战赛（ILSVRC），成为了图像分类和目标检测的基准。其中，ILSVRC2012 比赛所采用的子集成为了研究者最常用的版本，详见下文 ImageNet-1K.</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：14,197,122</li>
+<li>标注：21,814 类</li>
+</ul>
+<p><strong>下载</strong>：用教育邮箱登录官网，选择下载页面，可以在 Winter 2021 release 处看到链接，有若干版本：</p>
+<ul>
+<li>原始全部数据</li>
+<li>可以只下载某一类</li>
+<li>使用论文 "ImageNet-21K pretraining for the masses" 的脚本处理后的版本</li>
+<li>ImageNet10K from ECCV2010</li>
+</ul>
+<p><strong>WIP</strong>：尚未下载和使用过完整的 ImageNet-21K，因此无法给出更多的细节。</p>
+<p><br/></p>
+<h2 id="imagenet-1k-ilsvrc2012">ImageNet-1K (ILSVRC2012)</h2>
+<p><a target="_blank" rel="noopener" href="https://image-net.org/challenges/LSVRC/2012/2012-downloads.php">官网</a></p>
+<p><strong>简要介绍</strong>：ILSVRC2012 是最常用的 ImageNet 子集，包含 1000 类物体，因此也被称作 ImageNet-1K.</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：1,431,167</li>
+<li>划分：1,281,167 / 50,000 / 100,000 (train / valid / test)</li>
+<li>分辨率：各图片不一致，据说平均 469×387</li>
+<li>标注：1000 类。<a target="_blank" rel="noopener" href="https://gist.github.com/yrevar/942d3a0ac09ec9e5eb3a">此链接</a>有标签到类别名称的映射。</li>
+</ul>
+<p><strong>下载</strong>：用教育邮箱登录官网，选择 ILSVRC2012 下载页面可看到链接，包含：</p>
+<table>
+<tr>
+<th colspan="2">
+内容
+</th>
+<th>
+文件名
+</th>
+<th>
+大小
+</th>
+</tr>
+<tr>
+<th rowspan="2">
+Development Kit
+</th>
+<td>
+Development Kit (Task 1 &amp; 2)
+</td>
+<td>
+ILSVRC2012_devkit_t12.tar.gz
+</td>
+<td>
+2.5MB
+</td>
+</tr>
+<tr>
+<td>
+Development Kit (Task 3)
+</td>
+<td>
+ILSVRC2012_devkit_t3.tar.gz
+</td>
+<td>
+22MB
+</td>
+</tr>
+<tr>
+<th rowspan="4">
+Images
+</th>
+<td>
+Training images (Task 1 &amp; 2)
+</td>
+<td>
+ILSVRC2012_img_train.tar
+</td>
+<td>
+138GB
+</td>
+</tr>
+<tr>
+<td>
+Training images (Task 3)
+</td>
+<td>
+ILSVRC2012_img_train_t3.tar
+</td>
+<td>
+728MB
+</td>
+</tr>
+<tr>
+<td>
+Validation images (all tasks)
+</td>
+<td>
+ILSVRC2012_img_val.tar
+</td>
+<td>
+6.3GB
+</td>
+</tr>
+<tr>
+<td>
+Test images (all tasks)
+</td>
+<td>
+ILSVRC2012_img_test_v10102019.tar
+</td>
+<td>
+13GB
+</td>
+</tr>
+<tr>
+<th rowspan="4">
+Bounding Boxes
+</th>
+<td>
+Training bounding box annotations (Task 1 &amp; 2 only)
+</td>
+<td>
+ILSVRC2012_bbox_train_v2.tar.gz
+</td>
+<td>
+20MB
+</td>
+</tr>
+<tr>
+<td>
+Training bounding box annotations (Task 3 only)
+</td>
+<td>
+ILSVRC2012_bbox_train_dogs.tar.gz
+</td>
+<td>
+1MB
+</td>
+</tr>
+<tr>
+<td>
+Validation bounding box annotations (all tasks)
+</td>
+<td>
+ILSVRC2012_bbox_val_v3.tgz
+</td>
+<td>
+2.2MB
+</td>
+</tr>
+<tr>
+<td>
+Test bounding box annotations (Task 3 only)
+</td>
+<td>
+ILSVRC2012_bbox_test_dogs.zip
+</td>
+<td>
+33MB
+</td>
+</tr>
+</table>
+<p>其中 Task 1 是粗粒度分类任务、Task 2 是分类并定位任务、Task 3 是细粒度分类任务。</p>
+<blockquote>
+<p>注：一般使用的（以及「基本信息」里面描述的）是 Task 1 &amp; 2 任务的训练数据。</p>
+</blockquote>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── ImageNet<br>    ├── ILSVRC2012_bbox_train_v2.tar.gz         (20.9 MB)<br>    ├── ILSVRC2012_bbox_train_dogs.tar.gz       (726 KB)<br>    ├── ILSVRC2012_bbox_val_v3.tgz              (2.2 MB)<br>    ├── ILSVRC2012_bbox_test_dogs.zip           (34.6 MB)<br>    ├── ILSVRC2012_devkit_t12.tar.gz            (2.6 MB)<br>    ├── ILSVRC2012_devkit_t3.tar.gz             (22.4 MB)<br>    ├── ILSVRC2012_img_train.tar                (147.9 GB)<br>    ├── ILSVRC2012_img_train_t3.tar             (762.5 MB)<br>    ├── ILSVRC2012_img_val.tar                  (6.74 GB)<br>    ├── ILSVRC2012_img_test_v10102019.tar       (13.69 GB)<br>    ├── meta.bin                                (created by torchvision)<br>    ├── train                                   (extracted and organized by torchvision)<br>    │   ├── n01440764<br>    │   ├── ...<br>    │   └── n15075141<br>    ├── val                                     (extracted and organized by torchvision)<br>    │   ├── n01440764<br>    │   ├── ...<br>    │   └── n15075141<br>    └── test                                    (extracted from ILSVRC2012_img_test_v10102019.tar)<br>        ├── ILSVRC2012_test_00000001.JPEG<br>        ├── ...<br>        └── ILSVRC2012_test_00100000.JPEG<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：第一次使用 torchvision 加载 ImageNet 数据集时，它会自动帮你解压并组织文件，最终得到上述目录结构，这个过程耗时较长。这个目录结构与直接解压不同，例如 <code>ILSVRC2012_img_val.tar</code> 中其实是直接包含了所有图片，但 torchvision 将它组织成和训练集一致的结构便于加载。</p>
+</blockquote>
+<p><strong>使用 torchvision 加载数据集（不支持测试集，因为测试集没有 ground-truth 标签）</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>imagenet = dset.ImageNet(root=<span class="hljs-string">&#x27;/data/ImageNet&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(imagenet)<br><span class="hljs-number">1281167</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>imagenet = dset.ImageNet(root=<span class="hljs-string">&#x27;/data/ImageNet&#x27;</span>, split=<span class="hljs-string">&#x27;val&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(imagenet)<br><span class="hljs-number">50000</span><br></code></pre></td></tr></table></figure>
+<p><strong>对于不需要标签的任务，可以自定义 <code>Dataset</code> 加载测试集</strong>。</p>
+<p><br/></p>
+<h2 id="imagenet-downsampled">ImageNet-Downsampled</h2>
+<p><a target="_blank" rel="noopener" href="https://image-net.org/download-images.php">官网</a> | <a target="_blank" rel="noopener" href="https://patrykchrabaszcz.github.io/Imagenet32/">官方博客</a></p>
+<p><strong>简要介绍</strong>：论文 <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1707.08819">“A Downsampled Variant of ImageNet as an Alternative to the CIFAR datasets”</a> 提出的 ImageNet-1K 数据集的下采样版本，包括 8x8, 16x16, 32x32 和 64x64 四种分辨率版本。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>划分：1,281,167 / 50,000 (train / valid)</li>
+<li>标注：1000 类</li>
+</ul>
+<p><strong>下载</strong>：用教育邮箱登录官网，选择下载页面，可以在 Download downsampled image data (32x32, 64x64) 处看到链接。</p>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── ImageNet64<br>    ├── Imagenet64_train_part1.zip  (6.9 GB)<br>    ├── Imagenet64_train_part2.zip  (6.9 GB)<br>    ├── Imagenet64_val.zip          (534 MB)<br>    ├── train_data_batch_1          (extracted from Imagenet64_train_part1.zip)<br>    ├── train_data_batch_2          (extracted from Imagenet64_train_part1.zip)<br>    ├── train_data_batch_3          (extracted from Imagenet64_train_part1.zip)<br>    ├── train_data_batch_4          (extracted from Imagenet64_train_part1.zip)<br>    ├── train_data_batch_5          (extracted from Imagenet64_train_part1.zip)<br>    ├── train_data_batch_6          (extracted from Imagenet64_train_part2.zip)<br>    ├── train_data_batch_7          (extracted from Imagenet64_train_part2.zip)<br>    ├── train_data_batch_8          (extracted from Imagenet64_train_part2.zip)<br>    ├── train_data_batch_9          (extracted from Imagenet64_train_part2.zip)<br>    ├── train_data_batch_10         (extracted from Imagenet64_train_part2.zip)<br>    └── val_data                    (extracted from Imagenet64_val.zip)<br></code></pre></td></tr></table></figure>
+<p><strong>自定义 <code>Dataset</code> 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> pickle<br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset<br><span class="hljs-keyword">import</span> torchvision.transforms <span class="hljs-keyword">as</span> T<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ImageNet64</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, root, split=<span class="hljs-string">&#x27;train&#x27;</span>, transform=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-keyword">assert</span> split <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;train&#x27;</span>, <span class="hljs-string">&#x27;valid&#x27;</span>]<br>        <span class="hljs-keyword">assert</span> os.path.isdir(root), <span class="hljs-string">f&#x27;<span class="hljs-subst">&#123;root&#125;</span> is not an existing directory&#x27;</span><br><br>        self.transform = transform<br><br>        <span class="hljs-keyword">if</span> split == <span class="hljs-string">&#x27;train&#x27;</span>:<br>            self.data, self.labels = [], []<br>            <span class="hljs-keyword">for</span> idx <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1</span>, <span class="hljs-number">11</span>):<br>                filepath = os.path.join(root, <span class="hljs-string">f&#x27;train_data_batch_<span class="hljs-subst">&#123;idx&#125;</span>&#x27;</span>)<br>                <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(filepath, <span class="hljs-string">&#x27;rb&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>                    d = pickle.load(f)<br>                self.data.append(d[<span class="hljs-string">&#x27;data&#x27;</span>])<br>                self.labels.extend(d[<span class="hljs-string">&#x27;labels&#x27;</span>])<br>            self.data = np.concatenate(self.data, axis=<span class="hljs-number">0</span>)<br>            self.labels = [i-<span class="hljs-number">1</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> self.labels]<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(os.path.join(root, <span class="hljs-string">f&#x27;val_data&#x27;</span>), <span class="hljs-string">&#x27;rb&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>                d = pickle.load(f)<br>            self.data = d[<span class="hljs-string">&#x27;data&#x27;</span>]<br>            self.labels = [i-<span class="hljs-number">1</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> d[<span class="hljs-string">&#x27;labels&#x27;</span>]]<br>        self.data = np.dstack((self.data[:, :<span class="hljs-number">64</span>*<span class="hljs-number">64</span>], self.data[:, <span class="hljs-number">64</span>*<span class="hljs-number">64</span>:<span class="hljs-number">2</span>*<span class="hljs-number">64</span>*<span class="hljs-number">64</span>], self.data[:, <span class="hljs-number">2</span>*<span class="hljs-number">64</span>*<span class="hljs-number">64</span>:]))<br>        self.data = self.data.reshape((self.data.shape[<span class="hljs-number">0</span>], <span class="hljs-number">64</span>, <span class="hljs-number">64</span>, <span class="hljs-number">3</span>))  <span class="hljs-comment"># HWC</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.data)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, item</span>):<br>        img, label = self.data[item], self.labels[item]<br>        img = Image.fromarray(img)<br>        <span class="hljs-keyword">if</span> self.transform <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>            img = self.transform(img)<br>        <span class="hljs-keyword">return</span> img, label<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    dataset = ImageNet64(root=<span class="hljs-string">&#x27;/data/ImageNet64/&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = ImageNet64(root=<span class="hljs-string">&#x27;/data/ImageNet64/&#x27;</span>, split=<span class="hljs-string">&#x27;valid&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br></code></pre></td></tr></table></figure>
+<h2 id="istd">ISTD</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/DeepInsight-PCALab/ST-CGAN">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/istd">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：Image Shadow Triplets Dataset (ISTD) 是一个用于阴影理解（检测/去除）的数据集，包含 1,870 个图像三元组，每个三元组由阴影图像、阴影掩膜和无阴影图像构成。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：1,870</li>
+<li>划分：1,330 / 540 (train / test)</li>
+<li>分辨率：640×480</li>
+<li>标注：三元组（A：阴影图像；B：阴影掩膜；C：无阴影图像）</li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── ISTD<br>    ├── ISTD_Dataset.rar       (2.14 GB)<br>    ├── train                  (extracted from ISTD_Dataset.rar)<br>    │   ├── train_A            (contains 1330 images)<br>    │   ├── train_B            (contains 1330 images)<br>    │   └── train_C            (contains 1330 images)<br>    └── test                   (extracted from ISTD_Dataset.rar)<br>        ├── test_A             (contains 540 images)<br>        ├── test_B             (contains 540 images)<br>        └── test_C             (contains 540 images)<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>。</p>
+<p><br/></p>
+<h2 id="logo">LOGO</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/vinthony/deep-blind-watermark-removal">官网</a> | <a target="_blank" rel="noopener" href="https://uofmacau-my.sharepoint.com/:f:/g/personal/yb87432_umac_mo/Ek27dEFECGJKqYlZ1vxf7QMBTp3LuEAo-24Sfq_6vGxgaw">OneDrive</a></p>
+<p><strong>简要介绍</strong>：LOGO 是一个用于水印去除的数据集。背景图像选自 MSCOCO 数据集的 VAL2014 子集；水印收集自互联网上 1000 多个不同的著名标志。将水印（标志）在不同位置、半透明度和大小随机放置在自然图像上来生成水印样本。每个训练/测试样本都包含合成的水印图像、原始背景、水印以及水印掩膜以进行监督。所有水印和背景图像在训练和验证分区中都没有重叠。按照水印的不同透明度和大小，整个数据集分为四种设置：LOGO-L、LOGO-H、LOGO-Gray、LOGO30K.</p>
+<p><strong>基本信息</strong>：</p>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">LOGO-L</th>
+<th style="text-align: center;">LOGO-H</th>
+<th style="text-align: center;">LOGO-Gray</th>
+<th style="text-align: center;">LOGO30K</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">transparency</td>
+<td style="text-align: center;">35% - 60%</td>
+<td style="text-align: center;">60% - 85%</td>
+<td style="text-align: center;">35% - 85%</td>
+<td style="text-align: center;">35% - 85%</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Percentage of the watermarks size</td>
+<td style="text-align: center;">35% - 60%</td>
+<td style="text-align: center;">60% - 85%</td>
+<td style="text-align: center;">35% - 85%</td>
+<td style="text-align: center;">35% - 85%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Numbers of samples (train : val)</td>
+<td style="text-align: center;">12k : 2k</td>
+<td style="text-align: center;">12k : 2k</td>
+<td style="text-align: center;">12k : 2k</td>
+<td style="text-align: center;">28k : 4k</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Colorful watermark?</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">yes</td>
+<td style="text-align: center;">no</td>
+<td style="text-align: center;">yes</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>数量：
+<ul>
+<li>LOGO-L、LOGO-H、LOGO-Gray：14,176</li>
+<li>LOGO30K：32,403</li>
+</ul></li>
+<li>划分（train / valid）：
+<ul>
+<li>LOGO-L、LOGO-H、LOGO-Gray：12,151 / 2,025</li>
+<li>LOGO30K：28,352 / 4,051</li>
+</ul></li>
+<li>分辨率：对应 COCO 数据集的原始图片大小，另提供 resize 到 256×256 的验证集。</li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs scss">data<br>└── LOGO<br>    ├── <span class="hljs-number">10</span>kgray<span class="hljs-selector-class">.zip</span>               (<span class="hljs-number">14.99</span> GB)<br>    ├── <span class="hljs-number">10</span>khigh<span class="hljs-selector-class">.zip</span>               (<span class="hljs-number">15.18</span> GB)<br>    ├── <span class="hljs-number">10</span>kmid<span class="hljs-selector-class">.zip</span>                (<span class="hljs-number">15</span> GB)<br>    ├── <span class="hljs-number">27</span>kpng<span class="hljs-selector-class">.zip</span>                (<span class="hljs-number">24.11</span> GB)<br>    ├── <span class="hljs-number">10</span>kgray                   (extracted from <span class="hljs-number">27</span>kpng.zip)<br>    │   ├── train_images<span class="hljs-selector-class">.txt</span><br>    │   ├── train_wm<span class="hljs-selector-class">.txt</span><br>    │   ├── val_images<span class="hljs-selector-class">.txt</span><br>    │   ├── val_wm<span class="hljs-selector-class">.txt</span><br>    │   ├── natural               (contains <span class="hljs-number">40504</span> jpg images selected from COCO_val2014)<br>    │   ├── train_images<br>    │   │   ├── image             (contains <span class="hljs-number">12151</span> png images)<br>    │   │   ├── <span class="hljs-attribute">mask</span>              (contains <span class="hljs-number">12151</span> png images)<br>    │   │   └── wm                (contains <span class="hljs-number">12151</span> png images)<br>    │   ├── val_images<br>    │   │   ├── image             (contains <span class="hljs-number">2025</span> png images)<br>    │   │   ├── <span class="hljs-attribute">mask</span>              (contains <span class="hljs-number">2025</span> png images)<br>    │   │   └── wm                (contains <span class="hljs-number">2025</span> png images)<br>    │   ├── val_input_256         (contains <span class="hljs-number">2025</span> png images, resized to <span class="hljs-number">256</span>x256)<br>    │   └── val_target_256        (contains <span class="hljs-number">2025</span> png images, resized to <span class="hljs-number">256</span>x256)<br>    ├── <span class="hljs-number">10</span>khigh                   (extracted from <span class="hljs-number">10</span>khigh.zip)<br>    │   └── same as <span class="hljs-number">10</span>kgray<br>    ├── <span class="hljs-number">10</span>kmid                    (extracted from <span class="hljs-number">10</span>kmid.zip)<br>    │   └── same as <span class="hljs-number">10</span>kgray<br>    └── <span class="hljs-number">27</span>kpng                    (extracted from <span class="hljs-number">27</span>kpng.zip)<br>        ├── natural               (contains <span class="hljs-number">32403</span> jpg images selected from COCO_val2014)<br>        ├── train_images<br>        │   ├── image             (contains <span class="hljs-number">28352</span> png images)<br>        │   ├── <span class="hljs-attribute">mask</span>              (contains <span class="hljs-number">28352</span> png images)<br>        │   └── wm                (contains <span class="hljs-number">28352</span> png images)<br>        ├── val_images<br>        │   ├── image             (contains <span class="hljs-number">4055</span> png images)<br>        │   ├── <span class="hljs-attribute">mask</span>              (contains <span class="hljs-number">4051</span> png images)<br>        │   └── wm                (contains <span class="hljs-number">4051</span> png images)<br>        └── val_target_256        (contains <span class="hljs-number">4051</span> png images, cropped to <span class="hljs-number">256</span>x256)<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>。</p>
+<p><br/></p>
+<h2 id="mnist">MNIST</h2>
+<p><a target="_blank" rel="noopener" href="http://yann.lecun.com/exdb/mnist/">官网</a></p>
+<p><strong>简要介绍</strong>：MNIST 手写数字数据集包含 60,000 个训练样本和 10,000 个测试样本。数字的大小已标准化且放置在图像中心。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：70,000</li>
+<li>划分：60,000 / 10,000 (train / test)</li>
+<li>分辨率：28×28</li>
+<li>标注：10 类</li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── MNIST<br>    └── MNIST<br>        └── raw<br>            ├── t10k-images-idx3-ubyte<br>            ├── t10k-images-idx3-ubyte.gz<br>            ├── t10k-labels-idx1-ubyte<br>            ├── t10k-labels-idx1-ubyte.gz<br>            ├── train-images-idx3-ubyte<br>            ├── train-images-idx3-ubyte.gz<br>            ├── train-labels-idx1-ubyte<br>            └── train-labels-idx1-ubyte.gz<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>mnist = dset.MNIST(root=<span class="hljs-string">&#x27;/data/MNIST&#x27;</span>, train=<span class="hljs-literal">True</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(mnist)<br><span class="hljs-number">60000</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>mnist = dset.MNIST(root=<span class="hljs-string">&#x27;/data/MNIST&#x27;</span>, train=<span class="hljs-literal">False</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(mnist)<br><span class="hljs-number">10000</span><br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="nvidia-irregular-mask-dataset">NVIDIA Irregular Mask Dataset</h2>
+<p><a target="_blank" rel="noopener" href="https://nv-adlr.github.io/publication/partialconv-inpainting">官网</a> | <a target="_blank" rel="noopener" href="https://www.dropbox.com/s/qp8cxqttta4zi70/irregular_mask.zip?dl=0">Dropbox (irregular_mask.zip)</a> | <a target="_blank" rel="noopener" href="https://www.dropbox.com/s/01dfayns9s0kevy/test_mask.zip?dl=0">Dropbox (test_mask.zip)</a></p>
+<p><strong>简要介绍</strong>：随机掩码来源于估计视频中两个相邻帧之间遮挡/非遮挡掩码。数据集提出者采用这种方式生成了 55,116 个用于训练的掩码，训练时首先从 55,116 个掩码中随机采样一个掩码，然后进行随机膨胀、旋转和裁剪来增强掩码数据集。用同样的方式生成了 24,866 个测试掩码，经过随机增强后按照面积比例划分为 6 组：(0.01, 0.1], (0.1, 0.2], (0.2, 0.3], (0.3, 0.4], (0.4, 0.5], (0.5, 0.6]，每组 2,000 个掩码，其中 1,000 个没有靠近边缘的缺失像素，另外 1,000 个有靠近边缘的缺失像素，最终形成大小为 12,000 的测试集。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>划分（官方）：55,116 / 12,000 (train / test)</li>
+<li>划分（个人用法，见「使用说明」）：76,800 / 19,200 (train / test)</li>
+<li>分辨率：
+<ul>
+<li>训练集（增强前）：960×640</li>
+<li>测试集：512×512</li>
+</ul></li>
+</ul>
+<p><strong>使用说明（重要！）</strong>：从「简要介绍」可以看到，NVIDIA 官方提供的训练集并不是最终的训练数据，需要在训练时做增强操作。但考虑到数据增强的耗时，很多研究只采用官方测试集中的图片训练和测试，因此需要重新制作和划分训练、测试集。我这里采用类似于 EdgeConnect 的做法重新划分训练、测试集，具体方法为：每张官方测试集中的掩码图片在翻转和旋转后可以生成 8 张图片，因此原来的测试集大小被扩张到 96,000，再随机按 4:1 划分新的训练/测试集（详见 <a target="_blank" rel="noopener" href="https://github.com/knazeri/edge-connect/issues/28#issuecomment-456440064">knazeri/edge-connect#28 (comment)</a>）。划分脚本如下 <code>_make_irregular_dataset.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">from</span> tqdm <span class="hljs-keyword">import</span> tqdm<br><br><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">import</span> torchvision.transforms <span class="hljs-keyword">as</span> T<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    irregular_mask = <span class="hljs-string">&#x27;/data/NVIDIAIrregularMaskDataset/downloaded_test/&#x27;</span><br>    save_path_train = <span class="hljs-string">&#x27;/data/NVIDIAIrregularMaskDataset/train/&#x27;</span><br>    save_path_test = <span class="hljs-string">&#x27;/data/NVIDIAIrregularMaskDataset/test/&#x27;</span><br><br>    masks = os.listdir(irregular_mask)<br>    <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">6</span>):<br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(os.path.join(save_path_train, <span class="hljs-built_in">str</span>(k))):<br>            os.mkdir(os.path.join(save_path_train, <span class="hljs-built_in">str</span>(k)))<br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> os.path.exists(os.path.join(save_path_test, <span class="hljs-built_in">str</span>(k))):<br>            os.mkdir(os.path.join(save_path_test, <span class="hljs-built_in">str</span>(k)))<br><br>        tests = np.random.choice(np.arange(<span class="hljs-number">2000</span>), size=<span class="hljs-number">400</span>, replace=<span class="hljs-literal">False</span>)<br>        <span class="hljs-keyword">for</span> idx, fileid <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(tqdm(<span class="hljs-built_in">range</span>(k * <span class="hljs-number">2000</span>, (k + <span class="hljs-number">1</span>) * <span class="hljs-number">2000</span>))):<br>            mask = Image.<span class="hljs-built_in">open</span>(os.path.join(irregular_mask, <span class="hljs-built_in">str</span>(fileid).zfill(<span class="hljs-number">5</span>)+<span class="hljs-string">&#x27;.png&#x27;</span>))<br>            mask = T.ToTensor()(mask)<br>            <span class="hljs-comment"># binarization</span><br>            mask = torch.where(mask &lt; <span class="hljs-number">0.5</span>, <span class="hljs-number">0.</span>, <span class="hljs-number">1.</span>)<br>            <span class="hljs-comment"># rotation &amp; flipping</span><br>            <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">4</span>):<br>                <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">2</span>):<br>                    tmp = T.RandomRotation((i * <span class="hljs-number">90</span>, i * <span class="hljs-number">90</span>))(mask)<br>                    tmp = T.RandomHorizontalFlip(p=j)(tmp)<br>                    tmp = T.ToPILImage()(tmp)<br><br>                    <span class="hljs-keyword">if</span> idx <span class="hljs-keyword">in</span> tests:<br>                        tmp.save(os.path.join(save_path_test, <span class="hljs-built_in">str</span>(k), <span class="hljs-built_in">str</span>(fileid).zfill(<span class="hljs-number">5</span>)+<span class="hljs-string">f&#x27;_<span class="hljs-subst">&#123;i*<span class="hljs-number">2</span>+j&#125;</span>.png&#x27;</span>))<br>                    <span class="hljs-keyword">else</span>:<br>                        tmp.save(os.path.join(save_path_train, <span class="hljs-built_in">str</span>(k), <span class="hljs-built_in">str</span>(fileid).zfill(<span class="hljs-number">5</span>)+<span class="hljs-string">f&#x27;_<span class="hljs-subst">&#123;i*<span class="hljs-number">2</span>+j&#125;</span>.png&#x27;</span>))<br></code></pre></td></tr></table></figure>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── NVIDIAIrregularMaskDataset<br>    ├── _make_irregular_dataset.py<br>    ├── downloaded_train.zip          (1.33 GB, renamed)<br>    ├── downloaded_test.zip           (44.9 MB, renamed)<br>    ├── downloaded_train              (extracted from downloaded_train.zip, renamed)<br>    │   ├── 00001.png<br>    │   ├── ...<br>    │   └── 55116.png<br>    ├── downloaded_test               (extracted from downloaded_test.zip, renamed)<br>    │   ├── 00000.png<br>    │   ├── ...<br>    │   └── 11999.png<br>    ├── train.zip                     (285 MB)<br>    ├── test.zip                      (71.3 MB)<br>    ├── train                         (created by _make_irregular_dataset.py)<br>    └── test                          (created by _make_irregular_dataset.py)<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>。</p>
+<p><br/></p>
+<h2 id="oxford-102-flower">Oxford 102 Flower</h2>
+<p><a target="_blank" rel="noopener" href="https://www.robots.ox.ac.uk/~vgg/data/flowers/102/">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/oxford-102-flower">Papers with Code</a></p>
+<p><strong>简要介绍</strong>：Oxford 102 Flower 是一个包含 102 个花卉类别的图像分类数据集。所选花卉是英国常见的花卉。每个类别包含 40 至 258 张图像。这些图像在大小、姿态和光照上都有很大的变化。此外，有些类别内部变化很大，还有一些类别非常相似。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：8,189</li>
+<li>划分：1,020 / 1,020 / 6,149 (train / valid / test)</li>
+<li>分辨率：不一致，但最小边长均为 500</li>
+<li>标注：102 类</li>
+</ul>
+<p><strong>下载</strong>：官网提供了 6 个下载链接，分别是：</p>
+<table>
+<thead>
+<tr class="header">
+<th>内容</th>
+<th>文件名</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dataset images</td>
+<td><code>102flowers.tgz</code></td>
+<td>344.9 MB</td>
+</tr>
+<tr class="even">
+<td>Image segmentations</td>
+<td><code>102segmentations.tgz</code></td>
+<td>203.6 MB</td>
+</tr>
+<tr class="odd">
+<td>&amp;Chi2 distances</td>
+<td><code>distancematrices102.mat</code></td>
+<td>1.98 GB</td>
+</tr>
+<tr class="even">
+<td>The image labels</td>
+<td><code>imagelabels.mat</code></td>
+<td>502 B</td>
+</tr>
+<tr class="odd">
+<td>The data splits</td>
+<td><code>setid.mat</code></td>
+<td>15 KB</td>
+</tr>
+<tr class="even">
+<td>README</td>
+<td><code>README.txt</code></td>
+<td>/</td>
+</tr>
+</tbody>
+</table>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── Oxford-102-Flower<br>    └── flowers-102<br>        ├── README.txt<br>        ├── imagelabels.mat<br>        ├── setid.mat<br>        ├── distancematrices102.mat<br>        ├── 102flowers.tgz            (344.9 MB)<br>        ├── 102segmentations.tgz      (203.6 MB)<br>        ├── jpg                       (extracted from 102flowers.tgz)<br>        │   ├── image_00001.jpg<br>        │   ├── ...<br>        │   └── image_08189.jpg<br>        └── segmim                    (extracted from 102segmentations.tgz)<br>            ├── segmim_00001.jpg<br>            ├── ...<br>            └── segmim_08189.jpg<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>。</p>
+<p><br/></p>
+<h2 id="paris-streetview">Paris StreetView</h2>
+<p><strong>官网与下载</strong>：需要联系作者，见 https://github.com/pathak22/context-encoder/issues/24</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：15,000</li>
+<li>划分：14,900 / 100 (train / test)</li>
+<li>分辨率：
+<ul>
+<li>训练集：936×537</li>
+<li>测试集：227×227</li>
+</ul></li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── ParisStreetView<br>    ├── paris_eval_75876.zip                  (16.2 MB)<br>    ├── paris_train_original.zip              (1.22 GB)<br>    ├── paris_eval_gt                         (extracted from paris_eval_75876.zip)<br>    │   ├── 001_im.png<br>    │   ├── ...<br>    │   └── 100_im.png<br>    ├── paris_eval_corrupted                  (extracted from paris_eval_75876.zip)<br>    │   ├── 001_im.png<br>    │   ├── ...<br>    │   └── 100_im.png<br>    └── paris_train_original                  (extracted from paris_train_original.zip)<br>        ├── 48.842502_2.344968_90_-004.JPG<br>        ├── ...<br>        └── 48.867048_2.348918_270_-004.JPG<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">ParisStreetView</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    The downloaded data should be organized in the following structure:</span><br><span class="hljs-string"></span><br><span class="hljs-string">    - root/</span><br><span class="hljs-string">        - paris_train_original/ (14,900 images extracted from paris_train_original.zip)</span><br><span class="hljs-string">            - 48.842502_2.344968_90_-004.JPG</span><br><span class="hljs-string">            - ...</span><br><span class="hljs-string">        - paris_eval_gt/ (100 images extracted from paris_eval_75876.zip)</span><br><span class="hljs-string">            - 001_im.png</span><br><span class="hljs-string">            - ...</span><br><span class="hljs-string"></span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, root, split=<span class="hljs-string">&#x27;train&#x27;</span>, transform=<span class="hljs-literal">None</span></span>):<br>        <span class="hljs-keyword">assert</span> split <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;train&#x27;</span>, <span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-string">&#x27;all&#x27;</span>]<br>        train_root = os.path.join(root, <span class="hljs-string">&#x27;paris_train_original&#x27;</span>)<br>        eval_root = os.path.join(root, <span class="hljs-string">&#x27;paris_eval_gt&#x27;</span>)<br>        <span class="hljs-keyword">assert</span> os.path.isdir(root) <span class="hljs-keyword">and</span> os.path.isdir(train_root) <span class="hljs-keyword">and</span> os.path.isdir(eval_root)<br><br>        self.transform = transform<br><br>        img_ext = [<span class="hljs-string">&#x27;.png&#x27;</span>, <span class="hljs-string">&#x27;.jpg&#x27;</span>, <span class="hljs-string">&#x27;.jpeg&#x27;</span>]<br>        self.img_paths = []<br>        <span class="hljs-keyword">if</span> split <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;train&#x27;</span>, <span class="hljs-string">&#x27;all&#x27;</span>]:<br>            <span class="hljs-keyword">for</span> curdir, subdirs, files <span class="hljs-keyword">in</span> os.walk(train_root):<br>                <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> files:<br>                    <span class="hljs-keyword">if</span> os.path.splitext(file)[<span class="hljs-number">1</span>].lower() <span class="hljs-keyword">in</span> img_ext:<br>                        self.img_paths.append(os.path.join(curdir, file))<br>        <span class="hljs-keyword">if</span> split <span class="hljs-keyword">in</span> [<span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-string">&#x27;all&#x27;</span>]:<br>            <span class="hljs-keyword">for</span> curdir, subdirs, files <span class="hljs-keyword">in</span> os.walk(eval_root):<br>                <span class="hljs-keyword">for</span> file <span class="hljs-keyword">in</span> files:<br>                    <span class="hljs-keyword">if</span> os.path.splitext(file)[<span class="hljs-number">1</span>].lower() <span class="hljs-keyword">in</span> img_ext:<br>                        self.img_paths.append(os.path.join(curdir, file))<br>        self.img_paths = <span class="hljs-built_in">sorted</span>(self.img_paths)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.img_paths)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, item</span>):<br>        X = Image.<span class="hljs-built_in">open</span>(self.img_paths[item])<br>        <span class="hljs-keyword">if</span> self.transform <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>            X = self.transform(X)<br>        <span class="hljs-keyword">return</span> X<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    dataset = ParisStreetView(root=<span class="hljs-string">&#x27;/data/ParisStreetView&#x27;</span>, split=<span class="hljs-string">&#x27;train&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = ParisStreetView(root=<span class="hljs-string">&#x27;/data/ParisStreetView&#x27;</span>, split=<span class="hljs-string">&#x27;test&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br>    dataset = ParisStreetView(root=<span class="hljs-string">&#x27;/data/ParisStreetView&#x27;</span>, split=<span class="hljs-string">&#x27;all&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(<span class="hljs-built_in">len</span>(dataset))<br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="pascal-voc">PASCAL-VOC</h2>
+<p><a target="_blank" rel="noopener" href="http://host.robots.ox.ac.uk/pascal/VOC/">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/pascal-voc">Papers with Code</a></p>
+<p><strong>详细统计数据</strong>：http://host.robots.ox.ac.uk/pascal/VOC/voc2007/dbstats.html</p>
+<p><strong>说明</strong>：最常用的两个版本是 2007 和 2012，检测和分割可用的数据量也有所不同</p>
+<ul>
+<li><p>数量及划分：</p>
+<ul>
+<li><p>2007 Detection</p>
+<p>9,963 images，24,640 objects</p>
+<p>2,501 / 2,510 / 4,952 (train / valid / test)</p></li>
+<li><p>2007 Segmentation</p>
+<p>632 images</p>
+<p>209 / 213 / 210 (train / valid / test)</p></li>
+<li><p>2012 Detection</p>
+<p>11,540 images，27,450 objects</p>
+<p>5,717 / 5,823 (train / valid)</p></li>
+<li><p>2012 Segmentation</p>
+<p>2,913 images</p>
+<p>1,464 / 1,449 (train / valid)</p></li>
+</ul></li>
+<li><p>分辨率：各图片不一致，大多 500×375 左右</p></li>
+<li><p>标注：Bounding boxes、语义/实例分割 mask</p></li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── PASCAL-VOC<br>    ├── VOCtrainval_06-Nov-2007.tar      (460 MB)<br>    ├── VOCtest_06-Nov-2007.tar          (451 MB)<br>    ├── VOCtrainval_11-May-2012.tar      (2 GB)<br>    └── VOCdevkit                        (extracted from *.tar)<br>        ├── VOC2007<br>        │   ├── Annotations<br>        │   │   ├── 000001.xml<br>        │   │   ├── ...<br>        │   │   └── 009963.xml<br>        │   ├── ImageSets<br>        │   │   ├── Layout<br>        │   │   │   ├── test.txt<br>        │   │   │   ├── train.txt<br>        │   │   │   ├── trainval.txt<br>        │   │   │   └── val.txt<br>        │   │   ├── Main<br>        │   │   │   ├── aeroplane_test.txt<br>        │   │   │   ├── ...<br>        │   │   │   └── val.txt<br>        │   │   └── Segmentation<br>        │   │       ├── test.txt<br>        │   │       ├── train.txt<br>        │   │       ├── trainval.txt<br>        │   │       └── val.txt<br>        │   ├── JPEGImages<br>        │   │   ├── 000001.jpg<br>        │   │   ├── ...<br>        │   │   └── 009963.jpg<br>        │   ├── SegmentationClass<br>        │   │   ├── 000032.jpg<br>        │   │   ├── ...<br>        │   │   └── 009950.jpg<br>        │   └── SegmentationObject<br>        │       ├── 000032.jpg<br>        │       ├── ...<br>        │       └── 009950.jpg<br>        └── VOC2012                      (same as VOC2007)<br></code></pre></td></tr></table></figure>
+<p><strong>使用 torchvision 加载数据集</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;train&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">2501</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;val&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">2510</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;trainval&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">5011</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;test&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">4952</span><br><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;train&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">209</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;val&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">213</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;trainval&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">422</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2007&#x27;</span>, image_set=<span class="hljs-string">&#x27;test&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">210</span><br><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2012&#x27;</span>, image_set=<span class="hljs-string">&#x27;train&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">5717</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2012&#x27;</span>, image_set=<span class="hljs-string">&#x27;val&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">5823</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCDetection(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2012&#x27;</span>, image_set=<span class="hljs-string">&#x27;trainval&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">11540</span><br><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2012&#x27;</span>, image_set=<span class="hljs-string">&#x27;train&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">1464</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2012&#x27;</span>, image_set=<span class="hljs-string">&#x27;val&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">1449</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>voc = dset.VOCSegmentation(root=<span class="hljs-string">&#x27;/data/PASCAL-VOC&#x27;</span>, year=<span class="hljs-string">&#x27;2012&#x27;</span>, image_set=<span class="hljs-string">&#x27;trainval&#x27;</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(voc)<br><span class="hljs-number">2913</span><br></code></pre></td></tr></table></figure>
+<p><br/></p>
+<h2 id="places365">Places365</h2>
+<p><a target="_blank" rel="noopener" href="http://places2.csail.mit.edu/index.html">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/places365">Papers with Code</a> | <a target="_blank" rel="noopener" href="http://places2.csail.mit.edu/download-private.html">下载链接</a></p>
+<p><strong>简要介绍</strong>：Places365 数据集是一个场景识别数据集，由 1000 万张图像组成，包括 434 个场景类别。数据集有两个版本：Places365-Standard 包括 180 万个训练图像和 36000 个验证图像，涵盖了 365 个场景类别；Places365-Challenge-2016 在训练集中增加了 620 万张额外的图像，包括了 69 个新的场景类别（总共涵盖了 434 个场景类别），达到了 800 万张的训练图像。</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li><strong>Places365-Standard</strong>
+<ul>
+<li>数量：2,168,460</li>
+<li>划分：1,803,460 / 36,500 / 328,500 (train / valid / test)</li>
+<li>分辨率：
+<ul>
+<li>High-resolution：按照短边 512、保留长宽比缩放，若原图小于 512 则不变</li>
+<li>Small：直接缩放至 256×256，不管原始长宽比</li>
+</ul></li>
+<li>标注：365 类场景</li>
+</ul></li>
+<li><strong>Places365-Challenge-2016</strong>
+<ul>
+<li>数量：训练集在 Standard 的基础上额外添加了 6.2 million；验证集和测试集不变</li>
+<li>划分：8,026,628 / 36,500 / 328,500 (train / valid / test)</li>
+<li>标注：365 类场景</li>
+</ul></li>
+<li><strong>Places-Extra69</strong>
+<ul>
+<li>划分：98,721 / 6,600 (train / test)</li>
+<li>标注：额外 69 类场景</li>
+</ul></li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── Places365<br>    ├── categories_places365.txt<br>    ├── places365_train_standard.txt<br>    ├── places365_train_challenge.txt<br>    ├── places365_val.txt<br>    ├── places365_test.txt<br>    ├── train_256_places365standard.tar    (26.1 GB, MD5: 53ca1c756c3d1e7809517cc47c5561c5)<br>    ├── train_large_places365standard.tar  (112.6 GB, MD5: 67e186b496a84c929568076ed01a8aa1)<br>    ├── train_256_places365challenge.tar   (108 GB, MD5: 741915038a5e3471ec7332404dfb64ef)<br>    ├── train_large_places365challenge.tar (477 GB, MD5: 605f18e68e510c82b958664ea134545f)<br>    ├── val_256.tar                        (525.2 MB, MD5: e27b17d8d44f4af9a78502beb927f808)<br>    ├── val_large.tar                      (2.27 GB, MD5: 9b71c4993ad89d2d8bcbdc4aef38042f)<br>    ├── test_256.tar                       (4.74 GB, MD5: f532f6ad7b582262a2ec8009075e186b)<br>    ├── test_large.tar                     (20.48 GB, MD5: 41a4b6b724b1d2cd862fb3871ed59913)<br>    ├── data_256_standard                  (extracted from train_256_places365standard.tar)<br>    │   ├── a<br>    │   ├── ...<br>    │   └── z<br>    ├── data_large_standard                (extracted from train_large_places365standard.tar)<br>    │   ├── a<br>    │   ├── ...<br>    │   └── z<br>    ├── val_256                            (extracted from val_256.tar)<br>    │   ├── Places365_val_00000001.jpg<br>    │   ├── ...<br>    │   └── Places365_val_00036500.jpg<br>    ├── val_large                          (extracted from val_large.tar)<br>    │   ├── Places365_val_00000001.jpg<br>    │   ├── ...<br>    │   └── Places365_val_00036500.jpg<br>    ├── test_256                           (extracted from test_256.tar)<br>    │   ├── Places365_test_00000001.jpg<br>    │   ├── ...<br>    │   └── Places365_test_00328500.jpg<br>    └── test_large                         (extracted from test_large.tar)<br>        ├── Places365_test_00000001.jpg<br>        ├── ...<br>        └── Places365_test_00328500.jpg<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>注：我目前只下载了 Places365-Standard.</p>
+</blockquote>
+<p><strong>使用 torchvision 加载数据集（不支持测试集）</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> torchvision.datasets <span class="hljs-keyword">as</span> dset<br><span class="hljs-meta">&gt;&gt;&gt; </span>places = dset.Places365(root=<span class="hljs-string">&#x27;/data/Places365&#x27;</span>, split=<span class="hljs-string">&#x27;train-standard&#x27;</span>, small=<span class="hljs-literal">True</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(places)<br><span class="hljs-number">1803460</span><br><span class="hljs-meta">&gt;&gt;&gt; </span>places = dset.Places365(root=<span class="hljs-string">&#x27;/data/Places365&#x27;</span>, split=<span class="hljs-string">&#x27;val&#x27;</span>, small=<span class="hljs-literal">True</span>)<br><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-built_in">len</span>(places)<br><span class="hljs-number">36500</span><br></code></pre></td></tr></table></figure>
+<p><strong>可以自定义 <code>Dataset</code> 加载测试集</strong>。</p>
+<p><br/></p>
+<h2 id="raindrop">Raindrop</h2>
+<p><a target="_blank" rel="noopener" href="https://github.com/rui1996/DeRaindrop">官网</a> | <a target="_blank" rel="noopener" href="https://paperswithcode.com/dataset/raindrop">Papers with Code</a> | <a target="_blank" rel="noopener" href="https://drive.google.com/open?id=1e7R76s6vwUJxILOcAsthgDLPSnOrQ49K">Google Drive</a></p>
+<p><strong>简要介绍</strong>：Raindrop 是一个真实拍摄（而非合成）的用于去雨滴任务的数据集，由若干图像对构成。每对图像包含完全相同的背景，但其中一个图像有雨滴，而另一个图像则没有。为此，使用两片完全相同的玻璃——一片喷有水、另一片保持干净——附在相机镜头上拍摄。拍摄设备为 Sony A6000 和 Canon EOS 60.</p>
+<p><strong>基本信息</strong>：</p>
+<ul>
+<li>数量：1,110</li>
+<li>划分：861 / 249 (train / test_b)；另外，取 test_b 中对齐比较好的 58 对图片构成 test_a.</li>
+<li>分辨率：多数 720×480，有少量例外，但也很接近。</li>
+</ul>
+<p><strong>本地目录结构</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs text">data<br>└── Raindrop<br>    ├── train.zip               (1.07 GB)<br>    ├── test_a.zip              (63.7 MB)<br>    ├── test_b.zip              (154.4 MB)<br>    ├── train                   (extracted from train.zip)<br>    │   ├── data                (contains 861 png images)<br>    │   ├── gt                  (contains 861 png images)<br>    │   └── preview.html<br>    ├── test_a                  (extracted from test_a.zip)<br>    │   ├── data                (contains 58 png images)<br>    │   └── gt                  (contains 58 png images)<br>    └── test_b                  (extracted from test_b.zip)<br>        ├── data                (contains 249 jpg images)<br>        └── gt                  (contains 249 jpg images)<br></code></pre></td></tr></table></figure>
+<p><strong>需要自定义 <code>Dataset</code> 加载数据集</strong>。</p>
+<p><br/></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" class="category-chain-item">计算机视觉</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>计算机视觉常用数据集</div>
+      <div>https://xyfjason.github.io/blog-main/2022/09/14/计算机视觉常用数据集/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月14日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/09/17/VAE%E6%A2%B3%E7%90%86/" title="VAE梳理">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">VAE梳理</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/09/04/k-means%E6%8E%A2%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89soft-k-means/" title="k-means探究（二）soft k-means">
+                        <span class="hidden-mobile">k-means探究（二）soft k-means</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1052 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\pdata}{p_\text{data}} \newcommand{\x}{\mathbf x} \newcommand{\v}{\mathbf v} \newcommand{\R}{\mathbb R} \newcommand{\T}{\mathsf T} \] Brief Introduction 在从VAE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Score-Based Generative Models">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/10/13/Score-Based-Generative-Models/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\pdata}{p_\text{data}} \newcommand{\x}{\mathbf x} \newcommand{\v}{\mathbf v} \newcommand{\R}{\mathbb R} \newcommand{\T}{\mathsf T} \] Brief Introduction 在从VAE">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/score-based.png">
+<meta property="article:published_time" content="2022-10-13T09:14:18.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:07:40.004Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/score-based.png">
+  
+  
+  
+  <title>Score-Based Generative Models - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/score-based.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Score-Based Generative Models"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-13 17:14" pubdate>
+          2022年10月13日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          23k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          189 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Score-Based Generative Models</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\pdata}{p_\text{data}}
+\newcommand{\x}{\mathbf x}
+\newcommand{\v}{\mathbf v}
+\newcommand{\R}{\mathbb R}
+\newcommand{\T}{\mathsf T}
+\]</span></p>
+<h2 id="brief-introduction">Brief Introduction</h2>
+<p>在<a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">从VAE到DDPM</a>一文中，我们从 VAE 出发，通过变分推断得到了 DDPM 的理论框架；我们发现 DDPM 可以看作是具有人为指定的后验分布（即前向过程）的层次化 VAE。这一角度的代表论文是 2015 年的 Sohl-Dickstein et al.<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. Deep unsupervised learning using nonequilibrium thermodynamics. In *International Conference on Machine Learning*, pp. 2256-2265. PMLR, 2015.">[1]</span></a></sup> 和 2020 年的 DDPM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. *Advances in Neural Information Processing Systems* 33 (2020): 6840-6851.">[2]</span></a></sup>。与此同时，以<a target="_blank" rel="noopener" href="https://yang-song.net/">宋飏</a>博士的几篇论文<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. *Advances in Neural Information Processing Systems* 32 (2019).">[3]</span></a></sup><sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[4]</span></a></sup>为代表，人们从 score matching + Langevin dynamics (SMLD) 的角度出发得到了与 DDPM 本质相同的模型，称为 score-based generative models。两个角度出发点截然不同，但殊途同归，也是非常有意思了。</p>
+<h2 id="score-function">Score Function</h2>
+<p>所谓生成模型，就是希望对数据分布 <span class="math inline">\(\pdata(\x)\)</span> 建模，使得我们能够从该分布中随意采样。假设我们构建了一个以 <span class="math inline">\(\theta\)</span> 为参数的模型 <span class="math inline">\(f_\theta:\R^d\to\R\)</span>（一般称为 Energy-Based Model, EBM），那么可用以下形式获得概率分布： <span class="math display">\[
+p_\theta(\x)=\frac{e^{-f_\theta(\x)}}{Z_\theta}\tag{1}\label{p}
+\]</span> 其中 <span class="math inline">\(Z_\theta=\int_\x e^{-f_\theta(\x)}\mathrm{d}\x\)</span> 是归一化因子。</p>
+<p>训练生成模型无非就是希望极大化数据的对数似然： <span class="math display">\[
+\max_\theta\quad \E_{\pdata(\x)}[\log p_\theta(\x)]
+\]</span> 但是直接计算对数似然存在一个问题：<span class="math inline">\(Z_\theta\)</span> 通常是 intractable 的。不同的生成模型采用了不同的思路来解决这个问题，而 score-based generative models 使用 <strong>score function</strong> 来巧妙地回避开 <span class="math inline">\(Z_\theta\)</span>.</p>
+<p>Score function 定义为对数 pdf 对数据的梯度： <span class="math display">\[
+s(\x)=\nabla_\x\log p(\x)
+\]</span> 那么对于 <span class="math inline">\(\eqref{p}\)</span> 式来说，其 score function 为： <span class="math display">\[
+s_\theta(\x)=\nabla_\x \log p_\theta(\x)=\nabla_\x \log \frac{e^{-f_\theta(\x)}}{Z_\theta}=-\nabla_\x f_\theta(\x)
+\]</span> 可以看见<strong>由于 <span class="math inline">\(Z_\theta\)</span> 与 <span class="math inline">\(\x\)</span> 无关，对 <span class="math inline">\(\x\)</span> 求梯度后就直接变成零了</strong>！这启发我们直接对 score function 建模，即构建一个模型 <span class="math inline">\(s_\theta(\x)\)</span>，用它去近似真实数据分布的 score function： <span class="math display">\[
+s_\theta(\x)\xrightarrow{\text{approximate}} s_\text{data}(\x)=\nabla_\x\log \pdata(\x)
+\]</span> 此过程称作 <strong>score matching</strong>.</p>
+<p>Score function 是一个向量场，指示了从当前点去到分布密度更大的地方的方向，如下图所示：</p>
+<p><img src="https://yang-song.net/assets/img/score/score_contour.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=40% /></p>
+<p>因此模型学习到了 score function，也就相当于学到了数据分布。</p>
+<h2 id="score-matching">Score Matching</h2>
+<p>为了训练模型 <span class="math inline">\(s_\theta(\x)\)</span>，我们最小化它与 <span class="math inline">\(s_\text{data}(\x)\)</span> 的均方距离（也即是模型给出的分布和数据分布之间的 Fisher Divergence）： <span class="math display">\[
+\min_\theta\quad J_\text{ESM}(\theta)=\frac{1}{2}\E_{\pdata(\x)}\left[\|s_\text{data}(\x)-s_\theta(\x)\|_2^2\right]\tag{2}\label{esm}
+\]</span> 下标 ESM 是 Explicit Score Matching 的意思，explicit 是指该函数要求我们显式地知道 <span class="math inline">\(s_\text{data}(\x)\)</span>，但这恰恰是我们不知道的。我们可以通过 Parzen 窗对其做非参估计，但是论文<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Hyvärinen, Aapo, and Peter Dayan. Estimation of non-normalized statistical models by score matching. *Journal of Machine Learning Research* 6, no. 4 (2005).">[5]</span></a></sup>的作者指出没有这个必要，我们可以使用一个分部积分去掉 <span class="math inline">\(s_\text{data}(\x)\)</span>。具体而言，将 <span class="math inline">\(\eqref{esm}\)</span> 式展开： <span class="math display">\[
+\begin{align}
+J_\text{ESM}(\theta)&amp;=\frac{1}{2}\E_{\pdata(\x)}\left[\|s_\text{data}(\x)-s_\theta(\x)\|_2^2\right]\\
+&amp;=\E_{\pdata(\x)}\left[\frac{1}{2}\|s_\text{data}(\x)\|^2-s_\text{data}(\x)^T s_\theta(\x)+\frac{1}{2}\|s_\theta(\x)\|^2\right]
+\end{align}
+\]</span> 第一项与 <span class="math inline">\(\theta\)</span> 无关可以略去，最后一项可以直接优化，唯一需要处理的是中间项： <span class="math display">\[
+\begin{align}
+-\E_{\pdata(\x)}[s_\text{data}(\x)^Ts_\theta(\x)]
+&amp;=-\int \pdata(\x) \sum_{i=1}^d s_\text{data}(\x)_is_\theta(\x)_i\mathrm{d}\x\\
+&amp;=-\sum_{i=1}^d \int \pdata(\x) \frac{\partial \log p_\text{data}(\x)}{\partial\x_i}s_\theta(\x)_i\mathrm{d}\x\\
+&amp;=-\sum_{i=1}^d\int \frac{\pdata(\x)}{\pdata(\x)}\frac{\partial\pdata(\x)}{\partial\x_i} s_\theta(\x)_i\mathrm{d}\x\\
+&amp;=-\sum_{i=1}^d\int \frac{\partial\pdata(\x)}{\partial\x_i} s_\theta(\x)_i \mathrm{d}\x
+\end{align}
+\]</span></p>
+<div class="note note-info">
+            <p><strong>分部积分</strong></p><p>设 <span class="math inline">\(f(x),g(x)\)</span> 是关于 <span class="math inline">\(x\)</span> 的一元函数且具有连续导数，且下文出现的积分都存在，由于： <span class="math display">\[[f(x)g(x)]&#39;=f(x)g&#39;(x)+g(x)f&#39;(x)\]</span> 两边同时在 <span class="math inline">\((-\infty,+\infty)\)</span> 上积分，得到： <span class="math display">\[\lim_{x\to+\infty}f(x)g(x)-\lim_{x\to-\infty}f(x)g(x)=\int_{-\infty}^{+\infty}f(x)g&#39;(x)\mathrm{d}x+\int_{-\infty}^{+\infty}g(x)f&#39;(x)\mathrm{d}x\]</span> 即： <span class="math display">\[\int_{-\infty}^{+\infty}f(x)g&#39;(x)\mathrm{d}x=\left.[f(x)g(x)]\right|^{+\infty}_{-\infty}-\int_{-\infty}^{+\infty}g(x)f&#39;(x)\mathrm{d}x\]</span> <strong>扩展到多元函数</strong></p><p>设 <span class="math inline">\(f(\x),g(\x)\)</span> 是关于 <span class="math inline">\(\x\)</span> 的多元标量函数，固定除 <span class="math inline">\(\x_i\)</span> 外的其他变元，所有求导均为对 <span class="math inline">\(\x_i\)</span> 的偏导，那么上述推导依旧使用，因此有结论： <span class="math display">\[\begin{align}\int_{-\infty}^{+\infty}f(\x)\frac{\partial{g(\x)}}{\partial\x_i}\mathrm{d}\x&amp;=\lim_{\x_i\to+\infty}f(\ldots,\x_i,\ldots)g(\ldots,\x_i,\ldots)\\&amp;-\lim_{\x_i\to-\infty}f(\ldots,\x_i,\ldots)g(\ldots,\x_i,\ldots)\\&amp;-\int_{-\infty}^{+\infty}g(\x)\frac{\partial{f(\x)}}{\partial\x_i}\mathrm{d}\x\end{align}\]</span></p>
+          </div>
+<p>应用分部积分，并且假设 <span class="math inline">\(\pdata(\ldots,\x_i,\ldots)s_\theta(\ldots,\x_i,\ldots)_i\to 0(\x_i\to\pm\infty)\)</span>，那么中间项变成： <span class="math display">\[
+\begin{align}
+-\sum_{i=1}^d\int \frac{\partial\pdata(\x)}{\partial\x_i} s_\theta(\x)_i \mathrm{d}\x
+&amp;=\sum_{i=1}^d\int \frac{\partial s_\theta(\x)_i}{\partial\x_i} \pdata(\x) \mathrm{d}\x\\
+&amp;=\int \pdata(\x) \sum_{i=1}^d \frac{\partial s_\theta(\x)_i}{\partial\x_i} \mathrm{d}\x\\
+&amp;=\E_{\x\sim\pdata}\left[\sum_{i=1}^d \frac{\partial s_\theta(\x)_i}{\partial\x_i}\right]
+\end{align}
+\]</span> 于是最终优化目标为： <span class="math display">\[
+J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\sum_{i=1}^d \left(\frac{\partial s_\theta(\x)_i}{\partial\x_i}+\frac{1}{2}s_\theta(\x)_i^2\right)\right]\tag{3}\label{ism}
+\]</span> 下标 ISM 指 Implicit Score Matching，与 ESM 相对应。如果用 <span class="math inline">\(s_\theta(\x)\)</span> 的 Jacobian 矩阵 <span class="math inline">\(\nabla_\x s_\theta(\x)\)</span> 来表示，就是： <span class="math display">\[
+J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\text{tr}\left({\nabla_\x s_\theta(\x)}\right)+\frac{1}{2}\|s_\theta(\x)\|^2\right]\tag{3&#39;}\label{ism&#39;}
+\]</span> 当然，由于 <span class="math inline">\(s_\theta(\x)\)</span> 本身是 <span class="math inline">\(\log p_\theta(\x)\)</span> 的梯度，所以前者的 Jacobian 矩阵，也是后者的 Hessian 矩阵，所以也可以写成： <span class="math display">\[
+J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\text{tr}\left({\nabla^2_\x \log p_\theta(\x)}\right)+\frac{1}{2}\|\nabla_\x\log p_\theta(\x)\|^2\right]\tag{3&#39;&#39;}\label{ism&#39;&#39;}
+\]</span> 只是记号上的不同罢了。</p>
+<p>可以看见，现在的优化目标期望里面已经没有 <span class="math inline">\(\pdata(\x)\)</span> 或 <span class="math inline">\(s_\text{data}(\x)\)</span> 了，而期望本身通过训练过程的采样来近似。</p>
+<p>当然，上述推导过程要成立也有一些条件，比如用分部积分要求 <span class="math inline">\(s_\theta(\x)\)</span> 和 <span class="math inline">\(\pdata(\x)\)</span> 可导，出现的所有期望要存在，以及上文已经提到过的 <span class="math inline">\(\pdata(\x)s_\theta(\x)\to 0\ (\Vert\x\Vert \to\infty)\)</span>. 好在这些条件都容易满足。</p>
+<h3 id="denoising-score-matching">Denoising Score Matching</h3>
+<p>上文中，我们使用分部积分巧妙地去掉了 <span class="math inline">\(s_\text{data}(\x)=\nabla_\x \log\pdata(\x)\)</span>，避免了对数据分布做非参估计，但是代价是引入了 <span class="math inline">\(\text{tr}\left(\nabla_\x s_\theta(\x)\right)\)</span>，意味着我们还要对 score function 求导（即求 <span class="math inline">\(\log\pdata(\x)\)</span> 的 Hessian 矩阵）。虽然这个操作可以通过 <code>torch.autograd.grad()</code> 实现，但反向传播次数增加了 <span class="math inline">\(d\)</span> 倍（<span class="math inline">\(d\)</span> 为数据维数），在深度网络和高维数据的场景下效率很差。那如果我们做非参估计会怎样呢？考虑使用带高斯核的 Parzen 窗做非参估计（也称核密度估计，Kernel Density Estimation, KDE）： <span class="math display">\[
+\begin{align}
+&amp;q_\sigma(\tilde\x)=\frac{1}{N}\sum_{i=1}^N K_\sigma\left(\tilde\x-\x_i\right)\\
+&amp;K_\sigma(\tilde\x-\x_i)=\frac{1}{(2\pi)^{d/2}\sigma^d}e^{-\frac{1}{2\sigma^2}\|\tilde\x-\x_i\|_2^2}
+\end{align}
+\]</span> 其中，当 <span class="math inline">\(\sigma\to0\)</span> 时，高斯核趋向于 Dirac delta 函数，<span class="math inline">\(q_\sigma(\x)\to \pdata(\x)\)</span>.</p>
+<p>由于上述 Parzen 窗的本质和用高斯噪声扰动数据是一致的： <span class="math display">\[
+\begin{align}
+&amp;q_\sigma(\tilde\x)=\int_\x \pdata(\x) q_\sigma(\tilde\x\vert \x) \mathrm{d}\x\\
+&amp;q_\sigma(\tilde\x\vert\x)=K_\sigma(\tilde\x-\x)=\frac{1}{(2\pi)^{d/2}\sigma^d}e^{-\frac{1}{2\sigma^2}\|\tilde\x-\x\|_2^2}
+\end{align}
+\]</span> 所以我们现在干的事其实和 denoising autoencoders 干的事是一样的，这也是为什么论文<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Vincent, Pascal. A connection between score matching and denoising autoencoders. *Neural computation* 23, no. 7 (2011): 1661-1674.">[6]</span></a></sup>的标题是「score matching 与 denoising autoencoders 之间的联系」。方便起见，下文都站在加噪扰动视角而非核密度估计的视角叙述。</p>
+<p>我们在扰动后的数据分布上做 score matching，即将 <span class="math inline">\(\eqref{esm}\)</span> 式中的 <span class="math inline">\(\pdata\)</span> 换成 <span class="math inline">\(q_\sigma\)</span>： <span class="math display">\[
+\quad J_{\text{ESM}{q_\sigma}}(\theta)=\frac{1}{2}\E_{q_\sigma(\tilde\x)}\left[\|\nabla_\tilde\x\log q_\sigma(\tilde\x)-s_\theta(\tilde\x)\|_2^2\right]
+\]</span> 可是 <span class="math inline">\(\nabla_\tilde\x\log q_\sigma(\tilde\x)\)</span> 还是无法处理。注意到由于 <span class="math inline">\(q_\sigma(\tilde\x\vert\x)\)</span> 是高斯核，<span class="math inline">\(\nabla_\tilde\x\log q_\sigma(\tilde\x\vert \x)\)</span> 是可以直接计算的： <span class="math display">\[
+\nabla_{\tilde\x}\log q_\sigma(\tilde \x\vert\x)=\frac{1}{\sigma^2}(\x-\tilde \x)\tag{4}\label{score-gauss}
+\]</span> 所以我们希望能把期望里面的 <span class="math inline">\(\nabla_\tilde\x\log q_\sigma(\tilde\x)\)</span> 变换成 <span class="math inline">\(\nabla_\tilde\x\log q_\sigma(\tilde\x\vert \x)\)</span>. 把平方打开，第一个平方项与 <span class="math inline">\(\theta\)</span> 无关扔掉，另一个平方项保留，着重考虑中间项： <span class="math display">\[
+\begin{align}
+-\E_{q_\sigma(\tilde\x)}[\langle\nabla_{\tilde\x}\log q_\sigma(\tilde\x),s_\theta(\tilde\x)\rangle]
+&amp;=-\int_{\tilde\x} q_\sigma(\tilde\x) \left\langle \frac{\nabla_{\tilde\x}q_\sigma(\tilde\x)}{q_\sigma(\tilde\x)},s_\theta(\tilde\x) \right\rangle \mathrm{d}\tilde\x\\
+&amp;=-\int_{\tilde\x}\bigg\langle \nabla_{\tilde\x}{\color{purple}{q_\sigma(\tilde\x)}},s_\theta(\tilde\x) \bigg\rangle\mathrm{d}\tilde\x\\
+&amp;=-\int_{\tilde\x}\left\langle \nabla_{\tilde\x}{\color{purple}{\int_\x \pdata(\x)q_\sigma(\tilde\x\vert \x)\mathrm{d}\x}},s_\theta(\tilde\x) \right\rangle\mathrm{d}\tilde\x\\
+&amp;=-\int_{\tilde\x}\left\langle \int_\x \pdata(\x){\color{green}{\nabla_{\tilde\x}q_\sigma(\tilde\x\vert \x)}}\mathrm{d}\x,s_\theta(\tilde\x) \right\rangle\mathrm{d}\tilde\x\\
+&amp;=-\int_{\tilde\x}\left\langle \int_\x \pdata(\x){\color{green}{q_\sigma(\tilde\x\vert \x)\nabla_{\tilde\x}\log q_\sigma(\tilde\x\vert \x)}}\mathrm{d}\x,s_\theta(\tilde\x) \right\rangle\mathrm{d}\tilde\x\\
+&amp;=-\int_{\tilde\x}\int_\x \pdata(\x)q_\sigma(\tilde\x\vert \x)\bigg\langle {\nabla_{\tilde\x}\log q_\sigma(\tilde\x\vert \x)},s_\theta(\tilde\x) \bigg\rangle\mathrm{d}\x\mathrm{d}\tilde\x\\
+&amp;=-\E_{q_\sigma(\tilde \x,\x)}[\langle {\nabla_{\tilde\x}\log q_\sigma(\tilde\x\vert \x)},s_\theta(\tilde\x)\rangle]\\
+\end{align}
+\]</span> 这样我们就得到了变换后的目标函数： <span class="math display">\[
+J&#39;=\E_{q_\sigma(\tilde\x)}\left[\frac{1}{2}\|s_\theta(\tilde\x)\|^2\right]-\E_{q_\sigma(\tilde\x,\x)}\left[\left\langle\nabla_{\tilde\x}\log q_\sigma(\tilde\x\vert \x),s_\theta(\tilde\x)\right\rangle\right]
+\]</span> 看上去有点丑，不妨配凑回平方的形式，即是论文中提出的 Denoising Score Matching (DSM) 优化目标： <span class="math display">\[
+\begin{align}
+J_\text{DSM}(\theta)&amp;=\E_{q_\sigma(\tilde\x,\x)}\left[\frac{1}{2}\left\|\nabla_{\tilde\x}\log q_\sigma(\tilde\x\vert \x)-s_\theta(\tilde\x)\right\|^2 \right]\\
+&amp;=\E_{q_\sigma(\tilde\x,\x)}\left[\frac{1}{2}\left\|\frac{\x-\tilde\x}{\sigma^2} -s_\theta(\tilde\x)\right\|^2 \right]
+\end{align}\tag{5}\label{dsm}
+\]</span></p>
+<p>直观上，<span class="math inline">\(\x-\tilde\x\)</span> 指出了加噪数据 <span class="math inline">\(\tilde\x\)</span> 回到无噪声数据的移动方向，这正与 score function 的定义相符。</p>
+<h3 id="sliced-score-matching">Sliced Score Matching</h3>
+<blockquote>
+<p>本节其实与以去噪为基础的扩散模型关系不大，但为了完整性，同时考虑到它也是宋飏大佬的工作，就顺便读了读论文。</p>
+</blockquote>
+<p>Denoising score matching 虽然解决了原始 score matching 无法 scale 到深度网络和高维数据的问题，但是本身也有两个问题：</p>
+<ul>
+<li>只能学习带有噪声的分布</li>
+<li>性能对 noise level 很敏感</li>
+</ul>
+<p>而宋飏等人在 2020 年提出的 sliced score matching<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Sahaj Garg, Jiaxin Shi, and Stefano Ermon. Sliced score matching: A scalable approach to density and score estimation. In *Uncertainty in Artificial Intelligence*, pp. 574-584. PMLR, 2020.">[7]</span></a></sup> 是另一种解决方法，其思想是把 <span class="math inline">\(s_\theta(\x)\)</span> 随机投影到向量 <span class="math inline">\(\mathbf v\)</span> 上，只在投影的方向上做匹配。具体而言，<span class="math inline">\(\eqref{esm}\)</span> 式改写作： <span class="math display">\[
+J_\text{SSM(explicit)}=\frac{1}{2}\E_{p_{\v}(\v)}\E_{\pdata(\x)}\left[\left(\v^\T s_\text{data}(\x)-\v^\T s_\theta(\x)\right)^2\right]
+\]</span> 并要求 <span class="math inline">\(\E_{p_\v(\v)}[\v\v^\T]\succ 0\)</span> 且 <span class="math inline">\(\E_{p_\v(\v)}\left[\Vert\v\Vert_2^2\right]&lt;\infty\)</span>. 常用的 <span class="math inline">\(p_\v(\v)\)</span> 包括标准多元正态分布 <span class="math inline">\(\mathcal N(0,\mathbf I)\)</span>、多元 Rademacher 分布（<span class="math inline">\(\{\pm 1\}^d\)</span> 上的均匀分布）、超球面 <span class="math inline">\(\mathbb S^{d-1}\)</span> 上的均匀分布等。</p>
+<p>与原始 score matching 类似，我们可以用分部积分去掉 <span class="math inline">\(s_\text{data}(\x)\)</span>. 同样只需着重考虑中间项： <span class="math display">\[
+\begin{align}
+-\E_{p_{\v}(\v)}\left[\E_{\pdata(\x)}\left[\left(\v^\T s_\text{data}(\x)\right)\left(\v^\T s_\theta(\x)\right)\right]\right]
+&amp;=-\E_{p_{\v}(\v)}\left[\int\pdata(\x)\left(\v^\T s_\text{data}(\x)\right)\left(\v^\T s_\theta(\x)\right)\mathrm{d}\x\right]\\
+&amp;=-\E_{p_{\v}(\v)}\left[\int\pdata(\x)\left(\v^\T\nabla_\x \log p_\text{data}(\x)\right)\left(\v^\T s_\theta(\x)\right)\mathrm{d}\x\right]\\
+&amp;=-\E_{p_{\v}(\v)}\left[\int\left(\v^\T\nabla_\x p_\text{data}(\x)\right)\left(\v^\T s_\theta(\x)\right)\mathrm{d}\x\right]\\
+&amp;=-\E_{p_{\v}(\v)}\left[\int\left(\sum_{i=1}^d v_i\frac{\partial\pdata(\x)}{\partial\x_i}\right)\left(\v^\T s_\theta(\x)\right)\mathrm{d}\x\right]\\
+&amp;=-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\int\frac{\partial\pdata(\x)}{\partial\x_i}\left(\v^\T s_\theta(\x)\right)\mathrm{d}\x\right]\\
+\end{align}
+\]</span> 利用多元函数分部积分结论，有： <span class="math display">\[
+\begin{align}
+&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i{\color{dodgerblue}{\int\frac{\partial\pdata(\x)}{\partial\x_i}\left(\v^\T s_\theta(\x)\right)\mathrm{d}\x}}\right]\\
+=&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left({\color{dodgerblue}{\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\int\left(\frac{\partial\left(\v^\T s_\theta(\x)\right)}{\partial\x_i}\right)\pdata(\x)\mathrm{d}\x}}\right)\right]\\
+=&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]+\E_{p_\v(\v)}\left[\sum_{i=1}^d v_i\pdata(\x)\left(\int\v^\T\frac{\partial s_\theta(\x))}{\partial\x_i}\mathrm{d}\x\right)\right]\\
+=&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]+\E_{p_\v(\v)}\left[\int\pdata(\x)\left(\sum_{i=1}^d v_i\v^\T \frac{\partial s_\theta(\x))}{\partial\x_i}\right)\mathrm{d}\x\right]\\
+=&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]+\E_{p_\v(\v)}\left[\E_{\pdata(\x)}\left[\v^\T \nabla_\x s_\theta(\x)\v\right]\right]\\
+\end{align}
+\]</span> 后面那项是我们想要的，现在需要证明前面那项等于 0. 在原始 score matching 中，我们是通过假设 <span class="math inline">\(\pdata(\x)s_\theta(\x)\to 0\ (\Vert\x\Vert\to \infty)\)</span> 完成的，但是现在多了个 <span class="math inline">\(\v\)</span> 来搅局。不过好在最后要对 <span class="math inline">\(p_\v(\v)\)</span> 求期望，所以我们依旧能够期待前项可以等于 0. 利用绝对值不等式把 <span class="math inline">\(\v\)</span> 拆出来，并利用柯西不等式，我们有： <span class="math display">\[
+\begin{align}
+&amp;\left|\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]\right|\\
+\leq&amp;\left|\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]\right|+\left|\E_{p_\v(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]\right|\\
+\leq&amp;\sum_{i=1}^d \lim_{\x_i\to+\infty}\sum_{j=1}^d\E_{p_\v(\v)}\left[\left| v_iv_j \right|\right]\left|\pdata(\x){s_\theta(\x)}_j\right|+\sum_{i=1}^d \lim_{\x_i\to-\infty}\sum_{j=1}^d\E_{p_\v(\v)}\left[\left| v_iv_j \right|\right]\left|\pdata(\x){s_\theta(\x)}_j\right|\\
+\leq&amp; \sum_{i=1}^d\lim_{\x_i\to+\infty}\sum_{j=1}^d\sqrt{\E_{p_\v(\v)}v_i^2\E_{p_\v(\v)}v_j^2}\left|\pdata(\x){s_\theta(\x)}_j\right|+\sum_{i=1}^d\lim_{\x_i\to-\infty}\sum_{j=1}^d\sqrt{\E_{p_\v(\v)}v_i^2\E_{p_\v(\v)}v_j^2}\left|\pdata(\x){s_\theta(\x)}_j\right|\\
+=&amp;0
+\end{align}
+\]</span> 柯西不等式的作用只是为了用上 <span class="math inline">\(\E_{p_\v(\v)}\left[\Vert\v\Vert^2_2\right]&lt;\infty\)</span> 的假设条件，进而有限项乘以无穷小依旧是无穷小。</p>
+<p>于是我们就得到了 SSM 的 implicit 形式： <span class="math display">\[
+J_\text{SSM}=\E_{p_\v(\v)}\E_{\pdata(\x)}\left[\v^\T \nabla_\x s_\theta(\x)\v+\frac{1}{2}\left(\v^\T s_\theta(\x)\right)^2\right]\tag{6}\label{ssm}
+\]</span> 特别地，当 <span class="math inline">\(p_\v(\v)\)</span> 是标准多元正态分布或多元 Rademacher 分布时，后面一项可以直接积出来：<span class="math inline">\(\E_{p_\v(\v)}\left[\left(\v^\T s_\theta(\x)\right)^2\right]=\Vert s_\theta(\x)\Vert_2^2\)</span>，即： <span class="math display">\[
+J_\text{SSM-VR}=\E_{\pdata(\x)}\left[\E_{p_\v(\v)}\left[\v^\T \nabla_\x s_\theta(\x)\v\right]+\frac{1}{2}\left\|s_\theta(\x)\right\|^2_2\right]\tag{6&#39;}\label{ssm-vr}
+\]</span> 下标 VR 是 Variance Reduction 的意思，因为直接计算相比采样近似减小了方差，效果更好。</p>
+<p><br/></p>
+<p>说了这么多，<span class="math inline">\(\eqref{ssm}\)</span> 式中不还是有 <span class="math inline">\(\nabla_\x s_\theta(\x)\)</span> 吗，怎么就减少了计算量呢？注意 <span class="math inline">\(\v^\T \nabla_\x s_\theta(\x)\v=\nabla_\x(\v^\T s_\theta(\x))\v\)</span>，所以我们可以先计算出标量 <span class="math inline">\(\v^\T s_\theta(\x)\)</span>，然后对 <span class="math inline">\(\x\)</span> 求梯度，最后乘上 <span class="math inline">\(\v\)</span>，这样反向传播次数就是直接计算 <span class="math inline">\(\nabla_\x s_\theta(\x)\)</span> 的 <span class="math inline">\(1/d\)</span> 了。</p>
+<p>另外，每次采样的投影向量个数也是影响效率的重要因素。采样越多，近似越准确，计算量也越大，所以这是一个 trade-off. 论文作者实验发现每次采样 1 个向量效果就不错了。</p>
+<h2 id="langevin-dynamics">Langevin Dynamics</h2>
+<p>在模型学到了 score function 之后，我们怎么从中采样呢？直观上，score function <span class="math inline">\(\nabla_\x\log p(\x)\)</span> 是当前点指向密度更大处的方向，所以我们可以先随机初始化一个位置，然后不断沿着 score function 的方向走，最后就能走到密度的极大值点——这个过程很像梯度下降，只不过梯度下降是在参数空间中进行，而采样是在数据空间中进行： <span class="math display">\[
+\x_{k}\gets \x_{k-1}+\alpha \nabla_\x \log p(\x_{k-1}),\quad k=1,\ldots,K
+\]</span> 然而这样做每次都到达 <span class="math inline">\(p(\x)\)</span> 的极大值点，并不是我们希望的从 <span class="math inline">\(p(\x)\)</span> 采样。不过基于类似的思想，<strong>Langevin dynamics</strong> 加入高斯噪声，可以让采样分布收敛到 <span class="math inline">\(p(\x)\)</span>： <span class="math display">\[
+\begin{align}
+&amp;\x_0\sim \pi(\x)\\
+&amp;\x_{k}\gets\x_{k-1}+\frac{\epsilon}{2}\nabla_\x \log p(\x_{k-1})+\sqrt{\epsilon} \mathbf z_k,\quad k=1,\ldots,K
+\end{align}\tag{7}\label{langevin}
+\]</span> 其中 <span class="math inline">\(\mathbf z_k\sim \mathcal N(0,\mathbf I)\)</span>. 可以证明，当 <span class="math inline">\(\epsilon\to 0\)</span> 且 <span class="math inline">\(K\to\infty\)</span> 时，<span class="math inline">\(\x_K\)</span> 的分布收敛到 <span class="math inline">\(p(\x)\)</span>.</p>
+<p><img src="https://yang-song.net/assets/img/score/langevin.gif" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=40% /></p>
+<h2 id="noise-perturbations">Noise Perturbations</h2>
+<p>截至目前，我们用 score matching 训练模型预测 score function，然后通过 Langevin dynamics 采样。但这个做法在实际中很难 work. 究其原因，罪魁祸首在于 <strong>manifold hypothesis</strong>，即真实情况下的数据分布在高维空间中的低维流形上。换句话说，空间中绝大部分都是低密度区域。这将导致两个问题：</p>
+<p>首先，从训练层面上讲，低密度区域数据量少（甚至没有），无法较好地训练模型，导致模型预测的 score function 不准确：</p>
+<p><img src="https://yang-song.net/assets/img/score/pitfalls.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=80% /></p>
+<p>又由于我们的初始化点极有可能落在低密度区域中，所以不准确的 score function 将对采样过程产生极大的影响。</p>
+<p>其次，即便 score function 能被准确预测，但对于被低密度区域隔开的两个分布来说，Langevin dynamics 很难收敛到正确的分布（尽管 Langevin dynamics 在理论上能收敛到正确的分布，但可能需要很小的步长和很多的步数），如图所示：</p>
+<p><img src="fig3.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Generative modeling by estimating gradients of the data distribution." width=80% /></p>
+<p>真实情况是右上的正态分布权重更大，但中图的采样结果显示两个分布被予以了几乎相同的权重。</p>
+<p>宋飏等人提出解决这两个问题的办法是：<strong>给数据添加高斯噪声，并且随着 Langevin dynamics 的进行逐渐减小 noise level（退火）</strong>。添加噪声后的数据遍布整个空间，填充了低密度区域，因此模型能够得到更多的监督信号，Langevin dynamics 也能更快的收敛到高密度区域；同时，逐渐减小的噪声使得带噪分布最终收敛到真实分布，因此也能保证采样质量不受影响。</p>
+<p><img src="https://yang-song.net/assets/img/score/single_noise.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=80% /></p>
+<p>形式化地说，我们确定一个逐渐减小的噪声序列 <span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span>，那么对应 <span class="math inline">\(\sigma_i\)</span> 的噪声扰动后的数据分布为： <span class="math display">\[
+q_{\sigma_i}(\x)=\int\pdata(\mathbf t) \mathcal N\left(\x;\mathbf t,\sigma_i^2\mathbf I\right) \mathrm{d}\mathbf t
+\]</span> 我们用一个神经网络（称作 Noise Conditional Score Networks，NCSN）<strong>同时预测不同 noise level 的 score function</strong>，即： <span class="math display">\[
+s_\theta(\x, \sigma_i)\xrightarrow{\text{approximate}} \nabla_\x\log q_{\sigma_i}(\x)
+\]</span> 于是训练目标就是对每一个 noise level 做 score matching： <span class="math display">\[
+\mathcal L\left(\theta,\{\sigma_i\}_{i=1}^L\right)=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{q_{\sigma_i}(\x)}\left[\|\nabla_\x\log q_{\sigma_i}(\x)-s_\theta(\x,\sigma_i) \|^2\right]
+\]</span> 其中 <span class="math inline">\(\lambda(\sigma_i)\)</span> 是给不同 noise level 加的权重。</p>
+<p>考虑到 denoising score matching 正好符合现在的加噪去噪设定，所以我们选择它而非 sliced score matching. 根据前文的叙述，训练目标变换为： <span class="math display">\[
+\begin{align}
+\mathcal L\left(\theta,\{\sigma_i\}_{i=1}^L\right)&amp;=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\nabla_{\tilde\x}\log q_{\sigma_i}(\tilde \x\vert\x) -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]\\
+&amp;=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\frac{\x-\tilde\x}{\sigma_i^2} -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]
+\end{align}\tag{8}\label{ncsn}
+\]</span> 其中 <span class="math inline">\(q_{\sigma_i}(\tilde\x\vert \x)=\mathcal N\left(\tilde \x;\x,\sigma_i^2\mathbf I\right)\)</span>.</p>
+<p>怎么选取权重 <span class="math inline">\(\lambda(\sigma_i)\)</span> 呢？根据作者经验，一般有 <span class="math inline">\(\Vert s_\theta(\x,\sigma)\Vert_2\propto 1/\sigma\)</span>，所以为了各个 noise level 的损失大致相同，取 <span class="math inline">\(\lambda(\sigma_i)=\sigma_i^2\)</span>.</p>
+<p>训练完成后，我们就可以随机初始化采样点，逐渐减小 noise level，在每个 level 下通过 Langevin dynamics 以步长 <span class="math inline">\(\alpha_i\)</span> 更新若干步，最终生成新的数据。算法流程图如下所示：</p>
+<p><img src="alg.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Generative modeling by estimating gradients of the data distribution." width=40% /></p>
+<p>其中步长设置为 <span class="math inline">\(\alpha_i=\epsilon\cdot\sigma_i^2/\sigma_L^2\propto \sigma_i^2\)</span> 的动机是保证不同 noise level 下 Langevin dynamics 的信噪比 <span class="math inline">\(\frac{\alpha_i s_\theta(\x,\sigma_i)}{2\sqrt{\alpha_i}\mathbf z}\)</span> 的模长固定。</p>
+<p><br/></p>
+<p>这一代的 NCSN 已然能与 GAN 媲美，但局限在 32x32 的大小。在后续的工作<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[4]</span></a></sup>中，宋飏等人探索了更多的技巧，进一步地提升了图像生成质量，并能稳定生成 256x256 的图片。这些技巧包括：</p>
+<ul>
+<li><p>选择 <span class="math inline">\(\sigma_1\)</span> 与训练数据中两两之间的最大欧氏距离差不多大。</p></li>
+<li><p>选择 <span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span> 为公比为 <span class="math inline">\(\gamma\)</span> 的等比序列，且 <span class="math display">\[
+\Phi\left(\sqrt{2d}(\gamma-1)+3\gamma\right)-\Phi\left(\sqrt{2d}(\gamma-1)-3\gamma\right)\approx 0.5
+\]</span></p></li>
+<li><p>将 NCSN 参数化为 <span class="math inline">\(s_\theta(\x,\sigma)=s_\theta(\x)/\sigma\)</span>，其中 <span class="math inline">\(s_\theta(\x)\)</span> 是一个无条件的网络。</p></li>
+<li><p>选择 <span class="math inline">\(T\)</span>（每个 noise level 下 Langevin dynamics 的步数）在可承受范围尽可能大，并选择 <span class="math inline">\(\epsilon\)</span>（Langevin dynamics 里与步长有关的参数）使得一个复杂的式子（懒得抄了）约等于 <span class="math inline">\(1\)</span>.</p></li>
+<li><p>在测试（采样）的时候使用 EMA.</p></li>
+</ul>
+<p>具体内容和分析本文不再叙述，感兴趣的读者可以去看论文<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[4]</span></a></sup>。</p>
+<h2 id="connection-to-ddpm">Connection to DDPM</h2>
+<p>在引言里，我们说 SMLD 和 DDPM 本质是相同的，现在来看看为什么。</p>
+<h3 id="loss-function">Loss Function</h3>
+<p>首先回顾一下 DDPM 的损失函数： <span class="math display">\[
+\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\tag{9}\label{ddpm-eps}
+\]</span> 对 <span class="math inline">\(q(\x_t\vert \x_0)=\mathcal N\left(\x_t;\sqrt{\bar\alpha_t}\x_0,(1-\bar\alpha_t)\mathbf I\right)\)</span> 求 score function： <span class="math display">\[
+\begin{align}
+\nabla_{\x_t}\log q(\x_t\vert\x_0)&amp;=-\frac{1}{2(1-\bar\alpha_t)}\nabla_{\x_t}\left\|\x_t-\sqrt{\bar\alpha_t}\x_0\right\|^2\\
+&amp;=-\frac{1}{1-\bar\alpha_t}\left(\x_t-\sqrt{\bar\alpha_t}\x_0\right)\\
+&amp;=-\frac{1}{1-\bar\alpha_t}\left(\sqrt{\bar\alpha_t}\x_0+\sqrt{1-\bar\alpha_t}\epsilon-\sqrt{\bar\alpha_t}\x_0\right)\\
+&amp;=-\frac{\epsilon}{\sqrt{1-\bar\alpha_t}}
+\end{align}\tag{10}\label{qscore}
+\]</span> 代入 <span class="math inline">\(\eqref{ddpm-eps}\)</span> 式： <span class="math display">\[
+\begin{align}
+&amp;\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\\
+=&amp;\E_{t,\x_0,\epsilon}\left[\left\|-\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log q(\x_t\vert \x_0)-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\\
+=&amp;\E_{t,\x_0,\epsilon}\left[(1-\bar\alpha_t)\left\|\nabla_{\x_t}\log q(\x_t\vert \x_0)-s_\theta\left(\x_t,t\right) \right\|^2\right]
+\end{align}
+\]</span> 其中做了一个变量替换：<span class="math inline">\(s_\theta(\x_t,t)=-\frac{1}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\)</span>.</p>
+<p>为了方便比较，将其改写一下： <span class="math display">\[
+\frac{1}{T}\sum_{t=1}^T(1-\bar\alpha_t)\E_{\pdata(\x_0)}\E_{q(\x_t\vert \x_0)}\left[\left\|\nabla_{\x_t} \log q(\x_t\vert \x_0)-s_\theta\left(\x_t,t\right) \right\|^2 \right]\tag{9&#39;}\label{ddpm}
+\]</span> 对比 <span class="math inline">\(\eqref{ncsn}\)</span> 式： <span class="math display">\[
+\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\nabla_{\tilde\x}\log q_{\sigma_i}(\tilde \x\vert\x) -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]
+\]</span> 可以看到，<span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{ncsn}\)</span> 式<strong>几乎</strong>完全相同！二者甚至连系数都保持了一致：</p>
+<ul>
+<li>根据 <span class="math inline">\(\eqref{qscore}\)</span> 式有：<span class="math inline">\(1-\bar\alpha_t\propto 1/\E[\Vert\nabla_{\x_t}\log q(\x_t\vert \x_0)\Vert^2]\)</span></li>
+<li>根据 <span class="math inline">\(\eqref{score-gauss}\)</span> 式有：<span class="math inline">\(\lambda(\sigma_i)=\sigma_i^2\propto1/\E[\Vert\nabla_{\tilde\x}\log q_\sigma(\tilde \x\vert\x)\Vert^2]\)</span></li>
+</ul>
+<p>唯一能揪出来的一点不同是： <span class="math display">\[
+\begin{align}
+&amp;q(\x_t\vert \x_0)=\mathcal N\left(\x_t;{\color{darkred}{\sqrt{\bar\alpha_t}\x_0}},(1-\bar\alpha_t)\mathbf I\right)&amp;&amp;\text{DDPM}\\
+&amp;q_{\sigma_i}(\tilde\x\vert \x)=\mathcal N\left(\tilde \x;{\color{darkred}{\x}},\sigma_i^2\mathbf I\right)&amp;&amp;\text{SMLD}
+\end{align}
+\]</span> 它们对于均值处是否加权略有分歧。DDPM 为均值加权，效果就是随着扩散过程的进行，数据的均值往 <span class="math inline">\(\mathbf 0\)</span> 移动，并且一直维持着有限的方差且越来越接近 <span class="math inline">\(\mathbf I\)</span>，最后服从 <span class="math inline">\(\mathcal N(\mathbf 0,\mathbf I)\)</span>；而 SMLD 均值没有加权，所以无论怎么加噪数据的中心始终在原本的位置，因此加噪过程其实是依靠增大 <span class="math inline">\(\sigma_i^2\)</span> 来让数据弥散到整个空间。正因如此，在之后的文章中我们可以看到，宋飏等人将前者称为 Variance Preserving，而后者称为 Variance Exploding.</p>
+<p>但其实这个差别不是很重要，如果把 SMLD 的均值也加上权重，并不影响任何推导过程。</p>
+<h3 id="reverse-process">Reverse Process</h3>
+<p>虽然二者在损失函数上保持了惊人的一致，但是在生成过程上还是有一些区别。对于 DDPM，我们构建逆向的马尔可夫链，每一步从 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 中采样： <span class="math display">\[
+\begin{align}
+&amp;p_\theta(\x_{t-1}\vert \x_t)=\mathcal N(\x_{t-1}; \mu_\theta(\x_t,t),\sigma_t^2\mathbf I)\\
+&amp;\mu_\theta(\x_t,t)=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\right)=\frac{1}{\sqrt{\alpha_t}}\left(\x_t+(1-\alpha_t)s_\theta(\x_t,t)\right)
+\end{align}
+\]</span> 或写作： <span class="math display">\[
+\x_{t-1}=\frac{1}{\sqrt{\alpha_t}}(\x_t+(1-\alpha_t)s_\theta(\x_t,t))+\sigma_t\mathbf z_t
+\]</span> 而对于 SMLD，我们在每一个 noise level <span class="math inline">\(\sigma_t\)</span> 下都进行 <span class="math inline">\(K\)</span> 步的 Langevin dynamics 游走： <span class="math display">\[
+\x_t^{k}\gets\x_t^{k-1}+\frac{\epsilon_t}{2}s_\theta(\x_t^{k-1},\sigma_{t})+\sqrt{\epsilon_t} \mathbf z_t^k,\quad k=1,\ldots,K
+\]</span> 上述过程重复 <span class="math inline">\(T\)</span> 次。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. Deep unsupervised learning using nonequilibrium thermodynamics. In <em>International Conference on Machine Learning</em>, pp. 2256-2265. PMLR, 2015. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. <em>Advances in Neural Information Processing Systems</em> 33 (2020): 6840-6851. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. <em>Advances in Neural Information Processing Systems</em> 32 (2019). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. <em>Advances in neural information processing systems</em> 33 (2020): 12438-12448. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Hyvärinen, Aapo, and Peter Dayan. Estimation of non-normalized statistical models by score matching. <em>Journal of Machine Learning Research</em> 6, no. 4 (2005). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Vincent, Pascal. A connection between score matching and denoising autoencoders. <em>Neural computation</em> 23, no. 7 (2011): 1661-1674. <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Song, Yang, Sahaj Garg, Jiaxin Shi, and Stefano Ermon. Sliced score matching: A scalable approach to density and score estimation. In <em>Uncertainty in Artificial Intelligence</em>, pp. 574-584. PMLR, 2020. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Yang Song. Generative Modeling by Estimating Gradients of the Data Distribution. https://yang-song.net/blog/2021/score/ <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>Denoising Diffusion-based Generative Modeling: Foundations and Applications. https://cvpr2022-tutorial-diffusion-models.github.io <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:10" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (一) Non-normalized 模型估計. https://bobondemon.github.io/2022/01/08/Estimation-of-Non-Normalized-Statistical-Models-by-Score-Matching/ <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:11" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (二) Denoising Score Matching (DSM) 改善效率並可 Scalable. https://bobondemon.github.io/2022/03/06/A-Connection-Between-Score-Matching-and-Denoising-Autoencoders/ <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:12" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (三) Sliced Score Matching (SSM) 同時保持效率和效果. https://bobondemon.github.io/2022/03/06/Sliced-Score-Matching-A-Scalable-Approach-to-Density-and-Score-Estimation/ <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:13" class="footnote-text"><span>扩散模型与能量模型，Score-Matching和SDE，ODE的关系 - 中森的文章 - 知乎 https://zhuanlan.zhihu.com/p/576779879 <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:14" class="footnote-text"><span>Yang Song. Sliced Score Matching: A Scalable Approach to Density and Score Estimation. https://yang-song.net/blog/2019/ssm/ <a href="#fnref:14" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Score-Based Generative Models</div>
+      <div>https://xyfjason.github.io/blog-main/2022/10/13/Score-Based-Generative-Models/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月13日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/11/30/2022%E4%BF%9D%E7%A0%94%E5%9B%9E%E5%BF%86%E5%BD%95/" title="保研回忆录">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">保研回忆录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">
+                        <span class="hidden-mobile">从VAE到DDPM</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

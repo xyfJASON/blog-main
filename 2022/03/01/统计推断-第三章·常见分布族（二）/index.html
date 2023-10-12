@@ -1,0 +1,907 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Beta}{\mathrm{B}} \] 本篇列举常见的连续分布。 1 均匀分布 \[ f(x\vert a,b)&#x3D;\begin{cases}\frac{1}{b-a},&amp;x\in[a,b]\\0,&amp;x\notin [a,b]\end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[统计推断]第三章·常见分布族（二）">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/03/01/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%89%E7%AB%A0%C2%B7%E5%B8%B8%E8%A7%81%E5%88%86%E5%B8%83%E6%97%8F%EF%BC%88%E4%BA%8C%EF%BC%89/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\Var}{\mathrm{Var}} \newcommand{\Beta}{\mathrm{B}} \] 本篇列举常见的连续分布。 1 均匀分布 \[ f(x\vert a,b)&#x3D;\begin{cases}\frac{1}{b-a},&amp;x\in[a,b]\\0,&amp;x\notin [a,b]\end">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+<meta property="article:published_time" content="2022-03-01T06:49:41.000Z">
+<meta property="article:modified_time" content="2023-10-12T12:40:18.980Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="statistics">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/statistics.jpeg">
+  
+  
+  
+  <title>[统计推断]第三章·常见分布族（二） - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/statistics.jpeg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[统计推断]第三章·常见分布族（二）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-01 14:49" pubdate>
+          2022年3月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          53 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[统计推断]第三章·常见分布族（二）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand{\E}{\mathbb E}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Beta}{\mathrm{B}}
+\]</span></p>
+<p>本篇列举常见的<strong>连续分布</strong>。</p>
+<h2 id="均匀分布">1 均匀分布</h2>
+<p><span class="math display">\[
+f(x\vert a,b)=\begin{cases}\frac{1}{b-a},&amp;x\in[a,b]\\0,&amp;x\notin [a,b]\end{cases}
+\]</span></p>
+<div class="note note-info">
+            <p><strong>期望</strong>： <span class="math display">\[\E X=\int_a^b\frac{x}{b-a}\mathrm dx=\frac{a+b}{2}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>方差</strong> <span class="math display">\[\Var X=\int_a^b\frac{\left(x-\frac{a+b}{2}\right)^2}{b-a}\mathrm dx=\frac{(a-b)^2}{12}\]</span></p>
+          </div>
+<h2 id="伽玛分布">2 伽玛分布</h2>
+<p><strong><span class="math inline">\(\Gamma\)</span> 函数</strong>： <span class="math display">\[
+\Gamma(\alpha)=\int_0^{+\infty}t^{\alpha-1}e^{-t}\mathrm dt
+\]</span> 利用分部积分法易得递推式： <span class="math display">\[
+\Gamma(\alpha+1)=\alpha\Gamma(\alpha),\quad \alpha&gt;0
+\]</span> 又 <span class="math inline">\(\Gamma(1)=1\)</span>，因此对于正整数 <span class="math inline">\(n\)</span>，<span class="math inline">\(\Gamma(n)=(n-1)!\)</span>.</p>
+<p><br/></p>
+<p>基于 <span class="math inline">\(\Gamma\)</span> 函数，可以定义参数为 <span class="math inline">\((\alpha,\beta)\)</span> 的<strong>伽玛分布族</strong>： <span class="math display">\[
+f(x\vert \alpha,\beta)=\frac{1}{\Gamma(\alpha)\beta^\alpha}x^{\alpha-1}e^{-x/\beta},\quad 0&lt;x&lt;+\infty,\,\alpha&gt;0,\,\beta&gt;0
+\]</span> 其中 <span class="math inline">\(\alpha\)</span> 主要影响分布的峰起状态，称为形状参数；<span class="math inline">\(\beta\)</span> 主要影响分布的散度情况，称为尺度参数；记该分布为 <span class="math inline">\(\text{Gamma}(\alpha,\beta)\)</span>.</p>
+<p><img src="gamma.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<div class="note note-info">
+            <p><strong>期望</strong> <span class="math display">\[\begin{align}\E X&amp;=\frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^{+\infty}x^{\alpha}e^{-x/\beta}\mathrm dx\\&amp;=\frac{\beta}{\Gamma(\alpha)}\int_0^{+\infty}t^{\alpha}e^{-t}\mathrm dt&amp;&amp;t=x/\beta\\&amp;=\frac{\beta}{\Gamma(\alpha)}\Gamma(\alpha+1)\\&amp;=\alpha\beta\end{align}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>二阶矩</strong> <span class="math display">\[\begin{align}\E X^2&amp;=\frac{1}{\Gamma(\alpha)\beta^\alpha}\int_0^{+\infty}x^{\alpha+1} e^{-x/\beta}\mathrm dx\\&amp;=\frac{\beta^2}{\Gamma(\alpha)}\int_0^{+\infty}t^{\alpha+1} e^{-t}\mathrm dt&amp;&amp;t=x/\beta\\&amp;=\frac{\beta^2}{\Gamma(\alpha)}\Gamma(\alpha+2)\\&amp;=\alpha(\alpha+1)\beta^2\end{align}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>方差</strong> <span class="math display">\[\Var X=\E X^2-(\E X)^2=\alpha\beta^2\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>矩母函数</strong>：第二章已经推导过了 <span class="math display">\[M_X(t)=\left(\frac{1}{1-\beta t}\right)^\alpha,\quad t&lt;\frac{1}{\beta}\]</span></p>
+          </div>
+<p><strong>伽玛分布与泊松分布</strong>：设 <span class="math inline">\(X\)</span> 是参数为 <span class="math inline">\((\alpha,\beta)\)</span> 的伽玛随机变量，其中 <span class="math inline">\(\alpha\)</span> 为整数，<span class="math inline">\(Y\)</span> 服从参数为 <span class="math inline">\((x/\beta)\)</span> 的泊松分布，则对任意 <span class="math inline">\(x\)</span>，都有： <span class="math display">\[
+P(X\leq x)=P(Y\geq \alpha)
+\]</span> <em>Proof</em>. 反复运用分部积分法。</p>
+<h2 id="chi2-分布">3 <span class="math inline">\(\chi^2\)</span> 分布</h2>
+<p>在伽玛分布中，若令 <span class="math inline">\(\alpha=p/2,\,\beta=2\)</span>，其中 <span class="math inline">\(p\)</span> 是整数，则伽玛概率密度函数变为： <span class="math display">\[
+f(x\vert p)=\frac{1}{\Gamma(p/2)2^{p/2}}x^{p/2-1}e^{-x/2},\quad 0&lt;x&lt;\infty
+\]</span> 这是自由度为 <span class="math inline">\(p\)</span> 的 <span class="math inline">\(\chi^2\)</span> 概率密度函数。</p>
+<h2 id="指数分布">4 指数分布</h2>
+<p>在伽玛分布中，若令 <span class="math inline">\(\alpha=1\)</span>，则得到指数概率密度函数： <span class="math display">\[
+f(x\vert \beta)=\frac{1}{\beta}e^{-x/\beta},\quad 0&lt;x&lt;\infty
+\]</span> <div class="note note-info">
+            <p><strong>期望</strong>（分部积分易得） <span class="math display">\[\E X=\beta\]</span></p>
+          </div></p>
+<div class="note note-info">
+            <p><strong>方差</strong>（分部积分易得） <span class="math display">\[\Var X=\beta^2\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>无记忆性</strong>：对任意 <span class="math inline">\(s&gt;t\geq 0\)</span>，有 <span class="math display">\[P(X&gt;s\vert X&gt;t)=P(X&gt;s-t)\]</span></p>
+          </div>
+<h2 id="weibull-分布">5 Weibull 分布</h2>
+<p>设 <span class="math inline">\(X\)</span> 服从参数为 <span class="math inline">\(\beta\)</span> 的指数分布，则 <span class="math inline">\(Y=X^{1/\gamma}\)</span> 服从参数为 <span class="math inline">\((\gamma,\beta)\)</span> 的 <strong>Weibull 分布</strong>，即其概率密度函数为： <span class="math display">\[
+f(y\vert \gamma,\beta)=\frac{\gamma}{\beta}y^{\gamma-1}e^{-y^\gamma/\beta},\quad 0&lt;y&lt;\infty,\,\gamma&gt;0,\,\beta&gt;0
+\]</span></p>
+<blockquote>
+<p>推导：由于 <span class="math inline">\(y=g(x)=x^{1/\gamma}\)</span> 是单调函数，根据第二章的结论可知： <span class="math display">\[
+f_Y(y)=f_X(g^{-1}(y))\left|\frac{\mathrm d}{\mathrm dy}g^{-1}(y)\right|=\frac{\gamma}{\beta}y^{\gamma-1}e^{-y^\gamma/\beta}
+\]</span></p>
+</blockquote>
+<p>Weibull 分布广泛引用于寿命分析和危险率函数的建模。</p>
+<h2 id="正态分布">6 正态分布</h2>
+<p><span class="math inline">\(X\)</span> 服从参数为 <span class="math inline">\((\mu,\sigma^2)\)</span> 的正态分布： <span class="math display">\[
+f(x\vert \mu,\sigma^2)=\frac{1}{\sqrt{2\pi}\sigma}\exp\frac{-(x-\mu)^2}{2\sigma^2},\quad -\infty&lt;x&lt;+\infty
+\]</span> 记作 <span class="math inline">\(N(\mu,\sigma^2)\)</span>.</p>
+<p><br/></p>
+<p>验证上述概率密度函数积分为 <span class="math inline">\(1\)</span> 需要一些技巧，一个常见的证法是转换为二重积分。首先，作变量代换 <span class="math inline">\(z=(x-\mu)/\sigma\)</span>，则易知我们只需要证明： <span class="math display">\[
+\int_0^{+\infty}e^{-z^2/2}\mathrm dz=\sqrt{\frac{\pi}{2}}
+\]</span> 我们计算其平方并使用极坐标换元： <span class="math display">\[
+\begin{align}
+\left(\int_0^{+\infty}e^{-z^2/2}\mathrm dz\right)^2&amp;=\left(\int_0^{+\infty}e^{-t^2/2}\mathrm dt\right)\left(\int_0^{+\infty}e^{-u^2/2}\mathrm du\right)\\
+&amp;=\int_0^{+\infty}\int_0^{+\infty}e^{-(t^2+u^2)/2}\mathrm dt\mathrm du\\
+&amp;=\int_0^{+\infty}\int_0^{\pi/2}re^{-r^2/2}\mathrm d\theta\mathrm dr\\
+&amp;=\frac{\pi}{2}\left.e^{-r^2/2}\right|_{+\infty}^0=\frac{\pi}{2}
+\end{align}
+\]</span> 事实上，若令 <span class="math inline">\(w=z^2/2\)</span>，则上述积分本质是 <span class="math inline">\(\Gamma(1/2)\)</span>，即： <span class="math display">\[
+\Gamma(1/2)=\int_0^{+\infty}w^{-1/2}e^{-w}\mathrm dw=\sqrt\pi
+\]</span> <div class="note note-info">
+            <p><strong>期望</strong> <span class="math display">\[\E X=\mu\]</span></p>
+          </div></p>
+<div class="note note-info">
+            <p><strong>方差</strong> <span class="math display">\[\Var X=\sigma^2\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>矩母函数</strong> <span class="math display">\[\begin{align}M_X(t)&amp;=\E[e^{tX}]\\&amp;=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{+\infty}e^{tx}e^{-{(x-\mu)^2}/{2\sigma^2}}\mathrm dx\\&amp;=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{t(\sigma s+\mu)}e^{-{s^2}/{2}}\mathrm ds&amp;&amp;s=(x-\mu)/\sigma\\&amp;=\frac{e^{t\mu}}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{t^2\sigma^2/2}e^{-{(s-t\sigma)^2}/{2}}\mathrm ds\\&amp;=e^{\mu t+\sigma^2t^2/2}\end{align}\]</span></p>
+          </div>
+<p>对正态分布的概率密度函数求导易知，其在 <span class="math inline">\(x=\mu\)</span> 处取得极值，<span class="math inline">\(\mu\pm\sigma\)</span> 是拐点。</p>
+<p><img src="norm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p><br/></p>
+<p>正态分布常用于近似其他分布，但怎样的近似足够好并无绝对的标准。以二项分布为例，经验上当 <span class="math inline">\(\min(np,n(1-p))\geq 5\)</span> 时，可使用 <span class="math inline">\(N(np, np(1-p))\)</span> 近似 <span class="math inline">\(\text{Binomial}(n,p)\)</span>.</p>
+<p>但由于二项分布是离散分布，在近似时使用<strong>连续性校正</strong>可以使近似更精确：设 <span class="math inline">\(X\sim\text{Binomial}(n,p)\)</span>，<span class="math inline">\(Y\sim N(np,np(1-p))\)</span>，则： <span class="math display">\[
+P(X\leq x)\approx P(Y\leq x+1/2)\quad P(X\geq x)\approx P(Y\geq x-1/2)
+\]</span></p>
+<h2 id="贝塔分布">7 贝塔分布</h2>
+<p><strong><span class="math inline">\(\Beta\)</span> 函数</strong>： <span class="math display">\[
+\Beta(\alpha,\beta)=\int_0^1 x^{\alpha-1}(1-x)^{\beta-1}\mathrm dx
+\]</span> <span class="math inline">\(\Beta\)</span> 函数和 <span class="math inline">\(\Gamma\)</span> 函数的关系： <span class="math display">\[
+\Beta(\alpha,\beta)=\frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)}
+\]</span> 一般不直接处理 <span class="math inline">\(\Beta\)</span> 函数，而是用这个关系式转化成 <span class="math inline">\(\Gamma\)</span> 函数。</p>
+<p><br/></p>
+<p><strong>贝塔分布</strong>： <span class="math display">\[
+f(x\vert\alpha,\beta)=\frac{1}{\Beta(\alpha,\beta)}x^{\alpha-1}(1-x)^{\beta-1},\quad 0&lt;x&lt;1,\,\alpha&gt;0,\,\beta&gt;0
+\]</span> <div class="note note-info">
+            <p><strong><span class="math inline">\(n\)</span> 阶矩</strong> <span class="math display">\[\begin{align}\E X^n&amp;=\frac{1}{\Beta(\alpha,\beta)}\int_0^1 x^nx^{\alpha-1}(1-x)^{\beta-1}\mathrm dx\\&amp;=\frac{\Beta(\alpha+n,\beta)}{\Beta(\alpha,\beta)}\\&amp;=\frac{\Gamma(\alpha+n)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+n)\Gamma(\alpha)}\end{align}\]</span></p>
+          </div></p>
+<div class="note note-info">
+            <p><strong>期望</strong> <span class="math display">\[\E X=\frac{\Gamma(\alpha+1)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+1)\Gamma(\alpha)}=\frac{\alpha}{\alpha+\beta}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>二阶矩</strong> <span class="math display">\[\E X^2=\frac{\Gamma(\alpha+2)\Gamma(\alpha+\beta)}{\Gamma(\alpha+\beta+2)\Gamma(\alpha)}=\frac{(\alpha+1)\alpha}{(\alpha+\beta+1)(\alpha+\beta)}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>方差</strong> <span class="math display">\[\Var X=\E X^2-(\E X)^2=\frac{\alpha\beta}{(\alpha+\beta)^2(\alpha+\beta+1)}\]</span></p>
+          </div>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="beta1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% alt="Beta densities" /></div><div class="group-image-wrap"><img src="beta2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% alt="Symmetric beta densities" /></div></div></div>
+<h2 id="柯西分布">8 柯西分布</h2>
+<p>柯西分布是 <span class="math inline">\((-\infty,+\infty)\)</span> 上的一类对称钟形分布，概率密度函数为： <span class="math display">\[
+f(x\vert \theta)=\frac{1}{\pi}\frac{1}{1+(x-\theta)^2},\quad-\infty&lt;x&lt;+\infty,\,-\infty&lt;\theta&lt;+\infty
+\]</span> 第二章已经证明过，柯西分布期望不存在，于是任意阶矩也不存在，矩母函数亦不存在。</p>
+<p><img src="cauchy.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p><strong>两个标准正态分布之比就是柯西分布</strong>。</p>
+<h2 id="对数正态分布">9 对数正态分布</h2>
+<p>若 <span class="math inline">\(\log X\sim N(\mu,\sigma^2)\)</span>，则称 <span class="math inline">\(X\)</span> 服从对数正态分布。利用第二章随机变量的单调函数相关结论，易知： <span class="math display">\[
+f(x\vert\mu,\sigma^2)=\frac{1}{\sqrt{2\pi}\sigma}\frac{1}{x}\exp\frac{-(\log x-\mu)^2}{2\sigma^2},\quad 0&lt;x&lt;+\infty,\,-\infty&lt;\mu&lt;+\infty,\,\sigma&gt;0
+\]</span> <div class="note note-info">
+            <p><strong>期望</strong>：设 <span class="math inline">\(Y=\log X\sim N(\mu,\sigma^2)\)</span>，则： <span class="math display">\[\E X=\E e^{\log X}=\E e^Y=M_Y(1)=e^{\mu+\sigma^2/2}\]</span></p>
+          </div></p>
+<div class="note note-info">
+            <p><strong>二阶矩</strong> <span class="math display">\[\E X^2=\E e^{2\log X}=\E e^{2Y}=M_Y(2)=e^{2\mu+2\sigma^2}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>方差</strong> <span class="math display">\[\Var X=\E X^2-(\E X)^2=e^{2\mu+2\sigma^2}-e^{2\mu+\sigma^2}\]</span></p>
+          </div>
+<p>对数正态分布广泛应用于<strong>右偏变量</strong>的建模，例如工资。</p>
+<p><img src="lognorm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h2 id="双指数分布">10 双指数分布</h2>
+<p>将指数分布关于原点作对称并平移 <span class="math inline">\(\mu\)</span> 个单位，就得到了<strong>双指数分布</strong>，其概率密度函数为： <span class="math display">\[
+f(x\vert \mu,\sigma)=\frac{1}{2\sigma}e^{-|x-\mu|/\sigma},\quad -\infty&lt;x&lt;+\infty,\,-\infty&lt;\mu&lt;+\infty,\,\sigma&gt;0
+\]</span> 双指数分布是<u>尾部很粗的对称分布</u>，任意阶矩都存在。</p>
+<div class="note note-info">
+            <p><strong>期望</strong> <span class="math display">\[\begin{align}\E X&amp;=\frac{1}{2\sigma}\int_{-\infty}^{+\infty}xe^{-|x-\mu|/\sigma}\mathrm dx\\&amp;=\frac{1}{2\sigma}\left(\int_{\mu}^{+\infty}xe^{-(x-\mu)/\sigma}\mathrm dx+\int_{-\infty}^{\mu}xe^{(x-\mu)/\sigma}\mathrm dx\right)\\&amp;=\mu\end{align}\]</span></p>
+          </div>
+<div class="note note-info">
+            <p><strong>方差</strong> <span class="math display">\[\Var X=2\sigma^2\]</span></p>
+          </div>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD/" class="category-chain-item">统计推断</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/statistics/" class="print-no-link">#statistics</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[统计推断]第三章·常见分布族（二）</div>
+      <div>https://xyfjason.github.io/blog-main/2022/03/01/统计推断-第三章·常见分布族（二）/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/05/David-Silver%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-1%C2%B7Introduction/" title="[David Silver强化学习]1·Introduction">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[David Silver强化学习]1·Introduction</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/01/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E4%B8%89%E7%AB%A0%C2%B7%E5%B8%B8%E8%A7%81%E5%88%86%E5%B8%83%E6%97%8F%EF%BC%88%E4%B8%80%EF%BC%89/" title="[统计推断]第三章·常见分布族（一）">
+                        <span class="hidden-mobile">[统计推断]第三章·常见分布族（一）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
