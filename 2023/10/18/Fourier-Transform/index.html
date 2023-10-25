@@ -1,0 +1,1073 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="内积空间与正交基 我们知道，在一个 \(n\) 维线性空间中可以找到 \(n\) 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称为正交。如果一组基两两正交，那么这组基称作正交基。 值得注意的是，上述“线性空间”、“向量”、“内积”都是抽象的概念，不一定是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fourier Transform（未完待续）">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/10/18/Fourier-Transform/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="内积空间与正交基 我们知道，在一个 \(n\) 维线性空间中可以找到 \(n\) 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称为正交。如果一组基两两正交，那么这组基称作正交基。 值得注意的是，上述“线性空间”、“向量”、“内积”都是抽象的概念，不一定是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/Fourier-3B1B.jpg">
+<meta property="article:published_time" content="2023-10-18T02:22:41.000Z">
+<meta property="article:modified_time" content="2023-10-25T16:35:05.388Z">
+<meta property="article:author" content="xyfJASON">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/Fourier-3B1B.jpg">
+  
+  
+  
+  <title>Fourier Transform（未完待续） - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/Fourier-3B1B.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Fourier Transform（未完待续）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-18 10:22" pubdate>
+          2023年10月18日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          16k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          135 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Fourier Transform（未完待续）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="内积空间与正交基">内积空间与正交基</h2>
+<p>我们知道，在一个 <span class="math inline">\(n\)</span> 维线性空间中可以找到 <span class="math inline">\(n\)</span> 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称为正交。如果一组基两两正交，那么这组基称作正交基。</p>
+<p>值得注意的是，上述“线性空间”、“向量”、“内积”都是<strong>抽象的概念</strong>，不一定是 <span class="math inline">\(\mathbb R^n\)</span> 或 <span class="math inline">\(\mathbb C^n\)</span>. 只要定义的加法和数乘运算满足相应的性质，那么就是一个线性空间；只要定义的内积运算满足相应的性质，那么就是一个内积空间。因此，若将上述抽象的“向量”<strong>具体化为区间 <span class="math inline">\([a,b]\)</span> 上的函数</strong>，并定义两个函数的内积为： <span class="math display">\[
+\langle f(x),g(x)\rangle=\int_a^bf(x)\bar g(x)\mathrm dx
+\]</span> 那么这可以是一个合法的内积空间。</p>
+<p>设定义在 <span class="math inline">\(D\)</span> 上的正交函数系 <span class="math inline">\(\{\varphi_n(x)\mid n\in\mathbb N\}\)</span> 构成函数空间的一个正交基，那么任意 <span class="math inline">\(D\)</span> 上的函数 <span class="math inline">\(f(x)\)</span> 都可以表示为该基的线性组合： <span class="math display">\[
+f(x)=\sum_{n}c_n\varphi_n(x)
+\]</span> 为了求解系数 <span class="math inline">\(c_n\)</span>，考虑 <span class="math inline">\(f(x)\)</span> 与 <span class="math inline">\(\varphi_n(x)\)</span> 的内积： <span class="math display">\[
+\langle f(x),\varphi_n(x)\rangle=\sum_ic_i\langle\varphi_i(x),\varphi_n(x)\rangle=c_n\langle\varphi_n(x),\varphi_n(x)\rangle
+\]</span></p>
+<p>于是： <span class="math display">\[
+c_n=\frac{\langle f(x),\varphi_n(x)\rangle}{\langle\varphi_n(x),\varphi_n(x)\rangle}
+\]</span> 而傅里叶级数就是取这个正交基为三角函数系的特殊情况。</p>
+<h2 id="傅立叶级数">傅立叶级数</h2>
+<h3 id="以-2pi-为周期的周期函数">以 <span class="math inline">\(2\pi\)</span> 为周期的周期函数</h3>
+<p>在<strong>区间 <span class="math inline">\([-\pi,\pi]\)</span> 上</strong>，利用积化和差公式可以证明，如下的三角函数系两两正交： <span class="math display">\[
+\{1,\cos x,\sin x,\cos 2x,\sin 2x,\ldots,\cos nx,\sin nx,\ldots\}\tag{1}\label{basis1}
+\]</span> 于是根据第一节的内容，<span class="math inline">\([-\pi,\pi]\)</span> 上的函数 <span class="math inline">\(f(x)\)</span> 可以表示为该基的线性组合： <span class="math display">\[
+f(x)=\frac{a_0}{2}+\sum_{n=1}^{\infty}(a_n\cos nx+b_n\sin nx)\tag{2}\label{fs1}
+\]</span> 其中系数为： <span class="math display">\[
+\begin{align}
+\frac{a_0}{2}&amp;=\frac{\langle f(x),1\rangle}{\langle1,1\rangle}=\frac{1}{2\pi}\int_{-\pi}^{\pi} f(x)\mathrm dx\\
+a_n&amp;=\frac{\langle f(x),\cos nx\rangle}{\langle\cos nx,\cos nx\rangle}=\frac{1}{\pi}\int_{-\pi}^\pi f(x)\cos nx\mathrm dx\\
+b_n&amp;=\frac{\langle f(x),\sin nx\rangle}{\langle\sin nx,\sin nx\rangle}=\frac{1}{\pi}\int_{-\pi}^\pi f(x)\sin nx\mathrm dx
+\end{align}\tag{3}\label{fs1c}
+\]</span></p>
+<p>这就是以 <span class="math inline">\(2\pi\)</span> 为周期的周期函数的傅里叶级数。</p>
+<p>那么 <span class="math inline">\([-\pi,\pi]\)</span> 区间之外呢？由于正余弦函数的<strong>周期性</strong>，我们知道其余部分其实就是 <span class="math inline">\([-\pi,\pi]\)</span> 上那一段函数的<strong>周期延拓</strong>。也就是说，上述方法对于<strong>以 <span class="math inline">\(2\pi\)</span> 为周期</strong>的函数 <span class="math inline">\(f(x)\)</span> 都是行之有效的。</p>
+<h3 id="以-2l-为周期的周期函数">以 <span class="math inline">\(2l\)</span> 为周期的周期函数</h3>
+<p>更一般地，如果周期函数 <span class="math inline">\(f(x)\)</span> <strong>以 <span class="math inline">\(2l\)</span> 为周期</strong>（<span class="math inline">\(l&gt;0\)</span> 为任意正数），我们只需要相应地改变基函数的周期即可： <span class="math display">\[
+\left\{1,\cos\frac{\pi x}{l},\sin\frac{\pi x}{l},\cos\frac{2\pi x}{l},\sin\frac{2\pi x}{l},\ldots,\cos\frac{n\pi x}{l},\sin\frac{n\pi x}{l},\ldots\right\}\tag{4}\label{basis2}
+\]</span> 那么 <span class="math inline">\(f(x)\)</span> 可以表示为该基的线性组合： <span class="math display">\[
+f(x)=\frac{a_0}{2}+\sum_{n=1}^{\infty}\left(a_n\cos\frac{n\pi x}{l}+b_n\sin\frac{n\pi x}{l}\right)\tag{5}\label{fs2}
+\]</span> 其中系数为： <span class="math display">\[
+\begin{align}
+\frac{a_0}{2}&amp;=\frac{\langle f(x),1\rangle}{\langle1,1\rangle}=\frac{1}{2l}\int_{-l}^{l} f(x)\mathrm dx\\
+a_n&amp;=\frac{\left\langle f(x),\cos\left(\frac{n\pi}{l}x\right)\right\rangle}{\left\langle\cos\frac{n\pi x}{l},\cos\frac{n\pi x}{l}\right\rangle}=\frac{1}{l}\int_{-l}^l f(x)\cos\frac{n\pi x}{l}\mathrm dx\\
+b_n&amp;=\frac{\left\langle f(x),\sin\frac{n\pi x}{l}\right\rangle}{\left\langle\sin\frac{n\pi x}{l},\sin\frac{n\pi x}{l}\right\rangle}=\frac{1}{l}\int_{-l}^l f(x)\sin\frac{n\pi x}{l}\mathrm dx
+\end{align}\tag{6}\label{fs2c}
+\]</span></p>
+<p>这就是以 <span class="math inline">\(2l\)</span> 为周期的周期函数的傅里叶级数。</p>
+<h3 id="指数形式">指数形式</h3>
+<p><span class="math inline">\(\eqref{fs2}\)</span> 式看起来比较冗长，利用欧拉公式 <span class="math inline">\(e^{jx}=\cos x+j\sin x\)</span>，我们可以让它变得更简洁。根据欧拉公式有： <span class="math display">\[
+\cos x=\frac{e^{jx}+e^{-jx}}{2},\quad\sin x=\frac{e^{jx}-e^{-jx}}{2j}=-j\ \frac{e^{jx}-e^{-jx}}{2}
+\]</span> 代入 <span class="math inline">\(\eqref{fs2}\)</span> 式得： <span class="math display">\[
+\begin{align}
+f(x)&amp;=\frac{a_0}{2}+\sum_{n=1}^\infty\left(\frac{a_n}{2}\left(e^{j\frac{n\pi x}{l}}+e^{-j\frac{n\pi x}{l}}\right)-\frac{b_nj}{2}\left(e^{j\frac{n\pi x}{l}}-e^{-j\frac{n\pi x}{l}}\right)\right)\\
+&amp;=\frac{a_0}{2}+\sum_{n=1}^\infty\left(\frac{a_n-b_nj}{2}e^{j\frac{n\pi x}{l}}+\frac{a_n+b_nj}{2}e^{-j\frac{n\pi x}{l}}\right)\\
+&amp;=c_0+\sum_{n=1}^\infty\left(c_n e^{j\frac{n\pi x}{l}}+c_{-n}e^{-j\frac{n\pi x}{l}}\right)\\
+&amp;=\sum_{n=-\infty}^\infty c_n e^{j\frac{n\pi x}{l}}=\sum_{n=-\infty}^\infty c_n e^{jn\omega x}
+\end{align}\tag{7}\label{fs-complex}
+\]</span> 其中 <span class="math inline">\(\omega=\frac{2\pi}{2l}=\frac{\pi}{l}\)</span> 表示角频率，系数为： <span class="math display">\[
+\begin{align}
+c_n&amp;=\frac{a_n-b_n j}{2}\\
+&amp;=\frac{1}{2l}\left[\int_{-l}^l f(x)\cos\frac{n\pi x}{l}\mathrm dx-j\int_{-l}^l f(x)\sin\frac{n\pi x}{l}\mathrm dx\right]\\
+&amp;=\frac{1}{2l}\int_{-l}^lf(x)\left(\cos\frac{n\pi x}{l}-j\sin\frac{n\pi x}{l}\right)\mathrm dx\\
+&amp;=\frac{1}{2l}\int_{-l}^lf(x)e^{-j\frac{n\pi x}{l}}\mathrm dx\\
+&amp;=\frac{1}{2l}\int_{-l}^lf(x)e^{-jn\omega x}\mathrm dx
+\end{align}\tag{8}\label{fs-complex-c}
+\]</span> 这就是傅里叶级数的指数形式。</p>
+<p>当然，<span class="math inline">\(\eqref{fs-complex}\)</span> 式也可以直接看作是 <span class="math inline">\(f(x)\)</span> 在下列正交基下的线性组合： <span class="math display">\[
+\{1,e^{j\omega x},e^{-j\omega x},e^{2j\omega x},e^{-2j\omega x},\ldots,e^{jn\omega x},e^{-jn\omega x},\ldots\}\tag{9}\label{basis3}
+\]</span> 且系数为： <span class="math display">\[
+c_n=\frac{\langle f(x),e^{jn\omega x}\rangle}{\langle e^{jn\omega x},e^{jn\omega x}\rangle}=\frac{1}{2l}\int_{-l}^l f(x)e^{-jn\omega x}\mathrm dx
+\]</span></p>
+<blockquote>
+<p>注意复数的内积运算要乘共轭。</p>
+</blockquote>
+<h3 id="时域频域与可视化">时域、频域与可视化</h3>
+<p>如果把周期函数 <span class="math inline">\(f(x)\)</span> 看作一个周期信号——自变量是时间，函数值为信号的值，函数图像就是信号的波形——我们称之为<strong>时域表示</strong>。例如下图是一个周期为 <span class="math inline">\(2\pi\)</span> 的方波：</p>
+<p><img src="fs.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="https://www.zhihu.com/question/21665935/answer/358423678" width=60% /></p>
+<p>通过傅里叶级数展开 <span class="math inline">\(\eqref{fs2}\)</span> 式，我们把 <span class="math inline">\(f(x)\)</span> 写作了不同角频率的正余弦信号的线性叠加。理论上，需要无数多个正余弦信号相叠加才能与原信号相等，但实际应用中不可能处理无限多个，只能在 <span class="math inline">\(n\)</span> 足够大时做一个截断。截断的地方越大，有限项的傅里叶级数就越逼近原函数，如下图所示：</p>
+<p><img src="fs.webp" srcset="/blog-main/logo/imageloading.png" lazyload alt="https://www.zhihu.com/question/21665935/answer/358423678" width=60% /></p>
+<p>由于这些正余弦信号是固定的，因此我们只需要计算出前面的系数 <span class="math inline">\(\{a_0,a_1,b_1,\ldots,a_n,b_n,\ldots\}\)</span> 就能恢复出 <span class="math inline">\(f(x)\)</span>. 考虑到 <span class="math inline">\(a_n,b_n\)</span> 对应的是角频率为 <span class="math inline">\(\frac{2l}{n}\)</span> 的正余弦信号，所以我们称这种表示方法为<strong>频域表示</strong>。为了直观，我们可以将所有的 <span class="math inline">\(a_n\)</span> 可视化出来——横坐标为 <span class="math inline">\(n\)</span>、纵坐标为 <span class="math inline">\(a_n\)</span> 的值，这样就得到了 <span class="math inline">\(\cos\)</span> 分量的频域图；类似地，将 <span class="math inline">\(b_n\)</span> 画出来就是 <span class="math inline">\(\sin\)</span> 分量的频域图。时域图和频域图是看待同一个周期函数的两个不同角度，如下图所示：</p>
+<p><img src="fourier-transform-visualized.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="https://insightincmiami.org/data-visualization-using-the-fourier-transform/" width=60% /></p>
+<h2 id="傅里叶变换">傅里叶变换</h2>
+<h3 id="非周期函数取极限">非周期函数：取极限</h3>
+<p>通过傅里叶级数，我们将任意<strong>周期函数</strong>表达为了不同角频率的 <span class="math inline">\(\cos\)</span> 和 <span class="math inline">\(\sin\)</span> 函数的线性组合 <span class="math inline">\(\eqref{fs2}\)</span> 式或 <span class="math inline">\(\eqref{fs-complex}\)</span> 式。那么，非周期函数怎么办呢？</p>
+<p>非周期函数可以看作是<strong>周期趋近于无限大</strong>的周期函数，因此在 <span class="math inline">\(\eqref{fs-complex}\)</span> 式中令 <span class="math inline">\(\omega\to0\)</span>： <span class="math display">\[
+\begin{align}
+f(x)&amp;=\lim_{\omega\to0}\sum_{n=-\infty}^{\infty}c_n e^{jn\omega x}\\
+&amp;=\lim_{\omega\to0}\sum_{n=-\infty}^{\infty}\frac{1}{2l}\left(\int_{-l}^l f(t)e^{-jn\omega t}\mathrm dt\right) e^{jn\omega x}\\
+&amp;=\lim_{\omega\to0}\sum_{n=-\infty}^{\infty}\frac{\omega}{2\pi}\left(\int_{-l}^l f(t)e^{-jn\omega t}\mathrm dt\right) e^{jn\omega x}\\
+&amp;=\lim_{\omega\to0}\sum_{n=-\infty}^{\infty}\frac{\omega}{2\pi}{\color{purple}{\left(\int_{-\infty}^{\infty} f(t)e^{-jn\omega t}\mathrm dt\right)e^{jn\omega x}}}&amp;&amp;{\color{red}{???}}\\
+\end{align}\tag{10}\label{fs-lim}
+\]</span></p>
+<div class="note note-danger">
+            <p><span class="math inline">\(\color{red}{???}\)</span> 为什么积分上下限能先求极限，网上很多资料直接略过了。</p>
+          </div>
+<p>极限求和的形式让我们非常想将其变成积分。根据定积分的定义（黎曼和）： <span class="math display">\[
+\int_a^b f(x)\mathrm dx=\lim_{h\to 0}\sum_{n=0}^{(b-a)/h}f(a+nh)\cdot h
+\]</span> 稍微改写一下： <span class="math display">\[
+\int_{-a}^a f(x)\mathrm dx=\lim_{h\to0}\sum_{n=-a/h}^{a/h}f(nh)\cdot h
+\]</span> 对比 <span class="math inline">\(\eqref{fs-lim}\)</span> 式，<span class="math inline">\(u=n\omega\)</span> 就是被积变量，紫色部分（关于 <span class="math inline">\(n\omega\)</span> 的函数）就是被积函数，因此： <span class="math display">\[
+\begin{align}
+&amp;f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(u)e^{jux}\mathrm du \tag{11}\label{IFT}\\
+&amp;F(u)=\int_{-\infty}^{\infty}f(x)e^{-jux}\mathrm dx\tag{12}\label{FT}
+\end{align}
+\]</span></p>
+<p>这里 <span class="math inline">\(\eqref{FT}\)</span> 式就是<strong>傅里叶变换</strong>，将信号从时域表示转换到频域表示；<span class="math inline">\(\eqref{IFT}\)</span> 式就是<strong>傅里叶逆变换</strong>，将信号从频域表示转换到时域表示。二者构成一个<strong>傅里叶变换对</strong>，记作： <span class="math display">\[
+f(x)\iff F(u)
+\]</span> 有时我们也用一个符号 <span class="math inline">\(\mathscr F\)</span> 来表示傅里叶变换，<span class="math inline">\(\mathscr F^{-1}\)</span> 表示傅里叶逆变换，即： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x)\}=F(u)=\int_{-\infty}^{\infty}f(x)e^{-jux}\mathrm dx\\
+&amp;\mathscr F^{-1}\{F(u)\}=f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(u)e^{jux}\mathrm du
+\end{align}
+\]</span></p>
+<h3 id="直观理解与可视化">直观理解与可视化</h3>
+<p>根据上面的推导过程，我们知道傅里叶变换就是傅里叶级数取极限。当 <span class="math inline">\(\omega\to0\)</span> 时，傅里叶级数中<strong>离散可数</strong>的角频率 <span class="math inline">\(n\omega\)</span> 变成了<strong>连续</strong>的 <span class="math inline">\(u\)</span>，相当于原本是用离散可数个正余弦信号去逼近原信号，现在变成了用“连续个”信号去逼近（从自然语言的角度而言，量词“个”就隐含了离散可数的意思，所以这句话比较抽象）。从频域图上看，相当于每一条“柱子”越来越靠近，最终连成一个连续的函数，也就是 <span class="math inline">\(F(u)\)</span> 的图像，如下图所示：</p>
+<p><img src="freq.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="https://www.zhihu.com/question/21665935/answer/358423678" width=80% /></p>
+<h3 id="另两种等价形式">另两种等价形式</h3>
+<p>虽然 <span class="math inline">\(\eqref{IFT}\)</span> 式和 <span class="math inline">\(\eqref{FT}\)</span> 式互为逆变换，但一个有系数一个没有系数，形式不是很对称，对强迫症不友好。不过好在做一点变量代换就可以解决这个问题：令 <span class="math inline">\(u=2\pi {\color{dodgerblue}{u}}\)</span>，那么： <span class="math display">\[
+\begin{align}
+&amp;f(x)=\int_{-\infty}^{\infty}F(2\pi{\color{dodgerblue}{u}})e^{j2\pi{\color{dodgerblue}{u}}x}\mathrm d{\color{dodgerblue}{u}}\\
+&amp;F(2\pi{\color{dodgerblue}{u}})=\int_{-\infty}^{\infty}f(x)e^{-j2\pi{\color{dodgerblue}{u}}x}\mathrm dx
+\end{align}
+\]</span></p>
+<p>然后再令 <span class="math inline">\({\color{dodgerblue}F}(u)=F(2\pi u)\)</span>，那么： <span class="math display">\[
+\begin{align}
+&amp;f(x)=\int_{-\infty}^{\infty}{\color{dodgerblue}{F(u)}}e^{j2\pi{\color{dodgerblue}u}x}\mathrm d{\color{dodgerblue}u}\tag{11&#39;}\label{IFT2}\\
+&amp;{\color{dodgerblue}F(u)}=\int_{-\infty}^{\infty}f(x)e^{-j2\pi{\color{dodgerblue}u}x}\mathrm dx\tag{12&#39;}\label{FT2}
+\end{align}
+\]</span> 这样逆变换 <span class="math inline">\(\eqref{IFT2}\)</span> 和正变换 <span class="math inline">\(\eqref{FT2}\)</span> 的形式就非常对称了。</p>
+<p>另一种更简单的变量代换的方式是令 <span class="math inline">\({\color{purple}F}(u)=\frac{1}{\sqrt{2\pi}}F(u)\)</span>，那么： <span class="math display">\[
+\begin{align}
+&amp;f(x)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}{\color{purple}{F}}(u)e^{jux}\mathrm du\tag{11&#39;&#39;}\label{IFT3}\\
+&amp;{\color{purple}F}(u)=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}f(x)e^{-jux}\mathrm dx\tag{12&#39;&#39;}\label{FT3}
+\end{align}
+\]</span> 不同的书上可能会采用不同的形式，但它们本质都是等价的。</p>
+<h3 id="傅里叶变换的性质">傅里叶变换的性质</h3>
+<h4 id="线性性">线性性</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{af(x)+bg(x)\}=a\mathscr F\{f(x)\}+b\mathscr F\{g(x)\}=F(u)+G(u)\\
+&amp;\mathscr F^{-1}\{aF(u)+bG(u)\}=a\mathscr F^{-1}\{F(u)\}+b\mathscr F^{-1}\{G(u)\}
+\end{align}\tag{13}\label{prop-linear}
+\]</span> 易证。</p>
+<h4 id="时域频域平移">时域频域平移</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x-x_0)\}=e^{-jux_0}F(u)\tag{14}\label{prop-time-shift}\\
+&amp;\mathscr F^{-1}\{F(u-u_0)\}=e^{ju_0x}f(x)\tag{15}\label{prop-freq-shift}
+\end{align}
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\begin{align}&amp;\mathscr F\{f(x-x_0)\}=\int_{-\infty}^{\infty}f(x-x_0)e^{-jux}\mathrm dx=\int_{-\infty}^{\infty}f(t)e^{-ju(t+x_0)}\mathrm dt=e^{-jux_0}F(u)\\&amp;\mathscr F^{-1}\{F(u-u_0)\}=\int_{-\infty}^{\infty}F(u-u_0)e^{jux}\mathrm du=\int_{-\infty}^{\infty}F(t)e^{j(t+u_0)x}\mathrm dt=e^{ju_0x}f(x)\end{align}\]</span> 证毕。</p>
+          </div></p>
+<h4 id="对称性">对称性</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u)\)</span>，则： <span class="math display">\[
+\mathscr F\{F(x)\}=2\pi f(-u)\tag{16}\label{prop-sym}
+\]</span> <div class="note note-secondary">
+            <p>证明：对逆傅里叶变换 <span class="math inline">\(\eqref{IFT}\)</span> 式做变量代换：<span class="math inline">\(x\coloneqq -u,\,u\coloneqq x\)</span>，有： <span class="math display">\[\begin{align}f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(u)e^{jux}\mathrm dx\implies f(-u)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(x)e^{-jux}\mathrm du=\frac{1}{2\pi}\mathscr F\{F(x)\}\end{align}\]</span> 得证。</p>
+          </div></p>
+<h4 id="卷积定理时域">卷积定理（时域）</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
+\mathscr F\{f(x)\ast g(x)\}=F(u)G(u)\tag{17}\label{prop-conv-time}
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\begin{align}\mathscr F\{f(x)\ast g(x)\}&amp;=\int_{-\infty}^{\infty}\left[f(x)\ast g(x)\right]e^{-jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}f(\tau)g(x-\tau)\mathrm d\tau\right]e^{-jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}f(\tau)\left[\int_{-\infty}^{\infty}g(x-\tau)e^{-jux}\mathrm dx\right]\mathrm d\tau\\&amp;=\int_{-\infty}^{\infty}f(\tau)\mathscr F\{g(x-\tau)\}\mathrm d\tau\\&amp;=\int_{-\infty}^{\infty}f(\tau)e^{-ju\tau}G(u)\mathrm d\tau&amp;&amp;\text{时域平移}\\&amp;=F(u)G(u)\end{align}\]</span> 证毕。</p>
+          </div></p>
+<h4 id="卷积定理频域">卷积定理（频域）</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
+\mathscr F\{f(x)g(x)\}=\frac{1}{2\pi}F(u)\ast G(u)\tag{18}\label{prop-conv-freq}
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\begin{align}\mathscr F^{-1}\left\{ {\frac{1}{2\pi}F(u)\ast G(u)}\right\}&amp;=\int_{-\infty}^{\infty}\left[\frac{1}{2\pi}F(u)\ast G(u)\right]e^{jux}\mathrm dx\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}F(\tau)G(u-\tau)\mathrm d\tau\right]e^{jux}\mathrm dx\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)\left[\int_{-\infty}^{\infty}G(u-\tau)e^{jux}\mathrm dx\right]\mathrm d\tau\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)\mathscr F^{-1}\{G(u-\tau)\}\mathrm d\tau\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)e^{jx\tau}g(x)\mathrm d\tau&amp;&amp;\text{频域平移}\\&amp;=f(x)g(x)\end{align}\]</span> 两边同时做傅里叶变换即证。</p>
+          </div></p>
+<h2 id="离散傅里叶变换">离散傅里叶变换</h2>
+<h3 id="dirac-delta-函数及其傅里叶变换">Dirac <span class="math inline">\(\delta\)</span> 函数及其傅里叶变换</h3>
+<p>Dirac <span class="math inline">\(\delta\)</span> 函数有助于将离散的序列表示为连续的函数，让我们能够用统一的形式同时表达离散和连续的情形。它定义为在零点处的一个冲激函数： <span class="math display">\[
+\delta(x)=\begin{cases}\infty,&amp;x=0\\0,&amp;x\neq0\end{cases}
+\]</span> 但要满足： <span class="math display">\[
+\int_{-\infty}^{\infty}\delta(x)\mathrm dx=1
+\]</span> 这个限制条件也使得 Dirac <span class="math inline">\(\delta\)</span> 函数成为一个合法的概率分布，因此它可以通过使某些概率分布（如正态分布）的方差参数趋向于 <span class="math inline">\(0\)</span> 达到。</p>
+<p><img src="Dirac_function_approximation.gif" srcset="/blog-main/logo/imageloading.png" lazyload alt="https://en.wikipedia.org/wiki/Dirac_delta_function" width=30% /></p>
+<p>Dirac <span class="math inline">\(\delta\)</span> 函数具备<strong>筛选性质</strong>，这是我们能将离散序列表达为连续函数的基础： <span class="math display">\[
+\int_{-\infty}^{\infty}f(x)\delta(x)\mathrm dx=f(0)
+\]</span> 或更一般地： <span class="math display">\[
+\int_{-\infty}^{\infty}f(x)\delta(x-x_0)\mathrm dx=f(x_0)
+\]</span> 筛选性质也被称为取样性质，因为上式相当于从 <span class="math inline">\(f(x)\)</span> 中取样了 <span class="math inline">\(f(x_0)\)</span>.</p>
+<p>由筛选性质易知 Dirac <span class="math inline">\(\delta\)</span> 函数的傅里叶变换为： <span class="math display">\[
+\mathscr F\{\delta(x-x_0)\}=\int_{-\infty}^{\infty}\delta(x-x_0)e^{-jux}\mathrm dx=e^{-jux_0}\tag{19}\label{fourier-dirac}
+\]</span></p>
+<h3 id="冲激串及其傅里叶变换">冲激串及其傅里叶变换</h3>
+<p>后文我们会考虑间隔为 <span class="math inline">\(h\)</span> 的一系列冲激函数，即一个冲激串： <span class="math display">\[
+s(x)=\sum_{n=-\infty}^{\infty}\delta(x-nh)
+\]</span> 下图显示了一个冲激函数与冲击串：</p>
+<p><img src="delta.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="截自 Digital Image Processing，符号与本文有所不同" width=70% /></p>
+<p>下面我们求冲激串的傅里叶变换。由于 <span class="math inline">\(s(x)\)</span> 是一个周期为 <span class="math inline">\(h\)</span> 的周期冲激函数，因此可以展开为傅里叶级数： <span class="math display">\[
+s(x)=\sum_{n=-\infty}^{\infty}c_ne^{j2\pi nx/h}
+\]</span> 其中： <span class="math display">\[
+\begin{align}
+c_n&amp;=\frac{1}{h}\int_{-h/2}^{h/2}s(x)e^{-j2\pi nx/h}\mathrm dx\\
+&amp;=\frac{1}{h}\int_{-h/2}^{h/2}\sum_{m=-\infty}^{\infty}\delta(x-mh)e^{-j2\pi nx/h}\mathrm dx\\
+&amp;=\frac{1}{h}e^0=\frac{1}{h}
+\end{align}
+\]</span></p>
+<p>于是 <span class="math inline">\(s(x)\)</span> 的傅里叶级数为： <span class="math display">\[
+s(x)=\frac{1}{h}\sum_{n=-\infty}^{\infty}e^{j2\pi nx/h}
+\]</span> 根据傅里叶变换的线性性 <span class="math inline">\(\eqref{prop-linear}\)</span>，我们只需要求每一项的傅里叶变换： <span class="math display">\[
+S(u)=\mathscr F\{s(x)\}=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}
+\]</span> 在上一小节中我们得到了 Dirac <span class="math inline">\(\delta\)</span> 函数的傅里叶变换 <span class="math inline">\(\eqref{fourier-dirac}\)</span> 式：<span class="math inline">\(\mathscr F\{\delta(x-x_0)\}=e^{-jux_0}\)</span>，根据傅里叶变换的对称性 <span class="math inline">\(\eqref{prop-sym}\)</span> 式，有： <span class="math display">\[
+\mathscr F\{e^{-jxu_0}\}=\delta(-u-u_0)\xRightarrow{a=-u_0}\mathscr F\{e^{jxa}\}=\delta(-u+a)=\delta(u-a)
+\]</span> 因此： <span class="math display">\[
+S(u)=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}=\frac{1}{h}\sum_{n=-\infty}^{\infty}\delta\left(u-\frac{2\pi n}{h}\right)\tag{20}\label{fourier-s}
+\]</span></p>
+<h3 id="离散时间傅里叶变换">离散时间傅里叶变换</h3>
+<p>傅里叶级数和傅里叶变换面向的都是<strong>连续</strong>函数 <span class="math inline">\(f(x)\)</span>，但在很多实际应用中，我们只能从 <span class="math inline">\(f(x)\)</span> 中<strong>采样离散</strong>的样本。假设我们每隔 <span class="math inline">\(h\)</span> 采样一次，那么得到序列 <span class="math inline">\(\{\ldots,f(-2h),f(-h),f(0),f(h),f(2h),\ldots\}\)</span>，如下图所示：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="sampling.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="sampling2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="sampling3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
+<p>为了方便处理，用 Dirac <span class="math inline">\(\delta\)</span> 函数将离散的序列写作函数的形式： <span class="math display">\[
+\begin{align}
+&amp;s(x)=\sum_{n=-\infty}^{\infty}\delta(x-nh)\\
+&amp;\tilde f(x)=f(x)s(x)=\sum_{n=-\infty}^{\infty}f(x)\delta(x-nh)
+\end{align}
+\]</span> 现在，要求 <span class="math inline">\(\tilde f(x)\)</span> 的傅里叶变换 <span class="math inline">\(\tilde F(u)\)</span>，有两个思路——一是根据卷积定理 <span class="math inline">\(\eqref{prop-conv-time}\)</span> 式，计算 <span class="math inline">\(s(x)\)</span> 的傅里叶变换并与 <span class="math inline">\(F(u)\)</span> 做卷积，这样能建立起 <span class="math inline">\(\tilde F(u)\)</span> 与 <span class="math inline">\(F(u)\)</span> 之间的联系；二是直接将 <span class="math inline">\(\eqref{FT}\)</span> 式中的 <span class="math inline">\(f(x)\)</span> 替换成 <span class="math inline">\(\tilde f(x)\)</span>，这样能建立起 <span class="math inline">\(\tilde F(u)\)</span> 与 <span class="math inline">\(f(x)\)</span> 的联系。</p>
+<p>首先看第一个思路。在上一节中我们已经计算得到了 <span class="math inline">\(s(x)\)</span> 的傅里叶变换 <span class="math inline">\(\eqref{fourier-s}\)</span> 式，于是： <span class="math display">\[
+\begin{align}
+\tilde F(u)&amp;=F(u)\ast S(u)\\
+&amp;=\int_{-\infty}^{\infty}F(\tau)\frac{1}{h}\sum_{n=-\infty}^{\infty}\delta\left(u-\tau-\frac{2\pi n}{h}\right)\mathrm d\tau\\
+&amp;=\frac{1}{h}\sum_{n=-\infty}^{\infty}\int_{-\infty}^{\infty}F(\tau)\delta\left(u-\tau-\frac{2\pi n}{h}\right)\mathrm d\tau\\
+&amp;=\frac{1}{h}\sum_{n=-\infty}^{\infty}F\left(u-\frac{2\pi n}{h}\right)
+\end{align}\tag{21}\label{DTFT1}
+\]</span> 由此可以看出，<strong><span class="math inline">\(\tilde F(u)\)</span> 是一个周期函数，周期为 <span class="math inline">\(\frac{2\pi}{h}\)</span></strong>.</p>
+<p>然后看第二个思路。将 <span class="math inline">\(\eqref{FT}\)</span> 式中的 <span class="math inline">\(f(x)\)</span> 换成 <span class="math inline">\(\tilde f(x)\)</span>，得： <span class="math display">\[
+\begin{align}
+\tilde F(u)&amp;=\int_{-\infty}^{\infty}\tilde f(x)e^{-jux}\mathrm dx\\
+&amp;=\int_{-\infty}^{\infty}\sum_{n=-\infty}^{\infty}f(x)\delta(x-nh)e^{-jux}\mathrm dx\\
+&amp;=\sum_{n=-\infty}^{\infty}\int_{-\infty}^{\infty}f(x)\delta(x-nh)e^{-jux}\mathrm dx\\
+&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}
+\end{align}\tag{22}\label{DTFT2}
+\]</span></p>
+<p>考虑两种思路的好处在于，我们很难直接从 <span class="math inline">\(\eqref{DTFT2}\)</span> 式中看出 <span class="math inline">\(\tilde F(u)\)</span> 的周期性，但事实上： <span class="math display">\[
+\begin{align}
+\tilde F\left(u+\frac{2\pi}{h}\right)&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-j(u+2\pi/h)nh}\\
+&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}e^{-j2\pi n}\\
+&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}(-1)^{-2n}\\
+&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}=\tilde F(u)
+\end{align}
+\]</span> <span class="math inline">\(\eqref{DTFT2}\)</span> 式的确是以 <span class="math inline">\(\frac{2\pi}{h}\)</span> 为周期。</p>
+<h3 id="离散傅里叶变换---wip">离散傅里叶变换 - WIP</h3>
+<p>在离散时间傅里叶变换的推导中，采样点有<strong>无数多个</strong>，可以视为一个<strong>周期无限长</strong>的序列，因此变换到频域后的 <span class="math inline">\(\eqref{DTFT2}\)</span> 式依旧是连续的。但在实际应用中，我们只能做<strong>有限次</strong>采样，考虑对这有限个采样点做周期延拓，那么就得到了一个<strong>周期序列</strong>。这很像反过来从傅里叶变换推导回了傅里叶级数。的确，离散傅里叶变换似乎应该叫做“离散时间傅里叶级数”才更准确。</p>
+<table style="text-align:center">
+<tr>
+<th width="24%">
+</th>
+<th width="38%">
+时域连续
+</th>
+<th width="38%">
+时域离散（频域周期）
+</th>
+</tr>
+<tr>
+<th>
+频域连续
+</th>
+<td>
+傅里叶变换
+</td>
+<td>
+离散时间傅里叶变换
+</td>
+</tr>
+<tr>
+<th>
+频域离散（时域周期）
+</th>
+<td>
+傅里叶级数
+</td>
+<td>
+离散傅里叶变换
+</td>
+</tr>
+</table>
+<blockquote>
+<p>注意频域与时域在离散和周期性上也有对称的关系。</p>
+</blockquote>
+<p>因此，为了得到离散傅里叶变换，我们只需要将离散时间傅里叶变换 <span class="math inline">\(\eqref{DTFT2}\)</span> 式离散化。由于它是一个以 <span class="math inline">\(\frac{2\pi}{h}\)</span> 为周期的周期函数，因此假设我们在该周期内等间隔地取了 <span class="math inline">\(\tilde F(u)\)</span> 的 <span class="math inline">\(M\)</span> 个样本。具体而言，我们在如下频率处取样： <span class="math display">\[
+u=\frac{2\pi m}{Mh},\quad m=0,\ldots,M-1
+\]</span> 代入 <span class="math inline">\(\eqref{DTFT2}\)</span> 式，得： <span class="math display">\[
+\tilde F(u)=\sum_{n=0}^{m-1}f(nh)e^{-j2\pi mn/M}
+\]</span> TODO: <span class="math inline">\(n\)</span> 范围怎么从 <span class="math inline">\(\infty\)</span> 到 <span class="math inline">\(0,\ldots,M-1\)</span> 的？</p>
+<p>未完待续。</p>
+<h2 id="图像的离散傅里叶变换">图像的离散傅里叶变换</h2>
+<h3 id="图像的空间域与频域">图像的空间域与频域</h3>
+<p>前文中我们研究的一元函数可以看作是时域信号，但是对于图像而言，时域信号这个说法显然不合适了。那应该怎么理解呢？</p>
+<p>首先，一幅数字图像其实是一个二元函数 <span class="math inline">\(f=f(x,y)\)</span>，其中自变量 <span class="math inline">\((x,y)\)</span> 是像素的坐标，函数值是像素的灰度级。因此，将图像在三维空间中绘制出来，就好像一个连绵不断的山脉，类似于信号波形的二维版本。只不过这里自变量表示空间位置而非时间，因此我们称之为<strong>空间域</strong>。</p>
+<p>与时域信号类似，用无数个二维的不同角频率的正余弦函数就可以去近似一幅图像。其中，图像变化比较剧烈的地方——比如边缘、纹理等细节，需要依靠高频的正余弦函数去拟合；相反，图像大体的构图就对应低频的正余弦函数。因此，我们经常把图像的细节称作高频分量，而整体构图称作低频分量。</p>
+<h3 id="二维离散傅里叶变换">二维离散傅里叶变换</h3>
+<p>设 <span class="math inline">\(f(x,y)\)</span> 是大小为 <span class="math inline">\(M\times N\)</span> 的数字图像，类似于一维的离散傅里叶变换 <span class="math inline">\(\eqref{IDF}\)</span> 式和逆变换 <span class="math inline">\(\eqref{IDFT}\)</span> 式，二维离散傅里叶变换为： <span class="math display">\[
+F(u,v)=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x,y)e^{-j2\pi(ux/M+vy/N)}\tag{24}\label{2D-DFT},\quad u=0,\ldots,M-1,\;v=0,\ldots,N-1
+\]</span> 逆变换为： <span class="math display">\[
+f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{j2\pi(ux/M+vy/N)},\quad x=0,\ldots,M-1,\;y=0,\ldots,N-1\tag{25}\label{2D-IDFT}
+\]</span></p>
+<h3 id="二维离散傅里叶变换的性质">二维离散傅里叶变换的性质</h3>
+<h4 id="平移">平移</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x-x_0,y-y_0)\}=e^{-j2\pi(ux_0/M+vy_0/N)}F(u,v)\\
+&amp;\mathscr F^{-1}\{F(u-u_0,v-v_0)\}=e^{j2\pi (u_0x/M+v_0y/N)}f(x,y)
+\end{align}
+\]</span></p>
+<p>未完待续。</p>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Rafael C. Gonzalez. Digital Image Processing, Fourth Edition. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>《数字图像处理》图像表征：离散傅里叶变换（DFT）、离散余弦变换（DCT）、主成分分析（PCA） - zhiwei的文章 - 知乎 https://zhuanlan.zhihu.com/p/563668048 <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>傅里叶级数和傅里叶变换是什么关系？ - 马同学的回答 - 知乎 https://www.zhihu.com/question/21665935/answer/358423678 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>傅里叶级数和傅里叶变换是什么关系？ - Hsuty的回答 - 知乎 https://www.zhihu.com/question/21665935/answer/2367861632 <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>傅里叶系列（二）傅里叶变换的推导 - leinlin的文章 - 知乎 https://zhuanlan.zhihu.com/p/41875010 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>彻底搞懂傅里叶变换之实用干货分享(四)-离散傅里叶变换(DFT) - anders的文章 - 知乎 https://zhuanlan.zhihu.com/p/405143684 <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Half_Kettle. 从傅里叶级数（Fourier series）到离散傅里叶变换（Discrete Fourier transform）. https://www.cnblogs.com/yang-ding/p/15925430.html <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>积分变换（3）——傅里叶变换的性质 - tetradecane的文章 - 知乎 https://zhuanlan.zhihu.com/p/108803395 <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%95%B0%E5%AD%A6/" class="category-chain-item">数学</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Fourier Transform（未完待续）</div>
+      <div>https://xyfjason.github.io/blog-main/2023/10/18/Fourier-Transform/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/10/12/%E7%9F%A9%E9%98%B5%E8%AE%BA-1-2%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E5%8F%8A%E5%85%B6%E7%9F%A9%E9%98%B5%E8%A1%A8%E7%A4%BA/" title="[矩阵论]1.2线性变换及其矩阵表示">
+                        <span class="hidden-mobile">[矩阵论]1.2线性变换及其矩阵表示</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
