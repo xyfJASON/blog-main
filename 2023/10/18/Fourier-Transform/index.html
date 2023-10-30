@@ -16,23 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="内积空间与正交基 我们知道，在一个 \(n\) 维线性空间中可以找到 \(n\) 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称为正交。如果一组基两两正交，那么这组基称作正交基。 值得注意的是，上述“线性空间”、“向量”、“内积”都是抽象的概念，不一定是">
+    <meta name="description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 内积空间与正交基 我们知道，在一个 \(n\) 维线性空间中可以找到 \(n\) 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Fourier Transform（未完待续）">
+<meta property="og:title" content="Fourier Transform">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/10/18/Fourier-Transform/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="内积空间与正交基 我们知道，在一个 \(n\) 维线性空间中可以找到 \(n\) 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称为正交。如果一组基两两正交，那么这组基称作正交基。 值得注意的是，上述“线性空间”、“向量”、“内积”都是抽象的概念，不一定是">
+<meta property="og:description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 内积空间与正交基 我们知道，在一个 \(n\) 维线性空间中可以找到 \(n\) 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/Fourier-3B1B.jpg">
 <meta property="article:published_time" content="2023-10-18T02:22:41.000Z">
-<meta property="article:modified_time" content="2023-10-25T16:35:05.388Z">
+<meta property="article:modified_time" content="2023-10-30T11:10:59.187Z">
 <meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="image processing">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/Fourier-3B1B.jpg">
   
   
   
-  <title>Fourier Transform（未完待续） - xyfJASON</title>
+  <title>Fourier Transform - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -250,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Fourier Transform（未完待续）"></span>
+            <span id="subtitle" data-typed-text="Fourier Transform"></span>
           
         </div>
 
@@ -273,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          16k 字
+          21k 字
         
       </span>
     
@@ -284,7 +285,7 @@
         
         
         
-          135 分钟
+          179 分钟
         
       </span>
     
@@ -321,12 +322,15 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Fourier Transform（未完待续）</h1>
+            <h1 id="seo-header">Fourier Transform</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="内积空间与正交基">内积空间与正交基</h2>
+                <p><span class="math display">\[
+\newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
+\]</span></p>
+<h2 id="内积空间与正交基">内积空间与正交基</h2>
 <p>我们知道，在一个 <span class="math inline">\(n\)</span> 维线性空间中可以找到 <span class="math inline">\(n\)</span> 个线性无关的向量，构成该空间的一组基。任一空间中的向量都可以唯一表示为该基的线性组合。如果在线性空间中定义内积运算，就得到内积空间（实数域上称为欧氏空间，复数域上称为酉空间），内积为零的向量称为正交。如果一组基两两正交，那么这组基称作正交基。</p>
 <p>值得注意的是，上述“线性空间”、“向量”、“内积”都是<strong>抽象的概念</strong>，不一定是 <span class="math inline">\(\mathbb R^n\)</span> 或 <span class="math inline">\(\mathbb C^n\)</span>. 只要定义的加法和数乘运算满足相应的性质，那么就是一个线性空间；只要定义的内积运算满足相应的性质，那么就是一个内积空间。因此，若将上述抽象的“向量”<strong>具体化为区间 <span class="math inline">\([a,b]\)</span> 上的函数</strong>，并定义两个函数的内积为： <span class="math display">\[
 \langle f(x),g(x)\rangle=\int_a^bf(x)\bar g(x)\mathrm dx
@@ -463,7 +467,7 @@ f(x)\iff F(u)
 &amp;\mathscr F^{-1}\{aF(u)+bG(u)\}=a\mathscr F^{-1}\{F(u)\}+b\mathscr F^{-1}\{G(u)\}
 \end{align}\tag{13}\label{prop-linear}
 \]</span> 易证。</p>
-<h4 id="时域频域平移">时域频域平移</h4>
+<h4 id="平移性质">平移性质</h4>
 <p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u)\)</span>，则： <span class="math display">\[
 \begin{align}
 &amp;\mathscr F\{f(x-x_0)\}=e^{-jux_0}F(u)\tag{14}\label{prop-time-shift}\\
@@ -472,23 +476,29 @@ f(x)\iff F(u)
 \]</span> <div class="note note-secondary">
             <p>证明： <span class="math display">\[\begin{align}&amp;\mathscr F\{f(x-x_0)\}=\int_{-\infty}^{\infty}f(x-x_0)e^{-jux}\mathrm dx=\int_{-\infty}^{\infty}f(t)e^{-ju(t+x_0)}\mathrm dt=e^{-jux_0}F(u)\\&amp;\mathscr F^{-1}\{F(u-u_0)\}=\int_{-\infty}^{\infty}F(u-u_0)e^{jux}\mathrm du=\int_{-\infty}^{\infty}F(t)e^{j(t+u_0)x}\mathrm dt=e^{ju_0x}f(x)\end{align}\]</span> 证毕。</p>
           </div></p>
-<h4 id="对称性">对称性</h4>
+<h4 id="共轭对称性">共轭对称性</h4>
+<p>若 <span class="math inline">\(f(x)\)</span> 是<strong>实函数</strong>，则 <span class="math inline">\(F(u)=\mathscr F\{f(x)\}\)</span> 是共轭对称的（实部偶函数，虚部奇函数），即： <span class="math display">\[
+F^\ast(u)=F(-u)
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\begin{align}F^\ast(u)&amp;=\left(\int_{-\infty}^{\infty}f(x)e^{-jux}\mathrm dx\right)^\ast\\&amp;=\int_{-\infty}^{\infty}f^\ast(x)e^{jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}f(x)e^{jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}f(x)e^{-j(-u)x}\mathrm dx\\&amp;=F(-u)\end{align}\]</span></p>
+          </div></p>
+<p>若 <span class="math inline">\(f(x)\)</span> 是<strong>虚函数</strong>，则 <span class="math inline">\(F(u)=\mathscr F\{f(x)\}\)</span> 是共轭反对称的（实部奇函数，虚部偶函数），即： <span class="math display">\[
+F^\ast(u)=-F(-u)
+\]</span> 证明类似，略去。</p>
+<h4 id="对偶性互易性">对偶性（互易性）</h4>
 <p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u)\)</span>，则： <span class="math display">\[
 \mathscr F\{F(x)\}=2\pi f(-u)\tag{16}\label{prop-sym}
 \]</span> <div class="note note-secondary">
-            <p>证明：对逆傅里叶变换 <span class="math inline">\(\eqref{IFT}\)</span> 式做变量代换：<span class="math inline">\(x\coloneqq -u,\,u\coloneqq x\)</span>，有： <span class="math display">\[\begin{align}f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(u)e^{jux}\mathrm dx\implies f(-u)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(x)e^{-jux}\mathrm du=\frac{1}{2\pi}\mathscr F\{F(x)\}\end{align}\]</span> 得证。</p>
+            <p>证明：对逆傅里叶变换 <span class="math inline">\(\eqref{IFT}\)</span> 式做变量代换：<span class="math inline">\(x\coloneqq -u,\,u\coloneqq x\)</span>，有： <span class="math display">\[\begin{align}f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(u)e^{jux}\mathrm dx\implies f(-u)=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(x)e^{-jux}\mathrm du=\frac{1}{2\pi}\mathscr F\{F(x)\}\end{align}\]</span> 证毕。</p>
           </div></p>
-<h4 id="卷积定理时域">卷积定理（时域）</h4>
+<h4 id="卷积定理">卷积定理</h4>
 <p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
-\mathscr F\{f(x)\ast g(x)\}=F(u)G(u)\tag{17}\label{prop-conv-time}
+\begin{align}
+&amp;\mathscr F\{f(x)\ast g(x)\}=F(u)G(u)\tag{17}\label{prop-conv-time}\\
+&amp;\mathscr F\{f(x)g(x)\}=\frac{1}{2\pi}F(u)\ast G(u)\tag{18}\label{prop-conv-freq}
+\end{align}
 \]</span> <div class="note note-secondary">
-            <p>证明： <span class="math display">\[\begin{align}\mathscr F\{f(x)\ast g(x)\}&amp;=\int_{-\infty}^{\infty}\left[f(x)\ast g(x)\right]e^{-jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}f(\tau)g(x-\tau)\mathrm d\tau\right]e^{-jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}f(\tau)\left[\int_{-\infty}^{\infty}g(x-\tau)e^{-jux}\mathrm dx\right]\mathrm d\tau\\&amp;=\int_{-\infty}^{\infty}f(\tau)\mathscr F\{g(x-\tau)\}\mathrm d\tau\\&amp;=\int_{-\infty}^{\infty}f(\tau)e^{-ju\tau}G(u)\mathrm d\tau&amp;&amp;\text{时域平移}\\&amp;=F(u)G(u)\end{align}\]</span> 证毕。</p>
-          </div></p>
-<h4 id="卷积定理频域">卷积定理（频域）</h4>
-<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
-\mathscr F\{f(x)g(x)\}=\frac{1}{2\pi}F(u)\ast G(u)\tag{18}\label{prop-conv-freq}
-\]</span> <div class="note note-secondary">
-            <p>证明： <span class="math display">\[\begin{align}\mathscr F^{-1}\left\{ {\frac{1}{2\pi}F(u)\ast G(u)}\right\}&amp;=\int_{-\infty}^{\infty}\left[\frac{1}{2\pi}F(u)\ast G(u)\right]e^{jux}\mathrm dx\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}F(\tau)G(u-\tau)\mathrm d\tau\right]e^{jux}\mathrm dx\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)\left[\int_{-\infty}^{\infty}G(u-\tau)e^{jux}\mathrm dx\right]\mathrm d\tau\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)\mathscr F^{-1}\{G(u-\tau)\}\mathrm d\tau\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)e^{jx\tau}g(x)\mathrm d\tau&amp;&amp;\text{频域平移}\\&amp;=f(x)g(x)\end{align}\]</span> 两边同时做傅里叶变换即证。</p>
+            <p>证明时域卷积定理： <span class="math display">\[\begin{align}\mathscr F\{f(x)\ast g(x)\}&amp;=\int_{-\infty}^{\infty}\left[f(x)\ast g(x)\right]e^{-jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}f(\tau)g(x-\tau)\mathrm d\tau\right]e^{-jux}\mathrm dx\\&amp;=\int_{-\infty}^{\infty}f(\tau)\left[\int_{-\infty}^{\infty}g(x-\tau)e^{-jux}\mathrm dx\right]\mathrm d\tau\\&amp;=\int_{-\infty}^{\infty}f(\tau)\mathscr F\{g(x-\tau)\}\mathrm d\tau\\&amp;=\int_{-\infty}^{\infty}f(\tau)e^{-ju\tau}G(u)\mathrm d\tau&amp;&amp;\text{时域平移}\\&amp;=F(u)G(u)\end{align}\]</span> 证明频域卷积定理： <span class="math display">\[\begin{align}\mathscr F^{-1}\left\{ {\frac{1}{2\pi}F(u)\ast G(u)}\right\}&amp;=\int_{-\infty}^{\infty}\left[\frac{1}{2\pi}F(u)\ast G(u)\right]e^{jux}\mathrm dx\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}\left[\int_{-\infty}^{\infty}F(\tau)G(u-\tau)\mathrm d\tau\right]e^{jux}\mathrm dx\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)\left[\int_{-\infty}^{\infty}G(u-\tau)e^{jux}\mathrm dx\right]\mathrm d\tau\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)\mathscr F^{-1}\{G(u-\tau)\}\mathrm d\tau\\&amp;=\frac{1}{2\pi}\int_{-\infty}^{\infty}F(\tau)e^{jx\tau}g(x)\mathrm d\tau&amp;&amp;\text{频域平移}\\&amp;=f(x)g(x)\end{align}\]</span> 两边同时做傅里叶变换即证。</p>
           </div></p>
 <h2 id="离散傅里叶变换">离散傅里叶变换</h2>
 <h3 id="dirac-delta-函数及其傅里叶变换">Dirac <span class="math inline">\(\delta\)</span> 函数及其傅里叶变换</h3>
@@ -525,7 +535,7 @@ s(x)=\frac{1}{h}\sum_{n=-\infty}^{\infty}e^{j2\pi nx/h}
 \]</span> 根据傅里叶变换的线性性 <span class="math inline">\(\eqref{prop-linear}\)</span>，我们只需要求每一项的傅里叶变换： <span class="math display">\[
 S(u)=\mathscr F\{s(x)\}=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}
 \]</span> 在上一小节中我们得到了 Dirac <span class="math inline">\(\delta\)</span> 函数的傅里叶变换 <span class="math inline">\(\eqref{fourier-dirac}\)</span> 式：<span class="math inline">\(\mathscr F\{\delta(x-x_0)\}=e^{-jux_0}\)</span>，根据傅里叶变换的对称性 <span class="math inline">\(\eqref{prop-sym}\)</span> 式，有： <span class="math display">\[
-\mathscr F\{e^{-jxu_0}\}=\delta(-u-u_0)\xRightarrow{a=-u_0}\mathscr F\{e^{jxa}\}=\delta(-u+a)=\delta(u-a)
+\mathscr F\{e^{-jxu_0}\}=\delta(-u-u_0)\xrightarrow{a=-u_0}\mathscr F\{e^{jxa}\}=\delta(-u+a)=\delta(u-a)
 \]</span> 因此： <span class="math display">\[
 S(u)=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}=\frac{1}{h}\sum_{n=-\infty}^{\infty}\delta\left(u-\frac{2\pi n}{h}\right)\tag{20}\label{fourier-s}
 \]</span></p>
@@ -551,18 +561,19 @@ S(u)=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}=\frac{1}{h
 \tilde F(u)&amp;=\int_{-\infty}^{\infty}\tilde f(x)e^{-jux}\mathrm dx\\
 &amp;=\int_{-\infty}^{\infty}\sum_{n=-\infty}^{\infty}f(x)\delta(x-nh)e^{-jux}\mathrm dx\\
 &amp;=\sum_{n=-\infty}^{\infty}\int_{-\infty}^{\infty}f(x)\delta(x-nh)e^{-jux}\mathrm dx\\
-&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}
+&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}\\
+&amp;=\sum_{n=-\infty}^{\infty}f_ne^{-junh}
 \end{align}\tag{22}\label{DTFT2}
 \]</span></p>
 <p>考虑两种思路的好处在于，我们很难直接从 <span class="math inline">\(\eqref{DTFT2}\)</span> 式中看出 <span class="math inline">\(\tilde F(u)\)</span> 的周期性，但事实上： <span class="math display">\[
 \begin{align}
-\tilde F\left(u+\frac{2\pi}{h}\right)&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-j(u+2\pi/h)nh}\\
-&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}e^{-j2\pi n}\\
-&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}(-1)^{-2n}\\
-&amp;=\sum_{n=-\infty}^{\infty}f(nh)e^{-junh}=\tilde F(u)
+\tilde F\left(u+\frac{2\pi}{h}\right)&amp;=\sum_{n=-\infty}^{\infty}f_ne^{-j(u+2\pi/h)nh}\\
+&amp;=\sum_{n=-\infty}^{\infty}f_ne^{-junh}e^{-j2\pi n}\\
+&amp;=\sum_{n=-\infty}^{\infty}f_ne^{-junh}(-1)^{-2n}\\
+&amp;=\sum_{n=-\infty}^{\infty}f_ne^{-junh}=\tilde F(u)
 \end{align}
 \]</span> <span class="math inline">\(\eqref{DTFT2}\)</span> 式的确是以 <span class="math inline">\(\frac{2\pi}{h}\)</span> 为周期。</p>
-<h3 id="离散傅里叶变换---wip">离散傅里叶变换 - WIP</h3>
+<h3 id="离散傅里叶变换-1">离散傅里叶变换</h3>
 <p>在离散时间傅里叶变换的推导中，采样点有<strong>无数多个</strong>，可以视为一个<strong>周期无限长</strong>的序列，因此变换到频域后的 <span class="math inline">\(\eqref{DTFT2}\)</span> 式依旧是连续的。但在实际应用中，我们只能做<strong>有限次</strong>采样，考虑对这有限个采样点做周期延拓，那么就得到了一个<strong>周期序列</strong>。这很像反过来从傅里叶变换推导回了傅里叶级数。的确，离散傅里叶变换似乎应该叫做“离散时间傅里叶级数”才更准确。</p>
 <table style="text-align:center">
 <tr>
@@ -601,32 +612,152 @@ S(u)=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}=\frac{1}{h
 <blockquote>
 <p>注意频域与时域在离散和周期性上也有对称的关系。</p>
 </blockquote>
-<p>因此，为了得到离散傅里叶变换，我们只需要将离散时间傅里叶变换 <span class="math inline">\(\eqref{DTFT2}\)</span> 式离散化。由于它是一个以 <span class="math inline">\(\frac{2\pi}{h}\)</span> 为周期的周期函数，因此假设我们在该周期内等间隔地取了 <span class="math inline">\(\tilde F(u)\)</span> 的 <span class="math inline">\(M\)</span> 个样本。具体而言，我们在如下频率处取样： <span class="math display">\[
+<p>假设我们以间隔 <span class="math inline">\(h\)</span> 采样了 <span class="math inline">\(M\)</span> 个样本 <span class="math inline">\(\{f(nh)\}_{n=0}^{M-1}\)</span>，那么周期延拓后得到时域上离散且周期的序列，因此，其频域表示应该也是离散且周期的。我们只需要将离散时间傅里叶变换 <span class="math inline">\(\eqref{DTFT2}\)</span> 式离散化，由于它是一个以 <span class="math inline">\(\frac{2\pi}{h}\)</span> 为周期的周期函数，因此假设我们在该周期内等间隔地取了 <span class="math inline">\(\tilde F(u)\)</span> 的 <span class="math inline">\(M\)</span> 个样本，即在如下频率处取样：</p>
+<p><span class="math display">\[
 u=\frac{2\pi m}{Mh},\quad m=0,\ldots,M-1
 \]</span> 代入 <span class="math inline">\(\eqref{DTFT2}\)</span> 式，得： <span class="math display">\[
-\tilde F(u)=\sum_{n=0}^{m-1}f(nh)e^{-j2\pi mn/M}
-\]</span> TODO: <span class="math inline">\(n\)</span> 范围怎么从 <span class="math inline">\(\infty\)</span> 到 <span class="math inline">\(0,\ldots,M-1\)</span> 的？</p>
-<p>未完待续。</p>
-<h2 id="图像的离散傅里叶变换">图像的离散傅里叶变换</h2>
-<h3 id="图像的空间域与频域">图像的空间域与频域</h3>
-<p>前文中我们研究的一元函数可以看作是时域信号，但是对于图像而言，时域信号这个说法显然不合适了。那应该怎么理解呢？</p>
-<p>首先，一幅数字图像其实是一个二元函数 <span class="math inline">\(f=f(x,y)\)</span>，其中自变量 <span class="math inline">\((x,y)\)</span> 是像素的坐标，函数值是像素的灰度级。因此，将图像在三维空间中绘制出来，就好像一个连绵不断的山脉，类似于信号波形的二维版本。只不过这里自变量表示空间位置而非时间，因此我们称之为<strong>空间域</strong>。</p>
-<p>与时域信号类似，用无数个二维的不同角频率的正余弦函数就可以去近似一幅图像。其中，图像变化比较剧烈的地方——比如边缘、纹理等细节，需要依靠高频的正余弦函数去拟合；相反，图像大体的构图就对应低频的正余弦函数。因此，我们经常把图像的细节称作高频分量，而整体构图称作低频分量。</p>
-<h3 id="二维离散傅里叶变换">二维离散傅里叶变换</h3>
-<p>设 <span class="math inline">\(f(x,y)\)</span> 是大小为 <span class="math inline">\(M\times N\)</span> 的数字图像，类似于一维的离散傅里叶变换 <span class="math inline">\(\eqref{IDF}\)</span> 式和逆变换 <span class="math inline">\(\eqref{IDFT}\)</span> 式，二维离散傅里叶变换为： <span class="math display">\[
-F(u,v)=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x,y)e^{-j2\pi(ux/M+vy/N)}\tag{24}\label{2D-DFT},\quad u=0,\ldots,M-1,\;v=0,\ldots,N-1
+F_m=\tilde F\left(\frac{2\pi m}{Mh}\right)=\sum_{n=0}^{M-1}f_ne^{-j2\pi mn/M},\quad m=0,\ldots,M-1\tag{23}\label{DFT0}
+\]</span> 对应逆变换为： <span class="math display">\[
+f_n=\frac{1}{M}\sum_{m=0}^{M-1}F_me^{j2\pi mn/M},\quad n=0,\ldots,M-1\tag{24}\label{IDFT0}
+\]</span> 容易验证将 <span class="math inline">\(\eqref{DFT0}\)</span> 代入 <span class="math inline">\(\eqref{IDFT0}\)</span> 后得到 <span class="math inline">\(f_n\equiv f_n\)</span>，将 <span class="math inline">\(\eqref{IDFT0}\)</span> 代入 <span class="math inline">\(\eqref{DFT0}\)</span> 后得到 <span class="math inline">\(F_m\equiv F_m\)</span>，因此 <span class="math inline">\(f_n\iff F_m\)</span> 构成一个离散傅里叶变换对。为了与后文的符号统一，我们用 <span class="math inline">\(F(u)\)</span> 和 <span class="math inline">\(f(x)\)</span> 来代替 <span class="math inline">\(F_m\)</span> 和 <span class="math inline">\(f_n\)</span>，就得到了离散傅里叶变换的表达式： <span class="math display">\[
+\begin{align}
+&amp;F(u)=\sum_{x=0}^{M-1}f(x)e^{-j2\pi ux/M},\quad u=0,\ldots,M-1\tag{25}\label{DFT}\\
+&amp;f(x)=\frac{1}{M}\sum_{u=0}^{M-1}F(u)e^{j2\pi ux/M},\quad x=0,\ldots,M-1\tag{26}\label{IDFT}
+\end{align}
+\]</span></p>
+<h3 id="离散傅里叶变换的性质">离散傅里叶变换的性质</h3>
+<p>部分性质与连续傅里叶变换类似，不再做证明。</p>
+<h4 id="线性性-1">线性性</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{af(x)+bg(x)\}=a\mathscr F\{f(x)\}+b\mathscr F\{g(x)\}=F(u)+G(u)\\
+&amp;\mathscr F^{-1}\{aF(u)+bG(u)\}=a\mathscr F^{-1}\{F(u)\}+b\mathscr F^{-1}\{G(u)\}
+\end{align}
+\]</span></p>
+<h4 id="平移性质-1">平移性质</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x-x_0)\}=e^{-j2\pi ux_0/M}F(u)\\
+&amp;\mathscr F^{-1}\{F(u-u_0)\}=e^{j2\pi u_0x/M}f(x)
+\end{align}
+\]</span> 特别地，当 <span class="math inline">\(x_0=u_0=M/2\)</span> 时，有： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x-M/2)\}=(-1)^uF(u)\\
+&amp;\mathscr F^{-1}(F(u-M/2))=(-1)^xf(x)
+\end{align}
+\]</span></p>
+<h4 id="周期性">周期性</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;F(u)=F(u+kM)&amp;&amp;k\in\mathbb Z\\
+&amp;f(x)=f(x+kM)&amp;&amp;k\in\mathbb Z
+\end{align}
+\]</span></p>
+<h4 id="共轭对称性-1">共轭对称性</h4>
+<p>若 <span class="math inline">\(f(x)\)</span> 是<strong>实函数</strong>，则 <span class="math inline">\(F(u)=\mathscr F\{f(x)\}\)</span> 是共轭对称的（实部偶函数，虚部奇函数），即： <span class="math display">\[
+F^\ast(u)=F(-u)
+\]</span> 若 <span class="math inline">\(f(x)\)</span> 是<strong>虚函数</strong>，则 <span class="math inline">\(F(u)=\mathscr F\{f(x)\}\)</span> 是共轭反对称的（实部奇函数，虚部偶函数），即： <span class="math display">\[
+F^\ast(u)=-F(-u)
+\]</span></p>
+<h4 id="循环卷积定理">循环卷积定理</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x)\}=F(u),\,\mathscr F\{g(x)\}=G(u)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x)\ast g(x)\}=F(u)G(u)\\
+&amp;\mathscr F\{f(x)g(x)\}=\frac{1}{M}F(u)\ast G(u)
+\end{align}
+\]</span> 值得注意的是，由于离散傅里叶变换具有周期性，因此这里的卷积是<strong>循环卷积</strong>，即先将 <span class="math inline">\(f(x)\)</span> 与 <span class="math inline">\(g(x)\)</span> 进行周期延拓后再做卷积。后文中我们将看到，在图像处理中这种卷积模式并不是我们想要的，因此需要做一些额外的操作。</p>
+<h2 id="二维傅里叶变换">二维傅里叶变换</h2>
+<h3 id="二维连续傅里叶变换">二维连续傅里叶变换</h3>
+<p>设 <span class="math inline">\(f(x,y)\)</span> 是一个二元函数，其中 <span class="math inline">\(x,y\)</span> 为连续变量。类似于一维的傅里叶变换 <span class="math inline">\(\eqref{FT}\)</span> 式和逆变换 <span class="math inline">\(\eqref{IFT}\)</span> 式，二维的傅里叶变换为： <span class="math display">\[
+F(u,v)=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}f(x,y)e^{-j(ux+vy)}\mathrm dx\mathrm dy\tag{27}\label{2D-FT}
 \]</span> 逆变换为： <span class="math display">\[
-f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{j2\pi(ux/M+vy/N)},\quad x=0,\ldots,M-1,\;y=0,\ldots,N-1\tag{25}\label{2D-IDFT}
+f(x,y)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}F(u,v)e^{j(ux+vy)}\mathrm dx\mathrm dy\tag{28}\label{2D-IFT}
+\]</span></p>
+<h3 id="二维离散傅里叶变换">二维离散傅里叶变换</h3>
+<p>设 <span class="math inline">\(f(x,y)\)</span> 是一个二元函数，其中 <span class="math inline">\(x\in\{0,\ldots,M-1\},\,y\in\{0,\ldots,N-1\}\)</span>. 类似于一维的离散傅里叶变换 <span class="math inline">\(\eqref{DFT}\)</span> 式和逆变换 <span class="math inline">\(\eqref{IDFT}\)</span> 式，二维离散傅里叶变换为： <span class="math display">\[
+F(u,v)=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x,y)e^{-j2\pi(ux/M+vy/N)},\quad u=0,\ldots,M-1,\;v=0,\ldots,N-1\tag{29}\label{2D-DFT}
+\]</span> 逆变换为： <span class="math display">\[
+f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{j2\pi(ux/M+vy/N)},\quad x=0,\ldots,M-1,\;y=0,\ldots,N-1\tag{30}\label{2D-IDFT}
 \]</span></p>
 <h3 id="二维离散傅里叶变换的性质">二维离散傅里叶变换的性质</h3>
-<h4 id="平移">平移</h4>
+<p>可类比一维离散傅里叶变换的性质。</p>
+<h4 id="平移性质-2">平移性质</h4>
 <p>设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v)\)</span>，则： <span class="math display">\[
 \begin{align}
 &amp;\mathscr F\{f(x-x_0,y-y_0)\}=e^{-j2\pi(ux_0/M+vy_0/N)}F(u,v)\\
 &amp;\mathscr F^{-1}\{F(u-u_0,v-v_0)\}=e^{j2\pi (u_0x/M+v_0y/N)}f(x,y)
 \end{align}
 \]</span></p>
-<p>未完待续。</p>
+<h4 id="旋转性质">旋转性质</h4>
+<p>使用极坐标：<span class="math inline">\(x=r\cos\theta,\,y=r\sin\theta,\,u=\omega\cos\varphi,\,v=\omega\sin\varphi\)</span>，可得如下变换对： <span class="math display">\[
+f(r,\theta+\theta_0)\iff F(\omega,\varphi+\theta_0)
+\]</span> 即若 <span class="math inline">\(f(x,y)\)</span> 旋转 <span class="math inline">\(\theta_0\)</span> 角度，则 <span class="math inline">\(F(u,v)\)</span> 也旋转相同的角度，反之亦然。</p>
+<h4 id="周期性-1">周期性</h4>
+<p><span class="math display">\[
+\begin{align}
+&amp;F(u,v)=F(u+k_1M,v+k_2N)&amp;&amp;k_1,k_2\in\mathbb Z\\
+&amp;f(x,y)=f(x+k_1M,y+k_2N)&amp;&amp;k_1,k_2\in\mathbb Z
+\end{align}
+\]</span></p>
+<h4 id="共轭对称性-2">共轭对称性</h4>
+<p>若 <span class="math inline">\(f(x,y)\)</span> 是实函数，则 <span class="math inline">\(F(u,v)\)</span> 是共轭对称的（实部偶函数，虚部奇函数），即： <span class="math display">\[
+F^\ast(u,v)=F(-u,-v)
+\]</span> 若 <span class="math inline">\(f(x,y)\)</span> 是虚函数，则 <span class="math inline">\(F(u,v)\)</span> 是共轭反对称的（实部奇函数，虚部偶函数），即： <span class="math display">\[
+F^\ast(u,v)=-F(-u,-v)
+\]</span></p>
+<h4 id="频谱相位谱和功率谱">频谱、相位谱和功率谱</h4>
+<p>由于 DFT 是复函数，因此可以用极坐标表示： <span class="math display">\[
+\begin{align}
+&amp;F(u,v)=R(u,v)+jI(u,v)=|F(u,v)|e^{j\phi(u,v)}\\
+\text{where}\quad&amp;|F(u,v)|=\sqrt{R^2(u,v)+I^2(u,v)}\\
+&amp;\phi(u,v)=\arctan\frac{I(u,v)}{R(u,v)}
+\end{align}
+\]</span> 其中 <span class="math inline">\(|F(u,v)|\)</span> 称为频谱，<span class="math inline">\(\phi(u,v)\)</span> 称为相位谱，而功率谱是频谱的平方： <span class="math display">\[
+P(u,v)=|F(u,v)|^2=R^2(u,v)+I^2(u,v)
+\]</span> 前文说到，对于实函数 <span class="math inline">\(f(x,y)\)</span>，其傅里叶变换 <span class="math inline">\(F(u,v)\)</span> 是共轭对称的，于是容易知道其频谱是关于原点偶对称的，而相位谱是关于原点奇对称的： <span class="math display">\[
+|F(u,v)|=|F(-u,-v)|\quad\quad\phi(u,v)=-\phi(-u,-v)
+\]</span></p>
+<h4 id="二维循环卷积定理">二维循环卷积定理</h4>
+<p>设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v),\,\mathscr F\{g(x,y)\}=G(u,v)\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;\mathscr F\{f(x,y)\ast g(x,y)\}=F(u,v)\cdot G(u,v)\\
+&amp;\mathscr F\{f(x,y)\cdot g(x,y)\}=\frac{1}{MN}F(u,v)\ast G(u,v)
+\end{align}
+\]</span></p>
+<p>其中卷积依旧是循环卷积。</p>
+<h2 id="图像的频域滤波">图像的频域滤波</h2>
+<h3 id="图像的空间域与频域">图像的空间域与频域</h3>
+<p>前文中我们研究的一元函数可以看作是时域信号，但是对于图像而言，时域信号这个说法显然不合适了。那应该怎么理解呢？</p>
+<p>首先，一幅数字图像其实是一个二元函数 <span class="math inline">\(f=f(x,y)\)</span>，其中自变量 <span class="math inline">\((x,y)\)</span> 是像素的坐标，函数值是像素的灰度级。因此，将图像在三维空间中绘制出来，就好像一个连绵不断的山脉，类似于信号波形的二维版本。只不过这里自变量表示空间位置而非时间，因此我们称之为<strong>空间域</strong>。</p>
+<p>与时域信号类似，我们可以用无数个二维的不同角频率的正余弦函数去近似一幅图像。其中，图像变化比较剧烈的地方——比如边缘、纹理等细节，需要依靠高频的正余弦函数去拟合；相反，图像大体的构图就对应低频的正余弦函数。因此，我们经常把图像的细节称作高频分量，而整体构图称作低频分量。</p>
+<p>对图像做二维离散傅里叶变换就得到了其<strong>频域</strong>表示，将频域表示的频谱（即幅度）可视化出来就是频谱图。频域滤波指在频域上使用一个滤波器对图像做滤波的过程。然而，出于可视化、浮点误差等考虑，接下来我们关注对图像做频域滤波时的一些值得注意的方面。</p>
+<h3 id="循环卷积与交叠误差">循环卷积与交叠误差</h3>
+<p>根据循环卷积定理，在空间域中做循环卷积等价于在频域中做乘法。然而，我们在图像处理中使用的卷积通常是 padding 0 的卷积，两种卷积方式导致的结果差别就是所谓的交叠误差。</p>
+<p>幸运的是交叠误差很容易解决。设 <span class="math inline">\(f(x,y)\)</span> 和 <span class="math inline">\(h(x,y)\)</span> 分别是 <span class="math inline">\(A\times B\)</span> 和 <span class="math inline">\(C\times D\)</span> 的图像，则选取 <span class="math inline">\(P\geq A+C-1\)</span> 和 <span class="math inline">\(Q\geq B+D-1\)</span>，将 <span class="math inline">\(f\)</span> 和 <span class="math inline">\(h\)</span> 都往右下填充 0 直到 <span class="math inline">\(P\times Q\)</span> 大小，那么在频域中处理（对应循环卷积）与直接 padding 0 的卷积结果就一样了。</p>
+<h3 id="频谱图的可视化中心化与对数变换">频谱图的可视化：中心化与对数变换</h3>
+<p>我们知道 <span class="math inline">\(F(0,0)\)</span> 表示频率最低的分量，其值其实是图像所有位置的亮度之和： <span class="math display">\[
+F(0,0)=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x,y)e^{-j2\pi(0x/M+0y/N)}=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x,y)
+\]</span> 那么在频谱图上，这个点的亮度是最大的。又由于周期性，所以事实上四个角的亮度都很大，这不利于我们观察频谱图。因此，我们常常对频谱图做中心化，即将 <span class="math inline">\(F(0,0)\)</span> 平移到 <span class="math inline">\(F(M/2,N/2)\)</span> 的位置。根据傅里叶变换的平移性质，这相当于在做傅里叶变换之前先对 <span class="math inline">\(f(x,y)\)</span> 乘以 <span class="math inline">\((-1)^{x+y}\)</span>.</p>
+<p>另外，由于 <span class="math inline">\(F(0,0)\)</span> 实在是太大了，当我们可视化出频谱图后其他地方的亮度很低，不利于观察，因此我们常常在可视化之前做一个对数变换： <span class="math display">\[
+\log(1+|F(u,v)|)
+\]</span></p>
+<h3 id="浮点误差">浮点误差</h3>
+<p>理论上，傅里叶变换和逆变换是一对可逆操作，但是由于计算机存在浮点误差，实际操作中数值也许会稍有扰动。例如，数字图像原本是实数函数，在傅里叶变换到频域后执行某些滤波操作，然后傅里叶逆变换后理应得到实函数，但实际中可能存在很小的虚部。因此，我们常常需要在逆变换后增加一个取实部的操作。</p>
+<h3 id="频域滤波步骤">频域滤波步骤</h3>
+<p>根据上文的讨论，在对图像进行频域滤波时有如下步骤：</p>
+<ol type="1">
+<li>对于 <span class="math inline">\(M\times N\)</span> 的图像 <span class="math inline">\(f(x,y)\)</span>，取 <span class="math inline">\(P=2M,Q=2N\)</span>；</li>
+<li>将原图零填充（或其它填充方式）到 <span class="math inline">\(P\times Q\)</span> 大小，得到 <span class="math inline">\(f_p(x,y)\)</span>；</li>
+<li>对 <span class="math inline">\(f_p(x,y)\)</span> 乘以 <span class="math inline">\((-1)^{x+y}\)</span>，为频谱图的中心化做准备；</li>
+<li>计算傅里叶变换 <span class="math inline">\(F(u,v)\)</span>；</li>
+<li>构造大小为 <span class="math inline">\(P\times Q\)</span> 的频域滤波器 <span class="math inline">\(H(u,v)\)</span>；</li>
+<li>进行频域滤波：<span class="math inline">\(G(u,v)=H(u,v)F(u,v)\)</span>；</li>
+<li>计算傅里叶逆变换，取实部并将 <span class="math inline">\((-1)^{x+y}\)</span> 乘回来： <span class="math display">\[
+g_p(x,y)=\left(\text{real}\left[\mathscr F^{-1}\{G(u,v)\}\right]\right)(-1)^{x+y}
+\]</span></li>
+<li>取 <span class="math inline">\(g_p(x,y)\)</span> 左上角 <span class="math inline">\(M\times N\)</span> 区域 <span class="math inline">\(g(x,y)\)</span>，得到最终结果。</li>
+</ol>
+<p><img src="filter.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -695,6 +826,13 @@ f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{j2\pi(ux/M+vy/N)},\q
     </div>
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/image-processing/" class="print-no-link">#image processing</a>
+      
+    </div>
+  
 </div>
 
 
@@ -703,7 +841,7 @@ f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{j2\pi(ux/M+vy/N)},\q
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Fourier Transform（未完待续）</div>
+      <div>Fourier Transform</div>
       <div>https://xyfjason.github.io/blog-main/2023/10/18/Fourier-Transform/</div>
     </div>
     <div class="license-meta">
