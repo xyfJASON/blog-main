@@ -1,0 +1,879 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文对应《模式分类》的第 4 章。  核心思想 给定样本集 \(D&#x3D;\{\mathbf x_1,\ldots,\mathbf x_n\}\)，假定这些样本独立采样自 \(p(\mathbf x)\)，我们希望得到 \(p(\mathbf x)\) 的一个估计。 考虑样本空间中的一个小区域 \(R\)。一方面，若 \(p(\mathbf x)\) 是连续的，且 \(R\) 足够小使得 \(p(\m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[模式分类]非参数方法">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/01/%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB-%E9%9D%9E%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="本文对应《模式分类》的第 4 章。  核心思想 给定样本集 \(D&#x3D;\{\mathbf x_1,\ldots,\mathbf x_n\}\)，假定这些样本独立采样自 \(p(\mathbf x)\)，我们希望得到 \(p(\mathbf x)\) 的一个估计。 考虑样本空间中的一个小区域 \(R\)。一方面，若 \(p(\mathbf x)\) 是连续的，且 \(R\) 足够小使得 \(p(\m">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pattern-classification.png">
+<meta property="article:published_time" content="2023-11-01T12:41:40.000Z">
+<meta property="article:modified_time" content="2023-11-02T09:24:30.259Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pattern-classification.png">
+  
+  
+  
+  <title>[模式分类]非参数方法 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pattern-classification.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[模式分类]非参数方法"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-01 20:41" pubdate>
+          2023年11月1日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          48 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[模式分类]非参数方法</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>本文对应《模式分类》的第 4 章。</p>
+</blockquote>
+<h2 id="核心思想">核心思想</h2>
+<p>给定样本集 <span class="math inline">\(D=\{\mathbf x_1,\ldots,\mathbf x_n\}\)</span>，假定这些样本独立采样自 <span class="math inline">\(p(\mathbf x)\)</span>，我们希望得到 <span class="math inline">\(p(\mathbf x)\)</span> 的一个估计。</p>
+<p>考虑样本空间中的一个小区域 <span class="math inline">\(R\)</span>。一方面，若 <span class="math inline">\(p(\mathbf x)\)</span> 是连续的，且 <span class="math inline">\(R\)</span> 足够小使得 <span class="math inline">\(p(\mathbf x)\)</span> 在 <span class="math inline">\(R\)</span> 中几乎不变，那么向量 <span class="math inline">\(\mathbf x\)</span> 落入 <span class="math inline">\(R\)</span> 的概率为： <span class="math display">\[
+P=\int_R p(\mathbf x&#39;)\mathrm d\mathbf x&#39;\approx p(\mathbf x)V
+\]</span> 其中 <span class="math inline">\(V\)</span> 是区域 <span class="math inline">\(R\)</span> 的体积。另一方面，当数据量足够大时，如果有 <span class="math inline">\(k\)</span> 个样本落入 <span class="math inline">\(R\)</span>，那么： <span class="math display">\[
+P\approx k/n
+\]</span> 因此，联立上述两式，得： <span class="math display">\[
+p(\mathbf x)\approx\frac{k/n}{V}
+\]</span> 然而，为了让这个“约等于”尽可能准确，<span class="math inline">\(V\)</span> 需要趋近于零，<span class="math inline">\(n\)</span> 需要趋近于无穷。但是在现实中我们能获得的样本量肯定是有限的。因此，如果 <span class="math inline">\(V\)</span> 设置得太小，那么落入 <span class="math inline">\(R\)</span> 的样本太少，甚至没有，导致对 <span class="math inline">\(p(\mathbf x)\)</span> 的估计不连续；如果 <span class="math inline">\(V\)</span> 设置得太大，那么对 <span class="math inline">\(p(\mathbf x)\)</span> 的估计将太平滑。</p>
+<p>为了解决这个问题，我们考虑如下过程：为了估计 <span class="math inline">\(\mathbf x\)</span> 处的概率密度，构造一系列包含点 <span class="math inline">\(\mathbf x\)</span> 的区域 <span class="math inline">\(R_1,R_2,\ldots\)</span>，其中 <span class="math inline">\(R_n\)</span> 将使用 <span class="math inline">\(n\)</span> 个样本做密度估计。记 <span class="math inline">\(V_n\)</span> 为 <span class="math inline">\(R_n\)</span> 的体积，<span class="math inline">\(k_n\)</span> 为落入 <span class="math inline">\(R_n\)</span> 的样本数，那么可以得到序列： <span class="math display">\[
+p_n(\mathbf x)=\frac{k_n/n}{V_n},\quad n=1,2,\ldots\label{1}\tag{1}
+\]</span> 当以下三个条件满足时，<span class="math inline">\(p_n(\mathbf x)\)</span> 能收敛到 <span class="math inline">\(p(\mathbf x)\)</span>：</p>
+<ol type="1">
+<li><span class="math inline">\(\lim_{n\to\infty}V_n=0\)</span></li>
+<li><span class="math inline">\(\lim_{n\to\infty} k_n=\infty\)</span></li>
+<li><span class="math inline">\(\lim_{n\to\infty} k_n/n=0\)</span></li>
+</ol>
+<p>为了构造这样的序列，我们有两种方法——<strong>Parzen 窗</strong>和 <strong>k 近邻</strong>。前者取 <span class="math inline">\(V_n\)</span> 为某个关于 <span class="math inline">\(n\)</span> 的函数（例如 <span class="math inline">\(V_n=1/\sqrt{n}\)</span>），而后者取 <span class="math inline">\(k_n\)</span> 为某个关于 <span class="math inline">\(n\)</span> 的函数（例如 <span class="math inline">\(k_n=\sqrt{n}\)</span>）。在 <span class="math inline">\(n\to\infty\)</span> 时二者都能够收敛，但在有限样本情况下很难预测它们的效果。</p>
+<p><img src="two-methods.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<h2 id="parzen-窗">Parzen 窗</h2>
+<h3 id="基本原理">基本原理</h3>
+<p>为了方便，首先假设区域 <span class="math inline">\(R_n\)</span> 是以 <span class="math inline">\(\mathbf x\)</span>（待求密度处）为中心、边长为 <span class="math inline">\(h_n\)</span> 的 <span class="math inline">\(d\)</span> 维超立方体，则其体积为： <span class="math display">\[
+V_n=h_n^d
+\]</span> 为了解析地表达 <span class="math inline">\(k_n\)</span>，定义<strong>窗函数</strong>如下： <span class="math display">\[
+\varphi(\mathbf u)=\begin{cases}1,&amp;|u_j|\leq 1/2,\,j=1,\ldots,d\\0,&amp;\text{otherwise}\end{cases}
+\]</span> 即一个以原点为中心、边长为 <span class="math inline">\(1\)</span> 的超立方体。那么： <span class="math display">\[
+k_n=\sum_{i=1}^n\varphi\left(\frac{\mathbf x-\mathbf x_i}{h_n}\right)
+\]</span> 代入 <span class="math inline">\(\eqref{1}\)</span> 式得： <span class="math display">\[
+p_n(\mathbf x)=\frac{1}{n}\sum_{i=1}^n\frac{1}{V_n}\varphi\left(\frac{\mathbf x-\mathbf x_i}{h_n}\right)\label{parzen}\tag{2}
+\]</span> 可以验证这的确是一个概率分布。</p>
+<div class="note note-info">
+            <p>非负性显然，只需验证归一性： <span class="math display">\[\begin{align}\int p_n(\mathbf x)\mathrm d\mathbf x&amp;=\frac{1}{n}\sum_{i=1}^n\frac{1}{V_n}\int\varphi\left(\frac{\mathbf x-\mathbf x_i}{h_n}\right)\mathrm d\mathbf x\\&amp;=\frac{1}{n}\sum_{i=1}^n\frac{1}{V_n}\int\varphi(\mathbf u_i)h_n^d\mathrm d\mathbf u_i&amp;&amp;\mathbf u_i=\frac{\mathbf x-\mathbf x_i}{h_n}\\&amp;=\frac{1}{n}\sum_{i=1}^n\int\varphi(\mathbf u_i)\mathrm d\mathbf u_i\\&amp;=\frac{1}{n}\sum_{i=1}^n1\\&amp;=1\end{align}\]</span> 因此 <span class="math inline">\(\eqref{parzen}\)</span> 式的确是一个概率分布。</p>
+          </div>
+<h3 id="核函数角度">核函数角度</h3>
+<p>从核函数的角度理解，定义： <span class="math display">\[
+K(\mathbf x,\mathbf x_i)=\frac{1}{V_n}\varphi\left(\frac{\mathbf x-\mathbf x_i}{h_n}\right)
+\]</span> 满足： <span class="math display">\[
+K(\mathbf x,\mathbf x_i)\geq 0,\quad\int K(\mathbf x,\mathbf x_i)=1
+\]</span> 那么 <span class="math inline">\(\eqref{parzen}\)</span> 式可以写作： <span class="math display">\[
+p_n(\mathbf x)=\frac{1}{n}\sum_{i=1}^n K(\mathbf x,\mathbf x_i)\tag{3}\label{parzen-kernel}
+\]</span> 因此 Parzen 窗方法也被称作<strong>核密度估计 (KDE)</strong>。<span class="math inline">\(\eqref{parzen-kernel}\)</span> 式意味着 Parzen 窗估计也可以视作<strong>用核函数对样本在取值空间中进行插值</strong>。</p>
+<h3 id="窗函数核函数的选择">窗函数/核函数的选择</h3>
+<p>上面为了推导方便，我们假定了窗函数是单位超立方体，但这只是一种选择而已，我们还可以使用其他形式：</p>
+<ul>
+<li><p><strong>正态窗</strong>： <span class="math display">\[
+K(\mathbf x,\mathbf x_i)=\frac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}}\exp\left(-\frac{1}{2}(\mathbf x-\mathbf x_i)^T\Sigma^{-1}(\mathbf x-\mathbf x_i)\right)
+\]</span></p></li>
+<li><p><strong>球窗</strong>： <span class="math display">\[
+K(\mathbf x,\mathbf x_i)=\begin{cases}\frac{1}{V},&amp;\Vert\mathbf x-\mathbf x_i\Vert\leq r\\0,&amp;\text{otherwise}\end{cases}
+\]</span> 其中 <span class="math inline">\(r\)</span> 是超球体的半径，<span class="math inline">\(V\)</span> 是超球体的体积。</p></li>
+</ul>
+<h3 id="窗宽的影响">窗宽的影响</h3>
+<p>显然，如果 <span class="math inline">\(h_n\)</span>（或 <span class="math inline">\(V_n\)</span>）选取太大，那么估计不够精确，可以理解为欠拟合；如果太小，那么不够稳定，可以理解为过拟合。下图展示了不同情况下用正态窗做估计的例子，窗宽设置为 <span class="math inline">\(h_n=h_1/\sqrt{n}\)</span>，其中 <span class="math inline">\(h_1\)</span> 是可以调整的参数。</p>
+<p><img src="parzen-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+<h2 id="k-近邻">k 近邻</h2>
+<h3 id="基本原理-1">基本原理</h3>
+<p>Parzen 窗方法是人为设置 <span class="math inline">\(V_n\)</span>，再计算 <span class="math inline">\(k_n\)</span>；k 近邻方法则相反——人为设置 <span class="math inline">\(k_n\)</span>，再调整 <span class="math inline">\(V_n\)</span> 使得区域内正好落入 <span class="math inline">\(k_n\)</span> 个样本。这样窗宽将与训练样本有关，避免了如何选取合适窗宽的问题。</p>
+<p>值得注意的是，尽管 k 近邻估计出的 <span class="math inline">\(p_n(\mathbf x)\)</span> 是连续的，但其往往不可导，会有非常多的尖峰，且这些不可导点与原数据点几乎都是不同的，如下图所示：</p>
+<p><img src="knn-ex1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>另外，与 Parzen 窗不同的是，k 近邻得到的概率密度估计<strong>并不是一个合法的概率密度函数</strong>。例如，在一维情形下，记第 <span class="math inline">\(k_n\)</span> 个正好落入区域内的样本为 <span class="math inline">\(\mathbf x_\text{kNN}\)</span>，那么 <span class="math inline">\(V_n=2|\mathbf x-\mathbf x_\text{kNN}|\)</span>，于是代入 <span class="math inline">\(\eqref{1}\)</span> 式得： <span class="math display">\[
+p_n(\mathbf x)=\frac{k_n}{2n|\mathbf x-\mathbf x_\text{kNN}|}
+\]</span> 由于 <span class="math inline">\(\frac{1}{x}\)</span> 的积分是发散的，所以 <span class="math inline">\(p_n(\mathbf x)\)</span> 的积分是无穷大，如下图所示：</p>
+<p><img src="knn-ex2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>虽然积分是发散的，但 k 近邻密度估计的一个优点是 <span class="math inline">\(p_n(\mathbf x)\)</span> 永远不会为零，这在高维情况下非常有用。</p>
+<h3 id="用于估计后验概率">用于估计后验概率</h3>
+<p>我们可以用 k 近邻方法估计每一个类别的概率分布，然后使用<strong>最大后验准则</strong>进行分类。具体而言，设 <span class="math inline">\(\mathbf x\)</span> 周围包含 <span class="math inline">\(k\)</span> 个样本的区域中，有 <span class="math inline">\(k_i\)</span> 个样本属于 <span class="math inline">\(\omega_i\)</span> 类，那么： <span class="math display">\[
+p_n(\mathbf x\vert\omega_i)=\frac{k_i/n_i}{V},\quad p_n(\mathbf x,\omega_i)=\frac{k_i/n}{V}
+\]</span> 其中 <span class="math inline">\(n_i\)</span> 表示属于 <span class="math inline">\(\omega_i\)</span> 类的样本数量。于是对后验概率的估计为： <span class="math display">\[
+P_n(\omega_i\vert\mathbf x)=\frac{p_n(\mathbf x,\omega_i)}{p(\mathbf x)}=\frac{k_i/n}{V}\cdot\frac{V}{k/n}=\frac{k_i}{k}
+\]</span> 即区域中属于 <span class="math inline">\(\omega_i\)</span> 类的样本数量占区域中所有样本数量的比例。</p>
+<p>根据最大后验准则，有了后验概率，就可以得到一个分类器： <span class="math display">\[
+\omega_m=\mathop{\text{argmax}}_i\{P_n(\omega_i\vert\mathbf x)\}
+\]</span></p>
+<h3 id="最近邻分类器">最近邻分类器</h3>
+<p>上面提到我们可以用 k 近邻方法估计后验概率，再根据最大后验准则就可以进行分类。但事实上，我们只依赖最近邻就能达到足够好的性能。</p>
+<p>最近邻分类器的基本思想非常简单，即对于一个新样本，将其与已知样本逐一比较，找出距离最近的已知样本，以该样本的类别作为新样本的类别。如此，特征空间可以被分成一个个小单元（称作 Voronoi 网格），如图所示：</p>
+<p><img src="knn-partition.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>最近邻分类器有多好呢？可以证明，<strong>在无限训练样本的情形下，其误差率最多不会超过贝叶斯误差率的两倍</strong>。具体而言，设 <span class="math inline">\(P_n(e)\)</span> 为 <span class="math inline">\(n\)</span> 个样本下最近邻分类器的误差率，当 <span class="math inline">\(n\)</span> 趋近无穷时该误差收敛到 <span class="math inline">\(P\)</span>，记 <span class="math inline">\(P^\ast\)</span> 为贝叶斯分类器的误差率，<span class="math inline">\(c\)</span> 为类别数量，那么有： <span class="math display">\[
+P^\ast\leq P\leq P^\ast\left(2-\frac{c}{c-1}P^\ast\right)
+\]</span> <img src="knn-error.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+<p>证明比较复杂，暂时略去，以后有时间再看。</p>
+<h3 id="k-近邻分类器及其改进">k 近邻分类器及其改进</h3>
+<p>将最近邻分类器进行推广，选择前若干个离测试样本最近的样本，取其中出现最多的类别作为新样本的类别，这就是 k 近邻分类器。对 k 近邻分类器的分析比最近邻更加复杂，这里略去。结论是，当样本量无限时，随着 <span class="math inline">\(k\)</span> 的增加，k 近邻分类器的误差率逐渐逼近下界贝叶斯误差率；当 <span class="math inline">\(k\)</span> 趋近无穷大时二者相等。</p>
+<p><img src="knn-error2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<p>一些改进方法：</p>
+<ul>
+<li><p><strong>剪辑近邻法</strong>。考虑到分类时最容易分类错误的地方就是交界区域处，因此可以设法将交界区域的样本去掉。因此我们需要识别出那些位于交界区域的样本。一种做法是：将已知样本集划分为训练集和测试集，采用近邻法利用训练集中的样本对测试样本进行分类，从中去掉被错分类的样本，剩余样本构成剪辑样本集，用于对新来的样本进行分类。</p>
+<p><strong>多重剪辑</strong>：</p>
+<ol type="1">
+<li>划分。将样本集随机划分为 <span class="math inline">\(s\)</span> 个子集 <span class="math inline">\(X_1,X_2,\ldots, X_s\)</span>；</li>
+<li>分类。轮流地以其中一个作为训练样本集，对其邻近编号的样本进行测试；</li>
+<li>剪辑。从各个子集中去掉在步骤 2 中被分错的样本；</li>
+<li>混合。将剩下的样本合在一起，形成新的样本集；</li>
+<li>迭代。转步骤 1，如果没有新的样本被剪辑掉，则停止迭代。</li>
+</ol></li>
+<li><p><strong>压缩近邻法</strong>。考虑近邻法的分类原理，那些远离分类边界的样本对于最后的分类决策没有贡献，因此可以去掉。</p>
+<p>将样本集为两个活动的子集：储存集 <span class="math inline">\(X_S\)</span> 和备选集 <span class="math inline">\(X_G\)</span>.</p>
+<p>首先，在算法开始时，<span class="math inline">\(X_S\)</span> 中只有一个样本，其余样本均在 <span class="math inline">\(X_G\)</span> 中；</p>
+<p>然后，考查 <span class="math inline">\(X_G\)</span> 中的每一个样本，如果采用 <span class="math inline">\(X_S\)</span> 中的样本能够对其正确分类，则该样本仍然保留在 <span class="math inline">\(X_G\)</span> 中， 否则移动到 <span class="math inline">\(X_S\)</span> 中，从而扩大代表集合。依次重复进行上述操作，直到没有样本需要搬移为止。</p>
+<p>最后，用 <span class="math inline">\(X_S\)</span> 中的样本作为代表样本，对新来的样本进行分类。</p></li>
+</ul>
+<h2 id="距离度量">距离度量</h2>
+<p>合法的距离度量应满足：</p>
+<ol type="1">
+<li>非负性：<span class="math inline">\(D(\mathbf x,\mathbf y)\geq 0\)</span></li>
+<li>自反性：<span class="math inline">\(D(\mathbf x,\mathbf y)=0\iff\mathbf x=\mathbf y\)</span></li>
+<li>对称性：<span class="math inline">\(D(\mathbf x,\mathbf y)=D(\mathbf y,\mathbf x)\)</span></li>
+<li>三角不等式：<span class="math inline">\(D(\mathbf x,\mathbf y)+D(\mathbf y,\mathbf z)\geq D(\mathbf x,\mathbf z)\)</span></li>
+</ol>
+<p>常见距离度量：</p>
+<ul>
+<li><p>Minkowski 距离： <span class="math display">\[
+D(\mathbf x,\mathbf y)=\left(\sum_{i=1}^d|x_i-y_i|^q\right)^{1/q}
+\]</span></p></li>
+<li><p>Manhattan 距离： <span class="math display">\[
+D(\mathbf x,\mathbf y)=\sum_{i=1}^d|x_i-y_i|
+\]</span></p></li>
+<li><p>Euclidean 距离： <span class="math display">\[
+D(\mathbf x,\mathbf y)=\sqrt{\sum_{i=1}^d(x_i-y_i)^2}
+\]</span></p></li>
+<li><p>Chebyshev 距离： <span class="math display">\[
+D(\mathbf x,\mathbf y)=\max_{i=1}^d|x_i-y_i|
+\]</span></p></li>
+<li><p>Mahalanobis 距离： <span class="math display">\[
+D(\mathbf x,\mathbf y)=\sqrt{(\mathbf x-\mathbf y)^TM(\mathbf x-\mathbf y)}
+\]</span> 其中 <span class="math inline">\(M\)</span> 为半正定矩阵。</p></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB/" class="category-chain-item">模式分类</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[模式分类]非参数方法</div>
+      <div>https://xyfjason.github.io/blog-main/2023/11/01/模式分类-非参数方法/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/10/18/Fourier-Transform/" title="Fourier Transform">
+                        <span class="hidden-mobile">Fourier Transform</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
