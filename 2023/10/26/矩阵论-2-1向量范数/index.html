@@ -1,0 +1,856 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 概念与基本性质 向量范数的定义 设 \(V\) 是数域 \(K\) 上的线性空间，对 \(V\) 的任一向量 \(x\)，定义实值函数 \(\norm x\)，满足：  非负性：\(\norm x\geq0\)，且 \(\norm{x}&#x3D;0\iff x&#x3D;0\) 齐次性：\(\norm{kx}&#x3D;|k|\norm{x},\">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[矩阵论]2.1向量范数">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/10/26/%E7%9F%A9%E9%98%B5%E8%AE%BA-2-1%E5%90%91%E9%87%8F%E8%8C%83%E6%95%B0/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 概念与基本性质 向量范数的定义 设 \(V\) 是数域 \(K\) 上的线性空间，对 \(V\) 的任一向量 \(x\)，定义实值函数 \(\norm x\)，满足：  非负性：\(\norm x\geq0\)，且 \(\norm{x}&#x3D;0\iff x&#x3D;0\) 齐次性：\(\norm{kx}&#x3D;|k|\norm{x},\">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
+<meta property="article:published_time" content="2023-10-26T10:07:40.000Z">
+<meta property="article:modified_time" content="2023-11-04T15:47:29.549Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="linear algebra">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
+  
+  
+  
+  <title>[矩阵论]2.1向量范数 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/3b1b_transform_basis.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[矩阵论]2.1向量范数"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-10-26 18:07" pubdate>
+          2023年10月26日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          49 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[矩阵论]2.1向量范数</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><span class="math display">\[
+\newcommand\norm[1]{\Vert#1\Vert}
+\]</span></p>
+<h2 id="概念与基本性质">概念与基本性质</h2>
+<h3 id="向量范数的定义">向量范数的定义</h3>
+<p>设 <span class="math inline">\(V\)</span> 是数域 <span class="math inline">\(K\)</span> 上的线性空间，对 <span class="math inline">\(V\)</span> 的任一向量 <span class="math inline">\(x\)</span>，定义实值函数 <span class="math inline">\(\norm x\)</span>，满足：</p>
+<ol type="1">
+<li><strong>非负性</strong>：<span class="math inline">\(\norm x\geq0\)</span>，且 <span class="math inline">\(\norm{x}=0\iff x=0\)</span></li>
+<li><strong>齐次性</strong>：<span class="math inline">\(\norm{kx}=|k|\norm{x},\,k\in K,\,x\in V\)</span></li>
+<li><strong>三角不等式</strong>：<span class="math inline">\(\norm{x+y}\leq\norm{x}+\norm{y},\,x,y\in V\)</span></li>
+</ol>
+<blockquote>
+<p>注：<span class="math inline">\(|k|\)</span> 表示 <span class="math inline">\(k\)</span> 的绝对值（<span class="math inline">\(K=\mathbb R\)</span>）或模（<span class="math inline">\(K=\mathbb C\)</span>）。</p>
+</blockquote>
+<h3 id="向量范数的性质">向量范数的性质</h3>
+<p><strong>性质 1（范数是凸函数）</strong>： <span class="math display">\[
+\norm{(1-\lambda)x+\lambda y}\leq(1-\lambda)\norm x+\lambda\norm y,\quad 0\leq\lambda\leq1
+\]</span> <strong>性质 2（范数的乘法）</strong>：若 <span class="math inline">\(\norm{\cdot}\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数，则 <span class="math inline">\(k\norm{\cdot}\)</span> 仍然为向量范数，其中 <span class="math inline">\(k&gt;0\)</span>.</p>
+<p><strong>性质 3（范数的复合）</strong>：设 <span class="math inline">\(\norm{\cdot}_\text{comp}\)</span> 是 <span class="math inline">\(\mathbb R^m\)</span> 上的范数，且对 <span class="math inline">\(x\in\mathbb (R^+)^m\)</span> 为单调增加的。那么，给定 <span class="math inline">\(m\)</span> 个 <span class="math inline">\(n\)</span> 维线性空间 <span class="math inline">\(V\)</span> 上的范数 <span class="math inline">\(\norm{\cdot}_i\,(i=1,\ldots,m)\)</span>，可以定义复合范数为： <span class="math display">\[
+\norm{x}=\norm{U(x)}_\text{comp},\quad \text{where }\ U(x)=(\norm{x}_1,\ldots,\norm{x}_m)^T
+\]</span> <div class="note note-secondary">
+            <p>证明：非负性和齐次性是显然的，下面证明三角不等式。 <span class="math display">\[\begin{align}\norm{x+y}&amp;=\norm{U(x+y)}_\text{comp}\\&amp;\leq\norm{U(x)+U(y)}_\text{comp}&amp;&amp;U(x+y)\leq U(x)+U(y)\\&amp;\leq\norm{U(x)}_\text{comp}+\norm{U(y)}_\text{comp}\\&amp;=\norm{x}+\norm{y}\end{align}\]</span> 证毕。</p>
+          </div></p>
+<p>例如：设 <span class="math inline">\(\norm\cdot_f\)</span> 和 <span class="math inline">\(\norm\cdot_g\)</span> 是线性空间 <span class="math inline">\(V\)</span> 上的两个向量范数，则：</p>
+<ol type="1">
+<li><span class="math inline">\(\norm\cdot_f+\norm\cdot_g\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数</li>
+<li><span class="math inline">\(\max\{\norm\cdot_f,\norm\cdot_g\}\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数</li>
+<li><span class="math inline">\(\left[(\norm\cdot_f)^2+(\norm\cdot_g)^2\right]^{1/2}\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数</li>
+</ol>
+<p><strong>性质 4（范数的合成）</strong>：设 <span class="math inline">\(n\)</span> 维线性空间 <span class="math inline">\(V=V_1\oplus V_2\oplus\cdots\oplus V_m\)</span>，且 <span class="math inline">\(\norm\cdot_i\,(i=1,\ldots,m)\)</span> 为线性子空间 <span class="math inline">\(V_i\)</span> 上的范数。设 <span class="math inline">\(\norm{\cdot}_\text{comp}\)</span> 是 <span class="math inline">\(\mathbb R^m\)</span> 上的范数，且对 <span class="math inline">\(x\in\mathbb (R^+)^m\)</span> 为单调增加的，则对任意 <span class="math inline">\(x\in V\)</span>，存在唯一分解 <span class="math inline">\(x=x_1+\cdots+x_n\)</span>，其中 <span class="math inline">\(x_i\in V_i\)</span>. 定义合成范数为： <span class="math display">\[
+\norm x=\norm{U(x)}_\text{comp},\quad\text{where }\ U(x)=(\norm{x_1}_1,\ldots,\norm{x_m}_m)^T
+\]</span> <div class="note note-secondary">
+            <p>证明与性质 3 是类似的。</p>
+          </div></p>
+<p><strong>定义（均衡闭凸集）</strong>：线性空间 <span class="math inline">\(V\)</span> 的闭凸集 <span class="math inline">\(\Omega\)</span> 若满足：<span class="math inline">\(x\in\Omega\implies \lambda x\in\Omega\,(|\lambda|\leq1)\)</span>，那么 <span class="math inline">\(\Omega\)</span> 为均衡闭凸集。</p>
+<p><strong>性质 5（范数的几何性质：范数与均衡闭凸集一一对应）</strong>：若 <span class="math inline">\(\norm\cdot\)</span> 为 <span class="math inline">\(V\)</span> 上的向量范数，则 <span class="math inline">\(\Omega=\{x\mid\norm x\leq 1\}\)</span> 是 <span class="math inline">\(V\)</span> 上的均衡闭凸集；反之，若 <span class="math inline">\(\Omega\)</span> 是 <span class="math inline">\(V\)</span> 上的均衡闭凸集，且 <span class="math inline">\(\Omega\)</span> 含有内点，即包含一个小单位球，则可以定义函数 <span class="math inline">\(P(x)\)</span> 如下： <span class="math display">\[
+P(x)=\begin{cases}\min\{\lambda&gt;0\mid x/\lambda\in\Omega\}&amp;&amp;x\neq0\\0&amp;&amp;x=0\end{cases}
+\]</span> 那么 <span class="math inline">\(P(x)\)</span> 为 <span class="math inline">\(V\)</span> 上的范数。</p>
+<h3 id="补充绝对范数与单调范数">补充：绝对范数与单调范数</h3>
+<p><strong>绝对范数</strong>：设 <span class="math inline">\(x=(\xi_1,\ldots,\xi_n)^T\in\mathbb C^n\)</span>，记 <span class="math inline">\(|x|=(|\xi_1|,\ldots,|\xi_n|)^T\in\mathbb R^n\)</span>，若 <span class="math inline">\(\mathbb C^n\)</span> 上的范数 <span class="math inline">\(v\)</span> 满足条件： <span class="math display">\[
+v(x)=v(|x|),\quad \forall x\in\mathbb C^n
+\]</span> 则称 <span class="math inline">\(v\)</span> 为绝对范数。</p>
+<p><strong>单调范数</strong>：若对于任意 <span class="math inline">\(x,y\in\mathbb C^n\)</span>，范数 <span class="math inline">\(v\)</span> 满足： <span class="math display">\[
+|x|\leq |y|\implies v(x)\leq v(y)
+\]</span> 则称 <span class="math inline">\(v\)</span> 为单调范数。</p>
+<p><strong>定理</strong>：<span class="math inline">\(v\)</span> 为绝对范数的充要条件是 <span class="math inline">\(v\)</span> 为单调范数。</p>
+<h2 id="具体实例">具体实例</h2>
+<h3 id="范数">2-范数</h3>
+<p><span class="math display">\[
+\norm x_2=\sqrt{|x_1|^2+|x_2|^2+\cdots+|x_n|^2}
+\]</span></p>
+<h3 id="范数-1">1-范数</h3>
+<p><span class="math display">\[
+\norm x_1=|x_1|+|x_2|+\cdots+|x_n|
+\]</span></p>
+<h3 id="infty-范数"><span class="math inline">\(\infty\)</span>-范数</h3>
+<p><span class="math display">\[
+\norm x_\infty=\max_{i=1}^n |x_i|
+\]</span></p>
+<h3 id="p-范数"><span class="math inline">\(p\)</span>-范数</h3>
+<p><span class="math display">\[
+\norm x_p=\left(|x_1|^p+|x_2|^p+\cdots+|x_n|^p\right)^{1/p}\quad\quad p\geq 1
+\]</span></p>
+<blockquote>
+<p>当 <span class="math inline">\(0\leq p&lt;1\)</span> 时并不是范数，因为不满足三角不等式，但是在实际应用中仍然有重要应用。</p>
+</blockquote>
+<p><img src="pnorm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>为了证明 <span class="math inline">\(p\)</span>-范数满足三角不等式，首先需要证明一个引理和 Hölder 不等式。</p>
+<div class="note note-secondary">
+            <p><strong>引理</strong>：对任意实数 <span class="math inline">\(\alpha&gt;0,\beta&gt;0\)</span>，都有 <span class="math inline">\(\alpha\beta\leq \frac{\alpha^p}{p}+\frac{\beta^q}{q}\)</span>，其中 <span class="math inline">\(p&gt;1,q&gt;1\)</span> 且 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>.</p><p>证： <span class="math display">\[\begin{align}\frac{\alpha^p}{p}+\frac{\beta^q}{q}&amp;\geq\frac{q\alpha^p+p\beta^q}{pq}=\frac{q\alpha^p+p\beta^q}{p+q}\\&amp;=\frac{(\alpha^p+\cdots+\alpha^p)+(\beta^q+\cdots+\beta^q)}{p+q}\\&amp;\geq\sqrt[p+q]{\alpha^{pq}\beta^{pq}}=\sqrt[pq]{\alpha^{pq}\beta^{pq}}=\alpha\beta\end{align}\]</span> 证毕。</p>
+          </div>
+<div class="note note-secondary">
+            <p><strong>Hölder 不等式</strong>：对任意 <span class="math inline">\(\xi_k,\eta_k\in\mathbb C\,(k=1,\ldots,n)\)</span>，有： <span class="math display">\[\sum_{k=1}^n|\xi_k||\eta_k|\leq\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}\]</span> 其中 <span class="math inline">\(p&gt;1,q&gt;1\)</span> 且 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>.</p><p>证：令 <span class="math inline">\(\alpha={|\xi_i|}/{\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}}\)</span>，<span class="math inline">\(\beta={|\eta_i|}/{\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}}\)</span>，由引理得： <span class="math display">\[\frac{|\xi_i|}{\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}}\cdot\frac{|\eta_i|}{\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}}\leq\frac{|\xi_i|^p}{p\sum_{k=1}^n|\xi_k|^p}+\frac{|\eta_i|^q}{q\sum_{k=1}^n|\eta_k|^q}\]</span> 对 <span class="math inline">\(i\)</span> 求和： <span class="math display">\[\frac{\sum_{i=1}^n|\xi_i||\eta_i|}{\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}}\leq\frac{1}{p}+\frac{1}{q}=1\]</span> 证毕。</p>
+          </div>
+<p>接下来利用 Hölder 不等式就可以证明 <span class="math inline">\(p\)</span>-范数满足三角不等式了。</p>
+<div class="note note-secondary">
+            <p>设 <span class="math inline">\(x,y\in\mathbb C^n\)</span>，求证 <span class="math inline">\(\norm{x+y}_p\leq\norm{x}_p+\norm{y}_p\)</span>，其中 <span class="math inline">\(p\geq 1\)</span>.</p><p>证明： <span class="math display">\[\begin{align}\norm{x+y}_p^p&amp;=\sum_{k=1}^n|x_k+y_k|^p\\&amp;\leq\sum_{k=1}^n|x_k||x_k+y_k|^{p-1}+\sum_{k=1}^n|y_k||x_k+y_k|^{p-1}\\&amp;\leq\left(\sum_{k=1}^n|x_k|^p\right)^{1/p}\left(\sum_{k=1}^n|x_k+y_k|^{q(p-1)}\right)^{1/q}+\left(\sum_{k=1}^n|x_k|^p\right)^{1/p}\left(\sum_{k=1}^n|x_k+y_k|^{q(p-1)}\right)^{1/q}\\&amp;=\left(\norm{x}_p+\norm{y}_p\right)\left(\sum_{k=1}^n|x_k+y_k|^{p}\right)^{1/q}\\&amp;=\left(\norm{x}_p+\norm{y}_p\right)\norm{x+y}_p^{p/q}\\&amp;=\left(\norm{x}_p+\norm{y}_p\right)\norm{x+y}_p^{p-1}\end{align}\]</span> 于是： <span class="math display">\[\norm{x+y}_p\leq\left(\norm{x}_p+\norm{y}_p\right)\]</span> 证毕。</p>
+          </div>
+<h3 id="补充对偶范数">补充：对偶范数</h3>
+<p><strong>定义</strong>：令 <span class="math inline">\(\norm\cdot\)</span> 为 <span class="math inline">\(\mathbb R^n\)</span> 上的范数，其对偶范数 <span class="math inline">\(\norm\cdot_\ast\)</span> 定义为： <span class="math display">\[
+\norm{z}_\ast=\sup_{\norm x\leq 1}\{z^Tx\}
+\]</span> <strong>性质</strong>：<span class="math inline">\(\norm{x}_{\ast\ast}=\norm x\)</span>.</p>
+<p><strong>例子</strong>：<span class="math inline">\(l_p\)</span> 和 <span class="math inline">\(l_q\)</span> 互为对偶范数，其中 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>.</p>
+<h2 id="范数等价">范数等价</h2>
+<p>对有限维空间 <span class="math inline">\(V^n\)</span> 中任意两个向量范数 <span class="math inline">\(\norm x_\alpha,\norm x_\beta\)</span>，若存在正常数 <span class="math inline">\(c_1,c_2\)</span>，使得： <span class="math display">\[
+c_1\norm{x}_\beta\leq\norm{x}_\alpha\leq c_2\norm{x}_\beta,\quad\forall x\in V^n
+\]</span> 则称范数 <span class="math inline">\(\norm{x}_\alpha\)</span> 与 <span class="math inline">\(\norm{x}_\beta\)</span> 等价。</p>
+<p>范数等价是一个<strong>等价关系</strong>，满足<strong>自反性、对称性、传递性</strong>。</p>
+<p><strong>定理</strong>：有限维空间中任意两个向量范数都等价。</p>
+<div class="note note-secondary">
+            <p>证明：由于等价关系具有传递性，我们只需要证明任意一个向量范数都等价于 2-范数即可。</p><p>令 <span class="math inline">\(f(x)=\norm{x}\)</span> 为 <span class="math inline">\(V^n\)</span> 上的任一向量范数，由于当 <span class="math inline">\(x\to y\)</span> 时，<span class="math inline">\(\left|\norm x-\norm y\right|\leq \norm{x-y}\to 0\)</span>，因此范数是连续函数。于是 <span class="math inline">\(f(x)\)</span> 在单位超球面上有大于零的最小值和最大值： <span class="math display">\[0&lt;\min_{\norm{x}_2=1}f(x)\leq \max_{\norm{x}_2=1}f(x)\]</span> 记上述最小值为 <span class="math inline">\(c_1\)</span>，最大值为 <span class="math inline">\(c_2\)</span>，于是： <span class="math display">\[c_1\leq \left\Vert\frac{x}{\norm{x}_2}\right\Vert\leq c_2\implies c_1\norm{x}_2\leq\norm{x}\leq c_2\norm{x}_2\]</span> 故 <span class="math inline">\(\norm\cdot\)</span> 与 2-范数等价。证毕。</p>
+          </div>
+<h2 id="基于向量范数的收敛性">基于向量范数的收敛性</h2>
+<p><strong>定义</strong>：设 <span class="math inline">\(\{x^{(k)}\}\)</span> 是 <span class="math inline">\(V^n\)</span> 中的向量序列，若存在 <span class="math inline">\(x\in V^n\)</span>，使得： <span class="math display">\[
+\lim_{k\to\infty} \norm{x^{(k)}-x}_\alpha=0
+\]</span> 则称序列 <span class="math inline">\(\{x^{(k)}\}\)</span> 按 <span class="math inline">\(\alpha\)</span> 范数收敛到 <span class="math inline">\(x\)</span>.</p>
+<p><strong>定理</strong>：向量各分量收敛等价于范数收敛，即： <span class="math display">\[
+\lim_{k\to\infty} x^{(k)}=x\iff\lim_{k\to\infty} \norm{x^{(k)}-x}=0
+\]</span> <div class="note note-secondary">
+            <p>由于向量范数的等价性，只需要对 1-范数证明即可。 <span class="math display">\[\begin{align}x^{(k)}\to x&amp;\iff \xi_i^{(k)}\to\xi_i&amp;&amp;(i=1,\ldots,n)\\&amp;\iff |\xi_i^{(k)}-\xi_i|\to 0&amp;&amp;(i=1,\ldots,n)\\&amp;\iff \sum_{i=1}^n|\xi_i^{(k)}-\xi_i|\to 0\\&amp;\iff \norm{x^{(k)}-x}_1\to0\end{align}\]</span> 证毕。</p>
+          </div></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%9F%A9%E9%98%B5%E8%AE%BA/" class="category-chain-item">矩阵论</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/linear-algebra/" class="print-no-link">#linear algebra</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[矩阵论]2.1向量范数</div>
+      <div>https://xyfjason.github.io/blog-main/2023/10/26/矩阵论-2-1向量范数/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年10月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/11/01/%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB-%E9%9D%9E%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95/" title="[模式分类]非参数方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[模式分类]非参数方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/10/18/Fourier-Transform/" title="Fourier Transform">
+                        <span class="hidden-mobile">Fourier Transform</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
