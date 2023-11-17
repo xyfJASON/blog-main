@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 概念与基本性质 向量范数的定义 设 \(V\) 是数域 \(K\) 上的线性空间，对 \(V\) 的任一向量 \(x\)，定义实值函数 \(\norm x\)，满足：  非负性：\(\norm x\geq0\)，且 \(\norm{x}&#x3D;0\iff x&#x3D;0\) 齐次性：\(\norm{kx}&#x3D;|k|\norm{x},\">
+    <meta name="description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 矩阵函数的概念 定义：设一元函数 \(f(z)\) 能展开为 \(z\) 的幂级数： \[ f(z)&#x3D;\sum_{k&#x3D;0}^\infty c_kz^k,\quad |z|&lt;r \] 则当 \(n\) 阶方阵 \(A\) 满足 \(\rho(A)&lt;r\) 时，矩阵级数 \(\sum_{k&#x3D;0}^\infty">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[矩阵论]2.1向量范数">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/10/26/%E7%9F%A9%E9%98%B5%E8%AE%BA-2-1%E5%90%91%E9%87%8F%E8%8C%83%E6%95%B0/index.html">
+<meta property="og:title" content="[矩阵论]3.2矩阵函数">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/11/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-2%E7%9F%A9%E9%98%B5%E5%87%BD%E6%95%B0/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 概念与基本性质 向量范数的定义 设 \(V\) 是数域 \(K\) 上的线性空间，对 \(V\) 的任一向量 \(x\)，定义实值函数 \(\norm x\)，满足：  非负性：\(\norm x\geq0\)，且 \(\norm{x}&#x3D;0\iff x&#x3D;0\) 齐次性：\(\norm{kx}&#x3D;|k|\norm{x},\">
+<meta property="og:description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 矩阵函数的概念 定义：设一元函数 \(f(z)\) 能展开为 \(z\) 的幂级数： \[ f(z)&#x3D;\sum_{k&#x3D;0}^\infty c_kz^k,\quad |z|&lt;r \] 则当 \(n\) 阶方阵 \(A\) 满足 \(\rho(A)&lt;r\) 时，矩阵级数 \(\sum_{k&#x3D;0}^\infty">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
-<meta property="article:published_time" content="2023-10-26T10:07:40.000Z">
-<meta property="article:modified_time" content="2023-11-09T03:26:40.311Z">
+<meta property="article:published_time" content="2023-11-11T12:13:29.000Z">
+<meta property="article:modified_time" content="2023-11-17T09:03:37.826Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>[矩阵论]2.1向量范数 - xyfJASON</title>
+  <title>[矩阵论]3.2矩阵函数 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="[矩阵论]2.1向量范数"></span>
+            <span id="subtitle" data-typed-text="[矩阵论]3.2矩阵函数"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-10-26 18:07" pubdate>
-          2023年10月26日 晚上
+        <time datetime="2023-11-11 20:13" pubdate>
+          2023年11月11日 晚上
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.9k 字
+          4k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          49 分钟
+          34 分钟
         
       </span>
     
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">[矩阵论]2.1向量范数</h1>
+            <h1 id="seo-header">[矩阵论]3.2矩阵函数</h1>
             
             
               <div class="markdown-body">
@@ -330,104 +330,88 @@
                 <p><span class="math display">\[
 \newcommand\norm[1]{\Vert#1\Vert}
 \]</span></p>
-<h2 id="概念与基本性质">概念与基本性质</h2>
-<h3 id="向量范数的定义">向量范数的定义</h3>
-<p>设 <span class="math inline">\(V\)</span> 是数域 <span class="math inline">\(K\)</span> 上的线性空间，对 <span class="math inline">\(V\)</span> 的任一向量 <span class="math inline">\(x\)</span>，定义实值函数 <span class="math inline">\(\norm x\)</span>，满足：</p>
-<ol type="1">
-<li><strong>非负性</strong>：<span class="math inline">\(\norm x\geq0\)</span>，且 <span class="math inline">\(\norm{x}=0\iff x=0\)</span></li>
-<li><strong>齐次性</strong>：<span class="math inline">\(\norm{kx}=|k|\norm{x},\,k\in K,\,x\in V\)</span></li>
-<li><strong>三角不等式</strong>：<span class="math inline">\(\norm{x+y}\leq\norm{x}+\norm{y},\,x,y\in V\)</span></li>
-</ol>
-<blockquote>
-<p>注：<span class="math inline">\(|k|\)</span> 表示 <span class="math inline">\(k\)</span> 的绝对值（<span class="math inline">\(K=\mathbb R\)</span>）或模（<span class="math inline">\(K=\mathbb C\)</span>）。</p>
-</blockquote>
-<h3 id="向量范数的性质">向量范数的性质</h3>
-<p><strong>性质 1（范数是凸函数）</strong>： <span class="math display">\[
-\norm{(1-\lambda)x+\lambda y}\leq(1-\lambda)\norm x+\lambda\norm y,\quad 0\leq\lambda\leq1
-\]</span> <strong>性质 2（范数的乘法）</strong>：若 <span class="math inline">\(\norm{\cdot}\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数，则 <span class="math inline">\(k\norm{\cdot}\)</span> 仍然为向量范数，其中 <span class="math inline">\(k&gt;0\)</span>.</p>
-<p><strong>性质 3（范数的复合）</strong>：设 <span class="math inline">\(\norm{\cdot}_\text{comp}\)</span> 是 <span class="math inline">\(\mathbb R^m\)</span> 上的范数，且对 <span class="math inline">\(x\in\mathbb (R^+)^m\)</span> 为单调增加的。那么，给定 <span class="math inline">\(m\)</span> 个 <span class="math inline">\(n\)</span> 维线性空间 <span class="math inline">\(V\)</span> 上的范数 <span class="math inline">\(\norm{\cdot}_i\,(i=1,\ldots,m)\)</span>，可以定义复合范数为： <span class="math display">\[
-\norm{x}=\norm{U(x)}_\text{comp},\quad \text{where }\ U(x)=(\norm{x}_1,\ldots,\norm{x}_m)^T
-\]</span> <div class="note note-secondary">
-            <p>证明：非负性和齐次性是显然的，下面证明三角不等式。 <span class="math display">\[\begin{align}\norm{x+y}&amp;=\norm{U(x+y)}_\text{comp}\\&amp;\leq\norm{U(x)+U(y)}_\text{comp}&amp;&amp;U(x+y)\leq U(x)+U(y)\\&amp;\leq\norm{U(x)}_\text{comp}+\norm{U(y)}_\text{comp}\\&amp;=\norm{x}+\norm{y}\end{align}\]</span> 证毕。</p>
-          </div></p>
-<p>例如：设 <span class="math inline">\(\norm\cdot_f\)</span> 和 <span class="math inline">\(\norm\cdot_g\)</span> 是线性空间 <span class="math inline">\(V\)</span> 上的两个向量范数，则：</p>
-<ol type="1">
-<li><span class="math inline">\(\norm\cdot_f+\norm\cdot_g\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数</li>
-<li><span class="math inline">\(\max\{\norm\cdot_f,\norm\cdot_g\}\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数</li>
-<li><span class="math inline">\(\left[(\norm\cdot_f)^2+(\norm\cdot_g)^2\right]^{1/2}\)</span> 是 <span class="math inline">\(V\)</span> 上的向量范数</li>
-</ol>
-<p><strong>性质 4（范数的合成）</strong>：设 <span class="math inline">\(n\)</span> 维线性空间 <span class="math inline">\(V=V_1\oplus V_2\oplus\cdots\oplus V_m\)</span>，且 <span class="math inline">\(\norm\cdot_i\,(i=1,\ldots,m)\)</span> 为线性子空间 <span class="math inline">\(V_i\)</span> 上的范数。设 <span class="math inline">\(\norm{\cdot}_\text{comp}\)</span> 是 <span class="math inline">\(\mathbb R^m\)</span> 上的范数，且对 <span class="math inline">\(x\in\mathbb (R^+)^m\)</span> 为单调增加的，则对任意 <span class="math inline">\(x\in V\)</span>，存在唯一分解 <span class="math inline">\(x=x_1+\cdots+x_n\)</span>，其中 <span class="math inline">\(x_i\in V_i\)</span>. 定义合成范数为： <span class="math display">\[
-\norm x=\norm{U(x)}_\text{comp},\quad\text{where }\ U(x)=(\norm{x_1}_1,\ldots,\norm{x_m}_m)^T
-\]</span> <div class="note note-secondary">
-            <p>证明与性质 3 是类似的。</p>
-          </div></p>
-<p><strong>定义（均衡闭凸集）</strong>：线性空间 <span class="math inline">\(V\)</span> 的闭凸集 <span class="math inline">\(\Omega\)</span> 若满足：<span class="math inline">\(x\in\Omega\implies \lambda x\in\Omega\,(|\lambda|\leq1)\)</span>，那么 <span class="math inline">\(\Omega\)</span> 为均衡闭凸集。</p>
-<p><strong>性质 5（范数的几何性质：范数与均衡闭凸集一一对应）</strong>：若 <span class="math inline">\(\norm\cdot\)</span> 为 <span class="math inline">\(V\)</span> 上的向量范数，则 <span class="math inline">\(\Omega=\{x\mid\norm x\leq 1\}\)</span> 是 <span class="math inline">\(V\)</span> 上的均衡闭凸集；反之，若 <span class="math inline">\(\Omega\)</span> 是 <span class="math inline">\(V\)</span> 上的均衡闭凸集，且 <span class="math inline">\(\Omega\)</span> 含有内点，即包含一个小单位球，则可以定义函数 <span class="math inline">\(P(x)\)</span> 如下： <span class="math display">\[
-P(x)=\begin{cases}\min\{\lambda&gt;0\mid x/\lambda\in\Omega\}&amp;&amp;x\neq0\\0&amp;&amp;x=0\end{cases}
-\]</span> 那么 <span class="math inline">\(P(x)\)</span> 为 <span class="math inline">\(V\)</span> 上的范数。</p>
-<h3 id="补充绝对范数与单调范数">补充：绝对范数与单调范数</h3>
-<p><strong>绝对范数</strong>：设 <span class="math inline">\(x=(\xi_1,\ldots,\xi_n)^T\in\mathbb C^n\)</span>，记 <span class="math inline">\(|x|=(|\xi_1|,\ldots,|\xi_n|)^T\in\mathbb R^n\)</span>，若 <span class="math inline">\(\mathbb C^n\)</span> 上的范数 <span class="math inline">\(v\)</span> 满足条件： <span class="math display">\[
-v(x)=v(|x|),\quad \forall x\in\mathbb C^n
-\]</span> 则称 <span class="math inline">\(v\)</span> 为绝对范数。</p>
-<p><strong>单调范数</strong>：若对于任意 <span class="math inline">\(x,y\in\mathbb C^n\)</span>，范数 <span class="math inline">\(v\)</span> 满足： <span class="math display">\[
-|x|\leq |y|\implies v(x)\leq v(y)
-\]</span> 则称 <span class="math inline">\(v\)</span> 为单调范数。</p>
-<p><strong>定理</strong>：<span class="math inline">\(v\)</span> 为绝对范数的充要条件是 <span class="math inline">\(v\)</span> 为单调范数。</p>
-<h2 id="具体实例">具体实例</h2>
-<h3 id="范数">2-范数</h3>
-<p><span class="math display">\[
-\norm x_2=\sqrt{|x_1|^2+|x_2|^2+\cdots+|x_n|^2}
-\]</span></p>
-<h3 id="范数-1">1-范数</h3>
-<p><span class="math display">\[
-\norm x_1=|x_1|+|x_2|+\cdots+|x_n|
-\]</span></p>
-<h3 id="infty-范数"><span class="math inline">\(\infty\)</span>-范数</h3>
-<p><span class="math display">\[
-\norm x_\infty=\max_{i=1}^n |x_i|
-\]</span></p>
-<h3 id="p-范数"><span class="math inline">\(p\)</span>-范数</h3>
-<p><span class="math display">\[
-\norm x_p=\left(|x_1|^p+|x_2|^p+\cdots+|x_n|^p\right)^{1/p}\quad\quad p\geq 1
-\]</span></p>
-<blockquote>
-<p>当 <span class="math inline">\(0\leq p&lt;1\)</span> 时并不是范数，因为不满足三角不等式，但是在实际应用中仍然有重要应用。</p>
-</blockquote>
-<p><img src="pnorm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
-<p>为了证明 <span class="math inline">\(p\)</span>-范数满足三角不等式，首先需要证明一个引理和 Hölder 不等式。</p>
-<div class="note note-secondary">
-            <p><strong>引理</strong>：对任意实数 <span class="math inline">\(\alpha&gt;0,\beta&gt;0\)</span>，都有 <span class="math inline">\(\alpha\beta\leq \frac{\alpha^p}{p}+\frac{\beta^q}{q}\)</span>，其中 <span class="math inline">\(p&gt;1,q&gt;1\)</span> 且 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>.</p><p>证： <span class="math display">\[\begin{align}\frac{\alpha^p}{p}+\frac{\beta^q}{q}&amp;\geq\frac{q\alpha^p+p\beta^q}{pq}=\frac{q\alpha^p+p\beta^q}{p+q}\\&amp;=\frac{(\alpha^p+\cdots+\alpha^p)+(\beta^q+\cdots+\beta^q)}{p+q}\\&amp;\geq\sqrt[p+q]{\alpha^{pq}\beta^{pq}}=\sqrt[pq]{\alpha^{pq}\beta^{pq}}=\alpha\beta\end{align}\]</span> 证毕。</p>
+<h2 id="矩阵函数的概念">矩阵函数的概念</h2>
+<p><strong>定义</strong>：设一元函数 <span class="math inline">\(f(z)\)</span> 能展开为 <span class="math inline">\(z\)</span> 的幂级数： <span class="math display">\[
+f(z)=\sum_{k=0}^\infty c_kz^k,\quad |z|&lt;r
+\]</span> 则当 <span class="math inline">\(n\)</span> 阶方阵 <span class="math inline">\(A\)</span> 满足 <span class="math inline">\(\rho(A)&lt;r\)</span> 时，矩阵级数 <span class="math inline">\(\sum_{k=0}^\infty c_kA^k\)</span> 收敛，其和称为矩阵函数，记作： <span class="math display">\[
+f(A)=\sum_{k=0}^\infty c_k A^k
+\]</span> <strong>代入规则</strong>：若 <span class="math inline">\(f(z)\)</span> 能展开为 <span class="math inline">\(z\)</span> 的幂级数且 <span class="math inline">\(f(z)=g(z)\)</span> 对 <span class="math inline">\(|z|&lt;r\)</span> 成立，则当 <span class="math inline">\(\rho(A)&lt;r\)</span> 时，<span class="math inline">\(f(A)=g(A)\)</span>.</p>
+<p><strong>二元函数的代入规则</strong>：若 <span class="math inline">\(f(x,y)\)</span> 能展开为 <span class="math inline">\(x,y\)</span> 的幂级数且 <span class="math inline">\(f(x,y)=g(x,y)\)</span>. <strong>若 <span class="math inline">\(AB=BA\)</span></strong>，则 <span class="math inline">\(f(A,B)=g(A,B)\)</span>.</p>
+<div class="note note-info">
+            <p>为什么要求 <span class="math inline">\(AB=BA\)</span>？因为 <span class="math inline">\(f(x,y)=\sum_{i=0}^\infty\sum_{j=0}^\infty c_{ij}x^iy^j\)</span>，中间项要求交换律才能合并。</p>
           </div>
+<p><strong>举例</strong>： <span class="math display">\[
+\begin{align}
+&amp;\sin(A)=A-\frac{A^3}{3!}+\frac{A^5}{5!}-\cdots\\
+&amp;\cos(A)=I+\frac{A^2}{2!}+\frac{A^4}{4!}-\cdots\\
+&amp;e^A=I+A+\frac{A^2}{2!}+\frac{A^3}{3!}+\cdots
+\end{align}
+\]</span></p>
+<h2 id="矩阵函数的求法">矩阵函数的求法</h2>
+<h3 id="待定系数法">待定系数法</h3>
+<p>给定 <span class="math inline">\(A\)</span>，确定首一零化多项式 <span class="math inline">\(g(\lambda)\)</span>，使得 <span class="math inline">\(g(A)=0\)</span>，例如特征多项式或最小多项式均可。设 <span class="math display">\[
+f(\lambda)=g(\lambda)q(\lambda)+r(\lambda)
+\]</span> 其中 <span class="math inline">\(\deg r(\lambda)&lt;\deg g(\lambda)\)</span>. 那么只要确定了 <span class="math inline">\(r(\lambda)\)</span>，就有 <span class="math inline">\(f(A)=r(A)\)</span>.</p>
+<p>所以问题的关键在于如何确定 <span class="math inline">\(r(\lambda)\)</span>. 我们并不需要解 <span class="math inline">\(q(\lambda)\)</span>，只需要找 <span class="math inline">\(\deg r(\lambda)\)</span> 个函数值或导数值（<span class="math inline">\(k\)</span> 重根就求 <span class="math inline">\(k-1\)</span> 阶导）形成线性方程组，就能解系数方程（其实就是带有导数约束的插值问题）。具体而言，设 <span class="math inline">\(g(\lambda)\)</span> 的互异零点为 <span class="math inline">\(\lambda_1,\ldots,\lambda_s\)</span>，对应重数为 <span class="math inline">\(r_1,\ldots,r_s\)</span>，那么易知： <span class="math display">\[
+g^{(l)}(\lambda_i)=0,\quad l=0,\ldots,r_i-1;\,i=1,\ldots,s
+\]</span> 因此： <span class="math display">\[
+r^{(l)}(\lambda_i)=f^{(l)}(\lambda_i),\quad l=0,\ldots,r_i-1;\,i=1,\ldots,s\label{prob}\tag{1}
+\]</span> 解该方程组即可确定 <span class="math inline">\(r(\lambda)\)</span>.</p>
+<h4 id="方法-0.-直接求解">方法 0. 直接求解</h4>
+<p>对于规模较小的问题，直接求解方程组 <span class="math inline">\(\eqref{prob}\)</span> 式即可。</p>
 <div class="note note-secondary">
-            <p><strong>Hölder 不等式</strong>：对任意 <span class="math inline">\(\xi_k,\eta_k\in\mathbb C\,(k=1,\ldots,n)\)</span>，有： <span class="math display">\[\sum_{k=1}^n|\xi_k||\eta_k|\leq\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}\]</span> 其中 <span class="math inline">\(p&gt;1,q&gt;1\)</span> 且 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>.</p><p>证：令 <span class="math inline">\(\alpha={|\xi_i|}/{\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}}\)</span>，<span class="math inline">\(\beta={|\eta_i|}/{\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}}\)</span>，由引理得： <span class="math display">\[\frac{|\xi_i|}{\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}}\cdot\frac{|\eta_i|}{\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}}\leq\frac{|\xi_i|^p}{p\sum_{k=1}^n|\xi_k|^p}+\frac{|\eta_i|^q}{q\sum_{k=1}^n|\eta_k|^q}\]</span> 对 <span class="math inline">\(i\)</span> 求和： <span class="math display">\[\frac{\sum_{i=1}^n|\xi_i||\eta_i|}{\left(\sum_{k=1}^n|\xi_k|^p\right)^{1/p}\left(\sum_{k=1}^n|\eta_k|^q\right)^{1/q}}\leq\frac{1}{p}+\frac{1}{q}=1\]</span> 证毕。</p>
+            <p>例：设 <span class="math inline">\(A=\begin{bmatrix}2&amp;0&amp;0\\1&amp;1&amp;1\\1&amp;-1&amp;3\end{bmatrix}\)</span>，求 <span class="math inline">\(e^A\)</span>.</p><p>解：特征方程为： <span class="math display">\[\varphi(\lambda)=\begin{vmatrix}\lambda-2&amp;0&amp;0\\-1&amp;\lambda-1&amp;-1\\-1&amp;1&amp;\lambda-3\end{vmatrix}=(\lambda-2)^3\]</span> 设 <span class="math inline">\(f(\lambda)=e^\lambda=\varphi(\lambda)q(\lambda)+r(\lambda)\)</span>，其中 <span class="math inline">\(r(\lambda)=a\lambda^2+b\lambda+c\)</span>，则： <span class="math display">\[\begin{cases}r(2)=f(2)=e^2\\r&#39;(2)=f&#39;(2)=e^2\\r&#39;&#39;(2)=f&#39;&#39;(2)=e^2\end{cases}\implies\begin{cases}4a+2b+c=e^2\\4a+b=e^2\\2a=e^2\end{cases}\implies\begin{cases}a=e^2/2\\b=-e^2\\c=e^2\end{cases}\]</span> 故 <span class="math inline">\(r(\lambda)=e^2/2\cdot(\lambda^2-2\lambda+2)\)</span>，故： <span class="math display">\[f(A)=r(A)=\frac{e^2}{2}(A^2-2A+2I)=\begin{bmatrix}\cdots\end{bmatrix}\]</span></p>
           </div>
-<p>接下来利用 Hölder 不等式就可以证明 <span class="math inline">\(p\)</span>-范数满足三角不等式了。</p>
+<h4 id="方法-1.-sylvester-插值公式">方法 1. Sylvester 插值公式</h4>
+<p>暂略。</p>
+<h4 id="方法2.-广义-newton-插值公式">方法2. 广义 Newton 插值公式</h4>
+<div class="note note-success">
+            <p>思想：正如上文所说，解方程组 <span class="math inline">\(\eqref{prob}\)</span> 本质就是解带有导数约束的插值问题。我们知道 Taylor 展开式满足在<strong>一个点</strong>处的 <span class="math inline">\(n\)</span> 阶<strong>导数值</strong>相等，而 Newton 展开式满足在<strong>多个点</strong>处的<strong>函数值</strong>相等，所以我们想解决的插值问题其实是二者的结合，遂称作广义 Newton 插值。</p>
+          </div>
+<p><strong>Taylor 展开式</strong>：若已知 <span class="math inline">\(f(x)\)</span> 在 <span class="math inline">\(x_0\)</span> 的函数值和直到 <span class="math inline">\(n\)</span> 阶导数值，则： <span class="math display">\[
+Tf(x)=f(x_0)+f&#39;(x_0)(x-x_0)+\frac{f&#39;&#39;(x_0)}{2!}(x-x_0)^2+\cdots+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n
+\]</span> 使得 <span class="math inline">\(Tf^{(l)}(x_0)=f^{(l)}(x_0),\,l=0,\ldots,n\)</span> 成立。</p>
+<p><strong>Newton 展开式</strong>：若已知 <span class="math inline">\(f(x)\)</span> 在互异点 <span class="math inline">\(x_0,x_1,\ldots,x_n\)</span> 处的函数值，则有 Newton 插值公式： <span class="math display">\[
+\begin{align}
+Nf(x)&amp;=f(x_0)\\
+&amp;+f[x_0,x_1](x-x_0)\\
+&amp;+f[x_0,x_1,x_2](x-x_0)(x-x_1)\\
+&amp;+\cdots\\
+&amp;+f[x_0,x_1,\ldots,x_n](x-x_0)(x-x_1)\cdots(x-x_{n-1})
+\end{align}
+\]</span> 使得 <span class="math inline">\(Nf(x_i)=f(x_i),\,i=0,\ldots,n\)</span> 成立。</p>
+<p>其中 <span class="math inline">\(f[x_0,x_1]\)</span> 称作一阶均差： <span class="math display">\[
+f[x_0,x_1]=\frac{f(x_1)-f(x_0)}{x_1-x_0}
+\]</span> <span class="math inline">\(f[x_0,x_1,x_2]\)</span> 称作二阶均差： <span class="math display">\[
+f[x_0,x_1,x_2]=\frac{f[x_1,x_2]-f[x_0,x_1]}{x_2-x_0}
+\]</span> <span class="math inline">\(f[x_0,x_1,\ldots,x_k]\)</span> 称作 <span class="math inline">\(k\)</span> 阶均差： <span class="math display">\[
+f[x_0,x_1,\ldots,x_k]=\frac{f[x_1,\ldots,x_{k-1},x_k]-f[x_0,x_1,\ldots,x_{k-1}]}{x_k-x_0}
+\]</span> 可以借助下面这个三角形表格来计算均差：</p>
+<p><img src="diff.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p><strong>广义 Newton 展开式</strong></p>
+<p>从均差的定义可以看出，它的极限与导数有密切关系。事实上，利用罗尔定理可以证明：若 <span class="math inline">\(f(x)\)</span> 在 <span class="math inline">\([a,b]\)</span> 上存在 <span class="math inline">\(n\)</span> 阶导数，且节点 <span class="math inline">\(x_0,x_1,\ldots,x_n\in[a,b]\)</span>，则存在 <span class="math inline">\(\xi\in[a,b]\)</span> 使得： <span class="math display">\[
+f([x_0,x_1,\ldots,x_n])=\frac{f^{(n)}(\xi)}{n!}
+\]</span> 因此，我们可以定义在相同点处的“广义”均差为： <span class="math display">\[
+f([c,c,\ldots,c])=\frac{f^{(n)}(c)}{n!}
+\]</span> 那么，Taylor 展开就可以看作是广义 Newton 展开在插值节点重合的特殊情形。</p>
+<p>广义的均差也可以借助均差表计算，例如：</p>
+<p><img src="diff2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
 <div class="note note-secondary">
-            <p>设 <span class="math inline">\(x,y\in\mathbb C^n\)</span>，求证 <span class="math inline">\(\norm{x+y}_p\leq\norm{x}_p+\norm{y}_p\)</span>，其中 <span class="math inline">\(p\geq 1\)</span>.</p><p>证明： <span class="math display">\[\begin{align}\norm{x+y}_p^p&amp;=\sum_{k=1}^n|x_k+y_k|^p\\&amp;\leq\sum_{k=1}^n|x_k||x_k+y_k|^{p-1}+\sum_{k=1}^n|y_k||x_k+y_k|^{p-1}\\&amp;\leq\left(\sum_{k=1}^n|x_k|^p\right)^{1/p}\left(\sum_{k=1}^n|x_k+y_k|^{q(p-1)}\right)^{1/q}+\left(\sum_{k=1}^n|x_k|^p\right)^{1/p}\left(\sum_{k=1}^n|x_k+y_k|^{q(p-1)}\right)^{1/q}\\&amp;=\left(\norm{x}_p+\norm{y}_p\right)\left(\sum_{k=1}^n|x_k+y_k|^{p}\right)^{1/q}\\&amp;=\left(\norm{x}_p+\norm{y}_p\right)\norm{x+y}_p^{p/q}\\&amp;=\left(\norm{x}_p+\norm{y}_p\right)\norm{x+y}_p^{p-1}\end{align}\]</span> 于是： <span class="math display">\[\norm{x+y}_p\leq\left(\norm{x}_p+\norm{y}_p\right)\]</span> 证毕。</p>
+            <p>例：设 <span class="math inline">\(A=\begin{bmatrix}2&amp;0&amp;0\\1&amp;1&amp;2\\1&amp;-1&amp;3\end{bmatrix}\)</span>，求 <span class="math inline">\(e^{At}\)</span>.</p><p>解：特征方程为： <span class="math display">\[\varphi(\lambda)=\begin{vmatrix}\lambda-2&amp;0&amp;0\\-1&amp;\lambda-1&amp;-2\\-1&amp;1&amp;\lambda-3\end{vmatrix}=(\lambda-2)(\lambda-5)(\lambda+1)\]</span> 画均差表：</p><p><img src="diff-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p><p>于是： <span class="math display">\[r(\lambda)=e^{2t}+\frac{e^{5t}-e^{2t}}{3}(\lambda-2)+\frac{e^{5t}-2e^{2t}+e^{-t}}{18}(\lambda-2)(\lambda-5)\]</span> 故： <span class="math display">\[e^{At}=r(A)=\cdots\]</span></p>
           </div>
-<h3 id="补充对偶范数">补充：对偶范数</h3>
-<p><strong>定义</strong>：令 <span class="math inline">\(\norm\cdot\)</span> 为 <span class="math inline">\(\mathbb R^n\)</span> 上的范数，其对偶范数 <span class="math inline">\(\norm\cdot_\ast\)</span> 定义为： <span class="math display">\[
-\norm{z}_\ast=\sup_{\norm x\leq 1}\{z^Tx\}
-\]</span> <strong>性质</strong>：<span class="math inline">\(\norm{x}_{\ast\ast}=\norm x\)</span>.</p>
-<p><strong>例子</strong>：<span class="math inline">\(l_p\)</span> 和 <span class="math inline">\(l_q\)</span> 互为对偶范数，其中 <span class="math inline">\(\frac{1}{p}+\frac{1}{q}=1\)</span>.</p>
-<h2 id="范数等价">范数等价</h2>
-<p>对有限维空间 <span class="math inline">\(V^n\)</span> 中任意两个向量范数 <span class="math inline">\(\norm x_\alpha,\norm x_\beta\)</span>，若存在正常数 <span class="math inline">\(c_1,c_2\)</span>，使得： <span class="math display">\[
-c_1\norm{x}_\beta\leq\norm{x}_\alpha\leq c_2\norm{x}_\beta,\quad\forall x\in V^n
-\]</span> 则称范数 <span class="math inline">\(\norm{x}_\alpha\)</span> 与 <span class="math inline">\(\norm{x}_\beta\)</span> 等价。</p>
-<p>范数等价是一个<strong>等价关系</strong>，满足<strong>自反性、对称性、传递性</strong>。</p>
-<p><strong>定理</strong>：有限维空间中任意两个向量范数都等价。</p>
-<div class="note note-secondary">
-            <p>证明：由于等价关系具有传递性，我们只需要证明任意一个向量范数都等价于 2-范数即可。</p><p>令 <span class="math inline">\(f(x)=\norm{x}\)</span> 为 <span class="math inline">\(V^n\)</span> 上的任一向量范数，由于当 <span class="math inline">\(x\to y\)</span> 时，<span class="math inline">\(\left|\norm x-\norm y\right|\leq \norm{x-y}\to 0\)</span>，因此范数是连续函数。于是 <span class="math inline">\(f(x)\)</span> 在单位超球面上有大于零的最小值和最大值： <span class="math display">\[0&lt;\min_{\norm{x}_2=1}f(x)\leq \max_{\norm{x}_2=1}f(x)\]</span> 记上述最小值为 <span class="math inline">\(c_1\)</span>，最大值为 <span class="math inline">\(c_2\)</span>，于是： <span class="math display">\[c_1\leq \left\Vert\frac{x}{\norm{x}_2}\right\Vert\leq c_2\implies c_1\norm{x}_2\leq\norm{x}\leq c_2\norm{x}_2\]</span> 故 <span class="math inline">\(\norm\cdot\)</span> 与 2-范数等价。证毕。</p>
+<h3 id="数项级数求和法">数项级数求和法</h3>
+<p>暂略。</p>
+<h3 id="对角形法">对角形法</h3>
+<div class="note note-danger">
+            <p>对角化的计算量较大（要计算 <span class="math inline">\(P\)</span> 和 <span class="math inline">\(P^{-1}\)</span>，即解特征值和特征向量）</p>
           </div>
-<h2 id="基于向量范数的收敛性">基于向量范数的收敛性</h2>
-<p><strong>定义</strong>：设 <span class="math inline">\(\{x^{(k)}\}\)</span> 是 <span class="math inline">\(V^n\)</span> 中的向量序列，若存在 <span class="math inline">\(x\in V^n\)</span>，使得： <span class="math display">\[
-\lim_{k\to\infty} \norm{x^{(k)}-x}_\alpha=0
-\]</span> 则称序列 <span class="math inline">\(\{x^{(k)}\}\)</span> 按 <span class="math inline">\(\alpha\)</span> 范数收敛到 <span class="math inline">\(x\)</span>.</p>
-<p><strong>定理</strong>：向量各分量收敛等价于范数收敛，即： <span class="math display">\[
-\lim_{k\to\infty} x^{(k)}=x\iff\lim_{k\to\infty} \norm{x^{(k)}-x}=0
-\]</span> <div class="note note-secondary">
-            <p>由于向量范数的等价性，只需要对 1-范数证明即可。 <span class="math display">\[\begin{align}x^{(k)}\to x&amp;\iff \xi_i^{(k)}\to\xi_i&amp;&amp;(i=1,\ldots,n)\\&amp;\iff |\xi_i^{(k)}-\xi_i|\to 0&amp;&amp;(i=1,\ldots,n)\\&amp;\iff \sum_{i=1}^n|\xi_i^{(k)}-\xi_i|\to 0\\&amp;\iff \norm{x^{(k)}-x}_1\to0\end{align}\]</span> 证毕。</p>
-          </div></p>
+<p>若 <span class="math inline">\(A\)</span> 可对角化，即存在非奇异矩阵 <span class="math inline">\(P\)</span>，使得： <span class="math display">\[
+P^{-1}AP=\begin{bmatrix}\lambda_1&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;\lambda_n\end{bmatrix}
+\]</span> 则： <span class="math display">\[
+f(A)=P\begin{bmatrix}f(\lambda_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(\lambda_n)\end{bmatrix}P^{-1}
+\]</span></p>
+<h3 id="jordan-标准形法">Jordan 标准形法</h3>
+<p>暂略。</p>
 
                 
               </div>
@@ -480,8 +464,8 @@ c_1\norm{x}_\beta\leq\norm{x}_\alpha\leq c_2\norm{x}_\beta,\quad\forall x\in V^n
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>[矩阵论]2.1向量范数</div>
-      <div>https://xyfjason.github.io/blog-main/2023/10/26/矩阵论-2-1向量范数/</div>
+      <div>[矩阵论]3.2矩阵函数</div>
+      <div>https://xyfjason.github.io/blog-main/2023/11/11/矩阵论-3-2矩阵函数/</div>
     </div>
     <div class="license-meta">
       
@@ -493,7 +477,7 @@ c_1\norm{x}_\beta\leq\norm{x}_\alpha\leq c_2\norm{x}_\beta,\quad\forall x\in V^n
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年10月26日</div>
+          <div>2023年11月11日</div>
         </div>
       
       
@@ -525,9 +509,9 @@ c_1\norm{x}_\beta\leq\norm{x}_\alpha\leq c_2\norm{x}_\beta,\quad\forall x\in V^n
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2023/11/01/%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB-%E9%9D%9E%E5%8F%82%E6%95%B0%E6%96%B9%E6%B3%95/" title="[模式分类]非参数方法">
+                      <a href="/blog-main/2023/11/15/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-3%E7%9F%A9%E9%98%B5%E7%9A%84%E5%BE%AE%E5%88%86%E5%92%8C%E7%A7%AF%E5%88%86/" title="[矩阵论]3.3矩阵的微分和积分">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">[模式分类]非参数方法</span>
+                        <span class="hidden-mobile">[矩阵论]3.3矩阵的微分和积分</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -535,8 +519,8 @@ c_1\norm{x}_\beta\leq\norm{x}_\alpha\leq c_2\norm{x}_\beta,\quad\forall x\in V^n
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/10/17/%E7%9F%A9%E9%98%B5%E8%AE%BA-1-3%E6%AC%A7%E6%B0%8F%E7%A9%BA%E9%97%B4%E4%B8%8E%E9%85%89%E7%A9%BA%E9%97%B4/" title="[矩阵论]1.3欧氏空间与酉空间">
-                        <span class="hidden-mobile">[矩阵论]1.3欧氏空间与酉空间</span>
+                      <a href="/blog-main/2023/11/09/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-1%E7%9F%A9%E9%98%B5%E5%BA%8F%E5%88%97%E4%B8%8E%E7%9F%A9%E9%98%B5%E7%BA%A7%E6%95%B0/" title="[矩阵论]3.1矩阵序列与矩阵级数">
+                        <span class="hidden-mobile">[矩阵论]3.1矩阵序列与矩阵级数</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

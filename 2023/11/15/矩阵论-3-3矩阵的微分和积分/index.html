@@ -1,0 +1,917 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="矩阵的微分 定义：若 \(A(t)&#x3D;\left(a_{ij}(t)\right)\in\mathbb C^{m\times n}\) 的每个元素 \(a_{ij}(t)\) 都是 \(t\) 的可微函数，则 \(A(t)\) 关于 \(t\) 的导数定义为： \[ \frac{\mathrm d}{\mathrm dt}A(t)&#x3D;A&#39;(t)&#x3D;\left(a&#39;_{ij}(t)\rig">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[矩阵论]3.3矩阵的微分和积分">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/15/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-3%E7%9F%A9%E9%98%B5%E7%9A%84%E5%BE%AE%E5%88%86%E5%92%8C%E7%A7%AF%E5%88%86/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="矩阵的微分 定义：若 \(A(t)&#x3D;\left(a_{ij}(t)\right)\in\mathbb C^{m\times n}\) 的每个元素 \(a_{ij}(t)\) 都是 \(t\) 的可微函数，则 \(A(t)\) 关于 \(t\) 的导数定义为： \[ \frac{\mathrm d}{\mathrm dt}A(t)&#x3D;A&#39;(t)&#x3D;\left(a&#39;_{ij}(t)\rig">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
+<meta property="article:published_time" content="2023-11-15T08:30:26.000Z">
+<meta property="article:modified_time" content="2023-11-17T16:37:35.803Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="linear algebra">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
+  
+  
+  
+  <title>[矩阵论]3.3矩阵的微分和积分 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/3b1b_transform_basis.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[矩阵论]3.3矩阵的微分和积分"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-15 16:30" pubdate>
+          2023年11月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          85 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[矩阵论]3.3矩阵的微分和积分</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="矩阵的微分">矩阵的微分</h2>
+<p><strong>定义</strong>：若 <span class="math inline">\(A(t)=\left(a_{ij}(t)\right)\in\mathbb C^{m\times n}\)</span> 的每个元素 <span class="math inline">\(a_{ij}(t)\)</span> 都是 <span class="math inline">\(t\)</span> 的可微函数，则 <span class="math inline">\(A(t)\)</span> 关于 <span class="math inline">\(t\)</span> 的导数定义为： <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}A(t)=A&#39;(t)=\left(a&#39;_{ij}(t)\right)_{m\times n}
+\]</span> <strong>性质 1</strong>. <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}(A(t)+B(t))=\frac{\mathrm d}{\mathrm dt}A(t)+\frac{\mathrm d}{\mathrm dt}B(t)
+\]</span> <strong>性质 2</strong>. <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}(A(t)B(t))=\frac{\mathrm d}{\mathrm dt}A(t)\cdot B(t)+A(t)\cdot\frac{\mathrm d}{\mathrm dt}B(t)
+\]</span> <strong>推论</strong>. 若 <span class="math inline">\(C(t)=A(t)B(t)\)</span>，则： <span class="math display">\[
+\mathrm dC=\mathrm dA\cdot B+A\cdot\mathrm dB
+\]</span> 其中，<span class="math inline">\(\mathrm dA=(\mathrm dA/\mathrm dt)\cdot dt\)</span>，<span class="math inline">\(\mathrm dB=(\mathrm dB/\mathrm dt)\cdot dt\)</span>.</p>
+<p><strong>例（逆矩阵的导数）</strong>： <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}\left(A(t)^{-1}\right)=-A(t)^{-1}\frac{\mathrm dA(t)}{\mathrm dt}A(t)^{-1}
+\]</span> <div class="note note-secondary">
+            <p>证明：由于 <span class="math inline">\(A(t)\cdot A(t)^{-1}=I\)</span>，两边求导得： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}A(t)\cdot A(t)^{-1}+A(t)\cdot\frac{\mathrm d}{\mathrm dt}\left(A(t)^{-1}\right)=0\]</span> 故： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\left(A(t)^{-1}\right)=-A(t)^{-1}\frac{\mathrm dA(t)}{\mathrm dt}A(t)^{-1}\]</span></p>
+          </div></p>
+<p><strong>性质 3</strong>. <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}(\alpha(t)A(t))=\alpha&#39;(t)A(t)+\alpha(t)\cdot\frac{\mathrm d}{\mathrm dt}A(t)
+\]</span> <strong>性质 4</strong>. 若 <span class="math inline">\(A(t)\)</span> 和 <span class="math inline">\(\frac{\mathrm d}{\mathrm dt}A(t)\)</span> <strong>可交换</strong>，<span class="math inline">\(f(z)\)</span> 是与 <span class="math inline">\(t\)</span> 无关的一元解析函数，则： <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}f(A(t))=f&#39;(A(t))\cdot\frac{\mathrm d}{\mathrm dt}A(t)
+\]</span> <div class="note note-secondary">
+            <p>形式证明（不严格）：若将 <span class="math inline">\(f(z)\)</span> 展开为幂级数的形式 <span class="math inline">\(f(z)=\sum_{k=0}^\infty c_kz^k\)</span>，则根据可交换条件有： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}A^k(t)=\sum_{i=0}^{k-1}A^i(t)\cdot\frac{\mathrm d}{\mathrm dt}A(t)\cdot A^{k-1-i}(t)=kA^{k-1}(t)\cdot\frac{\mathrm d}{\mathrm dt}A(t)\]</span> 代入矩阵函数得： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}f(A(t))=\sum_{k=0}^\infty c_k\left(kA^{k-1}(t)\cdot\frac{\mathrm d}{\mathrm dt}A(t)\right)=f&#39;(A(t))\cdot\frac{\mathrm d}{\mathrm dt}A(t)\]</span></p>
+          </div></p>
+<p><strong>性质 5（迹函数求导基本定理）</strong>. 若 <span class="math inline">\(A(t)\)</span> 和 <span class="math inline">\(B(t)\)</span> 可交换，<span class="math inline">\(f(z)\)</span> 是与 <span class="math inline">\(t\)</span> 无关的一元解析函数，则： <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}\text{tr}\big(f(A(t))\cdot B(t)\big)=\text{tr}\left(f&#39;(A(t))\cdot\frac{\mathrm d}{\mathrm dt}A(t)B(t)\right)+\text{tr}\left(f(A(t))\cdot\frac{\mathrm d}{\mathrm dt}B(t)\right)
+\]</span> <strong>推论</strong>：取 <span class="math inline">\(B(t)=I\)</span>，则有： <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}\text{tr}(f(A(t)))=\text{tr}\left(f&#39;(A(t))\cdot\frac{\mathrm d}{\mathrm dt}A(t)\right)
+\]</span></p>
+<h2 id="矩阵的积分">矩阵的积分</h2>
+<p><strong>定义</strong>：若矩阵 <span class="math inline">\(A(t)=(a_{ij}(t))\in\mathbb C^{m\times n}\)</span> 的每个元素 <span class="math inline">\(a_{ij}(t)\)</span> 都在 <span class="math inline">\([t_0,t]\)</span> 上可积，则称 <span class="math inline">\(A(t)\)</span> 可积，记为： <span class="math display">\[
+\int_{t_0}^t A(\tau)\mathrm d\tau=\left(\int_{t_0}^ta_{ij}(\tau)\mathrm d\tau\right)_{m\times n}
+\]</span> <strong>性质 1</strong>. <span class="math display">\[
+\int_{t_0}^t[A(\tau)+B(\tau)]\mathrm d\tau=\int_{t_0}^tA(\tau)\mathrm d\tau+\int_{t_0}^tB(\tau)\mathrm d\tau
+\]</span> <strong>性质 2</strong>. <span class="math display">\[
+\begin{align}
+&amp;\int_{t_0}^t[A\cdot B(\tau)]\mathrm d\tau=A\cdot\left[\int_{t_0}^tB(\tau)\mathrm d\tau\right]\\
+&amp;\int_{t_0}^t[A(\tau)\cdot B]\mathrm d\tau=\left[\int_{t_0}^tA(\tau)\mathrm d\tau\right]\cdot B
+\end{align}
+\]</span> <strong>性质 3</strong>. <span class="math display">\[
+\frac{\mathrm d}{\mathrm dt}\int_{t_0}^tA(\tau)\mathrm d\tau=A(t)
+\]</span> <strong>性质 4</strong>. <span class="math display">\[
+\int_{t_0}^{t_1}A&#39;(\tau)\mathrm d\tau=A(t_1)-A(t_0)
+\]</span></p>
+<h2 id="其他微分概念">其他微分概念</h2>
+<h3 id="函数对矩阵的导数">函数对矩阵的导数</h3>
+<div class="note note-warning">
+            <p>前文涉及到的矩阵函数是从矩阵到矩阵的一个映射，本节探讨的函数是关于矩阵各个元素的函数，即从矩阵映射到数，与矩阵函数不同。</p>
+          </div>
+<div class="note note-info">
+            <p><strong>矩阵元素与矩阵符号的代数关系</strong></p><p>为了方便后续推导，这里列出矩阵元素与矩阵符号的代数关系式，可以避免将矩阵的各个分量列出来的繁琐。</p><p>我们约定 <span class="math inline">\(e_i\)</span> 表示第 <span class="math inline">\(i\)</span> 个分量为 1、其余分量为 0 的单位列向量，其维数由上下文确定，即同一个式子中出现的 <span class="math inline">\(e_i,e_j\)</span> 可能是不同维数的。</p><ul><li><p>用分量表示矩阵： <span class="math display">\[A=\sum_{i=1}^m\sum_{j=1}^na_{ij}e_ie_j^T\]</span></p></li><li><p>用矩阵表示分量： <span class="math display">\[a_{ij}=e_i^TAe_j\]</span></p></li><li><p>矩阵逐列拉成向量： <span class="math display">\[\text{Vec}(A)=\sum_{i=1}^m\sum_{j=1}^na_{ij}e_j\otimes e_i=\sum_{i=1}^mA^T e_i\otimes e_i=\sum_{j=1}^ne_j\otimes Ae_j\]</span></p></li><li><p>用拉成向量的矩阵表示分量： <span class="math display">\[a_{ij}=(e_j\otimes e_i)^T\text{Vec}(A)\]</span></p></li></ul>
+          </div>
+<p><strong>定义</strong>：设 <span class="math inline">\(X=(\xi_{ij})_{m\times n}\)</span>，<span class="math inline">\(f(X)\)</span> 为 <span class="math inline">\(mn\)</span> 元函数： <span class="math display">\[
+f(X)=f(\xi_{11},\ldots,\xi_{1n},\xi_{21},\ldots,\xi_{2n},\ldots,\xi_{m1},\ldots,\xi_{mn})
+\]</span> 定义 <span class="math inline">\(f(X)\)</span> 对矩阵 <span class="math inline">\(X\)</span> 的导数为： <span class="math display">\[
+\frac{\mathrm df}{\mathrm dX}=\left(\frac{\partial f}{\partial \xi_{ij}}\right)_{m\times n}=
+\begin{bmatrix}
+\frac{\partial f}{\partial \xi_{11}}&amp;\cdots&amp;\frac{\partial f}{\partial \xi_{1n}}\\
+\vdots&amp;\ddots&amp;\vdots\\
+\frac{\partial f}{\partial \xi_{m1}}&amp;\cdots&amp;\frac{\partial f}{\partial \xi_{mn}}\\
+\end{bmatrix}
+=\sum_{i=1}^m\sum_{j=1}^n\frac{\partial f}{\partial \xi_{ij}}e_ie_j^T
+\]</span> <strong>微分形式</strong>： <span class="math display">\[
+\frac{\mathrm df}{\mathrm dX}=A\iff \mathrm df=\text{tr}(A^T\cdot\mathrm dX)=\text{tr}(A\cdot \mathrm dX^T)
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\begin{align}\mathrm df&amp;=\sum_{i=1}^m\sum_{j=1}^n\frac{\partial f}{\partial\xi_{ij}}\mathrm d\xi_{ij}\\&amp;=\sum_{i=1}^m\sum_{j=1}^n\left(e_i^T\frac{\mathrm df}{\mathrm dX}e_j\right)\left(e_i^T\cdot \mathrm dX\cdot e_j\right)\\&amp;=\sum_{i=1}^m\sum_{j=1}^ne_j^T\left(\frac{\mathrm df}{\mathrm dX}\right)^Te_ie_i^T\cdot\mathrm dX\cdot e_j\\&amp;=\sum_{j=1}^ne_j^T\left(\frac{\mathrm df}{\mathrm dX}\right)^T\left(\sum_{i=1}^me_ie_i^T\right)\cdot\mathrm dX\cdot e_j\\&amp;=\sum_{j=1}^ne_j^T\left(\frac{\mathrm df}{\mathrm dX}\right)^T\mathrm dX\cdot e_j\\&amp;=\text{tr}\left(\left(\frac{\mathrm df}{\mathrm dX}\right)^T\mathrm dX\right)\\&amp;=\text{tr}(A^T\cdot dX)\end{align}\]</span> 证毕。</p>
+          </div></p>
+<div class="note note-success">
+            <p>非常重要！！！这个定理告诉我们：<strong>要求 <span class="math inline">\(\mathrm df/\mathrm dX\)</span>，只需要将 <span class="math inline">\(\mathrm df\)</span> 写作形如 <span class="math inline">\(\text{tr}(A^T\mathrm dX)\)</span> 的形式，那么 <span class="math inline">\(A\)</span> 就是结果</strong>。以下所有内容都围绕这一点展开。</p>
+          </div>
+<p><strong>性质 1（链式法则）</strong>：设 <span class="math inline">\(f(x)\)</span> 是向量 <span class="math inline">\(x\)</span> 的函数，<span class="math inline">\(x\)</span> 是标量 <span class="math inline">\(t\)</span> 的函数 <span class="math inline">\(x=x(t)\)</span>，则： <span class="math display">\[
+\frac{\mathrm df}{\mathrm dt}=\frac{\mathrm dx^T}{\mathrm dt}\cdot\frac{\mathrm df}{\mathrm dx}
+\]</span> <strong>性质 2（链式法则）</strong>：设 <span class="math inline">\(f(X)\)</span> 是 <span class="math inline">\(m\times n\)</span> 矩阵 <span class="math inline">\(X\)</span> 各元素的函数，而 <span class="math inline">\(X\)</span> 又是标量 <span class="math inline">\(t\)</span> 的函数，则： <span class="math display">\[
+\frac{\mathrm df}{\mathrm dt}=\text{tr}\left(\frac{\mathrm dX^T}{\mathrm dt}\cdot\frac{\mathrm df}{\mathrm dX}\right)
+\]</span> <div class="note note-secondary">
+            <p>证明：根据微分形式： <span class="math display">\[\mathrm df=\text{tr}\left(\left(\frac{\mathrm df}{\mathrm dX}\right)^T\mathrm dX\right),\quad \mathrm dX=\frac{\mathrm dX}{\mathrm dt}\mathrm dt\]</span> 有： <span class="math display">\[\mathrm df=\text{tr}\left(\left(\frac{\mathrm df}{\mathrm dX}\right)^T\frac{\mathrm dX}{\mathrm dt}\mathrm dt\right)=\text{tr}\left(\left(\frac{\mathrm df}{\mathrm dX}\right)^T\frac{\mathrm dX}{\mathrm dt}\right)\mathrm dt=\text{tr}\left(\frac{\mathrm dX^T}{\mathrm dt}\cdot\frac{\mathrm df}{\mathrm dX}\right)\mathrm dt\]</span> 证毕。</p>
+          </div></p>
+<p><strong>例</strong>：关于迹函数的导数： <span class="math display">\[
+\begin{align}
+&amp;\frac{\mathrm d}{\mathrm dX}\text{tr}(X^TA)=A\\
+&amp;\frac{\mathrm d}{\mathrm dX}\text{tr}(A^TX)=A\\
+&amp;\frac{\mathrm d}{\mathrm dX}\text{tr}(AX)=A^T
+\end{align}
+\]</span> <div class="note note-secondary">
+            <p>证明：微分是线性算子，可以放入 <span class="math inline">\(\text{tr}(\cdot)\)</span>，因此： <span class="math display">\[\mathrm d(\text{tr}(X^TA))=\text{tr}(\mathrm d(X^TA))=\text{tr}(\mathrm dX^T A)=\text{tr}(A^T\mathrm dX)\]</span> 根据微分形式，<span class="math inline">\(\mathrm d(\text{tr}(X^TA))/\mathrm dX=A\)</span>. 其他两式类似。证毕。</p>
+          </div></p>
+<p><strong>例</strong>：设 <span class="math inline">\(X\)</span> 为可逆矩阵，<span class="math inline">\(f(X)=\text{tr}(AX^{-1})\)</span>，则： <span class="math display">\[
+\frac{\mathrm d}{\mathrm dX}f(X)=-(X^{-1}AX^{-1})^T
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\mathrm df(X)=\text{tr}(\mathrm d(AX^{-1}))=\text{tr}(A\cdot\mathrm dX^{-1})\]</span> 由于 <span class="math inline">\(XX^{-1}=I\)</span>，两边取微分得：<span class="math inline">\(\mathrm dX\cdot X^{-1}+X\cdot\mathrm dX^{-1}=0\)</span>，故 <span class="math inline">\(\mathrm dX^{-1}=-X^{-1}\cdot\mathrm dX\cdot X^{-1}\)</span>，因此： <span class="math display">\[\mathrm df(X)=\text{tr}\left(A\cdot(-X^{-1}\mathrm dX X^{-1})\right)=\text{tr}\left((-X^{-1}AX^{-1})\mathrm dX\right)\]</span> 根据微分形式，<span class="math inline">\(\mathrm df(X)/\mathrm dX=(-X^{-1}AX^{-1})^T\)</span>. 证毕。</p>
+          </div></p>
+<p><strong>例</strong>：设 <span class="math inline">\(f(x)=x^TAx\)</span>，则： <span class="math display">\[
+\frac{\mathrm df}{\mathrm dx}=(A+A^T)x
+\]</span> <div class="note note-secondary">
+            <p>证明： <span class="math display">\[\mathrm df=\mathrm d(x^TAx)=\mathrm dx^TAx+x^TA\mathrm dx=x^T A^T\mathrm dx+x^TA\mathrm dx=x^T(A^T+A)\mathrm dx=\text{tr}\left(((A+A^T)x)^T\cdot\mathrm dx\right)\]</span> 根据微分形式，<span class="math inline">\(\mathrm df/\mathrm dx=(A+A^T)x\)</span>. 证毕。</p>
+          </div></p>
+<p><img src="table1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p><strong>例（行列式求导）</strong>：设矩阵 <span class="math inline">\(X\)</span> 非奇异，则： <span class="math display">\[
+\frac{\mathrm d(|X|)}{\mathrm dX}=|X|(X^{-1})^T
+\]</span></p>
+<p>或有微分形式： <span class="math display">\[
+\mathrm d|X|=|X|\text{tr}(X^{-1}\mathrm dX)=\text{tr}(|X|X^{-1}\mathrm dX)
+\]</span> <div class="note note-secondary">
+            <p>证明：设 <span class="math inline">\(c_{ij}\)</span> 为 <span class="math inline">\(x_{ij}\)</span> 的代数余子式，根据行列式定义知： <span class="math display">\[|X|=\sum_{i=1}^nc_{ij}x_{ij},\quad\forall j\]</span> 由于 <span class="math inline">\(c_{ij}\)</span> 与 <span class="math inline">\(x_{ij}\)</span> 无关，所以有 <span class="math inline">\(\partial|X|/\partial x_{ij}=c_{ij}\)</span>，于是有微分： <span class="math display">\[\mathrm d|X|=\sum_{i=1}^n\sum_{j=1}^n c_{ij}\mathrm dx_{ij}=\text{tr}(X^\ast\mathrm dX)\]</span> 其中 <span class="math inline">\(X^\ast\)</span> 是 <span class="math inline">\(X\)</span> 的伴随矩阵，由于 <span class="math inline">\(X^\ast=|X|X^{-1}\)</span>，因此： <span class="math display">\[\mathrm d|X|=\text{tr}(|X|X^{-1}\mathrm dX)\]</span> 证毕。</p>
+          </div></p>
+<p><strong>例</strong>：对于任意非奇异矩阵 <span class="math inline">\(X\)</span>，有： <span class="math display">\[
+\frac{\mathrm d(\ln|X|)}{\mathrm dX}=(X^T)^{-1}
+\]</span> <strong>例</strong>：对于任意 <span class="math inline">\(X\in\mathbb R^{m\times n}\)</span>， <span class="math display">\[
+\frac{\mathrm d(\ln|\delta I+X^TX|)}{\mathrm dX}=2X(\delta I+X^TX)
+\]</span> <img src="table2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<h3 id="矩阵对矩阵的导数">矩阵对矩阵的导数</h3>
+<p><strong>直积（Kronecker 积）</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n},\,B\in\mathbb C^{p\times q}\)</span>，称如下分块矩阵为 <span class="math inline">\(A\)</span> 与 <span class="math inline">\(B\)</span> 的直积： <span class="math display">\[
+A\otimes B=\begin{bmatrix}a_{11}B&amp;a_{12}B&amp;\cdots&amp;a_{1n}B\\a_{21}B&amp;a_{22}B&amp;\cdots&amp;a_{2n}B\\\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\a_{m1}B&amp;a_{m2}B&amp;\cdots&amp;a_{mn}B\\\end{bmatrix}\in\mathbb C^{mp\times nq}
+\]</span> 特别地，若 <span class="math inline">\(A\in\mathbb C^{m\times 1},\,B\in\mathbb C^{n\times 1}\)</span>，则 <span class="math inline">\(A\otimes B^T=AB^T\)</span>.</p>
+<p><strong>定义</strong>：设有关于 <span class="math inline">\(X=(\xi_{ij})_{m\times n}\)</span> 的 <span class="math inline">\(mn\)</span> 元函数： <span class="math display">\[
+f_{ij}(X)=f_{ij}(\xi_{11},\ldots,\xi_{1n},\ldots,\xi_{m1},\ldots,\xi_{mn}),\quad i=1,\ldots,r,\,j=1,\ldots,s
+\]</span> 定义矩阵： <span class="math display">\[
+F(X)=\begin{bmatrix}f_{11}&amp;\cdots&amp;f_{1s}\\\vdots&amp;\ddots&amp;\vdots\\f_{r1}&amp;\cdots&amp;f_{rs}\end{bmatrix}
+\]</span> 定义 <span class="math inline">\(F(X)\)</span> 的导数如下： <span class="math display">\[
+\frac{\mathrm dF}{\mathrm dX}=
+\begin{bmatrix}
+\frac{\partial F}{\partial \xi_{11}}&amp;\cdots&amp;\frac{\partial F}{\partial \xi_{1n}}\\
+\vdots&amp;\ddots&amp;\vdots\\
+\frac{\partial F}{\partial \xi_{m1}}&amp;\cdots&amp;\frac{\partial F}{\partial \xi_{mn}}
+\end{bmatrix}=\sum_{i=1}^m\sum_{j=1}^n(e_ie_j^T)\otimes\frac{\partial F}{\partial \xi_{ij}}
+\]</span> 其中， <span class="math display">\[
+\frac{\partial F}{\partial \xi_{ij}}=
+\begin{bmatrix}
+\frac{\partial f_{11}}{\partial \xi_{ij}}&amp;\cdots&amp;\frac{\partial f_{1s}}{\partial \xi_{ij}}\\
+\vdots&amp;\ddots&amp;\vdots\\
+\frac{\partial f_{r1}}{\partial \xi_{ij}}&amp;\cdots&amp;\frac{\partial f_{rs}}{\partial \xi_{ij}}
+\end{bmatrix}=\sum_{k=1}^r\sum_{l=1}^s\frac{\partial f_{kl}}{\partial \xi_{ij}}e_ke_l^T
+\]</span> 特别地，当 <span class="math inline">\(F\in\mathbb C^{m\times 1}\)</span> 且 <span class="math inline">\(X\in\mathbb C^{n\times 1}\)</span> 时， <span class="math display">\[
+\frac{\mathrm dF}{\mathrm dX^T}=
+\begin{bmatrix}
+\frac{\partial f_{1}}{\partial \xi_{1}}&amp;\cdots&amp;\frac{\partial f_{1}}{\partial \xi_{n}}\\
+\vdots&amp;\ddots&amp;\vdots\\
+\frac{\partial f_{m}}{\partial \xi_{1}}&amp;\cdots&amp;\frac{\partial f_{m}}{\partial \xi_{n}}
+\end{bmatrix}
+\]</span> <strong>性质（链式法则）</strong>：设 <span class="math inline">\(f(x)\)</span> 是向量 <span class="math inline">\(x\)</span> 的函数，<span class="math inline">\(x\)</span> 又是 <span class="math inline">\(u\)</span> 的函数，则： <span class="math display">\[
+\frac{\mathrm df}{\mathrm du}=\frac{\mathrm dx^T}{\mathrm du}\frac{\mathrm df}{\mathrm dx}
+\]</span> <strong>微分形式</strong>：设 <span class="math inline">\(y=F(x)\)</span> 是向量 <span class="math inline">\(x\)</span> 的向量值函数，则： <span class="math display">\[
+\frac{\mathrm dy}{\mathrm dx^T}=A\iff\mathrm dy=A\mathrm dx
+\]</span> <div class="note note-warning">
+            <p>一些论文中可能会把 <span class="math inline">\(\mathrm dy/\mathrm dx^T\)</span> 不严谨地直接写作 <span class="math inline">\(\mathrm dy/\mathrm dx\)</span>.</p>
+          </div></p>
+<h3 id="在微分方程中的应用">在微分方程中的应用</h3>
+<p>微分方程： <span class="math display">\[
+\begin{cases}
+x_1&#39;(t)=a_{11}x_1(t)+a_{12}x_2(t)+\cdots+a_{1n}x_n(t)+b_1(t)\\
+x_2&#39;(t)=a_{21}x_1(t)+a_{22}x_2(t)+\cdots+a_{2n}x_n(t)+b_2(t)\\
+\quad\vdots\\
+x_n&#39;(t)=a_{n1}x_1(t)+a_{n2}x_2(t)+\cdots+a_{nn}x_n(t)+b_n(t)\\
+\end{cases}
+\]</span> 令： <span class="math display">\[
+A=\begin{bmatrix}a_{11}&amp;\cdots&amp;a_{1n}\\\vdots&amp;\ddots&amp;\vdots\\a_{n1}&amp;\cdots&amp;a_{nn}\end{bmatrix},\quad
+x(t)=\begin{bmatrix}x_1(t)\\\vdots\\x_n(t)\end{bmatrix},\quad
+b(t)=\begin{bmatrix}b_1(t)\\\vdots\\b_n(t)\end{bmatrix}
+\]</span> 则可写作矩阵形式： <span class="math display">\[
+x&#39;(t)=A\cdot x(t)+b(t)
+\]</span> <strong>定理</strong>：齐次微分方程 <span class="math inline">\(x&#39;(t)=Ax(t)\)</span> 的通解为： <span class="math display">\[
+x(t)=e^{tA}c
+\]</span> 其中 <span class="math inline">\(c\)</span> 为任意常向量。若再加上初始条件 <span class="math inline">\(x(t_0)=x_0\)</span>，则解为： <span class="math display">\[
+x(t)=e^{(t-t_0)A}x_0
+\]</span> <strong>定理</strong>：非齐次微分方程 <span class="math inline">\(x&#39;(t)=Ax(t)+b(t)\)</span> 的通解为： <span class="math display">\[
+x(t)=x_1(t)+x_2(t)
+\]</span> 其中 <span class="math inline">\(x_1(t)=e^{tA}c\)</span> 是对应齐次微分方程的通解，<span class="math inline">\(x_2(t)\)</span> 是非齐次微分方程的一个特解。常向量 <span class="math inline">\(c\)</span> 由初始条件确定。</p>
+<p>使用<strong>常数变易法</strong>计算特解：设 <span class="math inline">\(x_2(t)=e^{tA}c(t)\)</span>，代入原非齐次微分方程有： <span class="math display">\[
+e^{tA}c&#39;(t)=b(t)
+\]</span> 由此可以解出一个 <span class="math inline">\(c(t)\)</span>，从而得到一个特解。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%9F%A9%E9%98%B5%E8%AE%BA/" class="category-chain-item">矩阵论</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/linear-algebra/" class="print-no-link">#linear algebra</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[矩阵论]3.3矩阵的微分和积分</div>
+      <div>https://xyfjason.github.io/blog-main/2023/11/15/矩阵论-3-3矩阵的微分和积分/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/11/11/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-2%E7%9F%A9%E9%98%B5%E5%87%BD%E6%95%B0/" title="[矩阵论]3.2矩阵函数">
+                        <span class="hidden-mobile">[矩阵论]3.2矩阵函数</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

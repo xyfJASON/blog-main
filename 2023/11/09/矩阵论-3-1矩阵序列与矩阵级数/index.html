@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-11-09T03:39:50.000Z">
-<meta property="article:modified_time" content="2023-11-10T15:06:29.491Z">
+<meta property="article:modified_time" content="2023-11-11T12:47:43.297Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.9k 字
+          5.1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          41 分钟
+          43 分钟
         
       </span>
     
@@ -406,14 +406,14 @@
 <div class="note note-secondary">
             <p>证明：</p><p>必要性。由于级数 <span class="math inline">\(I+A+A^2+\cdots\)</span> 收敛，所以部分和序列 <span class="math inline">\(S^{(k)}=I+A+\cdots+A^k\)</span> 收敛。记 <span class="math inline">\(T^{(k)}=I+A+\cdots+A^{k+1}\)</span>，则 <span class="math inline">\(A^{k+1}=T^k-S^k\to0\)</span>，即 <span class="math inline">\(A\)</span> 是收敛矩阵。根据前文的定理，有 <span class="math inline">\(\rho(A)&lt;1\)</span>.</p><p>充分性。已知 <span class="math inline">\(\rho(A)&lt;1\)</span>，故 <span class="math inline">\(A\)</span> 为收敛矩阵，<span class="math inline">\(A^k\to 0\)</span>. 于是 <span class="math inline">\(S^{(k)}=I+A+\cdots+A^k=(I-A)^{-1}-(I-A)^{-1}A^{k+1}\to(I-A)^{-1}\)</span>.</p><p>证毕。</p>
           </div>
-<p><strong>定理</strong>：若方针 <span class="math inline">\(A\)</span> 的某一范数满足 <span class="math inline">\(\norm{A}&lt;1\)</span>，则部分和 <span class="math inline">\(I+A+\cdots+A^N\)</span> 与 <span class="math inline">\((I-A)^{-1}\)</span> 之间的误差为： <span class="math display">\[
+<p><strong>定理</strong>：若方阵 <span class="math inline">\(A\)</span> 的某一范数满足 <span class="math inline">\(\norm{A}&lt;1\)</span>，则部分和 <span class="math inline">\(I+A+\cdots+A^N\)</span> 与 <span class="math inline">\((I-A)^{-1}\)</span> 之间的误差为： <span class="math display">\[
 \left\Vert(I-A)^{-1}-\sum_{k=0}^NA^k\right\Vert\leq\frac{\norm{A}^{N+1}}{1-\norm{A}}
 \]</span> <div class="note note-secondary">
             <p>证明：设 <span class="math inline">\(B=(I-A)^{-1}-\sum_{k=0}^NA^k=(I-A)^{-1}A^{N+1}\)</span>，则 <span class="math inline">\((I-A)B=A^{N+1}\)</span>，即 <span class="math inline">\(B=AB+A^{N+1}\)</span>，从而： <span class="math display">\[\norm{B}=\norm{AB+A^{N+1}}\leq\norm{A}\norm{B}+\norm{A}^{N+1}\implies\norm{B}\leq\frac{\norm{A}^{N+1}}{1-\norm{A}}\]</span> 证毕。</p>
           </div></p>
-<p><strong>定理</strong>：设幂级数 <span class="math inline">\(\sum_{k=0}^\infty c_kz^k\)</span> 的收敛半径为 <span class="math inline">\(r\)</span>，如果方针 <span class="math inline">\(A\)</span> 满足 <span class="math inline">\(\rho(A)&lt;r\)</span>，则矩阵幂级数 <span class="math inline">\(\sum_{k=0}^\infty c_kA^k\)</span> 绝对收敛；若 <span class="math inline">\(\rho(A)&gt;r\)</span>，则矩阵幂级数发散。</p>
+<p><strong>定理</strong>：设幂级数 <span class="math inline">\(\sum_{k=0}^\infty c_kz^k\)</span> 的收敛半径为 <span class="math inline">\(r\)</span>，如果方阵 <span class="math inline">\(A\)</span> 满足 <span class="math inline">\(\rho(A)&lt;r\)</span>，则矩阵幂级数 <span class="math inline">\(\sum_{k=0}^\infty c_kA^k\)</span> 绝对收敛；若 <span class="math inline">\(\rho(A)&gt;r\)</span>，则矩阵幂级数发散。</p>
 <div class="note note-secondary">
-            <p>证明：设 <span class="math inline">\(A\)</span> 的特征值 <span class="math inline">\(\lambda=\rho(A)\)</span>，<span class="math inline">\(x\)</span> 为对应特征向量，则： <span class="math display">\[\sum_{k=0}^\infty c_k(A^kx)=\sum_{k=0}^\infty c_k(\lambda^k x)=\left(\sum_{k=0}^\infty c_k\lambda^k\right)x\]</span> 当 <span class="math inline">\(\rho(A)&gt;r\)</span> 时，幂级数 <span class="math inline">\(\sum_{k=0}^\infty c_k\lambda^k\)</span> 发散，因此矩阵幂级数发散；反之同理。证毕。</p>
+            <p>证明：</p><p>根据上一章的结论，存在某个矩阵范数 <span class="math inline">\(\norm{A}\)</span> 使得 <span class="math inline">\(\rho(A)\leq\norm{A}&lt;r\)</span>，于是： <span class="math display">\[\sum_{k=0}^{\infty}\norm{c_kA^k}=\sum_{k=0}^{\infty}|c_k|\norm{A^k}\leq\sum_{k=0}^\infty |c_k|\norm{A}^k\]</span> 右侧数项级数收敛，因此左侧收敛，即矩阵幂级数绝对收敛。</p><p>设 <span class="math inline">\(A\)</span> 的特征值 <span class="math inline">\(\lambda=\rho(A)\)</span>，<span class="math inline">\(x\)</span> 为对应特征向量，则： <span class="math display">\[\sum_{k=0}^\infty c_k(A^kx)=\sum_{k=0}^\infty c_k(\lambda^k x)=\left(\sum_{k=0}^\infty c_k\lambda^k\right)x\]</span> 当 <span class="math inline">\(\rho(A)&gt;r\)</span> 时，幂级数 <span class="math inline">\(\sum_{k=0}^\infty c_k\lambda^k\)</span> 发散，因此矩阵幂级数发散；反之同理。证毕。</p>
           </div>
 
                 
@@ -511,6 +511,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/blog-main/2023/11/11/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-2%E7%9F%A9%E9%98%B5%E5%87%BD%E6%95%B0/" title="[矩阵论]3.2矩阵函数">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[矩阵论]3.2矩阵函数</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
