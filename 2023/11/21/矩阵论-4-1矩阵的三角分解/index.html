@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 矩阵函数的概念 定义：设一元函数 \(f(z)\) 能展开为 \(z\) 的幂级数： \[ f(z)&#x3D;\sum_{k&#x3D;0}^\infty c_kz^k,\quad |z|&lt;r \] 则当 \(n\) 阶方阵 \(A\) 满足 \(\rho(A)&lt;r\) 时，矩阵级数 \(\sum_{k&#x3D;0}^\infty">
+    <meta name="description" content="高斯消元法 初等矩阵：初等行变换可以用左乘初等矩阵表示：  交换两行：设 \(u_{i,j}&#x3D;(e_i-e_j)&#x2F;\sqrt{2}\)， \[ I-2u_{i,j}u_{i,j}^T \] 第 \(i\) 行乘以 \(\alpha\) 加到第 \(j\) 行： \[ I+\alpha e_je_i^T \] 第 \(i\) 行乘以 \(\alpha\)： \[ I+(\alpha-1)e_ie_i">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[矩阵论]3.2矩阵函数">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/11/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-2%E7%9F%A9%E9%98%B5%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:title" content="[矩阵论]4.1矩阵的三角分解">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/21/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-1%E7%9F%A9%E9%98%B5%E7%9A%84%E4%B8%89%E8%A7%92%E5%88%86%E8%A7%A3/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="\[ \newcommand\norm[1]{\Vert#1\Vert} \] 矩阵函数的概念 定义：设一元函数 \(f(z)\) 能展开为 \(z\) 的幂级数： \[ f(z)&#x3D;\sum_{k&#x3D;0}^\infty c_kz^k,\quad |z|&lt;r \] 则当 \(n\) 阶方阵 \(A\) 满足 \(\rho(A)&lt;r\) 时，矩阵级数 \(\sum_{k&#x3D;0}^\infty">
+<meta property="og:description" content="高斯消元法 初等矩阵：初等行变换可以用左乘初等矩阵表示：  交换两行：设 \(u_{i,j}&#x3D;(e_i-e_j)&#x2F;\sqrt{2}\)， \[ I-2u_{i,j}u_{i,j}^T \] 第 \(i\) 行乘以 \(\alpha\) 加到第 \(j\) 行： \[ I+\alpha e_je_i^T \] 第 \(i\) 行乘以 \(\alpha\)： \[ I+(\alpha-1)e_ie_i">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
-<meta property="article:published_time" content="2023-11-11T12:13:29.000Z">
-<meta property="article:modified_time" content="2023-11-18T12:20:09.514Z">
+<meta property="article:published_time" content="2023-11-21T02:53:13.000Z">
+<meta property="article:modified_time" content="2023-11-24T08:19:32.941Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>[矩阵论]3.2矩阵函数 - xyfJASON</title>
+  <title>[矩阵论]4.1矩阵的三角分解 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="[矩阵论]3.2矩阵函数"></span>
+            <span id="subtitle" data-typed-text="[矩阵论]4.1矩阵的三角分解"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-11-11 20:13" pubdate>
-          2023年11月11日 晚上
+        <time datetime="2023-11-21 10:53" pubdate>
+          2023年11月21日 上午
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4k 字
+          4.1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          34 分钟
+          35 分钟
         
       </span>
     
@@ -322,96 +322,135 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">[矩阵论]3.2矩阵函数</h1>
+            <h1 id="seo-header">[矩阵论]4.1矩阵的三角分解</h1>
             
             
               <div class="markdown-body">
                 
-                <p><span class="math display">\[
-\newcommand\norm[1]{\Vert#1\Vert}
+                <h2 id="高斯消元法">高斯消元法</h2>
+<p><strong>初等矩阵</strong>：初等行变换可以用左乘初等矩阵表示：</p>
+<ul>
+<li><p>交换两行：设 <span class="math inline">\(u_{i,j}=(e_i-e_j)/\sqrt{2}\)</span>， <span class="math display">\[
+I-2u_{i,j}u_{i,j}^T
+\]</span></p></li>
+<li><p>第 <span class="math inline">\(i\)</span> 行乘以 <span class="math inline">\(\alpha\)</span> 加到第 <span class="math inline">\(j\)</span> 行： <span class="math display">\[
+I+\alpha e_je_i^T
+\]</span></p></li>
+<li><p>第 <span class="math inline">\(i\)</span> 行乘以 <span class="math inline">\(\alpha\)</span>： <span class="math display">\[
+I+(\alpha-1)e_ie_i^T
+\]</span></p></li>
+</ul>
+<p><strong>消元因子</strong>：第 <span class="math inline">\(k\)</span> 步消元时，若 <span class="math inline">\(a_{kk}^{(k)}\neq 0\)</span>，则乘上消元因子 <span class="math inline">\(m_{ik}=a_{ik}^{(k)}/a_{kk}^{(k)}\)</span> 减到第 <span class="math inline">\(i\)</span> 行，其中 <span class="math inline">\(i=k+1,\ldots,n\)</span>. 这相当于左乘矩阵： <span class="math display">\[
+L_k=I-\left(\sum_{i=k+1}^nm_{ik}e_i\right)e_k^T=I-l_ke_k^T
+\]</span> 其中 <span class="math inline">\(l_k=(0,\ldots,0,m_{k+1,k},m_{k+2,k},\ldots,m_{nk})^T\)</span>.</p>
+<p><strong>定理</strong>：消元过程不改变矩阵的顺序主子式。</p>
+<p><strong>引理</strong>：约化的主元素 <span class="math inline">\(a_{ii}^{(i)}\neq 0\)</span> 的充要条件是矩阵 <span class="math inline">\(A\)</span> 的顺序主子式 <span class="math inline">\(D_i\neq 0\,(i=1,\ldots,k)\)</span>.</p>
+<p><strong>推论</strong>：若矩阵 <span class="math inline">\(A\)</span> 的顺序主子式 <span class="math inline">\(D_i\neq 0\,(i=1,\ldots,k)\)</span>，则： <span class="math display">\[
+a_{11}^{(1)}=D_1,\quad a_{ii}^{(i)}=D_i/D_{i-1}
 \]</span></p>
-<h2 id="矩阵函数的概念">矩阵函数的概念</h2>
-<p><strong>定义</strong>：设一元函数 <span class="math inline">\(f(z)\)</span> 能展开为 <span class="math inline">\(z\)</span> 的幂级数： <span class="math display">\[
-f(z)=\sum_{k=0}^\infty c_kz^k,\quad |z|&lt;r
-\]</span> 则当 <span class="math inline">\(n\)</span> 阶方阵 <span class="math inline">\(A\)</span> 满足 <span class="math inline">\(\rho(A)&lt;r\)</span> 时，矩阵级数 <span class="math inline">\(\sum_{k=0}^\infty c_kA^k\)</span> 收敛，其和称为矩阵函数，记作： <span class="math display">\[
-f(A)=\sum_{k=0}^\infty c_k A^k
-\]</span> <strong>代入规则</strong>：若 <span class="math inline">\(f(z)\)</span> 能展开为 <span class="math inline">\(z\)</span> 的幂级数且 <span class="math inline">\(f(z)=g(z)\)</span> 对 <span class="math inline">\(|z|&lt;r\)</span> 成立，则当 <span class="math inline">\(\rho(A)&lt;r\)</span> 时，<span class="math inline">\(f(A)=g(A)\)</span>.</p>
-<p><strong>二元函数的代入规则</strong>：若 <span class="math inline">\(f(x,y)\)</span> 能展开为 <span class="math inline">\(x,y\)</span> 的幂级数且 <span class="math inline">\(f(x,y)=g(x,y)\)</span>. <strong>若 <span class="math inline">\(AB=BA\)</span></strong>，则 <span class="math inline">\(f(A,B)=g(A,B)\)</span>.</p>
-<div class="note note-info">
-            <p>为什么要求 <span class="math inline">\(AB=BA\)</span>？因为 <span class="math inline">\(f(x,y)=\sum_{i=0}^\infty\sum_{j=0}^\infty c_{ij}x^iy^j\)</span>，中间项要求交换律才能合并。</p>
-          </div>
-<p><strong>举例</strong>： <span class="math display">\[
-\begin{align}
-&amp;\sin(A)=A-\frac{A^3}{3!}+\frac{A^5}{5!}-\cdots\\
-&amp;\cos(A)=I-\frac{A^2}{2!}+\frac{A^4}{4!}-\cdots\\
-&amp;e^A=I+A+\frac{A^2}{2!}+\frac{A^3}{3!}+\cdots
-\end{align}
+<p><strong>定理</strong>：若 <span class="math inline">\(A\)</span> 是正定矩阵，则一次消元后剩下的矩阵依旧是正定的。</p>
+<p><strong>定理</strong>：若 <span class="math inline">\(A\)</span> 严格对角占优，则一次消元后剩下的矩阵依旧是严格对角占优的。</p>
+<h2 id="lu-分解和-ldu-分解">LU 分解和 LDU 分解</h2>
+<p><strong>LU 分解</strong>：高斯消元的过程可以用 LU 分解表示： <span class="math display">\[
+\underbrace{L_{n-1}L_{n-2}\cdots L_2L_1}_{L^{-1}} A=U\implies A=LU
+\]</span> 其中 <span class="math inline">\(L\)</span> 为<strong>单位</strong>下三角矩阵，<span class="math inline">\(U\)</span> 为上三角矩阵。</p>
+<p><strong>LDU 分解</strong>：<span class="math inline">\(A=LDU\)</span>，其中 <span class="math inline">\(L\)</span> 为<strong>单位</strong>下三角矩阵，<span class="math inline">\(U\)</span> 为<strong>单位</strong>上三角矩阵，<span class="math inline">\(D\)</span> 为对角矩阵。</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(A\)</span> 是 <span class="math inline">\(n\)</span> 阶方阵，当且仅当 <span class="math inline">\(A\)</span> 的顺序主子式 <span class="math inline">\(\Delta_i\neq 0\)</span> 时，<span class="math inline">\(A\)</span> 可唯一分解为 <span class="math inline">\(A=LDU\)</span>，其中： <span class="math display">\[
+D=\text{diag}(d_1,\ldots,d_n),\quad d_k=\frac{\Delta_k}{\Delta_{k-1}}
+\]</span> <strong>推论</strong>：<span class="math inline">\(n\)</span> 阶非奇异方阵 <span class="math inline">\(A\)</span> 有 LU 分解 <span class="math inline">\(A=LU\)</span> 的充要条件是顺序主子式 <span class="math inline">\(\Delta_i\neq 0\)</span>.</p>
+<p><strong>带有置换矩阵的三角分解</strong>：设 <span class="math inline">\(A\)</span> 是 <span class="math inline">\(n\)</span> 阶非奇异方阵，则存在置换矩阵 <span class="math inline">\(P\)</span>，使得： <span class="math display">\[
+PA=L\hat U=LDU
+\]</span> 其中 <span class="math inline">\(L\)</span> 为<strong>单位</strong>下三角矩阵，<span class="math inline">\(\hat U\)</span> 为上三角矩阵，<span class="math inline">\(U\)</span> 为<strong>单位</strong>上三角矩阵，<span class="math inline">\(D\)</span> 为对角矩阵。</p>
+<h2 id="doolittle-分解和-crout-分解">Doolittle 分解和 Crout 分解</h2>
+<p><strong>Doolittle 分解</strong>：把 LDU 分解中的 <span class="math inline">\(DU\)</span> 结合起来用 <span class="math inline">\(\hat U\)</span> 表示，得到唯一的分解： <span class="math display">\[
+A=L(DU)=L\hat U
+\]</span> <strong>Crout 分解</strong>：把 LDU 分解中的 <span class="math inline">\(LD\)</span> 结合起来用 <span class="math inline">\(\hat L\)</span> 表示，得到唯一的分解： <span class="math display">\[
+A=(LD)U=\hat LU
+\]</span> <strong>计算方法（以 Doolittle 分解为例）</strong>：比较等式两边的元素逐行逐列求解 <span class="math inline">\(L,U\)</span> 各元素： <span class="math display">\[
+\begin{bmatrix}
+a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
+a_{21}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+a_{n1}&amp;a_{n2}&amp;\cdots&amp;a_{nn}\\
+\end{bmatrix}=
+\begin{bmatrix}
+1&amp;&amp;&amp;\\
+l_{21}&amp;1&amp;&amp;\\
+\vdots&amp;\vdots&amp;\ddots&amp;\\
+l_{n1}&amp;l_{n2}&amp;\cdots&amp;1\\
+\end{bmatrix}
+\begin{bmatrix}
+u_{11}&amp;u_{12}&amp;\cdots&amp;u_{1n}\\
+&amp;u_{22}&amp;\cdots&amp;u_{2n}\\
+&amp;&amp;\ddots&amp;\vdots\\
+&amp;&amp;&amp;u_{nn}\\
+\end{bmatrix}
+\]</span> 计算顺序：</p>
+<p><img src="calc.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h2 id="对称正定矩阵的-cholesky-分解">对称正定矩阵的 Cholesky 分解</h2>
+<p><strong>Cholesky 分解</strong>： <span class="math display">\[
+A=L\tilde D^2L^T\quad A=LDL^T\quad A=LL^T
+\]</span> 第二种表示中，<span class="math inline">\(D\)</span> 的对角元都大于零；第三种表示中，<span class="math inline">\(L\)</span> 的对角元都大于零。</p>
+<p><strong>计算方法</strong>：与上一节 Doolittle 分解的计算类似，逐行逐列计算即可： <span class="math display">\[
+\begin{bmatrix}
+a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
+a_{21}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+a_{n1}&amp;a_{n2}&amp;\cdots&amp;a_{nn}\\
+\end{bmatrix}=
+\begin{bmatrix}
+l_{11}&amp;&amp;&amp;\\
+l_{21}&amp;l_{22}&amp;&amp;\\
+\vdots&amp;\vdots&amp;\ddots&amp;\\
+l_{n1}&amp;l_{n2}&amp;\cdots&amp;l_{nn}\\
+\end{bmatrix}
+\begin{bmatrix}
+l_{11}&amp;l_{12}&amp;\cdots&amp;l_{1n}\\
+&amp;l_{22}&amp;\cdots&amp;l_{2n}\\
+&amp;&amp;\ddots&amp;\vdots\\
+&amp;&amp;&amp;l_{nn}\\
+\end{bmatrix}
+\]</span> 可得： <span class="math display">\[
+l_{jj}=\left(a_{jj}-\sum_{k=1}^{j-1}l_{jk}^2\right)^{1/2},\quad l_{ij}=\left(a_{ij}-\sum_{k=1}^{j-1}l_{ik}l_{jk}\right)/l_{jj}
+\]</span> 该计算方法的缺点是有开方运算，在计算机中可能出现根号下负数。</p>
+<p><strong>改进的 Cholesky 分解</strong>：所谓改进的 Cholesky 分解，其实就是指 <span class="math inline">\(A=LDL^T\)</span>，其计算过程不涉及开方： <span class="math display">\[
+\begin{bmatrix}
+a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
+a_{21}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+a_{n1}&amp;a_{n2}&amp;\cdots&amp;a_{nn}\\
+\end{bmatrix}=
+\begin{bmatrix}
+1&amp;&amp;&amp;\\
+l_{21}&amp;1&amp;&amp;\\
+\vdots&amp;\vdots&amp;\ddots&amp;\\
+l_{n1}&amp;l_{n2}&amp;\cdots&amp;1\\
+\end{bmatrix}
+\begin{bmatrix}
+d_1&amp;d_1l_{12}&amp;\cdots&amp;d_1l_{1n}\\
+&amp;d_2&amp;\cdots&amp;d_2l_{2n}\\
+&amp;&amp;\ddots&amp;\vdots\\
+&amp;&amp;&amp;d_n\\
+\end{bmatrix}
+\]</span> 逐行逐列计算可得： <span class="math display">\[
+l_{ij}=\left(a_{ij}-\sum_{k=1}^{j-1}l_{ik}d_kl_{jk}\right)/d_j,\quad d_i=a_{ii}-\sum_{k=1}^{j-1}l_{ik}^2d_k
 \]</span></p>
-<h2 id="矩阵函数的求法">矩阵函数的求法</h2>
-<h3 id="待定系数法">待定系数法</h3>
-<p>给定 <span class="math inline">\(A\)</span>，确定首一零化多项式 <span class="math inline">\(g(\lambda)\)</span>，使得 <span class="math inline">\(g(A)=0\)</span>，例如特征多项式或最小多项式均可。设 <span class="math display">\[
-f(\lambda)=g(\lambda)q(\lambda)+r(\lambda)
-\]</span> 其中 <span class="math inline">\(\deg r(\lambda)&lt;\deg g(\lambda)\)</span>. 那么只要确定了 <span class="math inline">\(r(\lambda)\)</span>，就有 <span class="math inline">\(f(A)=r(A)\)</span>.</p>
-<p>所以问题的关键在于如何确定 <span class="math inline">\(r(\lambda)\)</span>. 我们并不需要解 <span class="math inline">\(q(\lambda)\)</span>，只需要找 <span class="math inline">\(\deg r(\lambda)\)</span> 个函数值或导数值（<span class="math inline">\(k\)</span> 重根就求 <span class="math inline">\(k-1\)</span> 阶导）形成线性方程组，就能解系数方程（其实就是带有导数约束的插值问题）。具体而言，设 <span class="math inline">\(g(\lambda)\)</span> 的互异零点为 <span class="math inline">\(\lambda_1,\ldots,\lambda_s\)</span>，对应重数为 <span class="math inline">\(r_1,\ldots,r_s\)</span>，那么易知： <span class="math display">\[
-g^{(l)}(\lambda_i)=0,\quad l=0,\ldots,r_i-1;\,i=1,\ldots,s
-\]</span> 因此： <span class="math display">\[
-r^{(l)}(\lambda_i)=f^{(l)}(\lambda_i),\quad l=0,\ldots,r_i-1;\,i=1,\ldots,s\label{prob}\tag{1}
-\]</span> 解该方程组即可确定 <span class="math inline">\(r(\lambda)\)</span>.</p>
-<h4 id="方法-0.-直接求解">方法 0. 直接求解</h4>
-<p>对于规模较小的问题，直接求解方程组 <span class="math inline">\(\eqref{prob}\)</span> 式即可。</p>
-<div class="note note-secondary">
-            <p>例：设 <span class="math inline">\(A=\begin{bmatrix}2&amp;0&amp;0\\1&amp;1&amp;1\\1&amp;-1&amp;3\end{bmatrix}\)</span>，求 <span class="math inline">\(e^A\)</span>.</p><p>解：特征方程为： <span class="math display">\[\varphi(\lambda)=\begin{vmatrix}\lambda-2&amp;0&amp;0\\-1&amp;\lambda-1&amp;-1\\-1&amp;1&amp;\lambda-3\end{vmatrix}=(\lambda-2)^3\]</span> 设 <span class="math inline">\(f(\lambda)=e^\lambda=\varphi(\lambda)q(\lambda)+r(\lambda)\)</span>，其中 <span class="math inline">\(r(\lambda)=a\lambda^2+b\lambda+c\)</span>，则： <span class="math display">\[\begin{cases}r(2)=f(2)=e^2\\r&#39;(2)=f&#39;(2)=e^2\\r&#39;&#39;(2)=f&#39;&#39;(2)=e^2\end{cases}\implies\begin{cases}4a+2b+c=e^2\\4a+b=e^2\\2a=e^2\end{cases}\implies\begin{cases}a=e^2/2\\b=-e^2\\c=e^2\end{cases}\]</span> 故 <span class="math inline">\(r(\lambda)=e^2/2\cdot(\lambda^2-2\lambda+2)\)</span>，故： <span class="math display">\[f(A)=r(A)=\frac{e^2}{2}(A^2-2A+2I)=\begin{bmatrix}\cdots\end{bmatrix}\]</span></p>
-          </div>
-<h4 id="方法-1.-sylvester-插值公式">方法 1. Sylvester 插值公式</h4>
-<p>暂略。</p>
-<h4 id="方法2.-广义-newton-插值公式">方法2. 广义 Newton 插值公式</h4>
-<div class="note note-success">
-            <p>思想：正如上文所说，解方程组 <span class="math inline">\(\eqref{prob}\)</span> 本质就是解带有导数约束的插值问题。我们知道 Taylor 展开式满足在<strong>一个点</strong>处的 <span class="math inline">\(n\)</span> 阶<strong>导数值</strong>相等，而 Newton 展开式满足在<strong>多个点</strong>处的<strong>函数值</strong>相等，所以我们想解决的插值问题其实是二者的结合，遂称作广义 Newton 插值。</p>
-          </div>
-<p><strong>Taylor 展开式</strong>：若已知 <span class="math inline">\(f(x)\)</span> 在 <span class="math inline">\(x_0\)</span> 的函数值和直到 <span class="math inline">\(n\)</span> 阶导数值，则： <span class="math display">\[
-Tf(x)=f(x_0)+f&#39;(x_0)(x-x_0)+\frac{f&#39;&#39;(x_0)}{2!}(x-x_0)^2+\cdots+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n
-\]</span> 使得 <span class="math inline">\(Tf^{(l)}(x_0)=f^{(l)}(x_0),\,l=0,\ldots,n\)</span> 成立。</p>
-<p><strong>Newton 展开式</strong>：若已知 <span class="math inline">\(f(x)\)</span> 在互异点 <span class="math inline">\(x_0,x_1,\ldots,x_n\)</span> 处的函数值，则有 Newton 插值公式： <span class="math display">\[
-\begin{align}
-Nf(x)&amp;=f(x_0)\\
-&amp;+f[x_0,x_1](x-x_0)\\
-&amp;+f[x_0,x_1,x_2](x-x_0)(x-x_1)\\
-&amp;+\cdots\\
-&amp;+f[x_0,x_1,\ldots,x_n](x-x_0)(x-x_1)\cdots(x-x_{n-1})
-\end{align}
-\]</span> 使得 <span class="math inline">\(Nf(x_i)=f(x_i),\,i=0,\ldots,n\)</span> 成立。</p>
-<p>其中 <span class="math inline">\(f[x_0,x_1]\)</span> 称作一阶均差： <span class="math display">\[
-f[x_0,x_1]=\frac{f(x_1)-f(x_0)}{x_1-x_0}
-\]</span> <span class="math inline">\(f[x_0,x_1,x_2]\)</span> 称作二阶均差： <span class="math display">\[
-f[x_0,x_1,x_2]=\frac{f[x_1,x_2]-f[x_0,x_1]}{x_2-x_0}
-\]</span> <span class="math inline">\(f[x_0,x_1,\ldots,x_k]\)</span> 称作 <span class="math inline">\(k\)</span> 阶均差： <span class="math display">\[
-f[x_0,x_1,\ldots,x_k]=\frac{f[x_1,\ldots,x_{k-1},x_k]-f[x_0,x_1,\ldots,x_{k-1}]}{x_k-x_0}
-\]</span> 可以借助下面这个三角形表格来计算均差：</p>
-<p><img src="diff.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<p><strong>广义 Newton 展开式</strong></p>
-<p>从均差的定义可以看出，它的极限与导数有密切关系。事实上，利用罗尔定理可以证明：若 <span class="math inline">\(f(x)\)</span> 在 <span class="math inline">\([a,b]\)</span> 上存在 <span class="math inline">\(n\)</span> 阶导数，且节点 <span class="math inline">\(x_0,x_1,\ldots,x_n\in[a,b]\)</span>，则存在 <span class="math inline">\(\xi\in[a,b]\)</span> 使得： <span class="math display">\[
-f([x_0,x_1,\ldots,x_n])=\frac{f^{(n)}(\xi)}{n!}
-\]</span> 因此，我们可以定义在相同点处的“广义”均差为： <span class="math display">\[
-f([c,c,\ldots,c])=\frac{f^{(n)}(c)}{n!}
-\]</span> 那么，Taylor 展开就可以看作是广义 Newton 展开在插值节点重合的特殊情形。</p>
-<p>广义的均差也可以借助均差表计算，例如：</p>
-<p><img src="diff2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<div class="note note-secondary">
-            <p>例：设 <span class="math inline">\(A=\begin{bmatrix}2&amp;0&amp;0\\1&amp;1&amp;2\\1&amp;-1&amp;3\end{bmatrix}\)</span>，求 <span class="math inline">\(e^{At}\)</span>.</p><p>解：特征方程为： <span class="math display">\[\varphi(\lambda)=\begin{vmatrix}\lambda-2&amp;0&amp;0\\-1&amp;\lambda-1&amp;-2\\-1&amp;1&amp;\lambda-3\end{vmatrix}=(\lambda-2)(\lambda-5)(\lambda+1)\]</span> 画均差表：</p><p><img src="diff-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p><p>于是： <span class="math display">\[r(\lambda)=e^{2t}+\frac{e^{5t}-e^{2t}}{3}(\lambda-2)+\frac{e^{5t}-2e^{2t}+e^{-t}}{18}(\lambda-2)(\lambda-5)\]</span> 故： <span class="math display">\[e^{At}=r(A)=\cdots\]</span></p>
-          </div>
-<h3 id="数项级数求和法">数项级数求和法</h3>
-<p>暂略。</p>
-<h3 id="对角形法">对角形法</h3>
-<div class="note note-danger">
-            <p>对角化的计算量较大（要计算 <span class="math inline">\(P\)</span> 和 <span class="math inline">\(P^{-1}\)</span>，即解特征值和特征向量）</p>
-          </div>
-<p>若 <span class="math inline">\(A\)</span> 可对角化，即存在非奇异矩阵 <span class="math inline">\(P\)</span>，使得： <span class="math display">\[
-P^{-1}AP=\begin{bmatrix}\lambda_1&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;\lambda_n\end{bmatrix}
+<h2 id="分块矩阵的拟-lu-分解和拟-ldu-分解">分块矩阵的拟 LU 分解和拟 LDU 分解</h2>
+<p>只考虑 2 阶的分块矩阵： <span class="math display">\[
+A=\begin{bmatrix}A_{11}&amp;A_{12}\\A_{21}&amp;A_{22}\end{bmatrix}
+\]</span> 若 <span class="math inline">\(A_{11}\)</span> 可逆，设： <span class="math display">\[
+L=\begin{bmatrix}I_{n_1}&amp;0\\-A_{21}A_{11}^{-1}&amp;I_{n_2}\end{bmatrix}
 \]</span> 则： <span class="math display">\[
-f(A)=P\begin{bmatrix}f(\lambda_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(\lambda_n)\end{bmatrix}P^{-1}
+LA=\begin{bmatrix}A_{11}&amp;A_{12}\\0&amp;A_{22}-A_{21}A_{11}^{-1}A_{12}\end{bmatrix}
+\]</span> 若 <span class="math inline">\(A_{22}\)</span> 可逆，可右乘矩阵（作列变换）得到类似的结果。</p>
+<p><strong>求逆引理（Woodbury 公式）</strong>： <span class="math display">\[
+(A+BC)^{-1}=A^{-1}-A^{-1}B(I+CA^{-1}B)^{-1}CA^{-1}
+\]</span> <div class="note note-secondary">
+            <p>证明：考虑方程 <span class="math inline">\((A+BC)x=b\)</span>，令 <span class="math inline">\(y=Cx\)</span>，则： <span class="math display">\[\begin{bmatrix}A&amp;B\\-C&amp;0\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}=\begin{bmatrix}b\\0\end{bmatrix}\]</span> 利用高斯消元法：</p><p><img src="gauss.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p><p>故解得： <span class="math display">\[x=(A^{-1}-A^{-1}B(I+CA^{-1}B)^{-1}CA^{-1})b\]</span> 又 <span class="math inline">\(x=(A+BC)^{-1}b\)</span>，由 <span class="math inline">\(b\)</span> 的任意性可知命题成立。证毕。</p>
+          </div></p>
+<p><strong>推论</strong>： <span class="math display">\[
+(A+BD^{-1}C)^{-1}=A^{-1}-A^{-1}B(D+CA^{-1}B)^{-1}CA^{-1}
 \]</span></p>
-<h3 id="jordan-标准形法">Jordan 标准形法</h3>
-<p>暂略。</p>
 
                 
               </div>
@@ -464,8 +503,8 @@ f(A)=P\begin{bmatrix}f(\lambda_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(\lamb
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>[矩阵论]3.2矩阵函数</div>
-      <div>https://xyfjason.github.io/blog-main/2023/11/11/矩阵论-3-2矩阵函数/</div>
+      <div>[矩阵论]4.1矩阵的三角分解</div>
+      <div>https://xyfjason.github.io/blog-main/2023/11/21/矩阵论-4-1矩阵的三角分解/</div>
     </div>
     <div class="license-meta">
       
@@ -477,7 +516,7 @@ f(A)=P\begin{bmatrix}f(\lambda_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(\lamb
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年11月11日</div>
+          <div>2023年11月21日</div>
         </div>
       
       
@@ -509,18 +548,12 @@ f(A)=P\begin{bmatrix}f(\lambda_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(\lamb
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2023/11/15/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-3%E7%9F%A9%E9%98%B5%E7%9A%84%E5%BE%AE%E5%88%86%E5%92%8C%E7%A7%AF%E5%88%86/" title="[矩阵论]3.3矩阵的微分和积分">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">[矩阵论]3.3矩阵的微分和积分</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/11/09/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-1%E7%9F%A9%E9%98%B5%E5%BA%8F%E5%88%97%E4%B8%8E%E7%9F%A9%E9%98%B5%E7%BA%A7%E6%95%B0/" title="[矩阵论]3.1矩阵序列与矩阵级数">
-                        <span class="hidden-mobile">[矩阵论]3.1矩阵序列与矩阵级数</span>
+                      <a href="/blog-main/2023/11/15/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-3%E7%9F%A9%E9%98%B5%E7%9A%84%E5%BE%AE%E5%88%86%E5%92%8C%E7%A7%AF%E5%88%86/" title="[矩阵论]3.3矩阵的微分和积分">
+                        <span class="hidden-mobile">[矩阵论]3.3矩阵的微分和积分</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
