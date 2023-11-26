@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="高斯消元法 初等矩阵：初等行变换可以用左乘初等矩阵表示：  交换两行：设 \(u_{i,j}&#x3D;(e_i-e_j)&#x2F;\sqrt{2}\)， \[ I-2u_{i,j}u_{i,j}^T \] 第 \(i\) 行乘以 \(\alpha\) 加到第 \(j\) 行： \[ I+\alpha e_je_i^T \] 第 \(i\) 行乘以 \(\alpha\)： \[ I+(\alpha-1)e_ie_i">
+    <meta name="description" content="Givens 变换与 Householder 变换 Givens 矩阵与 Givens 变换 Givens 矩阵（初等旋转矩阵）：设 \(c,s\in\mathbb R\) 且 \(c^2+s^2&#x3D;1\)，定义 Givens 矩阵为： \[ T_{ij}&#x3D;T_{ij}(c,s)&#x3D; \begin{bmatrix} 1&amp;      &amp; &amp;  &amp; &amp;      &amp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[矩阵论]4.1矩阵的三角分解">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/21/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-1%E7%9F%A9%E9%98%B5%E7%9A%84%E4%B8%89%E8%A7%92%E5%88%86%E8%A7%A3/index.html">
+<meta property="og:title" content="[矩阵论]4.2矩阵的QR分解">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/26/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-2%E7%9F%A9%E9%98%B5%E7%9A%84QR%E5%88%86%E8%A7%A3/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="高斯消元法 初等矩阵：初等行变换可以用左乘初等矩阵表示：  交换两行：设 \(u_{i,j}&#x3D;(e_i-e_j)&#x2F;\sqrt{2}\)， \[ I-2u_{i,j}u_{i,j}^T \] 第 \(i\) 行乘以 \(\alpha\) 加到第 \(j\) 行： \[ I+\alpha e_je_i^T \] 第 \(i\) 行乘以 \(\alpha\)： \[ I+(\alpha-1)e_ie_i">
+<meta property="og:description" content="Givens 变换与 Householder 变换 Givens 矩阵与 Givens 变换 Givens 矩阵（初等旋转矩阵）：设 \(c,s\in\mathbb R\) 且 \(c^2+s^2&#x3D;1\)，定义 Givens 矩阵为： \[ T_{ij}&#x3D;T_{ij}(c,s)&#x3D; \begin{bmatrix} 1&amp;      &amp; &amp;  &amp; &amp;      &amp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
-<meta property="article:published_time" content="2023-11-21T02:53:13.000Z">
-<meta property="article:modified_time" content="2023-11-24T08:19:32.941Z">
+<meta property="article:published_time" content="2023-11-26T07:07:44.000Z">
+<meta property="article:modified_time" content="2023-11-26T12:51:33.363Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>[矩阵论]4.1矩阵的三角分解 - xyfJASON</title>
+  <title>[矩阵论]4.2矩阵的QR分解 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="[矩阵论]4.1矩阵的三角分解"></span>
+            <span id="subtitle" data-typed-text="[矩阵论]4.2矩阵的QR分解"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-11-21 10:53" pubdate>
-          2023年11月21日 上午
+        <time datetime="2023-11-26 15:07" pubdate>
+          2023年11月26日 下午
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.1k 字
+          7.8k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          35 分钟
+          66 分钟
         
       </span>
     
@@ -322,135 +322,181 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">[矩阵论]4.1矩阵的三角分解</h1>
+            <h1 id="seo-header">[矩阵论]4.2矩阵的QR分解</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="高斯消元法">高斯消元法</h2>
-<p><strong>初等矩阵</strong>：初等行变换可以用左乘初等矩阵表示：</p>
-<ul>
-<li><p>交换两行：设 <span class="math inline">\(u_{i,j}=(e_i-e_j)/\sqrt{2}\)</span>， <span class="math display">\[
-I-2u_{i,j}u_{i,j}^T
-\]</span></p></li>
-<li><p>第 <span class="math inline">\(i\)</span> 行乘以 <span class="math inline">\(\alpha\)</span> 加到第 <span class="math inline">\(j\)</span> 行： <span class="math display">\[
-I+\alpha e_je_i^T
-\]</span></p></li>
-<li><p>第 <span class="math inline">\(i\)</span> 行乘以 <span class="math inline">\(\alpha\)</span>： <span class="math display">\[
-I+(\alpha-1)e_ie_i^T
-\]</span></p></li>
-</ul>
-<p><strong>消元因子</strong>：第 <span class="math inline">\(k\)</span> 步消元时，若 <span class="math inline">\(a_{kk}^{(k)}\neq 0\)</span>，则乘上消元因子 <span class="math inline">\(m_{ik}=a_{ik}^{(k)}/a_{kk}^{(k)}\)</span> 减到第 <span class="math inline">\(i\)</span> 行，其中 <span class="math inline">\(i=k+1,\ldots,n\)</span>. 这相当于左乘矩阵： <span class="math display">\[
-L_k=I-\left(\sum_{i=k+1}^nm_{ik}e_i\right)e_k^T=I-l_ke_k^T
-\]</span> 其中 <span class="math inline">\(l_k=(0,\ldots,0,m_{k+1,k},m_{k+2,k},\ldots,m_{nk})^T\)</span>.</p>
-<p><strong>定理</strong>：消元过程不改变矩阵的顺序主子式。</p>
-<p><strong>引理</strong>：约化的主元素 <span class="math inline">\(a_{ii}^{(i)}\neq 0\)</span> 的充要条件是矩阵 <span class="math inline">\(A\)</span> 的顺序主子式 <span class="math inline">\(D_i\neq 0\,(i=1,\ldots,k)\)</span>.</p>
-<p><strong>推论</strong>：若矩阵 <span class="math inline">\(A\)</span> 的顺序主子式 <span class="math inline">\(D_i\neq 0\,(i=1,\ldots,k)\)</span>，则： <span class="math display">\[
-a_{11}^{(1)}=D_1,\quad a_{ii}^{(i)}=D_i/D_{i-1}
-\]</span></p>
-<p><strong>定理</strong>：若 <span class="math inline">\(A\)</span> 是正定矩阵，则一次消元后剩下的矩阵依旧是正定的。</p>
-<p><strong>定理</strong>：若 <span class="math inline">\(A\)</span> 严格对角占优，则一次消元后剩下的矩阵依旧是严格对角占优的。</p>
-<h2 id="lu-分解和-ldu-分解">LU 分解和 LDU 分解</h2>
-<p><strong>LU 分解</strong>：高斯消元的过程可以用 LU 分解表示： <span class="math display">\[
-\underbrace{L_{n-1}L_{n-2}\cdots L_2L_1}_{L^{-1}} A=U\implies A=LU
-\]</span> 其中 <span class="math inline">\(L\)</span> 为<strong>单位</strong>下三角矩阵，<span class="math inline">\(U\)</span> 为上三角矩阵。</p>
-<p><strong>LDU 分解</strong>：<span class="math inline">\(A=LDU\)</span>，其中 <span class="math inline">\(L\)</span> 为<strong>单位</strong>下三角矩阵，<span class="math inline">\(U\)</span> 为<strong>单位</strong>上三角矩阵，<span class="math inline">\(D\)</span> 为对角矩阵。</p>
-<p><strong>定理</strong>：设 <span class="math inline">\(A\)</span> 是 <span class="math inline">\(n\)</span> 阶方阵，当且仅当 <span class="math inline">\(A\)</span> 的顺序主子式 <span class="math inline">\(\Delta_i\neq 0\)</span> 时，<span class="math inline">\(A\)</span> 可唯一分解为 <span class="math inline">\(A=LDU\)</span>，其中： <span class="math display">\[
-D=\text{diag}(d_1,\ldots,d_n),\quad d_k=\frac{\Delta_k}{\Delta_{k-1}}
-\]</span> <strong>推论</strong>：<span class="math inline">\(n\)</span> 阶非奇异方阵 <span class="math inline">\(A\)</span> 有 LU 分解 <span class="math inline">\(A=LU\)</span> 的充要条件是顺序主子式 <span class="math inline">\(\Delta_i\neq 0\)</span>.</p>
-<p><strong>带有置换矩阵的三角分解</strong>：设 <span class="math inline">\(A\)</span> 是 <span class="math inline">\(n\)</span> 阶非奇异方阵，则存在置换矩阵 <span class="math inline">\(P\)</span>，使得： <span class="math display">\[
-PA=L\hat U=LDU
-\]</span> 其中 <span class="math inline">\(L\)</span> 为<strong>单位</strong>下三角矩阵，<span class="math inline">\(\hat U\)</span> 为上三角矩阵，<span class="math inline">\(U\)</span> 为<strong>单位</strong>上三角矩阵，<span class="math inline">\(D\)</span> 为对角矩阵。</p>
-<h2 id="doolittle-分解和-crout-分解">Doolittle 分解和 Crout 分解</h2>
-<p><strong>Doolittle 分解</strong>：把 LDU 分解中的 <span class="math inline">\(DU\)</span> 结合起来用 <span class="math inline">\(\hat U\)</span> 表示，得到唯一的分解： <span class="math display">\[
-A=L(DU)=L\hat U
-\]</span> <strong>Crout 分解</strong>：把 LDU 分解中的 <span class="math inline">\(LD\)</span> 结合起来用 <span class="math inline">\(\hat L\)</span> 表示，得到唯一的分解： <span class="math display">\[
-A=(LD)U=\hat LU
-\]</span> <strong>计算方法（以 Doolittle 分解为例）</strong>：比较等式两边的元素逐行逐列求解 <span class="math inline">\(L,U\)</span> 各元素： <span class="math display">\[
+                <h2 id="givens-变换与-householder-变换">Givens 变换与 Householder 变换</h2>
+<h3 id="givens-矩阵与-givens-变换">Givens 矩阵与 Givens 变换</h3>
+<p><strong>Givens 矩阵（初等旋转矩阵）</strong>：设 <span class="math inline">\(c,s\in\mathbb R\)</span> 且 <span class="math inline">\(c^2+s^2=1\)</span>，定义 Givens 矩阵为： <span class="math display">\[
+T_{ij}=T_{ij}(c,s)=
 \begin{bmatrix}
-a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
-a_{21}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
-\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
-a_{n1}&amp;a_{n2}&amp;\cdots&amp;a_{nn}\\
-\end{bmatrix}=
-\begin{bmatrix}
-1&amp;&amp;&amp;\\
-l_{21}&amp;1&amp;&amp;\\
-\vdots&amp;\vdots&amp;\ddots&amp;\\
-l_{n1}&amp;l_{n2}&amp;\cdots&amp;1\\
+1&amp;      &amp; &amp;  &amp; &amp;      &amp; &amp; &amp; &amp;      &amp; \\
+ &amp;\ddots&amp; &amp;  &amp; &amp;      &amp; &amp; &amp; &amp;      &amp; \\
+ &amp;      &amp;1&amp;  &amp; &amp;      &amp; &amp; &amp; &amp;      &amp; \\
+ &amp;      &amp; &amp;c &amp; &amp;      &amp; &amp;s&amp; &amp;      &amp; \\
+ &amp;      &amp; &amp;  &amp;1&amp;      &amp; &amp; &amp; &amp;      &amp; \\
+ &amp;      &amp; &amp;  &amp; &amp;\ddots&amp; &amp; &amp; &amp;      &amp; \\
+ &amp;      &amp; &amp;  &amp; &amp;      &amp;1&amp; &amp; &amp;      &amp; \\
+ &amp;      &amp; &amp;-s&amp; &amp;      &amp; &amp;c&amp; &amp;      &amp; \\
+ &amp;      &amp; &amp;  &amp; &amp;      &amp; &amp; &amp;1&amp;      &amp; \\
+ &amp;      &amp; &amp;  &amp; &amp;      &amp; &amp; &amp; &amp;\ddots&amp; \\
+ &amp;      &amp; &amp;  &amp; &amp;      &amp; &amp; &amp; &amp;      &amp;1\\
 \end{bmatrix}
-\begin{bmatrix}
-u_{11}&amp;u_{12}&amp;\cdots&amp;u_{1n}\\
-&amp;u_{22}&amp;\cdots&amp;u_{2n}\\
-&amp;&amp;\ddots&amp;\vdots\\
-&amp;&amp;&amp;u_{nn}\\
-\end{bmatrix}
-\]</span> 计算顺序：</p>
-<p><img src="calc.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
-<h2 id="对称正定矩阵的-cholesky-分解">对称正定矩阵的 Cholesky 分解</h2>
-<p><strong>Cholesky 分解</strong>： <span class="math display">\[
-A=L\tilde D^2L^T\quad A=LDL^T\quad A=LL^T
-\]</span> 第二种表示中，<span class="math inline">\(D\)</span> 的对角元都大于零；第三种表示中，<span class="math inline">\(L\)</span> 的对角元都大于零。</p>
-<p><strong>计算方法</strong>：与上一节 Doolittle 分解的计算类似，逐行逐列计算即可： <span class="math display">\[
-\begin{bmatrix}
-a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
-a_{21}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
-\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
-a_{n1}&amp;a_{n2}&amp;\cdots&amp;a_{nn}\\
-\end{bmatrix}=
-\begin{bmatrix}
-l_{11}&amp;&amp;&amp;\\
-l_{21}&amp;l_{22}&amp;&amp;\\
-\vdots&amp;\vdots&amp;\ddots&amp;\\
-l_{n1}&amp;l_{n2}&amp;\cdots&amp;l_{nn}\\
-\end{bmatrix}
-\begin{bmatrix}
-l_{11}&amp;l_{12}&amp;\cdots&amp;l_{1n}\\
-&amp;l_{22}&amp;\cdots&amp;l_{2n}\\
-&amp;&amp;\ddots&amp;\vdots\\
-&amp;&amp;&amp;l_{nn}\\
-\end{bmatrix}
-\]</span> 可得： <span class="math display">\[
-l_{jj}=\left(a_{jj}-\sum_{k=1}^{j-1}l_{jk}^2\right)^{1/2},\quad l_{ij}=\left(a_{ij}-\sum_{k=1}^{j-1}l_{ik}l_{jk}\right)/l_{jj}
-\]</span> 该计算方法的缺点是有开方运算，在计算机中可能出现根号下负数。</p>
-<p><strong>改进的 Cholesky 分解</strong>：所谓改进的 Cholesky 分解，其实就是指 <span class="math inline">\(A=LDL^T\)</span>，其计算过程不涉及开方： <span class="math display">\[
-\begin{bmatrix}
-a_{11}&amp;a_{12}&amp;\cdots&amp;a_{1n}\\
-a_{21}&amp;a_{22}&amp;\cdots&amp;a_{2n}\\
-\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
-a_{n1}&amp;a_{n2}&amp;\cdots&amp;a_{nn}\\
-\end{bmatrix}=
-\begin{bmatrix}
-1&amp;&amp;&amp;\\
-l_{21}&amp;1&amp;&amp;\\
-\vdots&amp;\vdots&amp;\ddots&amp;\\
-l_{n1}&amp;l_{n2}&amp;\cdots&amp;1\\
-\end{bmatrix}
-\begin{bmatrix}
-d_1&amp;d_1l_{12}&amp;\cdots&amp;d_1l_{1n}\\
-&amp;d_2&amp;\cdots&amp;d_2l_{2n}\\
-&amp;&amp;\ddots&amp;\vdots\\
-&amp;&amp;&amp;d_n\\
-\end{bmatrix}
-\]</span> 逐行逐列计算可得： <span class="math display">\[
-l_{ij}=\left(a_{ij}-\sum_{k=1}^{j-1}l_{ik}d_kl_{jk}\right)/d_j,\quad d_i=a_{ii}-\sum_{k=1}^{j-1}l_{ik}^2d_k
-\]</span></p>
-<h2 id="分块矩阵的拟-lu-分解和拟-ldu-分解">分块矩阵的拟 LU 分解和拟 LDU 分解</h2>
-<p>只考虑 2 阶的分块矩阵： <span class="math display">\[
-A=\begin{bmatrix}A_{11}&amp;A_{12}\\A_{21}&amp;A_{22}\end{bmatrix}
-\]</span> 若 <span class="math inline">\(A_{11}\)</span> 可逆，设： <span class="math display">\[
-L=\begin{bmatrix}I_{n_1}&amp;0\\-A_{21}A_{11}^{-1}&amp;I_{n_2}\end{bmatrix}
-\]</span> 则： <span class="math display">\[
-LA=\begin{bmatrix}A_{11}&amp;A_{12}\\0&amp;A_{22}-A_{21}A_{11}^{-1}A_{12}\end{bmatrix}
-\]</span> 若 <span class="math inline">\(A_{22}\)</span> 可逆，可右乘矩阵（作列变换）得到类似的结果。</p>
-<p><strong>求逆引理（Woodbury 公式）</strong>： <span class="math display">\[
-(A+BC)^{-1}=A^{-1}-A^{-1}B(I+CA^{-1}B)^{-1}CA^{-1}
-\]</span> <div class="note note-secondary">
-            <p>证明：考虑方程 <span class="math inline">\((A+BC)x=b\)</span>，令 <span class="math inline">\(y=Cx\)</span>，则： <span class="math display">\[\begin{bmatrix}A&amp;B\\-C&amp;0\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}=\begin{bmatrix}b\\0\end{bmatrix}\]</span> 利用高斯消元法：</p><p><img src="gauss.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p><p>故解得： <span class="math display">\[x=(A^{-1}-A^{-1}B(I+CA^{-1}B)^{-1}CA^{-1})b\]</span> 又 <span class="math inline">\(x=(A+BC)^{-1}b\)</span>，由 <span class="math inline">\(b\)</span> 的任意性可知命题成立。证毕。</p>
+\]</span> 由 Givens 矩阵确定的线性变换称作 <strong>Givens 变换（初等旋转变换）</strong>。</p>
+<div class="note note-info">
+            <p>顾名思义，Givens 变换的作用是旋转。具体而言，是在第 <span class="math inline">\(i\)</span> 和第 <span class="math inline">\(j\)</span> 维的平面上绕原点<strong>顺时针</strong>旋转 <span class="math inline">\(\theta\)</span>，其中 <span class="math inline">\(c=\cos\theta,\,s=\sin\theta\)</span>.</p>
+          </div>
+<p><strong>性质</strong>：Givens 矩阵是正交矩阵，且有： <span class="math display">\[
+[T_{ij}(c,s)]^{-1}=[T_{ij}(c,s)]^T=T_{ij}(c,-s),\quad\det(T_{ij}(c,s))=1
+\]</span> <strong>定理</strong>：设 <span class="math inline">\(x=(\xi_1,\ldots,\xi_n)^T\neq0\)</span>，则存在有限个 Givens 矩阵的乘积，记作 <span class="math inline">\(T\)</span>，使得 <span class="math inline">\(Tx=|x|e_1\)</span>.</p>
+<div class="note note-info">
+            <p>直观理解：依次把第 <span class="math inline">\(2,3,\ldots,n\)</span> 维转到 0 即可。</p>
+          </div>
+<div class="note note-secondary">
+            <p>证明（构造方法）：构造 Givens 矩阵 <span class="math inline">\(T_{12}(c,s)\)</span>： <span class="math display">\[c=\frac{\xi_1}{\sqrt{\xi_1^2+\xi_2^2}}\quad s=\frac{\xi_2}{\sqrt{\xi_1^2+\xi_2^2}}\]</span> 则： <span class="math display">\[T_{12}x=\left(\sqrt{\xi_1^2+\xi_2^2},0,\xi_3,\ldots,\xi_n\right)^T\]</span> 再对 <span class="math inline">\(T_{12}x\)</span> 构造 Givens 矩阵 <span class="math inline">\(T_{13}(c,s)\)</span>： <span class="math display">\[c=\frac{\sqrt{\xi_1^2+\xi_2^2}}{\sqrt{\xi_1^2+\xi_2^2+\xi_3^2}}\quad s=\frac{\xi_3}{\sqrt{\xi_1^2+\xi_2^2+\xi_3^2}}\]</span> 则： <span class="math display">\[T_{13}(T_{12}x)=\left(\sqrt{\xi_1^2+\xi_2^2+\xi_3^2},0,0,\xi_4,\ldots,\xi_n\right)^T\]</span> 如此继续下去，最后对 <span class="math inline">\(T_{1,n-1}\cdots T_{12}x\)</span> 构造 Givens 矩阵 <span class="math inline">\(T_{1n}(c,s)\)</span>： <span class="math display">\[c=\frac{\sqrt{\xi_1^2+\cdots\xi_{n-1}^2}}{\sqrt{\xi_1^2+\cdots\xi_{n-1}^2+\xi_n^2}}\quad s=\frac{\xi_n}{\sqrt{\xi_1^2+\cdots\xi_{n-1}^2+\xi_n^2}}\]</span> 则： <span class="math display">\[T_{1n}(T_{1,n-1}\cdots T_{12}x)=\left(\sqrt{\xi_1^2+\cdots\xi_n^2},0,\ldots,0\right)^T\]</span> 令 <span class="math inline">\(T=T_{1n}T_{1,n-1}\cdots T_{12}\)</span>，则 <span class="math inline">\(Tx=|x|e_1\)</span>.</p>
+          </div>
+<p><strong>推论</strong>：任给非零列向量 <span class="math inline">\(x\in\mathbb R^n\)</span> 及单位列向量 <span class="math inline">\(z\in\mathbb R^n\)</span>，则存在有限个 Givens 矩阵的乘积，记作 <span class="math inline">\(T\)</span>，使得 <span class="math inline">\(Tx=|x|z\)</span>.</p>
+<p><strong>快速 Givens 变换</strong>：暂略。</p>
+<h3 id="householder-矩阵与-householder-变换">Householder 矩阵与 Householder 变换</h3>
+<p><strong>Householder 矩阵（初等反射矩阵）</strong>：设 <span class="math inline">\(u\in\mathbb R^n\)</span> 是单位列向量，定义 Householder 矩阵为： <span class="math display">\[
+H=I-2uu^T
+\]</span> 由 Householder 矩阵确定的线性变换称作 <strong>Householder 变换（初等反射变换）</strong>。</p>
+<div class="note note-info">
+            <p>顾名思义，Householder 变换的作用是反射。具体而言，是对以 <span class="math inline">\(u\)</span> 为法向量的平面做反射。</p>
+          </div>
+<p><strong>性质</strong>：Householder 矩阵对称、正交、对合、自逆，且行列式为 <span class="math inline">\(-1\)</span>： <span class="math display">\[
+H^T=H,\quad H^TH=I,\quad H^2=I,\quad H^{-1}=H,\quad \det(H)=-1
+\]</span> <strong>定理</strong>：任给非零列向量 <span class="math inline">\(x\in\mathbb R^n\)</span> 及单位列向量 <span class="math inline">\(z\in\mathbb R^n\)</span>，则存在 Householder 矩阵 <span class="math inline">\(H\)</span>，使得 <span class="math inline">\(Hx=|x|z\)</span>.</p>
+<div class="note note-info">
+            <p>直观理解：找到 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(z\)</span> 之间对称平面，取 <span class="math inline">\(u\)</span> 为该平面的单位法向量即可。</p>
+          </div>
+<div class="note note-secondary">
+            <p>证明（构造方法）：若 <span class="math inline">\(x=|x|z\)</span>，取单位向量 <span class="math inline">\(u\)</span> 使得 <span class="math inline">\(u\perp x\)</span>，则 <span class="math inline">\(H_u=I-2uu^T\)</span>： <span class="math display">\[H_ux=(I-2uu^T)x=x-2uu^Tx=x=|x|z\]</span> 否则，<span class="math inline">\(x\neq|x|z\)</span>，取 <span class="math inline">\(u=\frac{x-|x|z}{\left|x-|x|z\right|}\)</span>，则： <span class="math display">\[\begin{align}H_ux&amp;=\left[I-2\frac{(x-|x|z)(x-|x|z)^T}{|x-|x|z|^2}\right]x\\&amp;=x-\frac{2(x-|x|z)^Tx}{|x-|x|z|^2}(x-|x|z)\\&amp;=x-(x-|x|z)=|x|z\end{align}\]</span></p>
+          </div>
+<p><strong>定理</strong>：Givens 变换是两个 Householder 变换的乘积。</p>
+<div class="note note-info">
+            <p>换句话说，一次旋转操作可以分解为两次反射操作。</p>
+          </div>
+<div class="note note-secondary">
+            <p>证明：取 <span class="math display">\[\begin{align}&amp;u=(0,\ldots,0,\sin(\theta/4),0,\ldots,0,\cos(\theta/4),0,\ldots,0)^T\\&amp;v=(0,\ldots,0,\sin(3\theta/4),0,\ldots,0,\cos(3\theta/4),0,\ldots,0)^T\end{align}\]</span> 可以验证 <span class="math inline">\(T_{ij}=H_vH_u\)</span>. 证毕。</p>
+          </div>
+<div class="note note-warning">
+            <p>Householder 矩阵并不能由若干个 Givens 矩阵的乘积表示，因为 <span class="math inline">\(\det(H)=-1,\,\det(G)=1\)</span>.</p>
+          </div>
+<h2 id="矩阵的-qr-分解">矩阵的 QR 分解</h2>
+<h3 id="qr-分解的定义">QR 分解的定义</h3>
+<p><strong>定义</strong>：若实（复）矩阵 <span class="math inline">\(A\)</span> 能分解成正交（酉）矩阵 <span class="math inline">\(Q\)</span> 与非奇异上三角矩阵 <span class="math inline">\(R\)</span> 的乘积，即 <span class="math inline">\(A=QR\)</span>，则称为 <span class="math inline">\(A\)</span> 的 QR 分解。</p>
+<p><strong>定理</strong>：对 <span class="math inline">\(n\)</span> 阶<strong>非奇异</strong>矩阵 <span class="math inline">\(A\)</span>，QR 分解在除去相差一个对角元素的绝对值（模）全等于 1 的对角矩阵外，分解唯一。</p>
+<div class="note note-info">
+            <p>证明（实数情形）：设 <span class="math inline">\(A=Q_1R_1=Q_2R_2\)</span>，则 <span class="math inline">\(P=Q_2^TQ_1=R_2R_1^{-1}\)</span>.</p><p>注意到 <span class="math inline">\(P^TP=I\)</span>，所以 <span class="math inline">\(P^T=P^{-1}\)</span>. 由于 <span class="math inline">\(P\)</span> 是上三角矩阵，所以 <span class="math inline">\(P^{-1}\)</span> 是上三角矩阵，<span class="math inline">\(P^T\)</span> 是下三角矩阵，二者又相等，因此只能是对角矩阵。又 <span class="math inline">\(P^2=I\)</span>，所以对角元只能是 <span class="math inline">\(\pm1\)</span>. 那么 <span class="math inline">\(Q_1=Q_2P,\,R_1=PR_2\)</span>. 证毕。</p>
+          </div>
+<p><strong>定理</strong>：对 <span class="math inline">\(m\times n\)</span> 实（复）矩阵 <span class="math inline">\(A\)</span>，其 <span class="math inline">\(n\)</span> 列线性无关，则 <span class="math inline">\(A\)</span> 有分解 <span class="math inline">\(A=QR\)</span>，其中 <span class="math inline">\(Q\)</span> 是 <span class="math inline">\(m\times n\)</span> 实（复）矩阵，且 <span class="math inline">\(Q^TQ=I\)</span>，<span class="math inline">\(R\)</span> 是实（复）非奇异上三角矩阵，且除去相差一个对角元素的绝对值（模）全等于 1 的对角矩阵外，分解唯一。</p>
+<h3 id="计算方法基于-gram-schmidt-正交化过程">计算方法：基于 Gram-Schmidt 正交化过程</h3>
+<p>设 <span class="math inline">\(A=(a_1,\ldots,a_n)\)</span> 非奇异，对其各列实施 Gram-Schmidt 正交化过程： <span class="math display">\[
+\begin{cases}
+b_1=a_1\\
+b_2=a_2-k_{21}b_1\\
+\quad\vdots\\
+b_n=a_n-k_{n,n-1}b_{n-1}-\cdots-k_{n1}b_1
+\end{cases}\implies
+\begin{cases}
+a_1=b_1\\
+a_2=b_2+k_{21}b_1\\
+\quad\vdots\\
+a_n=b_n+k_{n,n-1}b_{n-1}-\cdots-k_{n1}b_1
+\end{cases}
+\]</span> 写作矩阵形式： <span class="math display">\[
+\begin{align}
+A=BK&amp;\implies(a_1,a_2,\ldots,a_n)=(b_1,b_2,\ldots,b_n)\begin{bmatrix}1&amp;k_{21}&amp;\cdots&amp;k_{n1}\\&amp;1&amp;\cdots&amp;k_{n2}\\&amp;&amp;\ddots&amp;\vdots\\&amp;&amp;&amp;1\end{bmatrix}\\
+&amp;\implies(a_1,a_2,\ldots,a_n)=\underbrace{\begin{bmatrix}\dfrac{b_1}{|b_1|},\dfrac{b_2}{|b_2|}\ldots,\dfrac{b_n}{|b_n|}\end{bmatrix}}_Q\underbrace{\begin{bmatrix}|b_1|&amp;&amp;&amp;\\&amp;|b_2|&amp;&amp;\\&amp;&amp;\ddots&amp;\\&amp;&amp;&amp;|b_n|\end{bmatrix}\begin{bmatrix}1&amp;k_{21}&amp;\cdots&amp;k_{n1}\\&amp;1&amp;\cdots&amp;k_{n2}\\&amp;&amp;\ddots&amp;\vdots\\&amp;&amp;&amp;1\end{bmatrix}}_R\\
+&amp;\implies A=QR
+\end{align}
+\]</span> <div class="note note-warning">
+            <p>基于 Gram-Schmidt 正交化过程的 QR 分解计算方法在高阶时容易出现数值不稳定，需要用下文的基于 Givens 变换或 Householder 变换的方法计算。</p>
           </div></p>
-<p><strong>推论</strong>： <span class="math display">\[
-(A+BD^{-1}C)^{-1}=A^{-1}-A^{-1}B(D+CA^{-1}B)^{-1}CA^{-1}
-\]</span></p>
+<h3 id="计算方法基于-givens-变换">计算方法：基于 Givens 变换</h3>
+<p>任何 <span class="math inline">\(n\)</span> 阶<strong>实非奇异</strong>矩阵 <span class="math inline">\(A\)</span> 都可以通过左连乘 Givens 初等旋转矩阵化为上三角矩阵。</p>
+<ol type="1">
+<li><p>由于 <span class="math inline">\(\det(A)\neq0\)</span>，因此 <span class="math inline">\(A\)</span> 的第一列 <span class="math inline">\((a_{11},a_{21},\ldots,a_{n1})^T\neq 0\)</span>，根据前文的定理，存在有限个 Givens 矩阵的乘积 <span class="math inline">\(T_1\)</span>，使得 <span class="math display">\[
+T_1(a_{11},a_{21},\ldots,a_{n1})^T=\left|(a_{11},a_{21},\ldots,a_{n1})^T\right|\cdot e_1
+\]</span> 将 <span class="math inline">\(T_1\)</span> 作用在 <span class="math inline">\(A\)</span> 上得： <span class="math display">\[
+T_1A=\begin{bmatrix}
+a_{11}^{(1)}&amp;a_{12}^{(1)}&amp;\cdots&amp;a_{1n}^{(1)}\\
+0&amp;&amp;&amp;\\
+\vdots&amp;&amp;A^{(1)}&amp;\\
+0&amp;&amp;&amp;
+\end{bmatrix}
+\]</span></p></li>
+<li><p>由于 <span class="math inline">\(\det(A^{(1)})\neq0\)</span>，因此 <span class="math inline">\(A^{(1)}\)</span> 的第一列 <span class="math inline">\(\left(a_{22}^{(1)},a_{32}^{(1)},\ldots,a_{n2}^{(1)}\right)^T\neq0\)</span>，于是存在有限个 Givens 矩阵的乘积 <span class="math inline">\(T_2\)</span>，使得 <span class="math display">\[
+T_2\left(a_{22}^{(1)},a_{32}^{(1)},\ldots,a_{n2}^{(1)}\right)^T=\left|\left(a_{22}^{(1)},a_{32}^{(1)},\ldots,a_{n2}^{(1)}\right)^T\right|\cdot e_1
+\]</span> 将 <span class="math inline">\(T_2\)</span> 作用在 <span class="math inline">\(A\)</span> 上得： <span class="math display">\[
+T_2A^{(1)}=\begin{bmatrix}
+a_{22}^{(2)}&amp;a_{23}^{(2)}&amp;\cdots&amp;a_{2n}^{(2)}\\
+0&amp;&amp;&amp;\\
+\vdots&amp;&amp;A^{(2)}&amp;\\
+0&amp;&amp;&amp;
+\end{bmatrix}
+\]</span></p></li>
+<li><p>重复上述步骤，直到第 <span class="math inline">\(n-1\)</span> 步： <span class="math display">\[
+T_{n-1}A^{(n-2)}=\begin{bmatrix}a_{n-1,n-1}^{(n-1)}&amp;a_{n-1,n}^{(n-1)}\\0&amp;a_{nn}^{(n-1)}\end{bmatrix}
+\]</span></p></li>
+</ol>
+<p>最后，令： <span class="math display">\[
+T=\begin{bmatrix}I_{n-2}&amp;O\\O&amp;T_{n-1}\end{bmatrix}\cdots\begin{bmatrix}I_{2}&amp;O\\O&amp;T_{3}\end{bmatrix}\begin{bmatrix}I_{1}&amp;O\\O&amp;T_{2}\end{bmatrix}T_1
+\]</span> 则： <span class="math display">\[
+TA=\begin{bmatrix}
+a_{11}^{(1)}&amp;a_{12}^{(1)}&amp;\cdots&amp;a_{1,n-1}^{(1)}&amp;a_{1n}^{(1)}\\
+&amp;a_{22}^{(2)}&amp;\cdots&amp;a_{2,n-1}^{(2)}&amp;a_{2n}^{(2)}\\
+&amp;&amp;\ddots&amp;\vdots&amp;\vdots\\
+&amp;&amp;&amp;a_{n-1,n-1}^{(n-1)}&amp;a_{n-1,n}^{(n-1)}\\
+&amp;&amp;&amp;&amp;a_{nn}^{(n-1)}
+\end{bmatrix}
+\]</span> 即 <span class="math inline">\(A=QR\)</span>，其中 <span class="math inline">\(Q=T^{-1}=T^T\)</span>，<span class="math inline">\(R\)</span> 就是上面化出来的那一大坨上三角矩阵。</p>
+<div class="note note-info">
+            <p>该过程与高斯消元法有异曲同工之妙。</p>
+          </div>
+<h3 id="计算方法基于-householder-变换">计算方法：基于 Householder 变换</h3>
+<p>任何 <span class="math inline">\(n\)</span> 阶<strong>实非奇异</strong>矩阵 <span class="math inline">\(A\)</span> 都可以通过左连乘 Householder 初等反射矩阵化为上三角矩阵。</p>
+<ol type="1">
+<li><p>由于 <span class="math inline">\(\det(A)\neq0\)</span>，因此 <span class="math inline">\(A\)</span> 的第一列 <span class="math inline">\((a_{11},a_{21},\ldots,a_{n1})^T\neq 0\)</span>，根据前文的定理，存在一个 Householder 矩阵 <span class="math inline">\(H_1\)</span>，使得 <span class="math display">\[
+H_1(a_{11},a_{21},\ldots,a_{n1})^T=\left|(a_{11},a_{21},\ldots,a_{n1})^T\right|\cdot e_1
+\]</span> 将 <span class="math inline">\(H_1\)</span> 作用在 <span class="math inline">\(A\)</span> 上得： <span class="math display">\[
+H_1A=\begin{bmatrix}
+a_{11}^{(1)}&amp;a_{12}^{(1)}&amp;\cdots&amp;a_{1n}^{(1)}\\
+0&amp;&amp;&amp;\\
+\vdots&amp;&amp;A^{(1)}&amp;\\
+0&amp;&amp;&amp;
+\end{bmatrix}
+\]</span></p></li>
+<li><p>由于 <span class="math inline">\(\det(A^{(1)})\neq0\)</span>，因此 <span class="math inline">\(A^{(1)}\)</span> 的第一列 <span class="math inline">\(\left(a_{22}^{(1)},a_{32}^{(1)},\ldots,a_{n2}^{(1)}\right)^T\neq0\)</span>，于是存在一个 Householder 矩阵 <span class="math inline">\(H_2\)</span>，使得 <span class="math display">\[
+H_2\left(a_{22}^{(1)},a_{32}^{(1)},\ldots,a_{n2}^{(1)}\right)^T=\left|\left(a_{22}^{(1)},a_{32}^{(1)},\ldots,a_{n2}^{(1)}\right)^T\right|\cdot e_1
+\]</span> 将 <span class="math inline">\(H_2\)</span> 作用在 <span class="math inline">\(A\)</span> 上得： <span class="math display">\[
+H_2A^{(1)}=\begin{bmatrix}
+a_{22}^{(2)}&amp;a_{23}^{(2)}&amp;\cdots&amp;a_{2n}^{(2)}\\
+0&amp;&amp;&amp;\\
+\vdots&amp;&amp;A^{(2)}&amp;\\
+0&amp;&amp;&amp;
+\end{bmatrix}
+\]</span></p></li>
+<li><p>重复上述步骤，直到第 <span class="math inline">\(n-1\)</span> 步： <span class="math display">\[
+H_{n-1}A^{(n-2)}=\begin{bmatrix}a_{n-1,n-1}^{(n-1)}&amp;a_{n-1,n}^{(n-1)}\\0&amp;a_{nn}^{(n-1)}\end{bmatrix}
+\]</span></p></li>
+</ol>
+<p>最后，令： <span class="math display">\[
+H=\begin{bmatrix}I_{n-2}&amp;O\\O&amp;H_{n-1}\end{bmatrix}\cdots\begin{bmatrix}I_{2}&amp;O\\O&amp;H_{3}\end{bmatrix}\begin{bmatrix}I_{1}&amp;O\\O&amp;H_{2}\end{bmatrix}H_1
+\]</span> 则： <span class="math display">\[
+HA=\begin{bmatrix}
+a_{11}^{(1)}&amp;a_{12}^{(1)}&amp;\cdots&amp;a_{1,n-1}^{(1)}&amp;a_{1n}^{(1)}\\
+&amp;a_{22}^{(2)}&amp;\cdots&amp;a_{2,n-1}^{(2)}&amp;a_{2n}^{(2)}\\
+&amp;&amp;\ddots&amp;\vdots&amp;\vdots\\
+&amp;&amp;&amp;a_{n-1,n-1}^{(n-1)}&amp;a_{n-1,n}^{(n-1)}\\
+&amp;&amp;&amp;&amp;a_{nn}^{(n-1)}
+\end{bmatrix}
+\]</span> 即 <span class="math inline">\(A=QR\)</span>，其中 <span class="math inline">\(Q=H^{-1}=H^T\)</span>，<span class="math inline">\(R\)</span> 就是上面化出来的那一大坨上三角矩阵。</p>
+<h2 id="hessenberg-矩阵的正交相似">Hessenberg 矩阵的正交相似</h2>
+<p>暂略。</p>
 
                 
               </div>
@@ -503,8 +549,8 @@ LA=\begin{bmatrix}A_{11}&amp;A_{12}\\0&amp;A_{22}-A_{21}A_{11}^{-1}A_{12}\end{bm
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>[矩阵论]4.1矩阵的三角分解</div>
-      <div>https://xyfjason.github.io/blog-main/2023/11/21/矩阵论-4-1矩阵的三角分解/</div>
+      <div>[矩阵论]4.2矩阵的QR分解</div>
+      <div>https://xyfjason.github.io/blog-main/2023/11/26/矩阵论-4-2矩阵的QR分解/</div>
     </div>
     <div class="license-meta">
       
@@ -516,7 +562,7 @@ LA=\begin{bmatrix}A_{11}&amp;A_{12}\\0&amp;A_{22}-A_{21}A_{11}^{-1}A_{12}\end{bm
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年11月21日</div>
+          <div>2023年11月26日</div>
         </div>
       
       
@@ -548,18 +594,12 @@ LA=\begin{bmatrix}A_{11}&amp;A_{12}\\0&amp;A_{22}-A_{21}A_{11}^{-1}A_{12}\end{bm
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2023/11/26/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-2%E7%9F%A9%E9%98%B5%E7%9A%84QR%E5%88%86%E8%A7%A3/" title="[矩阵论]4.2矩阵的QR分解">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">[矩阵论]4.2矩阵的QR分解</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/11/15/%E7%9F%A9%E9%98%B5%E8%AE%BA-3-3%E7%9F%A9%E9%98%B5%E7%9A%84%E5%BE%AE%E5%88%86%E5%92%8C%E7%A7%AF%E5%88%86/" title="[矩阵论]3.3矩阵的微分和积分">
-                        <span class="hidden-mobile">[矩阵论]3.3矩阵的微分和积分</span>
+                      <a href="/blog-main/2023/11/21/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-1%E7%9F%A9%E9%98%B5%E7%9A%84%E4%B8%89%E8%A7%92%E5%88%86%E8%A7%A3/" title="[矩阵论]4.1矩阵的三角分解">
+                        <span class="hidden-mobile">[矩阵论]4.1矩阵的三角分解</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
