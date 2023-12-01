@@ -1,0 +1,862 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="背景 图像金字塔  子带编码 在子带编码中，一幅图像被分解成为一系列限带分量的集合，称为子带，它们可以重组在一起无失真地重建原始图像。  如上图所示，输入是带限时间离散信号 \(x(n),\,n&#x3D;0,1,2,\ldots\)；输出序列 \(\hat x(n)\) 通过低通和高通分析滤波器 \(h_0(n)\) 和 \(h_1(n)\) 分解成 \(y_0(n)\) 和 \(y_1(n)\)，再通过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[图像处理]小波变换和多分辨率处理">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/11/29/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86-%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2%E5%92%8C%E5%A4%9A%E5%88%86%E8%BE%A8%E7%8E%87%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="背景 图像金字塔  子带编码 在子带编码中，一幅图像被分解成为一系列限带分量的集合，称为子带，它们可以重组在一起无失真地重建原始图像。  如上图所示，输入是带限时间离散信号 \(x(n),\,n&#x3D;0,1,2,\ldots\)；输出序列 \(\hat x(n)\) 通过低通和高通分析滤波器 \(h_0(n)\) 和 \(h_1(n)\) 分解成 \(y_0(n)\) 和 \(y_1(n)\)，再通过">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/Digital-Image-Processing.webp">
+<meta property="article:published_time" content="2023-11-29T03:20:09.000Z">
+<meta property="article:modified_time" content="2023-12-01T08:32:52.430Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="image processing">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/Digital-Image-Processing.webp">
+  
+  
+  
+  <title>[图像处理]小波变换和多分辨率处理 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/Digital-Image-Processing.webp') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[图像处理]小波变换和多分辨率处理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-29 11:20" pubdate>
+          2023年11月29日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          41 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[图像处理]小波变换和多分辨率处理</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="背景">背景</h2>
+<h3 id="图像金字塔">图像金字塔</h3>
+<p><img src="pyramid.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<h3 id="子带编码">子带编码</h3>
+<p>在子带编码中，一幅图像被分解成为一系列限带分量的集合，称为子带，它们可以重组在一起无失真地重建原始图像。</p>
+<p><img src="subband.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>如上图所示，输入是带限时间离散信号 <span class="math inline">\(x(n),\,n=0,1,2,\ldots\)</span>；输出序列 <span class="math inline">\(\hat x(n)\)</span> 通过低通和高通分析滤波器 <span class="math inline">\(h_0(n)\)</span> 和 <span class="math inline">\(h_1(n)\)</span> 分解成 <span class="math inline">\(y_0(n)\)</span> 和 <span class="math inline">\(y_1(n)\)</span>，再通过低通和高通综合滤波器 <span class="math inline">\(g_0(n)\)</span> 和 <span class="math inline">\(g_1(n)\)</span> 综合得到。其中 <span class="math inline">\(h_0(n),h_1(n)\)</span> 的理想传递函数 <span class="math inline">\(H_0\)</span> 和 <span class="math inline">\(H_1\)</span> 如上图下方所示。</p>
+<div class="note note-info">
+            <p><strong>Z 变换</strong>是离散傅里叶变换的一般推广： <span class="math display">\[X(z)=\sum_{-\infty}^{\infty}x(n)z^{-n},\quad z\text{ is a complex variable}\]</span> 有如下性质：</p><ul><li><p>下采样（抽样）： <span class="math display">\[x_\text{down}(n)=x(2n)\iff X_\text{down}(z)=\frac{1}{2}\left[X(z^{1/2})+X(-z^{1/2})\right]\]</span></p></li><li><p>上采样（内插）： <span class="math display">\[x^\text{up}(n)=\begin{cases}x(n/2),&amp;n=0,2,\ldots\\0,&amp;\text{otherwise}\end{cases}\iff X^\text{up}(z)=X(z^2)\]</span></p></li></ul><p>若先抽样再内插： <span class="math display">\[\hat X(z)=X_\text{down}(z^2)=\frac{1}{2}\left[X(z)+X(-z)\right]\]</span> 则 <span class="math inline">\(\hat x(n)=Z^{-1}[\hat X(z)]\)</span> 就是结果。</p>
+          </div>
+<p>利用 Z 变换，子带编码系统的输出可以写作： <span class="math display">\[
+\begin{align}
+\hat X(z)=&amp;\ \frac{1}{2}G_0(z)[H_0(z)X(z)+H_0(-z)X(-z)]+\\
+&amp;\ \frac{1}{2}G_1(z)[H_1(z)X(z)+H_1(-z)X(-z)]\\
+=&amp;\ \frac{1}{2}[H_0(z)G_0(z)+H_1(z)G_1(z)]X(z)+\\
+&amp;\ \frac{1}{2}[H_0(-z)G_1(z)+H_1(-z)G_0(z)]X(-z)
+\end{align}
+\]</span> 因此，为了无失真地重构输入，我们希望分析和综合滤波器满足： <span class="math display">\[
+\begin{align}
+&amp;H_0(z)G_0(z)+H_1(z)G_1(z)=2\tag{1}\label{demand1}\\
+&amp;H_0(-z)G_1(z)+H_1(-z)G_0(z)=0\tag{2}\label{demand2}
+\end{align}
+\]</span> 或写作矩阵形式： <span class="math display">\[
+\begin{bmatrix}G_0(z)&amp;G_1(z)\end{bmatrix}
+\underbrace{\begin{bmatrix}H_0(z)&amp;H_0(-z)\\H_1(z)&amp;H_1(-z)\end{bmatrix}}_{\mathbf H_m(z)}
+=\begin{bmatrix}2&amp;0\end{bmatrix}\tag{3}\label{demand3}
+\]</span> 若 <span class="math inline">\(\mathbf H_m(z)\)</span> 非奇异，则： <span class="math display">\[
+\begin{bmatrix}G_0(z)\\G_1(z)\end{bmatrix}=\frac{2}{\det(\mathbf H_m(z))}\begin{bmatrix}H_1(-z)\\-H_0(-z)\end{bmatrix}\tag{4}\label{demand4}
+\]</span> 这就是子带编码系统的滤波器之间的关系，从中我们可以分析出两条性质——交叉调制和双正交性。</p>
+<p><strong>交叉调制</strong>：上式告诉我们，<strong><span class="math inline">\(G_1(z)\)</span> 是 <span class="math inline">\(H_0(-z)\)</span> 的函数，而 <span class="math inline">\(G_0(z)\)</span> 是 <span class="math inline">\(H_1(-z)\)</span> 的函数</strong>。</p>
+<p><strong>双正交性</strong>： <span class="math display">\[
+\langle h_i(2n-k),g_j(k)\rangle=\delta(i-j)\delta(n),\quad i,j\in\{0,1\}
+\]</span> 或者展开写作： <span class="math display">\[
+\begin{align}
+&amp;\langle g_0(k),h_0(2n-k)\rangle=\delta(n)\\
+&amp;\langle g_1(k),h_1(2n-k)\rangle=\delta(n)\\
+&amp;\langle g_0(k),h_1(2n-k)\rangle=0\\
+&amp;\langle g_1(k),h_0(2n-k)\rangle=0
+\end{align}
+\]</span> <div class="note note-secondary">
+            <p>推导（仅推到第一个式子）：根据 <span class="math inline">\(\eqref{demand4}\)</span> 式有： <span class="math display">\[\begin{align}&amp;G_0(z)H_0(z)=\frac{2}{\det(\mathbf H_m(z))}H_0(z)H_1(-z)\\&amp;G_1(z)H_1(z)=\frac{-2}{\det(\mathbf H_m(z))}H_0(-z)H_1(z)\\\end{align}\]</span> 所以 <span class="math inline">\(G_1(z)H_1(z)=G_0(-z)H_0(-z)\)</span>. 代入 <span class="math inline">\(\eqref{demand1}\)</span> 式消去 <span class="math inline">\(G_1\)</span> 和 <span class="math inline">\(H_1\)</span> 得： <span class="math display">\[G_0(z)H_0(z)+G_0(-z)H_0(-z)=2\]</span> 做逆 Z 变换得： <span class="math display">\[\sum_kg_0(k)h_0(n-k)+(-1)^n\sum_kg_0(k)h_0(n-k)=2\delta(n)\]</span> 由于奇次方项相互抵消，故： <span class="math display">\[\sum_kg_0(k)h_0(2n-k)=\langle g_0(k),h_0(2n-k)\rangle=\delta(n)\]</span> 第二到第四个式子可以类似地通过消去不同滤波器得到。</p>
+          </div></p>
+<p>下表给出了三种满足完美重构要求 <span class="math inline">\(\eqref{demand1},\eqref{demand2}\)</span> 式的解：</p>
+<p><img src="subband-filters.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<h3 id="haar-变换">Haar 变换</h3>
+<p>Haar 变换可以表达为： <span class="math display">\[
+T=HFH
+\]</span> 其中 <span class="math inline">\(F\)</span> 是一个 <span class="math inline">\(N\times N\)</span> 的图像矩阵，<span class="math inline">\(H\)</span> 是 <span class="math inline">\(N\times N\)</span> 的变换矩阵，<span class="math inline">\(T\)</span> 是 <span class="math inline">\(N\times N\)</span> 的变换结果。<span class="math inline">\(H\)</span> 的第 <span class="math inline">\(k\)</span> 行由 Haar 基函数 <span class="math inline">\(h_k(z)\)</span> 在 <span class="math inline">\(0/N,1/N,\ldots,(N-1)/N\)</span> 处的值构成，设 <span class="math inline">\(k=2^p+q-1\)</span>，则 Haar 基函数为： <span class="math display">\[
+\begin{align}
+&amp;h_0(z)=h_{00}(z)=\frac{1}{\sqrt{N}}&amp;\quad z\in[0,1]\\
+&amp;h_k(z)=h_{pq}(z)=\frac{1}{\sqrt{N}}\begin{cases}
+2^{p/2},&amp;(q-1)/2^p\leq z\leq (q-0.5)/2^p\\
+-2^{p/2},&amp;(q-0.5)/2^p\leq z\leq q/2^p\\
+0,&amp;\text{otherwise}
+\end{cases}&amp;\quad z\in[0,1]
+\end{align}
+\]</span> 例如 <span class="math inline">\(H_8\)</span> 为： <span class="math display">\[
+H_8=\frac{1}{\sqrt{8}}\begin{bmatrix}
+1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1&amp;1\\
+1&amp;1&amp;1&amp;1&amp;-1&amp;-1&amp;-1&amp;-1\\
+\sqrt2&amp;\sqrt2&amp;-\sqrt2&amp;-\sqrt2&amp;0&amp;0&amp;0&amp;0\\
+0&amp;0&amp;0&amp;0&amp;\sqrt2&amp;\sqrt2&amp;-\sqrt2&amp;-\sqrt2\\
+2&amp;-2&amp;0&amp;0&amp;0&amp;0&amp;0&amp;0\\
+0&amp;0&amp;2&amp;-2&amp;0&amp;0&amp;0&amp;0\\
+0&amp;0&amp;0&amp;0&amp;2&amp;-2&amp;0&amp;0\\
+0&amp;0&amp;0&amp;0&amp;0&amp;0&amp;2&amp;-2\\
+\end{bmatrix}
+\]</span></p>
+<h2 id="多分辨率展开">多分辨率展开</h2>
+<p><strong>尺度函数</strong>：创建图像的一系列近似，相邻两个近似之间的近似度相差 2 倍。</p>
+<p><strong>小波</strong>：用于编码相邻两个近似之间信息的差异。</p>
+<h3 id="序列展开">序列展开</h3>
+<p>设 <span class="math inline">\(f(x)\)</span> 能被分解为一系列展开函数的线性组合： <span class="math display">\[
+f(x)=\sum_k\alpha_k\varphi_k(x)
+\]</span> 若展开唯一，则 <span class="math inline">\(\varphi_k(x)\)</span> 称作<strong>基函数</strong>。基函数张成的函数空间记作 <span class="math display">\[
+V=\overline{\mathop{\text{Span}}_k\{\varphi_k(x)\}}
+\]</span> 对任意函数空间 <span class="math inline">\(V\)</span> 以及对应的基 <span class="math inline">\(\{\varphi_k(x)\}\)</span>，都有一个<strong>对偶函数</strong>集合 <span class="math inline">\(\{\tilde\varphi_k(x)\}\)</span>，使得： <span class="math display">\[
+\alpha_k=\langle\tilde\varphi_k(x),f(x)\rangle=\int\tilde\varphi_k^\ast(x)f(x)\mathrm dx
+\]</span> 容易知道，如果 <span class="math inline">\(\{\varphi_k(x)\}\)</span> 正交，则其对偶就是它本身。</p>
+<h3 id="尺度函数">尺度函数</h3>
+<p>给定平方可积函数 <span class="math inline">\(\varphi(x)\)</span>，考虑如下展开函数集合： <span class="math display">\[
+\varphi_{j,k}(x)=2^{j/2}\varphi(2^jx-k),\quad j,k\in\mathbb Z
+\]</span> 这里 <span class="math inline">\(k\)</span> 决定函数在 <span class="math inline">\(x\)</span> 轴的位置，<span class="math inline">\(j\)</span> 决定函数的宽度，系数 <span class="math inline">\(2^{j/2}\)</span> 用于控制函数的高度（幅度）。</p>
+<p>对于任意的 <span class="math inline">\(j\)</span>，<span class="math inline">\(\{\varphi_{j,k}(x)\}\)</span> 可以张成一个子空间： <span class="math display">\[
+V_j=\overline{\mathop{\text{Span}}_k\{\varphi_{j,k}(x)\}}
+\]</span> <div class="note note-info">
+            <p>例。<strong>Haar 尺度函数</strong>定义为： <span class="math display">\[\varphi(x)=\begin{cases}1,&amp;0\leq x&lt;1\\0,&amp;\text{otherwise}\end{cases}\]</span> 下图展示了展开函数中的 4 个，以及 <span class="math inline">\(V_1\)</span> 中的两个函数：</p><p><img src="haar-scaling.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+          </div></p>
+<p>尺度函数服从多分辨率分析 (MRA) 的四个基本要求：</p>
+<ol type="1">
+<li>尺度函数对其积分变换是正交的；</li>
+<li>由低尺度的尺度函数张成的子空间在低尺度处嵌套在由高尺度张成的子空间内；</li>
+<li>唯一包含在所有 <span class="math inline">\(V_j\)</span> 中的函数是 <span class="math inline">\(f(x)=0\)</span>；</li>
+<li>任何函数都可以以任意精度表示。</li>
+</ol>
+<p>在这些条件下，子空间 <span class="math inline">\(V_j\)</span> 的展开函数可以被表述为子空间 <span class="math inline">\(V_{j+1}\)</span> 的展开函数的加权和： <span class="math display">\[
+\varphi_{j,k}(x)=\sum_n\alpha_n\varphi_{j+1,n}(x)
+\]</span> 代入展开函数的定义，并将 <span class="math inline">\(\alpha_n\)</span> 改写作 <span class="math inline">\(h_\varphi(n)\)</span>： <span class="math display">\[
+\varphi_{j,k}(x)=\sum_n h_\varphi(n)2^{(j+1)/2}\varphi(2^{j+1}x-n)
+\]</span> 令 <span class="math inline">\(j=k=0\)</span>，得： <span class="math display">\[
+\varphi(x)=\sum_nh_\varphi(n)\sqrt{2}\varphi(2x-n)
+\]</span> 其中 <span class="math inline">\(h_\varphi(n)\)</span> 称作尺度函数系数。<strong>这个式子是多分辨率分析的基础</strong>。它表明任意子空间的展开函数都可以从它们自身的双倍分辨率的拷贝中得到，即从相邻较高分辫率的空间中得到。</p>
+<div class="note note-info">
+            <p>例。<strong>Haar 尺度函数系数</strong>是 <span class="math inline">\(h_\varphi(0)=h_\varphi(1)=1/\sqrt{2}\)</span>，即 <span class="math inline">\(H_2\)</span> 的第一行。于是： <span class="math display">\[\varphi(x)=\frac{1}{\sqrt{2}}\sqrt{2}\varphi(2x)+\frac{1}{\sqrt{2}}\sqrt{2}\varphi(2x-1)=\varphi(2x)+\varphi(2x-1)\]</span></p>
+          </div>
+<h3 id="小波函数">小波函数</h3>
+<p>未完待续。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" class="category-chain-item">图像处理</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/image-processing/" class="print-no-link">#image processing</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[图像处理]小波变换和多分辨率处理</div>
+      <div>https://xyfjason.github.io/blog-main/2023/11/29/图像处理-小波变换和多分辨率处理/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/12/01/Stable-Diffusion-ControlNet%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" title="[Stable Diffusion]ControlNet代码分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[Stable Diffusion]ControlNet代码分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/11/27/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86-%E5%9B%BE%E5%83%8F%E6%81%A2%E5%A4%8D%E4%B8%8E%E9%87%8D%E5%BB%BA/" title="[图像处理]图像恢复与重建">
+                        <span class="hidden-mobile">[图像处理]图像恢复与重建</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
