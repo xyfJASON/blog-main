@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/3599097.jpeg">
 <meta property="article:published_time" content="2023-12-01T02:35:11.000Z">
-<meta property="article:modified_time" content="2023-12-02T03:21:01.981Z">
+<meta property="article:modified_time" content="2023-12-03T09:50:12.736Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="AIGC">
@@ -276,7 +276,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          8.3k 字
+          8.4k 字
         
       </span>
     
@@ -367,12 +367,12 @@
 <li>quant_conv：一层 1x1 卷积，将编码器隐空间维度 (=512) 映射到 embedding 维度 (=4)；</li>
 <li>post_quant_conv：一层 1x1 卷积，将 embedding 维度 (=4) 映射回解码器隐空间维度 (=512)。</li>
 </ul>
-<p><code>AutoencoderKL</code> 继承自 <code>pl.LightningModule</code>，因此还包括训练、验证、优化器、损失函数等使用 Pytorch Lightning 需要定义的东西，这里按下不表。</p>
+<p><code>AutoencoderKL</code> 继承自 <code>pl.LightningModule</code>，因此还包括训练、验证、优化器、损失函数等使用 Pytorch Lightning 需要定义的东西，暂时按下不表。</p>
 <h4 id="modelsdiffusion">models/diffusion</h4>
 <p>该目录下定义了扩散模型以及各种采样器。</p>
 <p>首先来看采样器。项目实现的采样器包括 <code>DDIMSampler</code>、<code>PLMSSampler</code> 和 <code>DPMSolverSampler</code>，它们都是普通的类，定义在以各自名字命名的文件或目录中。这些采样器都有 <code>sample()</code> 方法，给定采样步数、batch size、图像大小以及其他参数，就能迭代地从高斯噪声生成最终的图像。</p>
 <p>剩下一个 <code>ddpm.py</code> 是整个仓库里最长的文件，有 1800 行，其中定义了 <code>DDPM</code> 类、<code>LatentDiffusion</code> 类、<code>DiffusionWrapper</code> 类以及一系列继承自 <code>LatentDiffusion</code> 来做微调的类。我们着重看前三个。</p>
-<p><code>DDPM</code> 类和 openai guided-diffusion 里面定义的 GaussianDiffusion 是类似的，就是把与扩散模型相关的参数和功能封装起来。只不过这里它继承自 <code>pl.LightningModule</code>，因此还包括了用 Pytorch Lightning 训练需要的接口，不必太过关心。</p>
+<p><code>DDPM</code> 类和 openai guided-diffusion 里面定义的 GaussianDiffusion 是类似的，就是把与扩散模型相关的参数和功能封装起来。只不过这里它继承自 <code>pl.LightningModule</code>，因此还包括了用 Pytorch Lightning 训练需要的接口，同样暂时按下不表。</p>
 <p><code>LatentDiffusion</code> 类是 SD 最主要的类。它继承自 <code>DDPM</code> 类，但用 <code>instantiate_from_config()</code> 实例化了各个组件，包括：</p>
 <ul>
 <li>cond_stage_model：<code>FrozenCLIPEmbedder</code> 类（见下文）的实例，即文本编码器；</li>
@@ -410,8 +410,8 @@
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>└── control_model                 (ControlNet&#x27;s state_dict)<br>    ├── input_blocks<br>    ├── input_hint_block<br>    ├── middle_block<br>    ├── middle_block_out<br>    ├── time_embed<br>    └── zero_convs<br></code></pre></td></tr></table></figure>
 <h3 id="control-loras-by-stabilityai">Control-LoRAs by StabilityAI</h3>
 <p>以 <code>control-lora-canny-rank128.safetensors</code> 为例，依旧按树形结构展开，有：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── input_blocks<br>├── input_hint_block<br>├── label_emb<br>│   ├── 0.0.bias<br>│   ├── 0.0.down<br>│   ├── 0.0.up<br>│   ├── 0.2.bias<br>│   ├── 0.2.down<br>│   └── 0.2.up<br>├── lora_controlnet  (an empty tensor: Tensor([]))<br>├── middle_block<br>├── middle_block_out<br>├── time_embed<br>└── zero_convs<br></code></pre></td></tr></table></figure>
-<p>对比 ControlNet 的 keys，可以看见多了两项：<code>label_emb</code> 和 <code>lora_controlnet</code>，后者甚至只是一个空 Tensor. 由于 StabilityAI 并没有发布技术报告，所以我只能猜测它们发布模型的时候已经把 LoRA 融入 ControlNet 的权重里了。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── input_blocks<br>│   ├── 7.1.transformer_blocks.7.attn2.to_k.up<br>│   └── ...<br>├── input_hint_block<br>├── label_emb<br>│   ├── 0.0.bias<br>│   ├── 0.0.down<br>│   ├── 0.0.up<br>│   ├── 0.2.bias<br>│   ├── 0.2.down<br>│   └── 0.2.up<br>├── lora_controlnet  (an empty tensor: Tensor([]))<br>├── middle_block<br>├── middle_block_out<br>├── time_embed<br>└── zero_convs<br></code></pre></td></tr></table></figure>
+<p>对比 ControlNet 的 keys，可以看见多了两项：<code>label_emb</code> 和 <code>lora_controlnet</code>，后者只是一个空 Tensor，用于方便判断是否是 Control-LoRAs. 那 LoRA 是加到哪里了呢？其实 <code>input_blocks</code> 等地方的 linear 层都多了 <code>.up</code> 和 <code>.down</code>，我在上面只画了一个示意，它们正是 LoRA.</p>
 
                 
               </div>
