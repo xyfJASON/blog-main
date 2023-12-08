@@ -58,7 +58,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.5-a","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -102,7 +102,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/blog-main/">
+              <a class="nav-link" href="/blog-main/" target="_self">
                 <i class="iconfont icon-home-fill"></i>
                 <span>首页</span>
               </a>
@@ -114,7 +114,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/blog-main/archives/">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
                 <i class="iconfont icon-archive-fill"></i>
                 <span>归档</span>
               </a>
@@ -126,7 +126,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/blog-main/categories/">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
                 <i class="iconfont icon-category-fill"></i>
                 <span>分类</span>
               </a>
@@ -138,7 +138,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/blog-main/tags/">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
                 <i class="iconfont icon-tags-fill"></i>
                 <span>标签</span>
               </a>
@@ -150,7 +150,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/blog-main/about/">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
                 <i class="iconfont icon-user-fill"></i>
                 <span>关于</span>
               </a>
@@ -162,7 +162,7 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/blog-main/links/">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
                 <i class="iconfont icon-friends"></i>
                 <span>友链</span>
               </a>
@@ -184,7 +184,7 @@
                   
                   
                   
-                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage">
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
                     
                     <span>学术主页</span>
                   </a>
@@ -192,7 +192,7 @@
                   
                   
                   
-                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc">
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
                     
                     <span>博客 (ICPC/CCPC)</span>
                   </a>
@@ -200,7 +200,7 @@
                   
                   
                   
-                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi">
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
                     
                     <span>博客 (OI)</span>
                   </a>
@@ -266,7 +266,7 @@
                 
 
 <div class="text-center tagcloud">
-  <a href="/blog-main/tags/AIGC/" style="font-size: 21px; color: #85a1d8">AIGC</a> <a href="/blog-main/tags/computer-vision/" style="font-size: 27px; color: #4e87c2">computer vision</a> <a href="/blog-main/tags/deep-learning/" style="font-size: 25.5px; color: #5c8ec8">deep learning</a> <a href="/blog-main/tags/generative-models/" style="font-size: 28.5px; color: #4181bd">generative models</a> <a href="/blog-main/tags/git/" style="font-size: 16.5px; color: #adb5e9">git</a> <a href="/blog-main/tags/image-processing/" style="font-size: 16.5px; color: #adb5e9">image processing</a> <a href="/blog-main/tags/information-theory/" style="font-size: 15px; color: #bbe">information theory</a> <a href="/blog-main/tags/linear-algebra/" style="font-size: 24px; color: #6994cd">linear algebra</a> <a href="/blog-main/tags/linux/" style="font-size: 21px; color: #85a1d8">linux</a> <a href="/blog-main/tags/machine-learning/" style="font-size: 30px; color: #337ab7">machine learning</a> <a href="/blog-main/tags/python/" style="font-size: 15px; color: #bbe">python</a> <a href="/blog-main/tags/pytorch/" style="font-size: 18px; color: #a0aee3">pytorch</a> <a href="/blog-main/tags/reinforcement-learning/" style="font-size: 22.5px; color: #779bd3">reinforcement learning</a> <a href="/blog-main/tags/stable-diffusion/" style="font-size: 19.5px; color: #92a8de">stable diffusion</a> <a href="/blog-main/tags/statistics/" style="font-size: 22.5px; color: #779bd3">statistics</a>
+  <a href="/blog-main/tags/AIGC/" style="font-size: 21px; color: #85a1d8">AIGC</a> <a href="/blog-main/tags/computer-vision/" style="font-size: 27px; color: #4e87c2">computer vision</a> <a href="/blog-main/tags/deep-learning/" style="font-size: 25.5px; color: #5c8ec8">deep learning</a> <a href="/blog-main/tags/generative-models/" style="font-size: 28.5px; color: #4181bd">generative models</a> <a href="/blog-main/tags/git/" style="font-size: 16.5px; color: #adb5e9">git</a> <a href="/blog-main/tags/information-theory/" style="font-size: 15px; color: #bbe">information theory</a> <a href="/blog-main/tags/linear-algebra/" style="font-size: 24px; color: #6994cd">linear algebra</a> <a href="/blog-main/tags/linux/" style="font-size: 21px; color: #85a1d8">linux</a> <a href="/blog-main/tags/machine-learning/" style="font-size: 30px; color: #337ab7">machine learning</a> <a href="/blog-main/tags/python/" style="font-size: 15px; color: #bbe">python</a> <a href="/blog-main/tags/pytorch/" style="font-size: 18px; color: #a0aee3">pytorch</a> <a href="/blog-main/tags/reinforcement-learning/" style="font-size: 22.5px; color: #779bd3">reinforcement learning</a> <a href="/blog-main/tags/stable-diffusion/" style="font-size: 19.5px; color: #92a8de">stable diffusion</a> <a href="/blog-main/tags/statistics/" style="font-size: 22.5px; color: #779bd3">statistics</a>
 </div>
 
               </div>
