@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-12-05T03:45:55.000Z">
-<meta property="article:modified_time" content="2023-12-08T08:18:56.136Z">
+<meta property="article:modified_time" content="2023-12-09T17:00:29.552Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          465 字
+          732 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          4 分钟
+          7 分钟
         
       </span>
     
@@ -374,6 +374,21 @@ M_r=|a_{rr}|+\sum_{s=r+1}^n|a_{rs}|,\quad m_r=|a_{rr}|-\sum_{s=r+1}^n|a_{rs}|,\q
             <p>证明：根据 Schur 定理，存在酉矩阵 <span class="math inline">\(U\)</span> 使得 <span class="math inline">\(A=UTU^H\)</span>，其中 <span class="math inline">\(T\)</span> 为上三角矩阵，对角元素为 <span class="math inline">\(A\)</span> 的特征值，且： <span class="math display">\[\sum_{r=1}^n|\lambda_r|^2=\sum_{k=1}^n|t_{kk}|^2\leq\sum_{r=1}^n\sum_{s=1}^n|t_{rs}|^2=\text{tr}(T^HT)=\text{tr}(A^HA)\]</span> 证毕。</p>
           </div></p>
 <h2 id="特征值的包含区域圆盘定理">特征值的包含区域（圆盘定理）</h2>
+<p><strong>行盖尔圆</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n}\)</span>，记第 <span class="math inline">\(i\)</span> 个盖尔圆为： <span class="math display">\[
+S_i=\{z\mid |z-a_{ii}|\leq R_i,\,z\in\mathbb C\}
+\]</span> 其中 <span class="math inline">\(R_i=R_i(A)=\sum_{j\neq i}|a_{ij}|\)</span>.</p>
+<p><strong>圆盘定理 1</strong>：<span class="math inline">\(A\)</span> 的所有特征值在其 <span class="math inline">\(n\)</span> 个盖尔圆的并集之内，即： <span class="math display">\[
+\lambda\in S=\bigcup_{i=1}^nS_i=\bigcup_{i=1}^n\{z\mid |z-a_{ii}|\leq R_i,\,z\in\mathbb C\}
+\]</span> <div class="note note-secondary">
+            <p>证明：设 <span class="math inline">\(Ax=\lambda x\)</span>，写作分量形式： <span class="math display">\[\sum_{j=1}^na_{ij}x_j=\lambda x_i\implies (\lambda-a_{ii})x_i=\sum_{j\neq i}a_{ij}x_j\]</span> 设 <span class="math inline">\(x_t\)</span> 为 <span class="math inline">\(x\)</span> 各分量中模最大的那个，则 <span class="math inline">\(x_t\neq 0\)</span>，上式取 <span class="math inline">\(i=t\)</span> 后两边同时除以 <span class="math inline">\(x_t\)</span> 并取模得： <span class="math display">\[|\lambda-a_{tt}|=\sum_{j\neq t}|a_{tj}|\left|\frac{x_j}{x_t}\right|\leq\sum_{j\neq t}|a_{tj}|=R_t(A)\]</span> 因此 <span class="math inline">\(\lambda\in S_t\)</span>. 于是任意特征值 <span class="math inline">\(\lambda\in\bigcup_{i=1}^n S_i\)</span>. 证毕。</p>
+          </div></p>
+<div class="note note-info">
+            <p>圆盘定理 1 说明，特征值 <span class="math inline">\(\lambda\)</span> 属于特征向量最大分量的下标对应的盖尔圆。</p>
+          </div>
+<p><strong>圆盘定理 2</strong>：设矩阵 <span class="math inline">\(A\)</span> 的 <span class="math inline">\(n\)</span> 个盖尔圆有 <span class="math inline">\(k\)</span> 个互相连通并且与其余 <span class="math inline">\(n-k\)</span> 个不相交，则这个连通区域中恰有 <span class="math inline">\(k\)</span> 个特征值。</p>
+<div class="note note-success">
+            <p>说明：设 <span class="math inline">\(A=D+B\)</span>，其中 <span class="math inline">\(D\)</span> 为对角矩阵。设 <span class="math inline">\(A(t)=D+tB\)</span>，则当 <span class="math inline">\(t=0\)</span> 时，所有盖尔圆都是点，也就是特征追；当 <span class="math inline">\(t\)</span> 从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(1\)</span> 连续变化时，盖尔圆越来越大，而特征值也是<strong>连续</strong>变化的，所以 <span class="math inline">\(t=1\)</span> 时特征值只能在其连通区域内，不可能跳跃到不连通的另一个区域中。从这个角度也可以知道，当两个盖尔圆相切时，其特征值最多到达切点处。</p>
+          </div>
 <h2 id="矩阵谱半径的估计">矩阵谱半径的估计</h2>
 
                 
