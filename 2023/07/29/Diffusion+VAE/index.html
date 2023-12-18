@@ -1,0 +1,922 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="近期有几篇工作不约而同地都尝试了结合 Diffusion Models 与 VAE，尽管它们的动机并不相同。本文首先以一个结合 Diffusion 与 AE 的工作为引入，然后推导 Diffusion + VAE 的基本框架，再在这个基本框架下分别介绍相关的工作。 Diffusion + AE 在与 VAE 结合之前，论文[1]提出了 Diffusion Autoencoders，结合了 Diff">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diffusion+VAE">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/07/29/Diffusion+VAE/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="近期有几篇工作不约而同地都尝试了结合 Diffusion Models 与 VAE，尽管它们的动机并不相同。本文首先以一个结合 Diffusion 与 AE 的工作为引入，然后推导 Diffusion + VAE 的基本框架，再在这个基本框架下分别介绍相关的工作。 Diffusion + AE 在与 VAE 结合之前，论文[1]提出了 Diffusion Autoencoders，结合了 Diff">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-vae.png">
+<meta property="article:published_time" content="2023-07-29T08:34:26.000Z">
+<meta property="article:modified_time" content="2023-12-17T13:24:15.565Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-vae.png">
+  
+  
+  
+  <title>Diffusion+VAE - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-vae.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Diffusion+VAE"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-07-29 16:34" pubdate>
+          2023年7月29日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          22 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Diffusion+VAE</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>近期有几篇工作不约而同地都尝试了结合 Diffusion Models 与 VAE，尽管它们的动机并不相同。本文首先以一个结合 Diffusion 与 AE 的工作为引入，然后推导 Diffusion + VAE 的基本框架，再在这个基本框架下分别介绍相关的工作。</p>
+<h2 id="diffusion-ae">Diffusion + AE</h2>
+<p>在与 VAE 结合之前，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Preechakul, Konpat, Nattanat Chatthee, Suttisak Wizadwongsa, and Supasorn Suwajanakorn. Diffusion autoencoders: Toward a meaningful and decodable representation. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 10619-10629. 2022.">[1]</span></a></sup>提出了 Diffusion Autoencoders，结合了 Diffusion 与 AE. 作者的动机是<strong>为扩散模型寻找一个有语义的隐空间</strong>，因为即便是像 DDIM 那样的确定性采样过程，其“隐空间”，即 <span class="math inline">\(\mathbf x_T\)</span> 所在空间也并不理想，典型表现就是 DDIM 的插值结果并不是平滑变化的。Diffusion Autoencoders 希望构造一个像 GANs 和 VAEs 一样方便操纵的隐空间，能够平滑地插值、控制语义和编辑图像属性。为此，作者设计了如下架构：</p>
+<p><img src="diffusion-autoencoders.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>其中，Semantic encoder 是一个卷积编码器，目的是提取输入图像的语义特征 <span class="math inline">\(z_\text{sem}\)</span>；Conditional DDIM 是以 <span class="math inline">\(z_\text{sem}\)</span> 为条件（通过 AdaGN 融入）的扩散模型，可以把 <span class="math inline">\(\mathbf x_0\to\mathbf x_T\)</span> 过程看作“编码器”，<span class="math inline">\(\mathbf x_T\to\mathbf x_0\)</span> 过程看作“解码器”；Latent DDIM 稍后再做解释。在这个架构下，<strong><span class="math inline">\(z_\text{sem}\)</span> 和 <span class="math inline">\(\mathbf x_T\)</span> 共同形成了输入图像的隐空间</strong>。前者编码语义信息，让我们能够操纵生成图像的各种属性（如人的性别、年龄、微笑）；后者编码了 <span class="math inline">\(z_\text{sem}\)</span> 遗留的其他信息，往往是一些随机细节。二者共同作用，既有扩散模型能够几乎完美地重建输入图像的优势，又得到了 high-level 的语义表征 <span class="math inline">\(z_\text{sem}\)</span> 供下游任务的使用。当然，我们并没有显式地要求模型把语义编码在 <span class="math inline">\(z_\text{sem}\)</span> 而不是 <span class="math inline">\(\mathbf x_T\)</span> 之中，但实验发现——如果固定 <span class="math inline">\(z_\text{sem}\)</span> 不变，随机采样 <span class="math inline">\(\mathbf x_T\)</span>，那么生成的结果也大体不变，只有细节改变——这证明了确实是 <span class="math inline">\(z_\text{sem}\)</span> 编码图像语义、<span class="math inline">\(\mathbf x_T\)</span> 编码随机细节，符合我们的预期。</p>
+<p>为了支持无条件生成，我们需要对 <span class="math inline">\(z_\text{sem}\)</span> 的分布进行建模，这就是 Latent DDIM 的用途。当然，任何生成模型都可以用来建模 <span class="math inline">\(z_\text{sem}\)</span>，只是作者觉得扩散模型更好罢了。</p>
+<h2 id="diffusion-vae">Diffusion + VAE</h2>
+<h3 id="ddpm-回顾">DDPM 回顾</h3>
+<p><img src="diffusion.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>如上图所示，DDPM 将前向过程和逆向过程都设计为了马尔可夫链的形式： <span class="math display">\[
+q(\mathbf x_{1:T}\vert\mathbf x_0)=\prod_{t=1}^{T}q(\mathbf x_t\vert\mathbf x_{t-1})\quad\quad p(\mathbf x_{0:T})=p(\mathbf x_T)\prod_{t=1}^{T}p(\mathbf x_{t-1}\vert\mathbf x_t)
+\]</span> 于是 ELBO 可按如下方式推导： <span class="math display">\[
+\begin{align}
+\text{ELBO}(\mathbf x_0)&amp;=\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_{0:T})}{q(\mathbf x_{1:T}\vert\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_T)\prod_{t=1}^{T}p(\mathbf x_{t-1}\vert\mathbf x_t)}{\prod_{t=1}^{T}q(\mathbf x_t\vert\mathbf x_{t-1})}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_T)\prod_{t=1}^{T}p(\mathbf x_{t-1}\vert\mathbf x_t)}{q(\mathbf x_1\vert\mathbf x_0)\prod_{t=2}^{T}q(\mathbf x_t\vert\mathbf x_{t-1},\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_T)\prod_{t=1}^{T}p(\mathbf x_{t-1}\vert\mathbf x_t)}{q(\mathbf x_1\vert\mathbf x_0)\prod_{t=2}^{T}\frac{q(\mathbf x_t\vert\mathbf x_0)q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)}{q(\mathbf x_{t-1}\vert\mathbf x_0)}}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_T)\prod_{t=1}^{T}p(\mathbf x_{t-1}\vert\mathbf x_t)}{q(\mathbf x_T\vert\mathbf x_0)\prod_{t=2}^{T}q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log p(\mathbf x_0\vert\mathbf x_1)\right]+\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_T)}{q(\mathbf x_T\vert\mathbf x_0)}\right]+\sum_{t=2}^T\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_{t-1}\vert\mathbf x_t)}{q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1}\vert\mathbf x_0)}\left[\log p(\mathbf x_0\vert\mathbf x_1)\right]+\mathbb E_{q(\mathbf x_{T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_T)}{q(\mathbf x_T\vert\mathbf x_0)}\right]+\sum_{t=2}^T\mathbb E_{q(\mathbf x_t\vert\mathbf x_0)}\mathbb E_{q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)}\left[\log\frac{p(\mathbf x_{t-1}\vert\mathbf x_t)}{q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)}\right]\\
+&amp;=\underbrace{\mathbb E_{q(\mathbf x_{1}\vert\mathbf x_0)}\left[\log p(\mathbf x_0\vert\mathbf x_1)\right]}_\text{reconstruction term}-\underbrace{\text{KL}(q(\mathbf x_T\vert\mathbf x_0)\Vert p(\mathbf x_T))}_\text{regularization term}-\sum_{t=2}^T\mathbb E_{q(\mathbf x_t\vert\mathbf x_0)}\underbrace{\left[\text{KL}(q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)\Vert p(\mathbf x_{t-1}\vert\mathbf x_t))\right]}_\text{denoising matching terms}\\
+\end{align}
+\]</span> 可以看见，ELBO 由三项构成：重构项、正则项和去噪匹配项。DDPM 通过巧妙地设计 <span class="math inline">\(q\)</span>，使得 <span class="math inline">\(q(\mathbf x_t\vert\mathbf x_0)\)</span> 和 <span class="math inline">\(q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)\)</span> 都可以解析地写作正态分布的形式，并取 <span class="math inline">\(p\)</span> 为类似形式，那么上述重构项和去噪匹配项都能写作 MSE Loss，而正则项在 <span class="math inline">\(T\)</span> 充分大时趋近于 <span class="math inline">\(0\)</span>. 在进一步简化和重参数化后，就可以得到最终的损失函数（具体细节此处略过）： <span class="math display">\[
+L_\text{simple}(\theta)=\mathbb E_{t,\mathbf x_0,\epsilon}\left[\left\Vert\epsilon-\epsilon_\theta\left(\sqrt{\bar\alpha_t}\mathbf x_0+\sqrt{1-\bar\alpha_t}\epsilon,t\right)\right\Vert^2\right]
+\]</span></p>
+<h3 id="基本框架">基本框架</h3>
+<p>受到 Diffusion AE 的启发，我们在 DDPM 的概率图中新增一个隐变量 <span class="math inline">\(\mathbf z\)</span>，并且让逆向过程的每一步都以 <span class="math inline">\(\mathbf z\)</span> 为条件输入，如下图所示：</p>
+<p><img src="diffusion+vae.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /> <span class="math display">\[
+\begin{align}
+&amp;q(\mathbf x_{1:T},\mathbf z\vert\mathbf x_0)=q(\mathbf z\vert\mathbf x_0)q(\mathbf x_{1:T}\vert\mathbf x_0)=q(\mathbf z\vert\mathbf x_0)\prod_{t=1}^{T}q(\mathbf x_t\vert\mathbf x_{t-1})\label{inference}\tag{1}\\
+&amp;p(\mathbf x_{0:T},\mathbf z)=p(\mathbf z)p(\mathbf x_{0:T}\vert\mathbf z)=p(\mathbf z)p(\mathbf x_T\vert\mathbf z)\prod_{t=1}^T p(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf z)\label{generative}\tag{2}
+\end{align}
+\]</span> 那么 ELBO 可以写作： <span class="math display">\[
+\begin{align}
+\text{ELBO}(\mathbf x_0)&amp;=\mathbb E_{q(\mathbf x_{1:T},\mathbf z\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_{0:T},\mathbf z)}{q(\mathbf x_{1:T},\mathbf z\vert\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_{1:T},\mathbf z\vert\mathbf x_0)}\left[\log\frac{p(\mathbf z)p(\mathbf x_{0:T}\vert\mathbf z)}{q(\mathbf z\vert\mathbf x_0)q(\mathbf x_{1:T}\vert\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\left[\log\frac{p(\mathbf z)}{q(\mathbf z\vert\mathbf x_0)}\right]+\mathbb E_{q(\mathbf x_{1:T},\mathbf z\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_{0:T}\vert\mathbf z)}{q(\mathbf x_{1:T}\vert\mathbf x_0)}\right]\\
+&amp;=-\underbrace{\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z))}_\text{VAE regularization term}+\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\underbrace{\left[\mathbb E_{q(\mathbf x_{1:T}\vert\mathbf x_0)}\left[\log\frac{p(\mathbf x_{0:T}\vert\mathbf z)}{q(\mathbf x_{1:T}\vert\mathbf x_0)}\right]\right]}_\text{almost the same as DDPM}
+\end{align}
+\]</span> 其中第二项的推导过程与 DDPM 几乎没有区别，只需要把所有的 <span class="math inline">\(p\)</span> 都加上 <span class="math inline">\(\mathbf z\)</span> 作为条件即可，而多出来的第一项正好是 VAE 的正则项。因此总的来说，现在的优化目标由四项构成：</p>
+<ul>
+<li><p><strong>VAE 正则项</strong>： <span class="math display">\[
+-\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z)))\label{vae-reg}\tag{3}
+\]</span></p></li>
+<li><p><strong>VAE 重构项 / Diffusion 正则项</strong>： <span class="math display">\[
+-\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\left[\text{KL}(q(\mathbf x_T\vert\mathbf x_0)\Vert p(\mathbf x_T\vert\mathbf z))\right]\label{diff-reg}\tag{4}
+\]</span></p>
+<blockquote>
+<p>注：从 VAE 的角度看，<span class="math inline">\(q(\mathbf x_T\vert\mathbf x_0)\)</span> 是 <span class="math inline">\(\mathbf x_T\)</span> 的真实分布，<span class="math inline">\(p(\mathbf x_T\vert\mathbf z)\)</span> 是预测的分布，因此相当于重构项；而从 Diffusion 的角度看，<span class="math inline">\(p(\mathbf x_T\vert\mathbf z)\)</span> 是先验分布，<span class="math inline">\(q(\mathbf x_T\vert\mathbf x_0)\)</span> 是后验分布，因此是正则项。</p>
+</blockquote></li>
+<li><p><strong>Diffusion 重构项</strong>： <span class="math display">\[
+\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\mathbb E_{q(\mathbf x_{1}\vert\mathbf x_0)}\left[\log p(\mathbf x_0\vert\mathbf x_1,\mathbf z)\right]\label{diff-rec}\tag{5}
+\]</span></p></li>
+<li><p><strong>Diffusion 去噪匹配项</strong>： <span class="math display">\[
+-\sum_{t=2}^T\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\mathbb E_{q(\mathbf x_t\vert\mathbf x_0)}\left[\text{KL}(q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)\Vert p(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf z))\right]\label{diff-match}\tag{6}
+\]</span></p></li>
+</ul>
+<p>下面我们介绍几个相关的工作。由于它们有着不同的动机，因此对上述基本框架或多或少进行了一些修改，我们可以着重关注修改的地方。</p>
+<h3 id="es-ddpm">ES-DDPM</h3>
+<p>ES-DDPM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lyu, Zhaoyang, Xudong Xu, Ceyuan Yang, Dahua Lin, and Bo Dai. Accelerating diffusion models via early stop of the diffusion process. *arXiv preprint arXiv:2205.12524* (2022).">[2]</span></a></sup> 的研究动机是希望加速扩散模型的训练和采样。不同于 improved DDPM 和 DDIM 在原马尔可夫链上跳跃式前进的加速采样方法，ES-DDPM 直接对加噪过程做一个截断（Early-Stop），不把原图像加噪到标准正态，如此不仅能加速采样，也能加速训练。这样做带来的一个问题是如何对非正态的 <span class="math inline">\(\mathbf x_{T&#39;}\)</span> 的分布进行建模。一个自然的想法就是用另一个生成模型，比如 VAE，来建模 <span class="math inline">\(\mathbf x_{T&#39;}\)</span>. 因此，ES-DDPM 的整体框架如下图所示：</p>
+<p><img src="es-ddpm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>可以看见，这与我们画的基本框架非常相像。一个略有不同的点在于，作者为了能够分别独自训练 VAE 和 DDPM，规定 <span class="math inline">\(\mathbf z\)</span> 与 <span class="math inline">\(p(\mathbf x_{t-1}\vert\mathbf x_t)\)</span> 二者独立： <span class="math display">\[
+p(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf z)=p(\mathbf x_{t-1}\vert\mathbf x_t),\quad t=1,2,\ldots,T
+\]</span> 如此一来，<span class="math inline">\(\eqref{diff-rec}\)</span> 式和 <span class="math inline">\(\eqref{diff-match}\)</span> 式就与原本的 DDPM 彻底一样了，只是训练的时间步少一些。</p>
+<p>对于 <span class="math inline">\(\eqref{diff-reg}\)</span> 式，注意现在 <span class="math inline">\(\mathbf x_{T&#39;}\)</span> 不是标准正态随机变量，所以并不为 <span class="math inline">\(0\)</span>，因此我们需要为 <span class="math inline">\(p(\mathbf x_T\vert\mathbf z)\)</span> 找一个便于计算的参数化形式。考虑到 DDPM 将 <span class="math inline">\(q(\mathbf x_{T&#39;}\vert\mathbf x_0)\)</span> 设计为了如下形式： <span class="math display">\[
+q(\mathbf x_{T&#39;}\vert\mathbf x_0)=\mathcal N\left(\mathbf x_{T&#39;};\sqrt{\bar\alpha_t}\mathbf x_0,(1-\bar\alpha_t)\mathbf I\right)
+\]</span> 自然想到将 <span class="math inline">\(p(\mathbf x_{T&#39;}\vert\mathbf z)\)</span> 设计为类似的形式： <span class="math display">\[
+p(\mathbf x_{T&#39;}\vert\mathbf z)=\mathcal N\left(\mathbf x_{T&#39;};\sqrt{\bar\alpha_t}f_\phi(\mathbf z),(1-\bar\alpha_t)\mathbf I\right)
+\]</span> 这个 <span class="math inline">\(f_\phi\)</span> 就相当于是 VAE 的解码器。那么很容易推出，<span class="math inline">\(\eqref{diff-reg}\)</span> 式的 KL 散度可以写作： <span class="math display">\[
+\text{KL}(q(\mathbf x_{T&#39;}\vert\mathbf x_0)\Vert p(\mathbf x_{T&#39;}\vert\mathbf z))=C_1\left\Vert\mathbf x_0-f_\phi(\mathbf z)\right\Vert^2+C_2
+\]</span> 直观来看就是用 <span class="math inline">\(\mathbf z\)</span> 去预测 <span class="math inline">\(\mathbf x_0\)</span>. 而 <span class="math inline">\(\eqref{vae-reg}\)</span> 式就是普通的 VAE 正则项，取先验 <span class="math inline">\(p(\mathbf z)\)</span> 为标准正态即可。那么现在 <span class="math inline">\(\eqref{vae-reg},\eqref{diff-reg},\eqref{diff-rec},\eqref{diff-match}\)</span> 式都被我们解析地写了出来，就可以开始<s>愉快地</s>训练了。</p>
+<p>训练结束后，我们依照 <span class="math inline">\(\eqref{generative}\)</span> 式采样即可：首先从标准正态中采样 <span class="math inline">\(\mathbf z\)</span>，然后计算 <span class="math inline">\(f_\phi(\mathbf z)\)</span>，再从 <span class="math inline">\(p(\mathbf x_{T&#39;}\vert\mathbf z)\)</span> 中采样 <span class="math inline">\(\mathbf x_{T&#39;}\)</span>，最后根据 <span class="math inline">\(p(\mathbf x_{t-1}\vert\mathbf x_t)\)</span> 去噪。注意到采样过程并不需要 VAE 的编码器 <span class="math inline">\(q(\mathbf z\vert\mathbf x_0)\)</span> 的参与，只需要解码器 <span class="math inline">\(f_\phi(\mathbf z)\)</span>，因此作者还提出，可以把 VAE 换做 GAN，并且实验发现性能更好。事实上，无论是 VAE 还是 GAN，ES-DDPM 干的事情可以简单地总结为：用一个生成模型（VAE / GAN）生成一张图像，然后进行一定程度地加噪，再用扩散模型去噪——本质上就是用 SDEdit 的方式来改良 VAE/GAN 生成的图像。</p>
+<h3 id="lrdm">LRDM</h3>
+<p>LRDM<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Traub, Jeremias. Representation Learning with Diffusion Models. *arXiv preprint arXiv:2210.11058* (2022).">[3]</span></a></sup> 其实是海德堡大学的一篇硕士论文，其动机与本文开头的 Diffusion Autoencoders 一致——为扩散模型寻找一个有语义的隐空间。考虑到 VAE 拥有这样的隐空间，因此作者考虑将 VAE 与 Diffusion 相结合，整体框架如下左图所示：</p>
+<p><img src="lrdm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>可以看见，除了变量名与本文略有出入以外，这与我们的基本框架几乎完全一致。唯一的一个小区别在于没有从 <span class="math inline">\(\mathbf z\)</span> 到 <span class="math inline">\(\mathbf x_T\)</span> 的线，但这一点无关紧要，因为在 LRDM 中 <span class="math inline">\(T\)</span> 是充分大的，<span class="math inline">\(q(\mathbf x_T\vert\mathbf x_0)\)</span> 趋近于标准正态，所以可以直接取 <span class="math inline">\(p(\mathbf x_T\vert\mathbf z)\)</span> 为标准正态，自然有没有 <span class="math inline">\(\mathbf z\)</span> 的条件都无所谓了。换句话说，<span class="math inline">\(\eqref{diff-reg}\)</span> 式就像原始的 DDPM 一样变成了 <span class="math inline">\(0\)</span>，这一点与 ES-DDPM 形成了鲜明对比（事实上本节涉及的方法中除了 ES-DDPM，<span class="math inline">\(\eqref{diff-reg}\)</span> 式都退化为 <span class="math inline">\(0\)</span>）。</p>
+<p>作者还做了进一步的扩展，考虑了给不同时间步以不同的隐变量的情形，如上右图所示。具体实现上可以通过给编码器以时间步 <span class="math inline">\(t\)</span> 作为条件来完成。相关推导应该也大差不差，这里就不赘述了。</p>
+<h3 id="diffusevae">DiffuseVAE</h3>
+<p>DiffuseVAE<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Pandey, Kushagra, Avideep Mukherjee, Piyush Rai, and Abhishek Kumar. Diffusevae: Efficient, controllable and high-fidelity generation from low-dimensional latents. *arXiv preprint arXiv:2201.00308* (2022).">[4]</span></a></sup> 的想法很直接：首先用 VAE 生成图像 <span class="math inline">\(\hat{\mathbf x}_0\)</span>，然后将其作为条件给到扩散模型来精细化，整体框架如下所示：</p>
+<p><img src="diffusevae.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>乍一看这好像与我们的基本框架不太相像，但仔细一瞧其实是类似的，只不过由于 DiffuseVAE 是分阶段训练而非联合训练的，在训练扩散模型之前已经训练好 VAE 了，所以可以把条件从隐变量 <span class="math inline">\(\mathbf z\)</span> 换成 VAE 重构的图像 <span class="math inline">\(\hat{\mathbf x}_0\)</span>，即： <span class="math display">\[
+p(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf z)=p(\mathbf x_{t-1}\vert\mathbf x_t,\hat{\mathbf x}_0),\quad t=1,2,\ldots,T
+\]</span> 相当于训练一个条件扩散模型做超分（类似于 SR3）。也就是说，由于 DiffuseVAE 选择了分阶段训练，我们原本统一的框架被拆分成了两个已有工作的拼接，多少有点遗憾。甚至作者也在论文的 limitation 一节说端到端的联合训练是值得探索的。不过有趣的是，我们框架中的前向过程是与条件独立的（即 <span class="math inline">\(\eqref{inference}\)</span> 式），而本文的作者还提出了一种带条件的前向过程形式化： <span class="math display">\[
+\begin{align}
+&amp;q(\mathbf x_1\vert\mathbf x_0,\hat{\mathbf x}_0)=\mathcal N\left(\mathbf x_1;\sqrt{1-\beta_1}\mathbf x_0+\hat{\mathbf x}_0,\beta_1\mathbf I\right)\\
+&amp;q(\mathbf x_t\vert\mathbf x_{t-1},\hat{\mathbf x}_0)=\mathcal N\left(\mathbf x_t;\sqrt{1-\beta_t}\mathbf x_{t-1}+(1-\sqrt{1-\beta_t})\hat{\mathbf x}_0,\beta_t\mathbf I\right)
+\end{align}
+\]</span> 在这样的形式化下，可以推出： <span class="math display">\[
+q(\mathbf x_t\vert\mathbf x_0,\hat{\mathbf x}_0)=\mathcal N\left(\mathbf x_t;\sqrt{\bar\alpha_t}\mathbf x_0+\hat{\mathbf x}_0,(1-\bar\alpha_t)\mathbf I\right)
+\]</span> 因此，当 <span class="math inline">\(T\to\infty\)</span> 时，<span class="math inline">\(q(\mathbf x_T\vert\mathbf x_0,\hat{\mathbf x}_0)\to\mathcal N(\mathbf x_T;\hat{\mathbf x}_0,\mathbf I)\)</span>，也就是说，模型不再是把任何图像都加噪到标准正态分布，而是加噪到以原图为中心的正态分布。当然，在这样的形式化下，原始 DDPM 中的相关公式都要重新推导，鉴于这已经偏离了本文的主题，就不再赘述了。</p>
+<h3 id="infodiffusion">InfoDiffusion</h3>
+<p>InfoDiffusion<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wang, Yingheng, Yair Schiff, Aaron Gokaslan, Weishen Pan, Fei Wang, Christopher De Sa, and Volodymyr Kuleshov. InfoDiffusion: Representation Learning Using Information Maximizing Diffusion Models. *arXiv preprint arXiv:2306.08757* (2023).">[5]</span></a></sup> 的目的依然是寻找一个有语义的隐空间，整体框架如下图所示：</p>
+<p><img src="infodiffusion.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>可见这就是在我们的基础框架上增加了两个正则项（红色框框），分别是：</p>
+<ul>
+<li><p><strong>Mutual Information Maximization</strong>：最大化隐变量 <span class="math inline">\(\mathbf z\)</span> 与图像 <span class="math inline">\(\mathbf x_0\)</span> 之间的互信息，用于避免模型忽略隐变量 <span class="math inline">\(\mathbf z\)</span>. <span class="math display">\[
+\text{MI}_{\mathbf x_0,\mathbf z}=\mathbb E_{q(\mathbf x_0,\mathbf z)}\left[\log\frac{q(\mathbf x_0,\mathbf z)}{q(\mathbf x_0)q(\mathbf z)}\right]
+\]</span> 这个思想最早来自于著名的 InfoGAN，而后被用在了 InfoVAE 之中，所以现在用在 Diffusion 中也并不意外。</p></li>
+<li><p><strong>Prior Regularization</strong>：让 <span class="math inline">\(\mathbf z\)</span> 的后验逼近一个可灵活选取的先验分布，防止后验坍塌。 <span class="math display">\[
+\mathcal R=\mathbf D(q(\mathbf z)\Vert p(\mathbf z))
+\]</span> 其中 <span class="math inline">\(\mathbf D\)</span> 可以是任意一种散度。</p></li>
+</ul>
+<p>那么总的优化目标就是： <span class="math display">\[
+\mathbb E_{q(\mathbf x_0)}[\text{ELBO}(\mathbf x_0)]+\zeta\cdot\text{MI}_{\mathbf x_0,\mathbf z}-\beta\cdot\mathcal R
+\]</span> 其中 <span class="math inline">\(\zeta,\beta&gt;0\)</span> 是控制正则项大小的系数。</p>
+<p>然而，这两个正则项都不能直接写出解析形式，需要进一步的推导。为此，我们首先重写 VAE 正则项（<span class="math inline">\(\eqref{vae-reg}\)</span> 式）： <span class="math display">\[
+\begin{align}
+-\mathbb E_{q(\mathbf x_0)}\left[\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z)))\right]
+&amp;=\mathbb E_{q(\mathbf x_0)}\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\left[\log\frac{p(\mathbf z)}{q(\mathbf z\vert\mathbf x_0)}\right]\\
+&amp;=\mathbb E_{q(\mathbf x_0,\mathbf z)}\left[\log\left(\frac{p(\mathbf z)}{q(\mathbf z\vert\mathbf x_0)}\cdot\frac{q(\mathbf z)}{q(\mathbf z)}\right)\right]\\
+&amp;=\mathbb E_{q(\mathbf x_0,\mathbf z)}\left[\log\frac{p(\mathbf z)}{q(\mathbf z)}+\log\frac{q(\mathbf z)}{q(\mathbf z\vert\mathbf x_0)}\right]\\
+&amp;=-\text{KL}(q(\mathbf z)\Vert p(\mathbf z))-\text{MI}_{\mathbf x_0,\mathbf z}
+\end{align}
+\]</span> 发现 VAE 正则项本身就由两部分组成：互信息 <span class="math inline">\(\text{MI}_{\mathbf x_0,\mathbf z}\)</span> 与 <span class="math inline">\(\mathcal R\)</span>（在取 <span class="math inline">\(\mathbf D\)</span> 为 KL 散度的情况下），所以 InfoDiffusion 添加的两个正则项本质上是在对原本的 VAE 正则项的两个组成部分进行重新加权。我们首先解决互信息无法解析表达的问题，只需要反过来用 VAE 正则项和 <span class="math inline">\(\mathcal R\)</span> 来替换掉互信息即可： <span class="math display">\[
+\begin{align}
+&amp;-\mathbb E_{q(\mathbf x_0)}\left[\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z)))\right]+\zeta\cdot\text{MI}_{\mathbf x_0,\mathbf z}-\beta\cdot\mathcal R\\
+=&amp;-\mathbb E_{q(\mathbf x_0)}[\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z))]+\zeta\cdot\left(-\mathcal R+\mathbb E_{q(\mathbf x_0)}[\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z))]\right)-\beta\cdot\mathcal R\\
+=&amp;\ (\zeta-1)\mathbb E_{q(\mathbf x_0)}[\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z))]-(\zeta+\beta)\cdot\mathcal R
+\end{align}
+\]</span> 最后把剩下的其他项（<span class="math inline">\(\eqref{diff-reg},\eqref{diff-rec},\eqref{diff-match}\)</span> 式套上对 <span class="math inline">\(\mathbf x_0\)</span> 求期望）加进来，就得到了最终的优化目标： <span class="math display">\[
+\begin{align}
+\mathcal L_I=\ &amp;\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\mathbb E_{q(\mathbf x_0,\mathbf x_1)}\left[\log p(\mathbf x_0\vert\mathbf x_1,\mathbf z)\right]
+-\mathbb E_{q(\mathbf x_0)}\left[\text{KL}(q(\mathbf x_T\vert\mathbf x_0)\Vert p(\mathbf x_T))\right]\\
+&amp;-\sum_{t=2}^T\mathbb E_{q(\mathbf x_0,\mathbf x_t)}\mathbb E_{q(\mathbf z\vert\mathbf x_0)}\left[\text{KL}(q(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf x_0)\Vert p(\mathbf x_{t-1}\vert\mathbf x_t,\mathbf z))\right]\\
+&amp;-(\zeta+\beta)\cdot\text{KL}(q(\mathbf z)\Vert p(\mathbf z))-(1-\zeta)\mathbb E_{q(\mathbf x_0)}[\text{KL}(q(\mathbf z\vert\mathbf x_0)\Vert p(\mathbf z))]
+\end{align}
+\]</span> 现在还有一个遗留问题就是 <span class="math inline">\(\mathcal R=\text{KL}(q(\mathbf z)\Vert p(\mathbf z))\)</span> 依旧无法写出解析形式。为此，作者证明了，虽然上述推导建立在取 <span class="math inline">\(\mathcal R\)</span> 中的散度 <span class="math inline">\(\mathbf D\)</span> 为 KL 散度的情形下，但是直接把 KL 散度换成其他散度也是没问题的。最终作者选用 MMD (maximum mean discrepancy)： <span class="math display">\[
+\begin{align}
+\text{MMD}(q(\mathbf z)\Vert p(\mathbf z))&amp;=
+\mathbb E_{\mathbf z,\mathbf z&#39;\sim q(\mathbf z)}[k(\mathbf z,\mathbf z&#39;)]\\
+&amp;+\mathbb E_{\mathbf z,\mathbf z&#39;\sim p(\mathbf z)}[k(\mathbf z,\mathbf z&#39;)]\\
+&amp;-2\mathbb E_{\mathbf z\sim q(\mathbf z),\mathbf z&#39;\sim p(\mathbf z)}[k(\mathbf z,\mathbf z&#39;)]
+\end{align}
+\]</span> 其中 <span class="math inline">\(k\)</span> 是一个正定核函数，对 <span class="math inline">\(q(\mathbf z)\)</span> 的期望通过采样 <span class="math inline">\(\{\mathbf x_0^{(i)}\}_{i=1}^N\sim q(\mathbf x_0)\)</span> 的方式来近似。</p>
+<p>事实上，InfoDiffusion 新加入的这两个正则项都是 InfoVAE<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Zhao, Shengjia, Jiaming Song, and Stefano Ermon. Infovae: Information maximizing variational autoencoders. *arXiv preprint arXiv:1706.02262* (2017).">[6]</span></a></sup> 提出的，感兴趣的读者可以参考 <a href="/blog-main/2023/09/15/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BA%92%E4%BF%A1%E6%81%AF/" title="生成模型中的互信息">生成模型中的互信息</a>一文。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Preechakul, Konpat, Nattanat Chatthee, Suttisak Wizadwongsa, and Supasorn Suwajanakorn. Diffusion autoencoders: Toward a meaningful and decodable representation. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 10619-10629. 2022. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Lyu, Zhaoyang, Xudong Xu, Ceyuan Yang, Dahua Lin, and Bo Dai. Accelerating diffusion models via early stop of the diffusion process. <em>arXiv preprint arXiv:2205.12524</em> (2022). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Traub, Jeremias. Representation Learning with Diffusion Models. <em>arXiv preprint arXiv:2210.11058</em> (2022). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Pandey, Kushagra, Avideep Mukherjee, Piyush Rai, and Abhishek Kumar. Diffusevae: Efficient, controllable and high-fidelity generation from low-dimensional latents. <em>arXiv preprint arXiv:2201.00308</em> (2022). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Wang, Yingheng, Yair Schiff, Aaron Gokaslan, Weishen Pan, Fei Wang, Christopher De Sa, and Volodymyr Kuleshov. InfoDiffusion: Representation Learning Using Information Maximizing Diffusion Models. <em>arXiv preprint arXiv:2306.08757</em> (2023). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Zhao, Shengjia, Jiaming Song, and Stefano Ermon. Infovae: Information maximizing variational autoencoders. <em>arXiv preprint arXiv:1706.02262</em> (2017). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Diffusion+VAE</div>
+      <div>https://xyfjason.github.io/blog-main/2023/07/29/Diffusion+VAE/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年7月29日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/" title="扩散模型中的信噪比">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型中的信噪比</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/06/21/Stable-Diffusion-%E8%AE%AD%E7%BB%83%E4%BD%A0%E7%9A%84LoRA-Linux/" title="[Stable Diffusion]训练你的LoRA(Linux)">
+                        <span class="hidden-mobile">[Stable Diffusion]训练你的LoRA(Linux)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

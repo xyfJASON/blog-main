@@ -1,0 +1,927 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="尺度函数 给定一个平方可积的实值函数 \(\varphi(x)\)，考虑如下函数集合 \(\{\varphi_{j,k}(x)\}\)： \[ \varphi_{j,k}(x)&#x3D;2^{j&#x2F;2}\varphi(2^jx-k) \] 其中 \(k\in\mathbb Z\) 表示平移量，决定函数的位置；\(j\in\mathbb Z\) 指示沿 \(x\) 轴的伸缩量，决定函数的宽度；另外，系数 \(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wavelet Transform">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/12/Wavelet-Transform/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="尺度函数 给定一个平方可积的实值函数 \(\varphi(x)\)，考虑如下函数集合 \(\{\varphi_{j,k}(x)\}\)： \[ \varphi_{j,k}(x)&#x3D;2^{j&#x2F;2}\varphi(2^jx-k) \] 其中 \(k\in\mathbb Z\) 表示平移量，决定函数的位置；\(j\in\mathbb Z\) 指示沿 \(x\) 轴的伸缩量，决定函数的宽度；另外，系数 \(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/wavelet-transform.png">
+<meta property="article:published_time" content="2023-12-12T10:02:57.000Z">
+<meta property="article:modified_time" content="2023-12-18T11:13:49.945Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="image processing">
+<meta property="article:tag" content="signal processing">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/wavelet-transform.png">
+  
+  
+  
+  <title>Wavelet Transform - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/wavelet-transform.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Wavelet Transform"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-12 18:02" pubdate>
+          2023年12月12日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Wavelet Transform</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="尺度函数">尺度函数</h2>
+<p>给定一个平方可积的实值函数 <span class="math inline">\(\varphi(x)\)</span>，考虑如下函数集合 <span class="math inline">\(\{\varphi_{j,k}(x)\}\)</span>： <span class="math display">\[
+\varphi_{j,k}(x)=2^{j/2}\varphi(2^jx-k)
+\]</span> 其中 <span class="math inline">\(k\in\mathbb Z\)</span> 表示平移量，决定函数的位置；<span class="math inline">\(j\in\mathbb Z\)</span> 指示沿 <span class="math inline">\(x\)</span> 轴的伸缩量，决定函数的宽度；另外，系数 <span class="math inline">\(2^{j/2}\)</span> 控制函数的高度。由于 <span class="math inline">\(\varphi_{j,k}(x)\)</span> 的形状由 <span class="math inline">\(j\)</span> 控制，因此我们称 <span class="math inline">\(\varphi(x)\)</span> 为<strong>尺度函数</strong>。</p>
+<p>举个例子，<strong>Haar 尺度函数</strong>定义为： <span class="math display">\[
+\varphi(x)=\begin{cases}1&amp;0\leq x&lt;1\\0&amp;\text{otherwise}\end{cases}
+\]</span> 下图可视化了 Haar 尺度函数及其平移伸缩后的图像：</p>
+<p><img src="haar-scaling.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>当我们固定 <span class="math inline">\(j=j_0\)</span> 后，改变 <span class="math inline">\(k\)</span>，就得到尺度函数的一系列间隔整数单位的平移副本，它们可以作为一组基张成一个函数空间： <span class="math display">\[
+V_{j_0}=\overline{\text{Span}\{\varphi_{j_0,k}(x)\}}
+\]</span> 因此，若 <span class="math inline">\(f(x)\in V_{j_0}\)</span>，则它能表示这组基的线性组合： <span class="math display">\[
+f(x)=\sum_{k}\alpha_k\varphi_{j_0,k}(x)
+\]</span> 例如，对于Haar 尺度函数，当 <span class="math inline">\(j=0\)</span> 时，可以想像所有的 <span class="math inline">\(\{\varphi_{0,k}(x)\}\)</span> 正好一个挨着一个铺满了 <span class="math inline">\(x\)</span> 轴。那么，只要一个函数 <span class="math inline">\(f(x)\)</span> 的“分辨率”不是太高，也即它在一个整数单位区间内不改变，那么就能表示为 <span class="math inline">\(\{\varphi_{0,k}(x)\}\)</span> 的线性组合。类似地，当 <span class="math inline">\(j=1\)</span> 时，<span class="math inline">\(\{\varphi_{1,k}(x)\}\)</span> 的“分辨率”更高了，只要 <span class="math inline">\(f(x)\)</span> 在半个整数单位区间内不改变，就可以表示为 <span class="math inline">\(\{\varphi_{1,k}(x)\}\)</span> 的线性组合。以此类推，随着 <span class="math inline">\(j\)</span> 增大，基函数 <span class="math inline">\(\{\varphi_{j,k}(x)\}\)</span> 的“分辨率”越来越高，能表示的 <span class="math inline">\(f(x)\)</span> 也就越来越精细。这就是<strong>多分辨率分析</strong>的意思。如下左图展示了一个可以表示为 <span class="math inline">\(\varphi_{1,0}(x),\varphi_{1,1}(x),\varphi_{1,4}(x)\)</span> 的线性组合的 <span class="math inline">\(f(x)\)</span>；右图则表明 <span class="math inline">\(\varphi_{0,0}(x)\)</span> 可以表示为 <span class="math inline">\(\varphi_{1,0}(x)\)</span> 和 <span class="math inline">\(\varphi_{1,1}(x)\)</span> 的线性组合。</p>
+<p><img src="haar-scaling2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>不过，为了多分辨率分析能够正常地进行下去，我们对尺度函数 <span class="math inline">\(\varphi(x)\)</span> 提出一些要求：</p>
+<ol type="1">
+<li><p>尺度函数与其间隔整数的平移副本之间是正交的。正交即内积为零，函数空间中内积的定义为：</p>
+<p><span class="math display">\[
+\langle f(x),g(x)\rangle=\int f^\ast(x)g(x)\mathrm dx
+\]</span> 因此，我们要求： <span class="math display">\[
+\langle \varphi_{j,k_1}(x),\varphi_{j,k_2}(x)\rangle=\int \varphi_{j,k_1}^\ast(x)\varphi_{j,k_2}(x)\mathrm dx=2^j\int\varphi^\ast(2^jx-k_1)\varphi(2^jx-k_2)\mathrm dx=0
+\]</span></p></li>
+<li><p>低分辨率尺度函数张成的子空间嵌套在高分辨率尺度函数张成的子空间之内。 <span class="math display">\[
+V_{-\infty}\subset\cdots\subset V_{-1}\subset V_0\subset V_1\subset V_2\subset\cdots\subset V_{\infty}
+\]</span></p></li>
+<li><p>唯一包含在所有空间中的函数是 <span class="math inline">\(f(x)=0\)</span>. <span class="math display">\[
+V_{-\infty}=\{0\}
+\]</span></p></li>
+<li><p>任何函数都可以以任意精度表示。 <span class="math display">\[
+V_{\infty}=\{L^2(\mathbb R)\}
+\]</span> 其中 <span class="math inline">\(L^2(\mathbb R)\)</span> 表示所有平方可积函数。</p></li>
+</ol>
+<p><img src="nested.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<p>于是，在这些要求下，<span class="math inline">\(V_j\)</span> 的基函数可以表示为更高一级分辨率 <span class="math inline">\(V_{j+1}\)</span> 的基函数的线性组合： <span class="math display">\[
+\varphi_{j,k}(x)=\sum_{n}\alpha_n\varphi_{j+1,n}(x)
+\]</span> 当 <span class="math inline">\(j=k=0\)</span> 时，有： <span class="math display">\[
+\varphi(x)=\sum_nh_\varphi(n)\sqrt{2}\varphi(2x-n)\tag{1}\label{scaling}
+\]</span> 这里 <span class="math inline">\(h_\varphi(n)\)</span> 称作<strong>尺度函数系数</strong>，<span class="math inline">\(h_\varphi\)</span> 称作尺度向量。<strong>这个式子是多分辨率分析的基础</strong>，它给出了尺度函数与其两倍分辨率副本之间的关系。例如，对于 Haar 尺度函数，有 <span class="math inline">\(\varphi(x)=\varphi(2x)+\varphi(2x-1)\)</span>，因此 <span class="math inline">\(h_\varphi(0)=h_\varphi(1)=1/\sqrt{2}\)</span>.</p>
+<h2 id="小波函数">小波函数</h2>
+<p>上文提到，尺度函数的相邻两个分辨率张成的空间之间是嵌套的子空间关系，即 <span class="math inline">\(V_{j}\subset V_{j+1}\)</span>. 于是，我们可以找到 <span class="math inline">\(V_j\)</span> 的<strong>正交补</strong> <span class="math inline">\(W_j\)</span>，使得 <span class="math inline">\(V_{j+1}=V_j\oplus W_j\)</span>，如图所示：</p>
+<p><img src="nested2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>那么，所有平方可积函数构成的空间就可以表示如下： <span class="math display">\[
+\begin{align}
+L^2(\mathbb R)&amp;=V_0\oplus W_0\oplus W_1\oplus\cdots\\
+&amp;=V_1\oplus W_1\oplus W_2\oplus\cdots\\
+&amp;=V_{j_0}\oplus W_{j_0}\oplus W_{j_0+1}\oplus\cdots\\
+&amp;=\cdots\oplus W_{-1}\oplus W_0\oplus W_1\oplus\cdots
+\end{align}
+\]</span> 即一个起始的 <span class="math inline">\(V_{j_0}\)</span> 与无数个更大分辨率的 <span class="math inline">\(W_{j}\,(j\geq j_0)\)</span> 之直和。</p>
+<p>在 <span class="math inline">\(W_j\)</span> 中，我们可以找到一组与尺度函数形式类似的正交基 <span class="math inline">\(\{\psi_{j,k}(x)\}\)</span>： <span class="math display">\[
+\psi_{j,k}(x)=2^{j/2}\psi(2^jx-k)
+\]</span> 其中 <span class="math inline">\(\psi(x)\)</span> 称作<strong>小波函数</strong>。由于 <span class="math inline">\(W_j\subset V_{j+1}\)</span>，仿照 <span class="math inline">\(\eqref{scaling}\)</span> 式，<span class="math inline">\(\psi(x)\)</span> 也能用其两倍分辨率的尺度函数表达： <span class="math display">\[
+\psi(x)=\sum_nh_\psi(n)\sqrt{2}\varphi(2x-n)\tag{2}\label{wavelet}
+\]</span> 其中 <span class="math inline">\(h_\psi(n)\)</span> 称作<strong>小波函数系数</strong>。</p>
+<p>不过说了这么多，我们还是没有给出同尺度下 <span class="math inline">\(\varphi(x)\)</span> 与 <span class="math inline">\(\psi(x)\)</span> 之间到底是什么关系。利用 <span class="math inline">\(W_j\)</span> 是 <span class="math inline">\(V_j\)</span> 的正交补，有论文指出小波函数系数与尺度函数系数之间的关系为： <span class="math display">\[
+h_\psi(n)=(-1)^nh_\varphi(1-n)\tag{3}\label{coef-relation}
+\]</span> 我们还是拿 Haar 尺度函数举例。根据 <span class="math inline">\(\eqref{coef-relation}\)</span> 式，可以得到 Haar 小波函数系数为 <span class="math inline">\(h_\psi(0)=1/\sqrt{2},\,h_\psi(1)=-1/\sqrt{2}\)</span>. 因此，<strong>Haar 小波函数</strong>为： <span class="math display">\[
+\psi(x)=\begin{cases}1&amp;0\leq x&lt;0.5\\-1&amp;0.5\leq x&lt;1\\0&amp;\text{otherwise}\end{cases}
+\]</span> 下图展示了 Haar 小波函数及其平移伸缩后的图像，以及将 <span class="math inline">\(f(x)\in V_1\)</span> 分解为 <span class="math inline">\(V_0\)</span> 中的尺度函数与 <span class="math inline">\(W_0\)</span> 中的小波函数的线性组合。</p>
+<p><img src="haar-wavelet.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<h2 id="小波级数展开">小波级数展开</h2>
+<p>对任意 <span class="math inline">\(f(x)\in L^2(\mathbb R)\)</span>，考虑从分辨率 <span class="math inline">\(j_0\)</span> 开始的空间分解： <span class="math display">\[
+L^2(\mathbb R)=V_{j_0}\oplus W_{j_0}\oplus W_{j_0+1}\oplus\cdots
+\]</span> 则 <span class="math inline">\(f(x)\)</span> 可以分解为相应分辨率的小波函数和尺度函数的线性组合： <span class="math display">\[
+f(x)=\sum_k c_{j_0}(k)\varphi_{j_0,k}(x)+\sum_{j=j_0}^\infty\sum_k d_j(k)\psi_{j,k}(x)
+\]</span> 由于 <span class="math inline">\(\{\varphi_{j_0,k}(x),\psi_{j,k}(x)\}\)</span> 之间两两都是正交的，所以组合系数就是函数与基的内积： <span class="math display">\[
+\begin{align}
+&amp;c_{j_0}(k)=\langle f(x),\varphi_{j_0,k}(x)\rangle=\int f^\ast(x)\varphi_{j_0,k}(x)\mathrm dx\\
+&amp;d_{j}(k)=\langle f(x),\psi_{j,k}(x) \rangle=\int f^\ast(x)\psi_{j,k}(x)\mathrm dx
+\end{align}
+\]</span></p>
+<h2 id="离散小波变换">离散小波变换</h2>
+<p>考虑连续函数 <span class="math inline">\(f(x)\)</span> 的离散采样 <span class="math inline">\(\{f(n)\mid n=0,1,\ldots,M-1\}\)</span>. 假设 <span class="math inline">\(M=2^J\)</span> 为 2 的幂次，并取 <span class="math inline">\(j_0=0\)</span>，那么有离散小波变换对： <span class="math display">\[
+\begin{align}
+&amp;f(n)=\frac{1}{\sqrt{M}} W_\varphi(0,0)\varphi_{0,0}(n)+\frac{1}{\sqrt{M}}\sum_{j=0}^{J-1}\sum_{k=0}^{2^j-1}W_\psi(j,k)\psi_{j,k}(n)\\
+&amp;W_\varphi(0,0)=\frac{1}{\sqrt{M}}\sum_{n=0}^{M-1} f(n)\varphi_{0,0}(n)\\
+&amp;W_\psi(j,k)=\frac{1}{\sqrt{M}}\sum_{n=0}^{M-1} f(n)\psi_{j,k}(n)
+\end{align}\tag{4}\label{dwt}
+\]</span> 注意这里略有滥用记号：这里的 <span class="math inline">\(\varphi_{j,k}(n),\psi_{j,k}(n)\)</span> 指的是将 <span class="math inline">\([0,1]\)</span> 区间分成 <span class="math inline">\(M\)</span> 份后，第 <span class="math inline">\(n\)</span> 份位置处尺度函数和小波函数的值，即其实是前文的 <span class="math inline">\(\varphi_{j,k}(n/M)\)</span> 和 <span class="math inline">\(\psi_{j,k}(n/M)\)</span>.</p>
+<p>例如，对于 Haar 尺度函数和小波函数，当 <span class="math inline">\(M=2\)</span> 时，<span class="math inline">\(\varphi_{0,0}(0)=\varphi_{0,0}(1)=1,\,\psi_{0,0}(0)=1,\,\psi_{0,0}(1)=-1\)</span>，或写作矩阵形式： <span class="math display">\[
+\begin{bmatrix}
+\varphi_{0,0}(0)&amp;\varphi_{0,0}(1)\\
+\psi_{0,0}(0)&amp;\psi_{0,0}(1)
+\end{bmatrix}=\begin{bmatrix}
+1&amp;1\\
+1&amp;-1
+\end{bmatrix}
+\]</span> 当 <span class="math inline">\(M=4\)</span> 时，相应矩阵为： <span class="math display">\[
+\begin{bmatrix}
+\varphi_{0,0}(0)&amp;\varphi_{0,0}(1)&amp;\varphi_{0,0}(2)&amp;\varphi_{0,0}(3)\\
+\psi_{0,0}(0)&amp;\psi_{0,0}(1)&amp;\psi_{0,0}(2)&amp;\psi_{0,0}(3)\\
+\psi_{1,0}(0)&amp;\psi_{1,0}(1)&amp;\psi_{1,0}(2)&amp;\psi_{1,0}(3)\\
+\psi_{1,1}(0)&amp;\psi_{1,1}(1)&amp;\psi_{1,1}(2)&amp;\psi_{1,1}(3)
+\end{bmatrix}=\begin{bmatrix}1&amp;1&amp;1&amp;1\\1&amp;1&amp;-1&amp;-1\\\sqrt{2}&amp;-\sqrt{2}&amp;0&amp;0\\0&amp;0&amp;\sqrt{2}&amp;-\sqrt{2}\end{bmatrix}
+\]</span> 作图可视化如下：</p>
+<p><img src="haar-discrete.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>事实上，如果对上面的矩阵做一个归一化（使得每行都是单位向量），那么得到的矩阵称作 <strong>Haar 矩阵</strong>： <span class="math display">\[
+H_2=\frac{1}{\sqrt{2}}\begin{bmatrix}1&amp;1\\1&amp;-1\end{bmatrix},\quad H_4=\frac{1}{\sqrt{4}}\begin{bmatrix}1&amp;1&amp;1&amp;1\\1&amp;1&amp;-1&amp;-1\\\sqrt{2}&amp;-\sqrt{2}&amp;0&amp;0\\0&amp;0&amp;\sqrt{2}&amp;-\sqrt{2}\end{bmatrix}
+\]</span> 注意归一化系数其实就是离散小波变换 <span class="math inline">\(\eqref{dwt}\)</span> 式中的系数 <span class="math inline">\(1/\sqrt{M}\)</span>. 因此，视离散采样的 <span class="math inline">\(M\)</span> 个值为一个向量 <span class="math inline">\([f(0),f(1),\ldots,f(M-1)]^T\)</span> ，Haar 矩阵各行构成一组单位正交基，那么离散小波变换其实就是这个向量在这组基下的线性表示。</p>
+<h2 id="子带编码">子带编码</h2>
+<p>为了介绍快速小波变换，我们需要了解一个前置知识——子带编码。</p>
+<p><img src="subband.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>如上图所示，输入是带限时间离散信号 <span class="math inline">\(f(n),\,n=0,1,2,\ldots\)</span>；信号经由分析滤波器 <span class="math inline">\(h_0(n)\)</span> 和 <span class="math inline">\(h_1(n)\)</span> 后下采样被分解成 <span class="math inline">\(f_\text{lp}(n)\)</span> 和 <span class="math inline">\(f_\text{hp}(n)\)</span>，即编码过程；分解的信号经由上采样和综合滤波器 <span class="math inline">\(g_0(n)\)</span> 和 <span class="math inline">\(g_1(n)\)</span> 输出 <span class="math inline">\(\hat f(n)\)</span>，即解码过程。其中 <span class="math inline">\(h_0(n),h_1(n)\)</span> 的理想传递函数 <span class="math inline">\(H_0\)</span> 和 <span class="math inline">\(H_1\)</span> 如上图下方所示。子带编码的目标是选择滤波器 <span class="math inline">\(h_0(n),h_1(n),g_0(n),g_1(n)\)</span> 以使得 <span class="math inline">\(\hat f(n)=f(n)\)</span>，即输出与输入相同，这时这些滤波器称作“完美重构”滤波器。</p>
+<p>相关文献表明，“完美重构”滤波器需要满足以下两个条件：</p>
+<ul>
+<li><p><strong>交叉调制</strong>： <span class="math display">\[
+\begin{cases}
+g_0(n)=(-1)^nh_1(n)\\g_1(n)=(-1)^{n+1}h_0(n)
+\end{cases}
+\quad\text{or}\quad
+\begin{cases}
+g_0(n)=(-1)^{n+1}h_1(n)\\g_1(n)=(-1)^nh_0(n)
+\end{cases}
+\]</span></p></li>
+<li><p><strong>双正交性</strong>： <span class="math display">\[
+\langle h_i(2n-k),g_j(k)\rangle=\delta(i-j)\delta(n),\quad i,j\in\{0,1\}
+\]</span> 或者展开写作： <span class="math display">\[
+\begin{align}
+&amp;\langle g_0(k),h_0(2n-k)\rangle=\delta(n)\\
+&amp;\langle g_1(k),h_1(2n-k)\rangle=\delta(n)\\
+&amp;\langle g_0(k),h_1(2n-k)\rangle=0\\
+&amp;\langle g_1(k),h_0(2n-k)\rangle=0
+\end{align}
+\]</span></p></li>
+</ul>
+<p>特别地，如果滤波器满足<strong>单位正交性</strong>： <span class="math display">\[
+\langle g_i(n),g_j(n+2m)\rangle=\delta(i-j)\delta(m),\quad i,j\in\{0,1\}
+\]</span> 那么可以证明它们还满足： <span class="math display">\[
+\begin{align}
+&amp;g_1(n)=(-1)^ng_0(2k-1-n)\\
+&amp;h_i(n)=g_i(2k-1-n),\quad i=\{0,1\}
+\end{align}
+\]</span></p>
+<h2 id="快速小波变换">快速小波变换</h2>
+<blockquote>
+<p>快速小波变换是离散小波变换的快速算法，主要是发现并利用了相邻尺度离散小波变换的系数之间的关系。</p>
+</blockquote>
+<p>在离散小波变换 <span class="math inline">\(\eqref{dwt}\)</span> 式中，求解每个系数 <span class="math inline">\(W_\varphi(0,0)\)</span> 和 <span class="math inline">\(W_\psi(j,k)\)</span> 的复杂度都是 <span class="math inline">\(O(M)\)</span> 的，一共有 <span class="math inline">\(M\)</span> 个系数要计算，因此总复杂度是 <span class="math inline">\(O(M^2)\)</span> 的，而快速小波变换能将其减少到 <span class="math inline">\(O(M)\)</span>.</p>
+<p>回顾 <span class="math inline">\(\eqref{scaling}\)</span> 式： <span class="math display">\[
+\varphi(x)=\sum_nh_\varphi(n)\sqrt{2}\varphi(2x-n)
+\]</span> 作变量代换：<span class="math inline">\(x\to 2^jx-k\)</span>，<span class="math inline">\(n\to m-2k\)</span>，得： <span class="math display">\[
+\begin{align}
+\varphi(2^jx-k)&amp;=\sum_n h_\varphi(n)\sqrt{2}\varphi(2(2^jx-k)-n)\\\
+&amp;=\sum_m h_\varphi(m-2k)\sqrt{2}\varphi(2^{j+1}x-m)
+\end{align}
+\]</span> 类似地，<span class="math inline">\(\eqref{wavelet}\)</span> 式也可以改写作： <span class="math display">\[
+\psi(2^jx-k)=\sum_m h_\psi(m-2k)\sqrt{2}\varphi(2^{j+1}x-m)
+\]</span> 代入离散小波变换的系数： <span class="math display">\[
+\begin{align}
+W_\psi(j,k)&amp;=\frac{1}{\sqrt{M}}\sum_{n=0}^{M-1} f(n)2^{j/2}\psi(2^jn-k)\\
+&amp;=\frac{1}{\sqrt{M}}\sum_{n=0}^{M-1} f(n)2^{j/2}\left(\sum_m h_\psi(m-2k)\sqrt{2}\varphi(2^{j+1}n-m)\right)\\
+&amp;=\sum_mh_\psi(m-2k)\left[\frac{1}{\sqrt{M}}\sum_{n=0}^{M-1} f(n)2^{(j+1)/2}\varphi(2^{j+1}n-m)\right]\\
+&amp;=\sum_mh_\psi(m-2k)W_\varphi(j+1,m)
+\end{align}
+\]</span> 这样就建立起了 <span class="math inline">\(W_\psi(j,k)\)</span> 与 <span class="math inline">\(W_\varphi(j+1,m)\)</span> 之间的关系。类似地，<span class="math inline">\(W_\varphi(j,k)\)</span> 与 <span class="math inline">\(W_\varphi(j+1,m)\)</span> 之间也有关系： <span class="math display">\[
+W_\varphi(j,k)=\sum_mh_\varphi(m-2k)W_\varphi(j+1,m)
+\]</span> 上述表达式可以看做是只在 <span class="math inline">\(n=2k,\,k\geq0\)</span> 处进行卷积，即： <span class="math display">\[
+\begin{align}
+&amp;W_\psi(j,k)=h_\psi(-n)\ast W_\varphi(j+1,n)\Bigg\vert_{n=2k,\,k\geq0}\\
+&amp;W_\varphi(j,k)=h_\varphi(-n)\ast W_\varphi(j+1,n)\Bigg\vert_{n=2k,\,k\geq0}
+\end{align}
+\]</span> 这等价于先正常卷积、再做 2 倍的下采样，如图所示：</p>
+<p><img src="fwt.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>由于我们要对所有 <span class="math inline">\(j=0,1,\ldots,J-1\)</span> 求 <span class="math inline">\(W_\psi(j,k)\)</span>，所以可以反复将低通分量不断地分解为更低尺度的低通分量与高通分量，注意 <span class="math inline">\(f(n)\)</span> 本身可以视为一个起始低通分量 <span class="math inline">\(W_\varphi(J,n)\)</span>，如图所示：</p>
+<p><img src="fwt2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>由于 <span class="math inline">\(h_\psi(-n)\)</span> 与 <span class="math inline">\(h_\varphi(-n)\)</span> 的长度可以视为常数（例如 Haar 尺度和小波函数系数长度为 2），因此每个卷积操作与其序列长度成正比，于是总的时间复杂度为 <span class="math inline">\(O(2^J+2^{J-1}+\cdots+1)=O(2^{J+1})=O(M)\)</span>.</p>
+<p>为了进行<strong>快速小波逆变换</strong>，注意到上述正变换的过程与子带编码的分析过程有着一致的形式——尺度函数系数 <span class="math inline">\(h_\varphi(-n)\)</span> 相当于子带编码中的低通分析滤波器 <span class="math inline">\(h_0(n)\)</span>，小波函数系数 <span class="math inline">\(h_\psi(-n)\)</span> 相当于高通分析滤波器 <span class="math inline">\(h_1(n)\)</span>. 于是，逆变换就是子带编码的综合过程。回忆子带编码中，完美重构要求 <span class="math inline">\(g_0(n)=h_0(-n),\,g_1(n)=h_1(-n)\)</span>，因此，在小波变换的语境下，综合滤波器分别为 <span class="math inline">\(g_0(n)=h_\varphi(n),\,g_1(n)=h_\psi(n)\)</span>，如下图所示：</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="ifwt.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div><div class="group-image-wrap"><img src="ifwt2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div></div></div>
+<p>同样的，不断迭代上述过程，我们最终就能够完美重构 <span class="math inline">\(f(n)=W_\varphi(J,n)\)</span>. 由于形式上的对称性，容易知道逆变换的复杂度也是 <span class="math inline">\(O(M)\)</span>. 因此，整个快速小波变换算法是 <span class="math inline">\(O(M)\)</span> 的，这比快速傅立叶变换的 <span class="math inline">\(O(M\log M)\)</span> 更优。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%95%B0%E5%AD%A6/" class="category-chain-item">数学</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/image-processing/" class="print-no-link">#image processing</a>
+      
+        <a href="/blog-main/tags/signal-processing/" class="print-no-link">#signal processing</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Wavelet Transform</div>
+      <div>https://xyfjason.github.io/blog-main/2023/12/12/Wavelet-Transform/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/12/17/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-1%E6%8A%95%E5%BD%B1%E7%9F%A9%E9%98%B5%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/" title="[矩阵论]6.1投影矩阵及其应用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[矩阵论]6.1投影矩阵及其应用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/12/12/%E7%9F%A9%E9%98%B5%E8%AE%BA-5-4%E7%9F%A9%E9%98%B5%E7%9A%84%E7%9B%B4%E7%A7%AF/" title="[矩阵论]5.4矩阵的直积">
+                        <span class="hidden-mobile">[矩阵论]5.4矩阵的直积</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

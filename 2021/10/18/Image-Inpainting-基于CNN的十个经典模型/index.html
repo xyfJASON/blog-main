@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/unsplash_hole.jpg">
 <meta property="article:published_time" content="2021-10-18T05:42:06.000Z">
-<meta property="article:modified_time" content="2023-10-12T13:02:48.105Z">
+<meta property="article:modified_time" content="2023-12-15T11:42:56.920Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="deep learning">
@@ -344,7 +344,7 @@
 <p>很明显，任何一个局部都有大量缺失像素，不利于我们填充。</p></li>
 <li><p>高层次语义 &amp; 低层次纹理：一方面，我们希望模型学到高层次的特征，不能乱填，要保持语义的一致性；另一方面，模型也要学到低层次的纹理，保证局部真实性。</p></li>
 </ul>
-<p>填充图像最简单传统的方式是 copy-and-paste，核心思想是从图片本身的 remaining pixels 或者一个大数据集中找到最相似的 image patch 粘到缺失的地方。显然这个方法计算量大，涉及人工设计的距离指标，效果也不太行。但都 2021 年了，我们肯定用深度学习来搞啊！在资料<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote">&lt;span class="hint--top hint--rounded" aria-label="Chu-Tak Li. "10 Papers You Must Read for Deep Image Inpainting". https://towardsdatascience.com/10-papers-you-must-read-for-deep-image-inpainting-2e41c589ced0"&gt;[2]</span></a></sup>中，作者总结了 10 个必须知道的模型，下面我们来依次看看。</p>
+<p>填充图像最简单传统的方式是 copy-and-paste，核心思想是从图片本身的 remaining pixels 或者一个大数据集中找到最相似的 image patch 粘到缺失的地方。显然这个方法计算量大，涉及人工设计的距离指标，效果也不太行。但都 2021 年了，我们肯定用深度学习来搞啊！在资料<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chu-Tak Li. “10 Papers You Must Read for Deep Image Inpainting”. https://towardsdatascience.com/10-papers-you-must-read-for-deep-image-inpainting-2e41c589ced0">[2]</span></a></sup>中，作者总结了 10 个必须知道的模型，下面我们来依次看看。</p>
 <h2 id="context-encoder">Context Encoder</h2>
 <p>2016 年的 <strong>Context Encoder</strong><sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Deepak Pathak, Philipp Krahenbuhl, Jeff Donahue, Trevor Darrell, and Alexei A. Efros, “[Context Encoders: Feature Learning by Inpainting](https://arxiv.org/abs/1604.07379),” *Proc. International Conference on Computer Vision and Pattern Recognition* (*CVPR*), 2016.">[3]</span></a></sup> 是第一个 GAN-based inpainting model，可谓是开山之作，也是这个任务的 baseline。作者的研究意图是：</p>
 <ul>
@@ -741,7 +741,7 @@ m&#39;=\sigma\left(m&#39;_{Partial}+\text{conv}(M)\right)
 <span id="fn:1" class="footnote-text"><span>Wang, Yi, Ying-Cong Chen, Xin Tao, and Jiaya Jia. VCNet: A Robust Approach to Blind Image Inpainting. In <em>Computer Vision–ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part XXV 16</em>, pp. 752-768. Springer International Publishing, 2020. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Chu-Tak Li. "10 Papers You Must Read for Deep Image Inpainting". https://towardsdatascience.com/10-papers-you-must-read-for-deep-image-inpainting-2e41c589ced0 <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>Chu-Tak Li. “10 Papers You Must Read for Deep Image Inpainting”. https://towardsdatascience.com/10-papers-you-must-read-for-deep-image-inpainting-2e41c589ced0 <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
 <span id="fn:3" class="footnote-text"><span>Deepak Pathak, Philipp Krahenbuhl, Jeff Donahue, Trevor Darrell, and Alexei A. Efros, “<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1604.07379">Context Encoders: Feature Learning by Inpainting</a>,” <em>Proc. International Conference on Computer Vision and Pattern Recognition</em> (<em>CVPR</em>), 2016. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>

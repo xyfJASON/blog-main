@@ -1,0 +1,801 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="投影算子与投影矩阵 定义 定义（投影算子）：设 \(\mathbb C^n&#x3D;L\oplus M\)，将任意 \(x\in\mathbb C^n\) 变为沿着 \(M\) 到 \(L\) 的投影的变换称为沿着 \(M\) 到 \(L\) 的投影算子，记作 \(P_{L,M}\)，即： \[ P_{L,M}x&#x3D;y \] 满足 \(R(P_{L,M})&#x3D;L,\,N(P_{L,M})&#x3D;M\). 注意 \(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[矩阵论]6.1投影矩阵及其应用">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/17/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-1%E6%8A%95%E5%BD%B1%E7%9F%A9%E9%98%B5%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="投影算子与投影矩阵 定义 定义（投影算子）：设 \(\mathbb C^n&#x3D;L\oplus M\)，将任意 \(x\in\mathbb C^n\) 变为沿着 \(M\) 到 \(L\) 的投影的变换称为沿着 \(M\) 到 \(L\) 的投影算子，记作 \(P_{L,M}\)，即： \[ P_{L,M}x&#x3D;y \] 满足 \(R(P_{L,M})&#x3D;L,\,N(P_{L,M})&#x3D;M\). 注意 \(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
+<meta property="article:published_time" content="2023-12-17T04:21:58.000Z">
+<meta property="article:modified_time" content="2023-12-17T06:00:56.763Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="linear algebra">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
+  
+  
+  
+  <title>[矩阵论]6.1投影矩阵及其应用 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/3b1b_transform_basis.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[矩阵论]6.1投影矩阵及其应用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-17 12:21" pubdate>
+          2023年12月17日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          441 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          4 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[矩阵论]6.1投影矩阵及其应用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="投影算子与投影矩阵">投影算子与投影矩阵</h2>
+<h3 id="定义">定义</h3>
+<p><strong>定义（投影算子）</strong>：设 <span class="math inline">\(\mathbb C^n=L\oplus M\)</span>，将任意 <span class="math inline">\(x\in\mathbb C^n\)</span> 变为沿着 <span class="math inline">\(M\)</span> 到 <span class="math inline">\(L\)</span> 的投影的变换称为沿着 <span class="math inline">\(M\)</span> 到 <span class="math inline">\(L\)</span> 的投影算子，记作 <span class="math inline">\(P_{L,M}\)</span>，即： <span class="math display">\[
+P_{L,M}x=y
+\]</span> 满足 <span class="math inline">\(R(P_{L,M})=L,\,N(P_{L,M})=M\)</span>. 注意 <span class="math inline">\(x-y\in M\)</span>.</p>
+<p><img src="proj.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+<p><strong>定义（投影矩阵）</strong>：投影算子 <span class="math inline">\(P_{L,M}\)</span> 在 <span class="math inline">\(\mathbb C^n\)</span> 的基 <span class="math inline">\(e_1,\ldots,e_n\)</span> 下的矩阵称为投影矩阵。</p>
+<h3 id="投影-iff-幂等">投影 <span class="math inline">\(\iff\)</span> 幂等</h3>
+<p><strong>引理</strong>：设 <span class="math inline">\(A\in\mathbb C^{n\times n}\)</span> 是幂等矩阵，<span class="math inline">\(A^2=A\)</span>，则： <span class="math display">\[
+N(A)=R(I-A)
+\]</span> <div class="note note-secondary">
+            <p>证明：任取 <span class="math inline">\(x\in N(A)\)</span>，则 <span class="math inline">\(Ax=0\)</span>，则 <span class="math inline">\(x=Ax+(I-A)x=(I-A)x\in R(I-A)\)</span>，因此 <span class="math inline">\(N(A)\subset R(I-A)\)</span>；</p><p>任取 <span class="math inline">\(y\in\mathbb C^n\)</span>，<span class="math inline">\(A(I-A)y=(A-A^2)y=0\)</span>，故 <span class="math inline">\((I-A)y\in N(A)\)</span>，故 <span class="math inline">\(R(I-A)\subset N(A)\)</span>；</p><p>综上，<span class="math inline">\(N(A)=R(I-A)\)</span>. 证毕。</p>
+          </div></p>
+<p><strong>定理（投影矩阵与幂等矩阵是等价的概念）</strong>： <span class="math display">\[
+P_{n\times n}=P_{L,M}\iff P^2=P
+\]</span> <div class="note note-secondary">
+            <p>证明：必要性。设 <span class="math inline">\(C^n=L\oplus M\)</span>，则对于任意 <span class="math inline">\(x\in\mathbb C^n\)</span>，存在唯一的分解 <span class="math inline">\(x=y+z,\,y\in L,\,z\in M\)</span>. 于是 <span class="math inline">\(P_{L,M}x=y\)</span>. 因此 <span class="math inline">\(P_{L,M}^2x=P_{L,M}y=y=P_{L,M}x\)</span>，即 <span class="math inline">\(P_{L,M}\)</span> 是幂等的。</p><p>充分性。任意 <span class="math inline">\(x\in\mathbb C^n\)</span> 可分解为 <span class="math inline">\(x=Px+(I-P)x\)</span>，根据引理知 <span class="math inline">\(N(P)=R(I-P)\)</span>，又 <span class="math inline">\(\mathbb C^n=R(P)\oplus N(P)\)</span>，所以这样的分解是唯一的，于是 <span class="math inline">\(P=P_{R(P),N(P)}\)</span>. 证毕。</p>
+          </div></p>
+<h3 id="计算方法">计算方法</h3>
+<p>取 <span class="math inline">\(L\)</span> 的一组基 <span class="math inline">\(q_1,\ldots,q_r\)</span> 和 <span class="math inline">\(M\)</span> 的一组基 <span class="math inline">\((q_{r+1},\ldots,q_n)\)</span>，则任意向量 <span class="math inline">\(x\in\mathbb C^n\)</span> 可表示为： <span class="math display">\[
+x=(q_1,\ldots,q_r,q_{r+1},\ldots,q_n)y=Qy
+\]</span> 于是： <span class="math display">\[
+P_{L,M}x=QI_ry=QI_rQ^{-1}y\implies P_{L,M}=QI_rQ^{-1}
+\]</span> 其中 <span class="math inline">\(I_r\)</span> 表示前 <span class="math inline">\(r\)</span> 个对角元为 1、其余为 0 的对角矩阵。</p>
+<h2 id="正交投影算子与正交投影矩阵">正交投影算子与正交投影矩阵</h2>
+<h3 id="定义-1">定义</h3>
+<p><strong>定义（正交投影算子）</strong>：设 <span class="math inline">\(L\)</span> 是 <span class="math inline">\(\mathbb C^n\)</span> 的子空间，则沿着 <span class="math inline">\(L^{\perp}\)</span> 到 <span class="math inline">\(L\)</span> 的投影算子 <span class="math inline">\(P_{L,L^{\perp}}\)</span> 为正交投影算子，简记为 <span class="math inline">\(P_L\)</span>.</p>
+<p><img src="proj-o.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+<p><strong>定义（正交投影矩阵）</strong>：正交投影算子 <span class="math inline">\(P_{L}\)</span> 在 <span class="math inline">\(\mathbb C^n\)</span> 的基 <span class="math inline">\(e_1,\ldots,e_n\)</span> 下的矩阵称为正交投影矩阵。</p>
+<h3 id="正交投影-iff-幂等-hermite">正交投影 <span class="math inline">\(\iff\)</span> 幂等 Hermite</h3>
+<p><strong>定理</strong>：矩阵 <span class="math inline">\(P\)</span> 为正交投影矩阵的充要条件是 <span class="math inline">\(P\)</span> 为幂等 Hermite 矩阵。</p>
+<div class="note note-secondary">
+            <p>证明：必要性。若 <span class="math inline">\(P\)</span> 为正交投影矩阵，则根据上一节定理知它是幂等矩阵，于是 <span class="math inline">\(R(I-P)=N(P)\)</span>。又 <span class="math inline">\(R(P)\perp N(P)\)</span>，所以 <span class="math inline">\(R(P)\perp R(I-P)\)</span>，因此对于任意 <span class="math inline">\(x,y\in\mathbb C^n\)</span>，有： <span class="math display">\[x^HP^H(I-P)y=0\implies P^H(I-P)=0\implies P^H=P^HP\implies P=(P^HP)^H=P^HP=P^H\]</span> 即 <span class="math inline">\(P\)</span> 是 Hermite 矩阵。</p><p>充分性。若 <span class="math inline">\(P\)</span> 是幂等 Hermite 矩阵，则根据上一节定理知它是投影矩阵 <span class="math inline">\(P_{R(P),N(P)}\)</span>. 又由于 <span class="math inline">\(P^H=P\)</span>，所以： <span class="math display">\[P_{R(P),N(P)}=P_{R(P),N(P^H)}=P_{R(P),R^\perp(P)}\]</span> 即 <span class="math inline">\(P\)</span> 是正交投影矩阵。证毕。</p>
+          </div>
+<h3 id="计算方法-1">计算方法</h3>
+<p>取 <span class="math inline">\(L\)</span> 的一组基 <span class="math inline">\(X=(x_1,\ldots,x_r)\)</span>，<span class="math inline">\(L^{\perp}\)</span> 的一组基 <span class="math inline">\(y=(y_1,\ldots,y_{n-r})\)</span>，则 <span class="math inline">\(X^HY=Y^HX=O\)</span>. 根据上一节投影矩阵的计算方法知： <span class="math display">\[
+P_L=P_{L,L^\perp}
+=\left[\begin{array}{c:c}X&amp;Y\end{array}\right]\;I_r\;\left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{-1}
+=\left[\begin{array}{c:c}X&amp;O\end{array}\right]\left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{-1}
+\]</span> 由于： <span class="math display">\[
+\left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{H}\left[\begin{array}{c:c}X&amp;Y\end{array}\right]=\left[\begin{array}{c}X^H\\\hdashline Y^H\end{array}\right]\left[\begin{array}{c:c}X&amp;Y\end{array}\right]=\left[\begin{array}{c:c}X^HX&amp;O\\\hdashline O&amp;Y^HY\end{array}\right]
+\]</span> 于是： <span class="math display">\[
+\left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{-1}=\left[\begin{array}{c:c}(X^HX)^{-1}&amp;O\\\hdashline O&amp;(Y^HY)^{-1}\end{array}\right]\left[\begin{array}{c}X^H\\\hdashline Y^H\end{array}\right]=\left[\begin{array}{c}(X^HX)^{-1}X^H\\\hdashline(Y^HY)^{-1}Y^H\end{array}\right]
+\]</span> 因此： <span class="math display">\[
+P_L=\left[\begin{array}{c:c}X&amp;O\end{array}\right]\left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{-1}=\left[\begin{array}{c:c}X&amp;O\end{array}\right]\left[\begin{array}{c}(X^HX)^{-1}X^H\\\hdashline(Y^HY)^{-1}Y^H\end{array}\right]=X(X^HX)^{-1}X^H
+\]</span></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E7%9F%A9%E9%98%B5%E8%AE%BA/" class="category-chain-item">矩阵论</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/linear-algebra/" class="print-no-link">#linear algebra</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[矩阵论]6.1投影矩阵及其应用</div>
+      <div>https://xyfjason.github.io/blog-main/2023/12/17/矩阵论-6-1投影矩阵及其应用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月17日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/12/17/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-2%E5%B9%BF%E4%B9%89%E9%80%86%E7%9F%A9%E9%98%B5%E7%9A%84%E5%AD%98%E5%9C%A8%E3%80%81%E6%80%A7%E8%B4%A8%E5%8F%8A%E6%9E%84%E9%80%A0/" title="[矩阵论]6.2广义逆矩阵的存在、性质及构造">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[矩阵论]6.2广义逆矩阵的存在、性质及构造</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/12/12/Wavelet-Transform/" title="Wavelet Transform">
+                        <span class="hidden-mobile">Wavelet Transform</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
