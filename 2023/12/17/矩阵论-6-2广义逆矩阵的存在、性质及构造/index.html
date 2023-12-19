@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="定义 定义：设矩阵 \(A\in\mathbb C^{m\times n}\)，若矩阵 \(X\in\mathbb C^{n\times m}\) 满足如下四个 Penrose 方程： \[ \begin{align} &amp;AXA&#x3D;A\tag{1}\label{1}\\ &amp;XAX&#x3D;X\tag{2}\label{2}\\ &amp;(AX)^H&#x3D;AX\tag{3}\label{3}\\">
+    <meta name="description" content="广义逆的定义 定义：设矩阵 \(A\in\mathbb C^{m\times n}\)，若矩阵 \(X\in\mathbb C^{n\times m}\) 满足如下四个 Penrose 方程： \[ \begin{align} &amp;AXA&#x3D;A\tag{1}\label{1}\\ &amp;XAX&#x3D;X\tag{2}\label{2}\\ &amp;(AX)^H&#x3D;AX\tag{3}\label{">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[矩阵论]6.2广义逆矩阵的存在、性质及构造">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/17/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-2%E5%B9%BF%E4%B9%89%E9%80%86%E7%9F%A9%E9%98%B5%E7%9A%84%E5%AD%98%E5%9C%A8%E3%80%81%E6%80%A7%E8%B4%A8%E5%8F%8A%E6%9E%84%E9%80%A0/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="定义 定义：设矩阵 \(A\in\mathbb C^{m\times n}\)，若矩阵 \(X\in\mathbb C^{n\times m}\) 满足如下四个 Penrose 方程： \[ \begin{align} &amp;AXA&#x3D;A\tag{1}\label{1}\\ &amp;XAX&#x3D;X\tag{2}\label{2}\\ &amp;(AX)^H&#x3D;AX\tag{3}\label{3}\\">
+<meta property="og:description" content="广义逆的定义 定义：设矩阵 \(A\in\mathbb C^{m\times n}\)，若矩阵 \(X\in\mathbb C^{n\times m}\) 满足如下四个 Penrose 方程： \[ \begin{align} &amp;AXA&#x3D;A\tag{1}\label{1}\\ &amp;XAX&#x3D;X\tag{2}\label{2}\\ &amp;(AX)^H&#x3D;AX\tag{3}\label{">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-12-17T06:03:47.000Z">
-<meta property="article:modified_time" content="2023-12-17T13:25:28.880Z">
+<meta property="article:modified_time" content="2023-12-19T07:13:43.797Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          152 字
+          991 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          2 分钟
+          9 分钟
         
       </span>
     
@@ -327,7 +327,7 @@
             
               <div class="markdown-body">
                 
-                <h2 id="定义">定义</h2>
+                <h2 id="广义逆的定义">广义逆的定义</h2>
 <p><strong>定义</strong>：设矩阵 <span class="math inline">\(A\in\mathbb C^{m\times n}\)</span>，若矩阵 <span class="math inline">\(X\in\mathbb C^{n\times m}\)</span> 满足如下四个 Penrose 方程： <span class="math display">\[
 \begin{align}
 &amp;AXA=A\tag{1}\label{1}\\
@@ -347,11 +347,162 @@
 <p><strong>定理</strong>： <span class="math display">\[
 \lim_{\delta\to0}(\delta^2I+A^HA)^{-1}A^H=A^+
 \]</span></p>
-<h2 id="性质和构造">性质和构造</h2>
-<h2 id="等价定义通解">等价定义（通解）</h2>
-<div class="note note-success">
-            <p>第一节中给出的定义是方程形式，有时并不方便。本节直接推导广义逆的通解形式。</p>
+<div class="note note-secondary">
+            <p>证明：设 <span class="math inline">\(A=U_1\Sigma V_1^H\)</span>，则TODO</p>
           </div>
+<h2 id="广义逆的性质和构造">广义逆的性质和构造</h2>
+<h3 id="重要引理与推论">重要引理与推论</h3>
+<p><strong>引理</strong>： <span class="math display">\[
+\begin{align}
+N(A)\supset N(B)&amp;\iff \exists X,A=XB\\
+R(A)\subset R(B)&amp;\iff \exists X,A=BX
+\end{align}
+\]</span> <strong>推论</strong>： <span class="math display">\[
+\begin{align}
+&amp;\text{rank}(AB)=\text{rank}(A)\implies \exists X,A=ABX\\
+&amp;\text{rank}(BA)=\text{rank}(A)\implies \exists X,A=XBA
+\end{align}
+\]</span> <div class="note note-secondary">
+            <p>证明：由于 <span class="math inline">\(R(AB)\subset R(A)\)</span>，且 <span class="math inline">\(\dim R(AB)=\text{rank}(AB)=\text{rank}(A)=\dim R(A)\)</span>，故 <span class="math inline">\(R(AB)=R(A)\)</span>. 于是 <span class="math inline">\(R(AB)\supset R(A)\)</span>，根据引理知 <span class="math inline">\(\exists X,A=ABX\)</span>.</p><p>类似地，由于 <span class="math inline">\(N(BA)\supset N(A)\)</span>，且 <span class="math inline">\(\dim N(BA)=n-\text{rank}(BA)=n-\text{rank}(A)=\dim N(A)\)</span>，故 <span class="math inline">\(N(BA)=N(A)\)</span>. 于是 <span class="math inline">\(N(BA)\subset N(A)\)</span>，根据引理知 <span class="math inline">\(\exists X,A=XBA\)</span>. 证毕。</p>
+          </div></p>
+<div class="note note-success">
+            <p>推论的这两个式子在证明中<strong>非常常用</strong>，即用更复杂的式子表示简单的矩阵，反而有助于证明。</p>
+          </div>
+<h3 id="关于-1-逆的定理">关于 1-逆的定理</h3>
+<p><strong>定理</strong>：矩阵 <span class="math inline">\(A\in\mathbb C^{m\times n}\)</span> 有唯一 1-逆的充要条件为 <span class="math inline">\(A\)</span> 是非奇异矩阵，且该 1-逆就是 <span class="math inline">\(A^{-1}\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：充分性显然，必要性证明如下。设 <span class="math inline">\(Au=0\)</span>，<span class="math inline">\(AXA=A\)</span>，那么容易验证 <span class="math inline">\(X&#39;=X+u\cdot[1,0,\ldots,0]\)</span> 也满足 <span class="math inline">\(AX&#39;A=A\)</span>，由于 1-逆唯一，故 <span class="math inline">\(u=0\)</span>，即 <span class="math inline">\(N(A)=\{0\}\)</span>. 类似可以证明 <span class="math inline">\(N(A^H)=\{0\}\)</span>，于是 <span class="math inline">\(A\)</span> 列满秩且行满秩，故 <span class="math inline">\(A\)</span> 为可逆方阵。证毕。</p>
+          </div>
+<p><strong>性质</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n},\,B\in\mathbb C^{n\times p},\,\lambda\in\mathbb C\)</span>，则：</p>
+<ol type="1">
+<li><p><span class="math inline">\((A^{(1)})^H\in A^{H}\{1\}\)</span>.</p></li>
+<li><p><span class="math inline">\(\lambda^+ A^{(1)}\in(\lambda A)\{1\}\)</span>. 其中 <span class="math inline">\(\lambda^{+}=\begin{cases}\lambda^{-1}&amp;\lambda\neq 0\\0&amp;\lambda=0\end{cases}\)</span>.</p></li>
+<li><p>若 <span class="math inline">\(S\)</span> 和 <span class="math inline">\(T\)</span> 非奇异，则 <span class="math inline">\(T^{-1}A^{(1)}S^{-1}\in(SAT)\{1\}\)</span>.</p></li>
+<li><p><span class="math inline">\(\text{rank}(A^{(1)})\geq \text{rank}(A)\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：<span class="math inline">\(\text{rank}(A)=\text{rank}(AA^{(1)}A)\leq\text{rank}(A^{(1)})\)</span>. 证毕。</p>
+          </div></li>
+<li><p><span class="math inline">\(AA^{(1)}\)</span> 和 <span class="math inline">\(A^{(1)}A\)</span> 均为幂等矩阵且与 <span class="math inline">\(A\)</span> 同秩。</p>
+<div class="note note-secondary">
+            <p>证明：<span class="math inline">\(\text{rank}(AA^{(1)})\leq\text{rank}(A)=\text{rank}(AA^{(1)}A)\leq\text{rank}(AA^{(1)})\)</span>，故 <span class="math inline">\(\text{rank}(AA^{(1)})=\text{rank}(A)\)</span>.</p>
+          </div></li>
+<li><p><span class="math inline">\(R(AA^{(1)})=R(A),\,N(A^{(1)}A)=N(A),\,R((A^{(1)}A)^H)=R(A^H)\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：<span class="math inline">\(R(AA^{(1)})\subset R(A)=R(AA^{(1)}A)\subset R(AA^{(1)})\)</span>，故 <span class="math inline">\(R(AA^{(1)})=R(A)\)</span>.</p><p>类似地，<span class="math inline">\(N(A)\subset N(AA^{(1)})\subset N(AA^{(1)}A)=N(A)\)</span>，故 <span class="math inline">\(N(AA^{(1)})=N(A)\)</span>.</p>
+          </div></li>
+<li><p><span class="math inline">\(A^{(1)}A=I_n\iff \text{rank}(A)=n\)</span>，<span class="math inline">\(AA^{(1)}=I_m\iff \text{rank}(A)=m\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：根据性质 5，<span class="math inline">\(\text{rank}(A^{(1)}A)=\text{rank}(A)\)</span>，因此必要性：<span class="math inline">\(A^{(1)}A=I_n\implies\text{rank}(A^{(1)}A)=n\implies\text{rank}(A)=n\)</span>；充分性：<span class="math inline">\(\text{rank}(A)=n\implies \text{rank}(A^{(1)}A)=n\)</span>，即 <span class="math inline">\(A^{(1)}A\)</span> 可逆，又 <span class="math inline">\(A^{(1)}A\)</span> 幂等，故为单位阵。另一个类似。证毕。</p>
+          </div></li>
+<li><p><span class="math inline">\(AB(AB)^{(1)}A=A\iff\text{rank}(AB)=\text{rank}(A)\)</span>，<span class="math inline">\(B(AB)^{(1)}AB=B\iff\text{rank}(AB)=\text{rank}(B)\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：充分性。根据前文推论，存在 <span class="math inline">\(X\)</span> 使得 <span class="math inline">\(A=ABX\)</span>，于是 <span class="math inline">\(AB(AB)^{(1)}A=AB(AB)^{(1)}ABX=ABX=A\)</span>.</p><p>必要性。<span class="math inline">\(\text{rank}(A)\geq\text{rank}(AB)\geq\text{rank}(AB(AB)^{(1)}A)=\text{rank}(A)\)</span>，故 <span class="math inline">\(\text{rank}(AB)=\text{rank}(A)\)</span>.</p>
+          </div></li>
+</ol>
+<h3 id="关于-12-逆的定理">关于 1,2-逆的定理</h3>
+<p><strong>定理</strong>：设 <span class="math inline">\(Y,Z\in A\{1\}\)</span>，则 <span class="math inline">\(X=YAZ\in A\{1,2\}\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：<span class="math inline">\(XAX=YAZAYAZ=YAYAZ=YAZ=X\)</span>，故 <span class="math inline">\(X\in A\{2\}\)</span>.</p><p>又 <span class="math inline">\(AXA=AYAZA=AZA=A\)</span>，故 <span class="math inline">\(X\in A\{1\}\)</span>. 综上，<span class="math inline">\(X\in A\{1,2\}\)</span>. 证毕。</p>
+          </div>
+<div class="note note-secondary">
+            <p>证明 2（利用通解形式，见下文）：奇异值分解 <span class="math inline">\(A=U\begin{bmatrix}\Sigma&amp;0\\0&amp;0\end{bmatrix}V^H\)</span>，则 <span class="math inline">\(Y,Z\)</span> 可分别写作： <span class="math display">\[Y=V\begin{bmatrix}\Sigma&amp;C_1\\D_1&amp;E_1\end{bmatrix}U^H,\quad Z=V\begin{bmatrix}\Sigma&amp;C_2\\D_2&amp;E_2\end{bmatrix}U^H\]</span> 于是： <span class="math display">\[X=YAZ=V\begin{bmatrix}B^{-1}&amp;C_1\\D_1&amp;E_1\end{bmatrix}U^HU\begin{bmatrix}B&amp;0\\0&amp;0\end{bmatrix}V^HV\begin{bmatrix}B^{-1}&amp;C_2\\D_2&amp;E_2\end{bmatrix}U^H=V\begin{bmatrix}B^{-1}&amp;C_2\\D_1&amp;D_1BC_2\end{bmatrix}U^H\]</span> 这正是 1,2-逆的通解形式，故 <span class="math inline">\(X\in A\{1,2\}\)</span>. 证毕。</p>
+          </div>
+<p><strong>定理</strong>：给定矩阵 <span class="math inline">\(A\)</span> 和 <span class="math inline">\(X\in A\{1\}\)</span>，则 <span class="math inline">\(X\in A\{1,2\}\)</span> 的充要条件是 <span class="math inline">\(\text{rank}(X)=\text{rank}(A)\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：充分性。由于 <span class="math inline">\(X\in A\{1\}\)</span>，故 <span class="math inline">\(A=AXA\)</span>，于是 <span class="math inline">\(\text{rank}(A)=\text{rank}(AXA)\leq\text{rank}(XA)\leq\text{rank}(X)=\text{rank}(A)\)</span>，故 <span class="math inline">\(\text{rank}(X)=\text{rank}(XA)\)</span>. 根据推论，存在 <span class="math inline">\(Y\)</span> 使得 <span class="math inline">\(X=XAY\)</span>，于是 <span class="math inline">\(XAX=XAXAY=XAY=X\)</span>，故 <span class="math inline">\(X\in A\{2\}\)</span>.</p><p>必要性。由于 <span class="math inline">\(A=AXA,\,XAX=X\)</span>，于是 <span class="math inline">\(\text{rank}(X)=\text{rank}(XAX)\leq\text{rank}(A)=\text{rank}(AXA)\leq\text{rank}(X)\)</span>，故 <span class="math inline">\(\text{rank}(X)=\text{rank}(A)\)</span>.</p><p>证毕。</p>
+          </div>
+<h3 id="关于-123-逆和-124-逆的定理">关于 1,2,3-逆和 1,2,4-逆的定理</h3>
+<p><strong>引理</strong>：对任意矩阵 <span class="math inline">\(A\)</span> 均有： <span class="math display">\[
+\text{rank}(A^HA)=\text{rank}(A)=\text{rank}(AA^H)
+\]</span> <div class="note note-secondary">
+            <p>证明：由于 <span class="math inline">\(A^HAx=0\implies x^HA^HAx=0\implies Ax=0\)</span>，所以 <span class="math inline">\(N(A^HA)\subset N(A)\)</span>. 又 <span class="math inline">\(N(A^HA)\supset N(A)\)</span>，于是 <span class="math inline">\(N(A^HA)=N(A)\)</span>，于是 <span class="math inline">\(\text{rank}(A^HA)=\text{rank}(A)\)</span>. 另一个类似。证毕。</p>
+          </div></p>
+<p><strong>定理</strong>：设有矩阵 <span class="math inline">\(A\)</span>，则： <span class="math display">\[
+\begin{align}
+&amp;Y=(A^HA)^{(1)}A^H\in A\{1,2,3\}\\
+&amp;Z=A^H(AA^H)^{(1)}\in A\{1,2,4\}
+\end{align}
+\]</span> <div class="note note-secondary">
+            <p>证明：由于 <span class="math inline">\(\text{rank}(A^HA)=\text{rank}(A)=\text{rank}(AA^H)\)</span>，根据 1-逆的性质 8 有： <span class="math display">\[A=A(A^HA)^{(1)}A^HA,\quad A^H=A^HA(A^HA)^{(1)}A^H\]</span> 因此： <span class="math display">\[\begin{align}&amp;AYA=A(A^HA)^{(1)}A^HA=A&amp;\implies Y\in A\{1\}\\&amp;YAY=(A^HA)^{(1)}A^HA(A^HA)^{(1)}A^H=(A^HA)^{(1)}A^H=Y&amp;\implies Y\in A\{2\}\end{align}\]</span> 又存在 <span class="math inline">\(X\)</span> 使得 <span class="math inline">\(A=XA^HA\)</span>，故： <span class="math display">\[AY=A(A^HA)^{(1)}A^H=(XA^HA)(A^HA)^{(1)}(XA^HA)^H=XA^HA(A^HA)^{(1)}A^HAX^H=XA^HAX^H\]</span> 是 Hermite 矩阵，于是 <span class="math inline">\(Y\in A\{3\}\)</span>.</p><p><span class="math inline">\(Z\)</span> 可类似证明。证毕。</p>
+          </div></p>
+<h3 id="关于-a-逆的定理">关于 <span class="math inline">\(A^+\)</span> 逆的定理</h3>
+<p><strong>定理</strong>： <span class="math display">\[
+A^+=A^4AA^{(1,3)}
+\]</span> <div class="note note-secondary">
+            <p>证明：设 <span class="math inline">\(X=A^{(1,4)}AA^{(1,3)}\)</span>，根据关于 1,2-逆的定理知 <span class="math inline">\(X\in A\{1,2\}\)</span>. 另外， <span class="math display">\[AX=AA^{(1,4)}AA^{(1,3)}=AA^{(1,3)},\quad XA=A^{(1,4)}AA^{(1,3)}A=A^{(1,4)}A\]</span> 均是 Hermite 矩阵，从而得到结论。证毕。</p>
+          </div></p>
+<div class="note note-secondary">
+            <p>证明 2（利用通解形式，见下文）：TODO</p>
+          </div>
+<p><strong>定理</strong>：给定矩阵 <span class="math inline">\(A\)</span>，有：</p>
+<ol type="1">
+<li><span class="math inline">\(\text{rank}(A^+)=\text{rank}(A)\)</span>.</li>
+<li><span class="math inline">\((A^+)^+=A\)</span>.</li>
+<li><span class="math inline">\((A^H)^+=(A^+)^H,\,(A^T)^+=(A^+)^T\)</span>.</li>
+<li><span class="math inline">\((A^HA)^+=A^+(A^H)^+,\,(AA^H)^+=(A^H)^+A^+\)</span>.</li>
+<li><span class="math inline">\(A^+=(A^HA)^+A^H=A^H(AA^H)^+\)</span>.</li>
+<li><span class="math inline">\(R(A^+)=R(A^H),\,N(A^+)=N(A^H)\)</span>.</li>
+</ol>
+<div class="note note-secondary">
+            <p>证明：前 5 条都可以通过定义证明。</p><p>对于第 6 条，根据 1 可知 <span class="math inline">\(\text{rank}(A^+)=\text{rank}(A)=\text{rank}(A^H)\)</span>，根据 5 可知 <span class="math inline">\(R(A^+)\subset R(A^H),\,N(A^+)\supset N(A^H)\)</span>，于是 <span class="math inline">\(R(A^+)=R(A^H),\,N(A^+)=N(A^H)\)</span>. 证毕。</p>
+          </div>
+<p><strong>推论</strong>：若 <span class="math inline">\(A\in\mathbb C_n^{m\times n}\)</span>，即列满秩，则 <span class="math inline">\(A^+=(A^HA)^{-1}A^H\)</span>；若 <span class="math inline">\(A\in\mathbb C_m^{m\times n}\)</span>，即行满秩，则 <span class="math inline">\(A^+=A^H(AA^H)^{-1}\)</span>.</p>
+<p><strong>推论</strong>：若 <span class="math inline">\(\alpha\in\mathbb C^n\)</span>，且 <span class="math inline">\(\alpha\neq 0\)</span>，则 <span class="math inline">\(\alpha^+=(\alpha^H\alpha)^{-1}\alpha^H\)</span>，而 <span class="math inline">\((\alpha^H)^+=(\alpha^+)^H=\alpha(\alpha^H\alpha)^{-1}\)</span>.</p>
+<h2 id="广义逆的通解形式">广义逆的通解形式</h2>
+<div class="note note-success">
+            <p>第一节中给出的广义逆的定义是方程形式，本节则直接推导广义逆的通解形式。</p><p>做证明时，有时使用方程形式不容易想到思路，而使用通解只需要无脑计算即可。</p>
+          </div>
+<p>设 <span class="math inline">\(A\in\mathbb C^{m\times n}_r\)</span>，存在 <span class="math inline">\(m\)</span> 阶可逆矩阵（或酉矩阵） <span class="math inline">\(P\)</span> 和 <span class="math inline">\(n\)</span> 阶可逆矩阵（或酉矩阵） <span class="math inline">\(Q\)</span> 使得 <span class="math inline">\(A=P\begin{bmatrix}B&amp;0\\0&amp;0\end{bmatrix}Q\)</span>，其中 <span class="math inline">\(B\)</span> 为 <span class="math inline">\(r\)</span> 阶可逆矩阵。</p>
+<div class="note note-success">
+            <p>注：应用奇异值分解可以使得 <span class="math inline">\(A=U\begin{bmatrix}\Sigma&amp;0\\0&amp;0\end{bmatrix}V^H\)</span>，这是上面的特殊情形，因此<strong>做证明题时直接奇异值分解</strong>就行了。</p><p>但是做计算题时，奇异值分解比较麻烦，所以我们不必追求让 <span class="math inline">\(B\)</span> 称为对角矩阵，只需要使得 <span class="math inline">\(B\)</span> 可逆即可。可以通过如下方式计算 <span class="math inline">\(P,Q,B\)</span>： <span class="math display">\[\begin{bmatrix}A&amp;I_m\\I_n&amp;0\end{bmatrix}\xrightarrow[\text{列变换}]{\text{行变换}}\begin{bmatrix}\begin{bmatrix}B&amp;0\\0&amp;0\end{bmatrix}&amp;P\\Q&amp;0\end{bmatrix}\]</span> 也可以通过 QR 分解做：首先使用列置换矩阵 <span class="math inline">\(P\)</span> 使得 <span class="math inline">\(AP\)</span> 前 <span class="math inline">\(r\)</span> 列线性无关，则对 <span class="math inline">\(AP\)</span> 做 QR 分解得 <span class="math inline">\(AP=Q_1\begin{bmatrix}R_1&amp;G\\0&amp;0\end{bmatrix}\)</span>，其中 <span class="math inline">\(R_1\)</span> 为上三角矩阵。再对 <span class="math inline">\(\begin{bmatrix}R_1^H&amp;0\\G^H&amp;0\end{bmatrix}\)</span> 做 QR 分解得 <span class="math inline">\(\begin{bmatrix}R_1^H&amp;0\\G^H&amp;0\end{bmatrix}=Q_2\begin{bmatrix}R_2&amp;0\\0&amp;0\end{bmatrix}\)</span>，其中 <span class="math inline">\(R_2\)</span> 为上三角矩阵。于是： <span class="math display">\[AP=Q_1\begin{bmatrix}R_2^H&amp;0\\0&amp;0\end{bmatrix}Q_2^H\implies A=Q_1\begin{bmatrix}R_2^H&amp;0\\0&amp;0\end{bmatrix}Q_2^HP^T\]</span> 这样得到的 <span class="math inline">\(B\)</span> 是一个下三角矩阵。</p>
+          </div>
+<table>
+
+<thead>
+<tr class="header">
+<th style="text-align: center;">广义逆</th>
+<th style="text-align: center;">通解</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ C,D,E,\quad\;X=Q^{-1}\begin{bmatrix}B^{-1}&amp;C\\D&amp;E\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,2\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ C,D,\quad X=Q^{-1}\begin{bmatrix}B^{-1}&amp;C\\D&amp;DBC\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,3\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ D,E,\quad\;X=Q^{-1}\begin{bmatrix}B^{-1}&amp;0\\D&amp;E\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,4\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ C,E,\quad\;X=Q^{-1}\begin{bmatrix}B^{-1}&amp;C\\0&amp;E\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,2,3\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ D,\quad\;X=Q^{-1}\begin{bmatrix}B^{-1}&amp;0\\D&amp;0\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,2,4\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ C,\quad\;X=Q^{-1}\begin{bmatrix}B^{-1}&amp;C\\0&amp;0\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,3,4\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\exists\ E,\quad\;X=Q^{-1}\begin{bmatrix}B^{-1}&amp;0\\0&amp;E\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(X\in A\{1,2,3,4\}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(X=Q^{-1}\begin{bmatrix}B^{-1}&amp;0\\0&amp;0\end{bmatrix}P^{-1}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>如果 <span class="math inline">\(P,Q\)</span> 是酉矩阵，则 <span class="math inline">\(Q^{-1},P^{-1}\)</span> 写为 <span class="math inline">\(Q^H,P^H\)</span> 即可。</p>
+<h2 id="广义逆的等价定义">广义逆的等价定义</h2>
+<p><strong>定义</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n}\)</span>，若矩阵 <span class="math inline">\(X\in\mathbb C^{n\times m}\)</span> 满足 <span class="math inline">\(AX=P_{R(A)},\,XA=P_{R(X)}\)</span>，其中 <span class="math inline">\(P_L\)</span> 是空间 <span class="math inline">\(L\)</span> 上的正交投影矩阵，则称 <span class="math inline">\(X\)</span> 为 <span class="math inline">\(A\)</span> 的 Moore 广义逆矩阵。</p>
+<p><strong>定理</strong>：Moore 广义逆矩阵和 Penrose 广义逆矩阵是等价的。</p>
 
                 
               </div>
@@ -448,6 +599,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/blog-main/2023/12/19/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-3%E5%B9%BF%E4%B9%89%E9%80%86%E7%9F%A9%E9%98%B5%E7%9A%84%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95/" title="[矩阵论]6.3广义逆矩阵的计算方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[矩阵论]6.3广义逆矩阵的计算方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
