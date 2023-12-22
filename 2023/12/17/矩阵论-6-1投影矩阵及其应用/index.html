@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="投影算子与投影矩阵 定义 投影算子：设 \(\mathbb C^n&#x3D;L\oplus M\)，将任意 \(x\in\mathbb C^n\) 变为沿着 \(M\) 到 \(L\) 的投影的变换称为沿着 \(M\) 到 \(L\) 的投影算子，记作 \(P_{L,M}\)，即： \[ P_{L,M}x&#x3D;y \] 满足 \(R(P_{L,M})&#x3D;L,\,N(P_{L,M})&#x3D;M\). 注意 \(x-y\">
+    <meta name="description" content="投影算子与投影矩阵 定义 投影算子：设 \(\mathbb C^n&#x3D;L\oplus M\)，则对于任意 \(x\in\mathbb C^n\) 有唯一分解 \(x&#x3D;y+z,\,y\in L,\,z\in M\). 称将 \(x\) 变为 \(y\) 的变换为沿着 \(M\) 到 \(L\) 的投影算子，记作 \(P_{L,M}\)，即： \[ P_{L,M}x&#x3D;y \]  性质：\(R(P_{L,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[矩阵论]6.1投影矩阵及其应用">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/17/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-1%E6%8A%95%E5%BD%B1%E7%9F%A9%E9%98%B5%E5%8F%8A%E5%85%B6%E5%BA%94%E7%94%A8/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="投影算子与投影矩阵 定义 投影算子：设 \(\mathbb C^n&#x3D;L\oplus M\)，将任意 \(x\in\mathbb C^n\) 变为沿着 \(M\) 到 \(L\) 的投影的变换称为沿着 \(M\) 到 \(L\) 的投影算子，记作 \(P_{L,M}\)，即： \[ P_{L,M}x&#x3D;y \] 满足 \(R(P_{L,M})&#x3D;L,\,N(P_{L,M})&#x3D;M\). 注意 \(x-y\">
+<meta property="og:description" content="投影算子与投影矩阵 定义 投影算子：设 \(\mathbb C^n&#x3D;L\oplus M\)，则对于任意 \(x\in\mathbb C^n\) 有唯一分解 \(x&#x3D;y+z,\,y\in L,\,z\in M\). 称将 \(x\) 变为 \(y\) 的变换为沿着 \(M\) 到 \(L\) 的投影算子，记作 \(P_{L,M}\)，即： \[ P_{L,M}x&#x3D;y \]  性质：\(R(P_{L,">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-12-17T04:21:58.000Z">
-<meta property="article:modified_time" content="2023-12-20T14:18:13.924Z">
+<meta property="article:modified_time" content="2023-12-22T08:16:10.415Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          496 字
+          538 字
         
       </span>
     
@@ -329,18 +329,18 @@
                 
                 <h2 id="投影算子与投影矩阵">投影算子与投影矩阵</h2>
 <h3 id="定义">定义</h3>
-<p><strong>投影算子</strong>：设 <span class="math inline">\(\mathbb C^n=L\oplus M\)</span>，将任意 <span class="math inline">\(x\in\mathbb C^n\)</span> 变为沿着 <span class="math inline">\(M\)</span> 到 <span class="math inline">\(L\)</span> 的投影的变换称为沿着 <span class="math inline">\(M\)</span> 到 <span class="math inline">\(L\)</span> 的投影算子，记作 <span class="math inline">\(P_{L,M}\)</span>，即： <span class="math display">\[
+<p><strong>投影算子</strong>：设 <span class="math inline">\(\mathbb C^n=L\oplus M\)</span>，则对于任意 <span class="math inline">\(x\in\mathbb C^n\)</span> 有唯一分解 <span class="math inline">\(x=y+z,\,y\in L,\,z\in M\)</span>. 称将 <span class="math inline">\(x\)</span> 变为 <span class="math inline">\(y\)</span> 的变换为沿着 <span class="math inline">\(M\)</span> 到 <span class="math inline">\(L\)</span> 的投影算子，记作 <span class="math inline">\(P_{L,M}\)</span>，即： <span class="math display">\[
 P_{L,M}x=y
-\]</span> 满足 <span class="math inline">\(R(P_{L,M})=L,\,N(P_{L,M})=M\)</span>. 注意 <span class="math inline">\(x-y\in M\)</span>.</p>
-<p><img src="proj.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+\]</span> <img src="proj.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
+<p><strong>性质</strong>：<span class="math inline">\(R(P_{L,M})=L,\,N(P_{L,M})=M\)</span>. 注意 <span class="math inline">\(x-y\in M\)</span>.</p>
 <p><strong>投影矩阵</strong>：投影算子 <span class="math inline">\(P_{L,M}\)</span> 在 <span class="math inline">\(\mathbb C^n\)</span> 的基 <span class="math inline">\((e_1,\ldots,e_n)\)</span> 下的矩阵称为投影矩阵。</p>
-<h3 id="投影-iff-幂等">投影 <span class="math inline">\(\iff\)</span> 幂等</h3>
+<h3 id="投影与幂等">投影与幂等</h3>
 <p><strong>引理</strong>：设 <span class="math inline">\(A\in\mathbb C^{n\times n}\)</span> 是幂等矩阵，<span class="math inline">\(A^2=A\)</span>，则： <span class="math display">\[
 N(A)=R(I-A)
 \]</span> <div class="note note-secondary">
             <p>证明：任取 <span class="math inline">\(x\in N(A)\)</span>，则 <span class="math inline">\(Ax=0\)</span>，则 <span class="math inline">\(x=Ax+(I-A)x=(I-A)x\in R(I-A)\)</span>，因此 <span class="math inline">\(N(A)\subset R(I-A)\)</span>；</p><p>任取 <span class="math inline">\(y\in\mathbb C^n\)</span>，<span class="math inline">\(A(I-A)y=(A-A^2)y=0\)</span>，故 <span class="math inline">\((I-A)y\in N(A)\)</span>，故 <span class="math inline">\(R(I-A)\subset N(A)\)</span>；</p><p>综上，<span class="math inline">\(N(A)=R(I-A)\)</span>. 证毕。</p>
           </div></p>
-<p><strong>定理（投影矩阵与幂等矩阵是等价的概念）</strong>： <span class="math display">\[
+<p><strong>定理</strong>：矩阵 <span class="math inline">\(P\)</span> 为投影矩阵的充要条件是 <span class="math inline">\(P\)</span> 为幂等矩阵，即： <span class="math display">\[
 P_{n\times n}=P_{L,M}\iff P^2=P
 \]</span> <div class="note note-secondary">
             <p>证明：必要性。设 <span class="math inline">\(C^n=L\oplus M\)</span>，则对于任意 <span class="math inline">\(x\in\mathbb C^n\)</span>，存在唯一的分解 <span class="math inline">\(x=y+z,\,y\in L,\,z\in M\)</span>. 于是 <span class="math inline">\(P_{L,M}x=y\)</span>. 因此 <span class="math inline">\(P_{L,M}^2x=P_{L,M}y=y=P_{L,M}x\)</span>，即 <span class="math inline">\(P_{L,M}\)</span> 是幂等的。</p><p>充分性。任意 <span class="math inline">\(x\in\mathbb C^n\)</span> 可分解为 <span class="math inline">\(x=Px+(I-P)x\)</span>，根据引理知 <span class="math inline">\(N(P)=R(I-P)\)</span>，又 <span class="math inline">\(\mathbb C^n=R(P)\oplus N(P)\)</span>，所以这样的分解是唯一的，于是 <span class="math inline">\(P=P_{R(P),N(P)}\)</span>. 证毕。</p>
@@ -356,10 +356,10 @@ P_{L,M}x=QI_ry=QI_rQ^{-1}y\implies P_{L,M}=QI_rQ^{-1}
           </div>
 <h2 id="正交投影算子与正交投影矩阵">正交投影算子与正交投影矩阵</h2>
 <h3 id="定义-1">定义</h3>
-<p><strong>定义（正交投影算子）</strong>：设 <span class="math inline">\(L\)</span> 是 <span class="math inline">\(\mathbb C^n\)</span> 的子空间，则沿着 <span class="math inline">\(L^{\perp}\)</span> 到 <span class="math inline">\(L\)</span> 的投影算子 <span class="math inline">\(P_{L,L^{\perp}}\)</span> 为正交投影算子，简记为 <span class="math inline">\(P_L\)</span>.</p>
+<p><strong>正交投影算子</strong>：设 <span class="math inline">\(L\)</span> 是 <span class="math inline">\(\mathbb C^n\)</span> 的子空间，则沿着 <span class="math inline">\(L^{\perp}\)</span> 到 <span class="math inline">\(L\)</span> 的投影算子 <span class="math inline">\(P_{L,L^{\perp}}\)</span> 为正交投影算子，简记为 <span class="math inline">\(P_L\)</span>.</p>
 <p><img src="proj-o.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
-<p><strong>定义（正交投影矩阵）</strong>：正交投影算子 <span class="math inline">\(P_{L}\)</span> 在 <span class="math inline">\(\mathbb C^n\)</span> 的基 <span class="math inline">\(e_1,\ldots,e_n\)</span> 下的矩阵称为正交投影矩阵。</p>
-<h3 id="正交投影-iff-幂等-hermite">正交投影 <span class="math inline">\(\iff\)</span> 幂等 Hermite</h3>
+<p><strong>正交投影矩阵</strong>：正交投影算子 <span class="math inline">\(P_{L}\)</span> 在 <span class="math inline">\(\mathbb C^n\)</span> 的基 <span class="math inline">\(e_1,\ldots,e_n\)</span> 下的矩阵称为正交投影矩阵。</p>
+<h3 id="正交投影与幂等-hermite">正交投影与幂等 Hermite</h3>
 <p><strong>定理</strong>：矩阵 <span class="math inline">\(P\)</span> 为正交投影矩阵的充要条件是 <span class="math inline">\(P\)</span> 为幂等 Hermite 矩阵。</p>
 <div class="note note-secondary">
             <p>证明：必要性。若 <span class="math inline">\(P\)</span> 为正交投影矩阵，则根据上一节定理知它是幂等矩阵，于是 <span class="math inline">\(R(I-P)=N(P)\)</span>。又 <span class="math inline">\(R(P)\perp N(P)\)</span>，所以 <span class="math inline">\(R(P)\perp R(I-P)\)</span>，因此对于任意 <span class="math inline">\(x,y\in\mathbb C^n\)</span>，有： <span class="math display">\[x^HP^H(I-P)y=0\implies P^H(I-P)=0\implies P^H=P^HP\implies P=(P^HP)^H=P^HP=P^H\]</span> 即 <span class="math inline">\(P\)</span> 是 Hermite 矩阵。</p><p>充分性。若 <span class="math inline">\(P\)</span> 是幂等 Hermite 矩阵，则根据上一节定理知它是投影矩阵 <span class="math inline">\(P_{R(P),N(P)}\)</span>. 又由于 <span class="math inline">\(P^H=P\)</span>，所以： <span class="math display">\[P_{R(P),N(P)}=P_{R(P),N(P^H)}=P_{R(P),R^\perp(P)}\]</span> 即 <span class="math inline">\(P\)</span> 是正交投影矩阵。证毕。</p>
@@ -375,7 +375,9 @@ P_L=P_{L,L^\perp}
 \left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{-1}=\left[\begin{array}{c:c}(X^HX)^{-1}&amp;O\\\hdashline O&amp;(Y^HY)^{-1}\end{array}\right]\left[\begin{array}{c}X^H\\\hdashline Y^H\end{array}\right]=\left[\begin{array}{c}(X^HX)^{-1}X^H\\\hdashline(Y^HY)^{-1}Y^H\end{array}\right]
 \]</span> 因此： <span class="math display">\[
 P_L=\left[\begin{array}{c:c}X&amp;O\end{array}\right]\left[\begin{array}{c:c}X&amp;Y\end{array}\right]^{-1}=\left[\begin{array}{c:c}X&amp;O\end{array}\right]\left[\begin{array}{c}(X^HX)^{-1}X^H\\\hdashline(Y^HY)^{-1}Y^H\end{array}\right]=X(X^HX)^{-1}X^H
-\]</span></p>
+\]</span> <div class="note note-info">
+            <p>同样的，正交投影矩阵的计算也与选取的基无关。假设有另一组基 <span class="math inline">\(\bar X=(\bar x_1,\ldots,\bar x_r)\)</span>，设 <span class="math inline">\(\bar X=XR\)</span>，则： <span class="math display">\[\bar P_L=\bar X({\bar X}^H\bar X)^{-1}{\bar X}^H=XR(R^HX^HXR)^{-1}R^HX^H=XRR^{-1}(X^HX)^{-1}(R^H)^{-1}R^HX^H=X(X^HX)^{-1}X^H=P_L\]</span> 可见 <span class="math inline">\(P_L\)</span> 与基的选取无关。</p>
+          </div></p>
 
                 
               </div>

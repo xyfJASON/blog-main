@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-11-11T12:13:29.000Z">
-<meta property="article:modified_time" content="2023-11-18T12:20:09.514Z">
+<meta property="article:modified_time" content="2023-12-21T12:55:43.693Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          684 字
+          750 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          6 分钟
+          7 分钟
         
       </span>
     
@@ -411,7 +411,20 @@ P^{-1}AP=\begin{bmatrix}\lambda_1&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;\lambda
 f(A)=P\begin{bmatrix}f(\lambda_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(\lambda_n)\end{bmatrix}P^{-1}
 \]</span></p>
 <h3 id="jordan-标准形法">Jordan 标准形法</h3>
-<p>暂略。</p>
+<p>在第一章中我们已经推导过了 Jordan 标准形的多项式，而对于一般函数，根据代入规则容易知道其结论有类似的形式。</p>
+<p>设 <span class="math inline">\(A\)</span> 的 Jordan 标准形为 <span class="math inline">\(J\)</span>，则存在可逆矩阵 <span class="math inline">\(P\)</span> 使得： <span class="math display">\[
+P^{-1}AP=J=\begin{bmatrix}J_1&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;J_s\end{bmatrix},\quad J_i=\begin{bmatrix}\lambda_i&amp;1&amp;&amp;\\&amp;\ddots&amp;\ddots&amp;\\&amp;&amp;\lambda_i&amp;1\\&amp;&amp;&amp;\lambda_i\end{bmatrix}_{m_i\times m_i}
+\]</span> 那么： <span class="math display">\[
+f(J_i)=\begin{bmatrix}
+f(\lambda_i)&amp;\frac{1}{1!}f&#39;(\lambda_i)&amp;\frac{1}{2!}f&#39;&#39;(\lambda_i)&amp;\cdots&amp;\frac{1}{(m_i-1)!}f^{(m_i-1)}(\lambda_i)\\
+&amp;f(\lambda_i)&amp;\frac{1}{1!}f&#39;(\lambda_i)&amp;\cdots&amp;\frac{1}{(m_i-2)!}f^{(m_i-2)}(\lambda_i)\\
+&amp;&amp;\ddots&amp;\ddots&amp;\vdots\\
+&amp;&amp;&amp;f(\lambda_i)&amp;\frac{1}{1!}f&#39;(\lambda_i)\\
+&amp;&amp;&amp;&amp;f(\lambda_i)
+\end{bmatrix}_{m_i\times m_i}
+\]</span> 于是原问题： <span class="math display">\[
+f(A)=Pf(J)P^{-1}=P\begin{bmatrix}f(J_1)&amp;&amp;\\&amp;\ddots&amp;\\&amp;&amp;f(J_s)\end{bmatrix}P^{-1}
+\]</span></p>
 
                 
               </div>

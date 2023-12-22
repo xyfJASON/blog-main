@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-12-17T06:03:47.000Z">
-<meta property="article:modified_time" content="2023-12-21T07:18:52.551Z">
+<meta property="article:modified_time" content="2023-12-22T08:47:14.806Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          991 字
+          1k 字
         
       </span>
     
@@ -342,13 +342,16 @@
 <p><img src="1inv.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
 <p><strong>定理</strong>：对任意 <span class="math inline">\(A\in\mathbb C^{m\times n}\)</span>，<span class="math inline">\(A^+\)</span> 存在且唯一。</p>
 <div class="note note-secondary">
-            <p>证明：存在性。对 <span class="math inline">\(A\)</span> 做奇异值分解 <span class="math inline">\(A=U\begin{bmatrix}\Sigma_r&amp;0\\0&amp;0\end{bmatrix}V^H\)</span>，取 <span class="math inline">\(X=V\begin{bmatrix}\Sigma_r^{-1}&amp;0\\0&amp;0\end{bmatrix}U^H\)</span>，可以验证 <span class="math inline">\(X\)</span> 满足 <span class="math inline">\(A^+\)</span> 的四个条件。</p><p>唯一性。设 <span class="math inline">\(X,Y\)</span> 均是 <span class="math inline">\(A^+\)</span>，则： <span class="math display">\[\begin{align}&amp;Y=YAY=Y(AY)^H=YY^HA^H=YY^H(AXA)^H=YY^HA^H(AX)^H=Y(AY)^HAX=YAYAX=YAX\\&amp;X=XAX=(XA)^HX=A^HX^HX=(AYA)^HX^HX=(YA)^HA^HX^HX=(YA)^H(XA)^HX=(YA)^HXAX=(YA)^HX=YAX\end{align}\]</span> 故 <span class="math inline">\(X=Y\)</span>. 证毕。</p>
+            <p>证明：存在性。对 <span class="math inline">\(A\)</span> 做奇异值分解 <span class="math inline">\(A=U\begin{bmatrix}\Sigma&amp;0\\0&amp;0\end{bmatrix}V^H\)</span>，取 <span class="math inline">\(X=V\begin{bmatrix}\Sigma^{-1}&amp;0\\0&amp;0\end{bmatrix}U^H\)</span>，可以验证 <span class="math inline">\(X\)</span> 满足 <span class="math inline">\(A^+\)</span> 的四个条件。</p><p>唯一性。设 <span class="math inline">\(X,Y\)</span> 均是 <span class="math inline">\(A^+\)</span>，则： <span class="math display">\[\begin{align}&amp;Y=YAY=Y(AY)^H=YY^HA^H=YY^H(AXA)^H=YY^HA^H(AX)^H=Y(AY)^HAX=YAYAX=YAX\\&amp;X=XAX=(XA)^HX=A^HX^HX=(AYA)^HX^HX=(YA)^HA^HX^HX=(YA)^H(XA)^HX=(YA)^HXAX=(YA)^HX=YAX\end{align}\]</span> 故 <span class="math inline">\(X=Y\)</span>. 证毕。</p>
+          </div>
+<div class="note note-info">
+            <p>上述定理的证明过程也给出了 <span class="math inline">\(A^+\)</span> 的一种基于奇异值分解的计算方法： <span class="math display">\[A=U\begin{bmatrix}\Sigma&amp;0\\0&amp;0\end{bmatrix}V^H\implies A^+=V\begin{bmatrix}\Sigma^{-1}&amp;0\\0&amp;0\end{bmatrix}U^H\]</span></p>
           </div>
 <p><strong>定理</strong>： <span class="math display">\[
 \lim_{\delta\to0}(\delta^2I+A^HA)^{-1}A^H=A^+
 \]</span></p>
 <div class="note note-secondary">
-            <p>证明：设 <span class="math inline">\(A=U_1\Sigma V_1^H\)</span>，则TODO</p>
+            <p>证明：设 <span class="math inline">\(A=U\begin{bmatrix}\Sigma&amp;0\\0&amp;0\end{bmatrix}V^H\)</span>，则 <span class="math inline">\(A^HA=V\begin{bmatrix}\Sigma^2&amp;0\\0&amp;0\end{bmatrix}V^H\)</span>，于是 <span class="math inline">\(\delta^2I+A^HA=V\begin{bmatrix}\Sigma^2+\delta^2I&amp;0\\0&amp;\delta^2I\end{bmatrix}V^H\)</span>，因此： <span class="math display">\[\begin{align}(\delta^2I+A^HA)^{-1}A^H&amp;=V\begin{bmatrix}\left[\sigma_i^2+\delta^2\right]_{r\times r}&amp;0\\0&amp;\delta^2I\end{bmatrix}^{-1}V^HA^H\\&amp;=V\begin{bmatrix}\left[\frac{1}{\sigma_i^2+\delta^2}\right]_{r\times r}&amp;0\\0&amp;\delta^{-2}I\end{bmatrix}(AV)^H\\&amp;=V\begin{bmatrix}\left[\frac{1}{\sigma_i^2+\delta^2}\right]_{r\times r}&amp;0\\0&amp;\delta^{-2}I\end{bmatrix}\begin{bmatrix}\Sigma&amp;0\\0&amp;0\end{bmatrix}U^H\\&amp;=V\begin{bmatrix}\left[\frac{\sigma_i}{\sigma_i^2+\delta^2}\right]_{r\times r}&amp;0\\0&amp;0\end{bmatrix}U^H\\\end{align}\]</span> 于是当 <span class="math inline">\(\delta\to0\)</span> 时， <span class="math display">\[\lim_{\delta\to0}(\delta^2I+A^HA)^{-1}A^H=\lim_{\delta\to0}V\begin{bmatrix}\left[\frac{\sigma_i}{\sigma_i^2+\delta^2}\right]_{r\times r}&amp;0\\0&amp;0\end{bmatrix}U^H=V\begin{bmatrix}\Sigma^{-1}&amp;0\\0&amp;0\end{bmatrix}U^H=A^+\]</span> 证毕。</p>
           </div>
 <h2 id="广义逆的性质和构造">广义逆的性质和构造</h2>
 <h3 id="重要引理与推论">重要引理与推论</h3>

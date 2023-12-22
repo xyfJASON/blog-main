@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，其解有无数多个，我们希望求极小范数解； 如果方程组不相容，即无解，那么求极值问题 \(\min \Vert Ax-b\Vert\) 称作求矛盾方程组的最小二乘解； 一般而言，最小二乘解也不唯一，因此我们希望求极小范数最小二乘解。  线性方程组">
+    <meta name="description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，其解有无数多个，我们希望求极小范数解，即 \(\min_{Ax&#x3D;b}\Vert x\Vert\)； 如果方程组不相容，即无解，那么我们希望求矛盾方程组的最小二乘解，即 \(\min \Vert Ax-b\Vert\)； 一般而言，最小二乘解也">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[矩阵论]6.4广义逆与线性方程组">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/20/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-4%E5%B9%BF%E4%B9%89%E9%80%86%E4%B8%8E%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，其解有无数多个，我们希望求极小范数解； 如果方程组不相容，即无解，那么求极值问题 \(\min \Vert Ax-b\Vert\) 称作求矛盾方程组的最小二乘解； 一般而言，最小二乘解也不唯一，因此我们希望求极小范数最小二乘解。  线性方程组">
+<meta property="og:description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，其解有无数多个，我们希望求极小范数解，即 \(\min_{Ax&#x3D;b}\Vert x\Vert\)； 如果方程组不相容，即无解，那么我们希望求矛盾方程组的最小二乘解，即 \(\min \Vert Ax-b\Vert\)； 一般而言，最小二乘解也">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-12-20T14:20:32.000Z">
-<meta property="article:modified_time" content="2023-12-21T06:22:33.773Z">
+<meta property="article:modified_time" content="2023-12-22T09:50:46.304Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          616 字
+          878 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          6 分钟
+          8 分钟
         
       </span>
     
@@ -329,10 +329,11 @@
                 
                 <p>对于方程组 <span class="math inline">\(Ax=b\)</span>，如果 <span class="math inline">\(A\)</span> 非奇异，则 <span class="math inline">\(x=A^{-1}b\)</span> 是唯一解。而在其他情况下，我们希望得到类似的结果。</p>
 <ul>
-<li>如果方程组相容，其解有无数多个，我们希望求<strong>极小范数解</strong>；</li>
-<li>如果方程组不相容，即无解，那么求极值问题 <span class="math inline">\(\min \Vert Ax-b\Vert\)</span> 称作求矛盾方程组的<strong>最小二乘解</strong>；</li>
-<li>一般而言，最小二乘解也不唯一，因此我们希望求<strong>极小范数最小二乘解</strong>。</li>
+<li>如果方程组相容，其解有无数多个，我们希望求<strong>极小范数解</strong>，即 <span class="math inline">\(\min_{Ax=b}\Vert x\Vert\)</span>；</li>
+<li>如果方程组不相容，即无解，那么我们希望求矛盾方程组的<strong>最小二乘解</strong>，即 <span class="math inline">\(\min \Vert Ax-b\Vert\)</span>；</li>
+<li>一般而言，最小二乘解也不唯一，因此我们希望求<strong>极小范数最小二乘解</strong>，即 <span class="math inline">\(\min_{\min\Vert Ax-b\Vert}\Vert x\Vert\)</span>.</li>
 </ul>
+<p>注：本节所用范数均为 2 范数。</p>
 <h2 id="线性方程组的相容性通解与-1-逆">线性方程组的相容性、通解与 1-逆</h2>
 <p><strong>定理</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n},\,B\in\mathbb C^{p\times q},\,D\in\mathbb C^{m\times q}\)</span>，则矩阵方程 <span class="math inline">\(AXB=D\)</span> 相容的充要条件是： <span class="math display">\[
 AA^{(1)}DB^{(1)}B=D
@@ -365,7 +366,7 @@ x=A^{(1)}b+(I-A^{(1)}A)y
 <div class="note note-secondary">
             <p>证明：由于 <span class="math inline">\(R(A^H)=N(A)^\perp\)</span>，所以设 <span class="math inline">\(x=y+z\)</span>，其中 <span class="math inline">\(y=P_{R(A^H)}x\in R(A^H),\,z=P_{N(A)}x\in N(A)\)</span>，于是： <span class="math display">\[\Vert x\Vert^2=\Vert y+z\Vert^2=\Vert y\Vert^2+\Vert z\Vert^2\geq \Vert y\Vert^2\]</span> 由于 <span class="math inline">\(Az=0\implies Ay=b\)</span>，即 <span class="math inline">\(y\)</span> 也是方程的解，所以为了让 <span class="math inline">\(x\)</span> 是极小范数解，只能是 <span class="math inline">\(z=0\)</span>，因此 <span class="math inline">\(x=y\in R(A^H)\)</span>.</p><p>唯一性。设 <span class="math inline">\(x&#39;\in R(A^H)\)</span> 且 <span class="math inline">\(Ax&#39;=b\)</span>，则 <span class="math inline">\(A(x-x&#39;)=0\)</span>，即 <span class="math inline">\(x-x&#39;\in N(A)=R^{\perp}(A^H)\)</span>. 又 <span class="math inline">\(x-x&#39;\in R(A^H)\)</span>，故 <span class="math inline">\(x-x&#39;=0\)</span>. 证毕。</p>
           </div>
-<p><strong>引理</strong>：集合 <span class="math inline">\(A\{1,4\}\)</span> 由方程 <span class="math inline">\(XA=A^{(1,4)}A\)</span> 的所有解组成，其中 <span class="math inline">\(A^{(1,4)}\in A\{1,4\}\)</span>.</p>
+<p><strong>引理</strong>：集合 <span class="math inline">\(A\{1,4\}\)</span> 由矩阵方程 <span class="math inline">\(XA=A^{(1,4)}A\)</span> 的所有解组成，其中 <span class="math inline">\(A^{(1,4)}\in A\{1,4\}\)</span>.</p>
 <div class="note note-secondary">
             <p>证明：<span class="math inline">\(AXA=AA^{(1,4)}A=A\)</span>，所以 <span class="math inline">\(X\in A\{1\}\)</span>；<span class="math inline">\((XA)^H=(A^{(1,4)}A)^H=A^{(1,4)}A=XA\)</span>，所以 <span class="math inline">\(X\in A\{4\}\)</span>. 综上 <span class="math inline">\(X\in A\{1,4\}\)</span>.</p><p>另一方面，若 <span class="math inline">\(X\in A\{1,4\}\)</span>，则 <span class="math display">\[A^{(1,4)}A=A^{(1,4)}AXA=(A^{(1,4)}A)^H(XA)^H=A^H(A^{(1,4)})^HA^HX^H=(AA^{(1,4)}A)^HX^H=A^HX^H=XA\]</span> 即 <span class="math inline">\(X\)</span> 是方程的解。证毕。</p>
           </div>
@@ -376,15 +377,36 @@ x=A^{(1)}b+(I-A^{(1)}A)y
 <p><strong>定理</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n},\,A^{(1,4)}\in A\{1,4\}\)</span>，则： <span class="math display">\[
 A\{1,4\}=\{A^{(1,4)}+Z(I-AA^{(1,4)})\mid Z\in\mathbb C^{n\times m}\}
 \]</span> <div class="note note-secondary">
-            <p>证明：根据引理，任意 <span class="math inline">\(X\in A\{1,4\}\)</span> 满足方程 <span class="math inline">\(XA=A^{(1,4)}A\)</span>，代入通解形式得： <span class="math display">\[\begin{align}X&amp;=A^{(1,4)}AA^{(1,4)}+Y-YAA^{(1)}\\&amp;=A^{(1,4)}AA^{(1,4)}+A^{(1,4)}+Z-(A^{(1,4)}+Z)AA^{(1,4)}&amp;Y=A^{(1,4)}+Z\\&amp;=A^{(1,4)}+Z+A^{(1,4)}AA^{(1,4)}-(A^{(1,4)}+Z)AA^{(1,4)}\\&amp;=A^{(1,4)}+Z(I-AA^{(1,4)})\end{align}\]</span> 证毕。</p>
+            <p>证明：根据引理，任意 <span class="math inline">\(X\in A\{1,4\}\)</span> 满足方程 <span class="math inline">\(XA=A^{(1,4)}A\)</span>，代入通解形式得： <span class="math display">\[\begin{align}X&amp;=A^{(1,4)}AA^{(1,4)}+Y-YAA^{(1,4)}\\&amp;=A^{(1,4)}AA^{(1,4)}+A^{(1,4)}+Z-(A^{(1,4)}+Z)AA^{(1,4)}&amp;Y=A^{(1,4)}+Z\\&amp;=A^{(1,4)}+Z+A^{(1,4)}AA^{(1,4)}-(A^{(1,4)}+Z)AA^{(1,4)}\\&amp;=A^{(1,4)}+Z(I-AA^{(1,4)})\end{align}\]</span> 证毕。</p>
           </div></p>
 <p><strong>定理</strong>：设 <span class="math inline">\(Ax=b\)</span> 相容，则 <span class="math inline">\(x=A^{(1,4)}b\)</span> 为极小范数解；反之，若对于任意 <span class="math inline">\(b\in R(A)\)</span>，<span class="math inline">\(x=Xb\)</span> 都是极小范数解，则 <span class="math inline">\(X\in A\{1,4\}\)</span>.</p>
 <div class="note note-secondary">
-            <p>证明：由上一节定理知 <span class="math inline">\(x=A^{(1,4)}b\)</span> 一定是解。设 <span class="math inline">\(Au=b\)</span>，则 <span class="math inline">\(x=A^{(1,4)}b=A^{(1,4)}Au=(A^{(1,4)}A)^Hu=A^H(A^{(1,4)})^Hu\in R(A^H)\)</span>，于是根据本节引理知 <span class="math inline">\(x\)</span> 为唯一极小范数解。</p><p>反之，考虑 <span class="math inline">\(Ax=a_i\)</span>，由于 <span class="math inline">\(x=Xa_i\)</span> 是方程的极小范数解，所以 <span class="math inline">\(Xa_i=A^{(1,4)}a_i\)</span>，故 <span class="math inline">\(XA=A^{(1,4)}A\)</span>，根据引理知 <span class="math inline">\(X\in A\{1,4\}\)</span>. 证毕。</p>
+            <p>证明：由第一节定理知 <span class="math inline">\(x=A^{(1,4)}b\)</span> 一定是解。设 <span class="math inline">\(Au=b\)</span>，则 <span class="math inline">\(x=A^{(1,4)}b=A^{(1,4)}Au=(A^{(1,4)}A)^Hu=A^H(A^{(1,4)})^Hu\in R(A^H)\)</span>，于是根据本节引理知 <span class="math inline">\(x\)</span> 为唯一极小范数解。</p><p>反之，考虑 <span class="math inline">\(Ax=a_i\)</span>，由于 <span class="math inline">\(x=Xa_i\)</span> 是方程的极小范数解，所以 <span class="math inline">\(Xa_i=A^{(1,4)}a_i\)</span>，故 <span class="math inline">\(XA=A^{(1,4)}A\)</span>，根据引理知 <span class="math inline">\(X\in A\{1,4\}\)</span>. 证毕。</p>
           </div>
 <h2 id="矛盾方程组的最小二乘解与-13-逆">矛盾方程组的最小二乘解与 1,3-逆</h2>
-<p><strong>定理</strong>：</p>
+<p><strong>引理</strong>：集合 <span class="math inline">\(A\{1,3\}\)</span> 由矩阵方程 <span class="math inline">\(AX=AA^{(1,3)}\)</span> 的所有解组成，其中 <span class="math inline">\(A^{(1,3)}\in A\{1,3\}\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：<span class="math inline">\(AXA=AA^{(1,3)}A=A\)</span>，故 <span class="math inline">\(X\in A\{1\}\)</span>；<span class="math inline">\((AX)^H=(AA^{(1,3)})^H=AA^{(1,3)}=AX\)</span>，故 <span class="math inline">\(X\in A\{3\}\)</span>. 综上 <span class="math inline">\(X\in A\{1,3\}\)</span>.</p><p>另一方面，若 <span class="math inline">\(X\in A\{1,3\}\)</span>，则： <span class="math display">\[AA^{(1,3)}=AXAA^{(1,3)}=(AX)^H(AA^{(1,3)})^H=X^HA^H(A^{(1,3)})^HA^H=X^H(AA^{(1,3)}A)^H=X^HA^H=AX\]</span> 即 <span class="math inline">\(X\)</span> 是方程的解。证毕。</p>
+          </div>
+<div class="note note-success">
+            <p>该定理说明尽管 <span class="math inline">\(A^{(1,3)}\)</span> 不唯一，但是 <span class="math inline">\(AA^{(1,3)}\)</span> 唯一。</p>
+          </div>
+<p><strong>推论</strong>：<span class="math inline">\(AA^{(1,3)}=P_{R(A)}\)</span>.</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(A\in\mathbb C^{m\times n},\,A^{(1,3)}\in A\{1,3\}\)</span>，则： <span class="math display">\[
+A\{1,3\}=\{A^{(1,3)}+(I-A^{(1,3)}A)Z\mid Z\in\mathbb C^{n\times m}\}
+\]</span> <div class="note note-secondary">
+            <p>证明：根据引理，任意 <span class="math inline">\(X\in A\{1,3\}\)</span> 满足方程 <span class="math inline">\(AX=AA^{(1,3)}\)</span>，代入通解形式得： <span class="math display">\[\begin{align}X&amp;=A^{(1,3)}AA^{(1,3)}+Y-A^{(1,3)}AY\\&amp;=A^{(1,3)}AA^{(1,3)}+A^{(1,3)}+Z-A^{(1,3)}A(A^{(1,3)}+Z)&amp;Y=A^{(1,3)}+Z\\&amp;=A^{(1,3)}+Z+A^{(1,3)}AA^{(1,3)}-A^{(1,3)}A(A^{(1,3)}+Z)\\&amp;=A^{(1,3)}+(I-A^{(1,3)}A)Z\end{align}\]</span> 证毕。</p>
+          </div></p>
+<p><strong>定理</strong>：设有方程 <span class="math inline">\(Ax=b\)</span>，则 <span class="math inline">\(x=A^{(1,3)}b\)</span> 为最小二乘解；反之，若对于任意 <span class="math inline">\(b\)</span>，<span class="math inline">\(x=Xb\)</span> 都是最小二乘解，则 <span class="math inline">\(X\in A\{1,3\}\)</span>.</p>
+<p><strong>法方程</strong>：<span class="math inline">\(x\)</span> 是方程组 <span class="math inline">\(Ax=b\)</span> 的最小二乘解的充要条件为： <span class="math display">\[
+A^HAx=A^Hb
+\]</span></p>
 <h2 id="矛盾方程组的极小范数最小二乘解与-a">矛盾方程组的极小范数最小二乘解与 <span class="math inline">\(A^+\)</span></h2>
+<p><strong>定理</strong>：<span class="math inline">\(x=A^+b\)</span> 是方程组 <span class="math inline">\(Ax=b\)</span> 的唯一极小范数最小二乘解。反之，若对所有 <span class="math inline">\(b\)</span>，<span class="math inline">\(x=Xb\)</span> 都是方程 <span class="math inline">\(Ax=b\)</span> 的极小范数最小二乘解，则 <span class="math inline">\(X=A^+\)</span>.</p>
+<p><strong>定理</strong>：若矩阵方程 <span class="math inline">\(AXB=D\)</span> 不相容，则其极小范数最小二乘解，即满足 <span class="math inline">\(\min_\limits{\min \Vert AXB-D\Vert}\Vert X\Vert\)</span> 的唯一解为 <span class="math inline">\(X=A^+DB^+\)</span>.</p>
+<div class="note note-secondary">
+            <p>证明：方程两边同时行拉直： <span class="math display">\[\overline{\text{vec}}(AXB)=\overline{\text{vec}}(D)\implies (A\otimes B^T)\overline{\text{vec}}(X)=\overline{\text{vec}}(D)\]</span> 其极小范数最小二乘解为： <span class="math display">\[\overline{\text{vec}}(X)=(A\otimes B^T)^+\overline{\text{vec}}(D)=(A^+\otimes (B^T)^+)\overline{\text{vec}}(D)=(A^+\otimes (B^+)^T)\overline{\text{vec}}(D)\]</span> 于是反过来应用拉直算子得 <span class="math inline">\(X=A^+DB^+\)</span>. 证毕。</p><p>注：上述过程应用了 <span class="math inline">\((A\otimes B)^+=A^+\otimes B^+\)</span> 的结论，该结论可以通过定义验证。</p>
+          </div>
 
                 
               </div>
