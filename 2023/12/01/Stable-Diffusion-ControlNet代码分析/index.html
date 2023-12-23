@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/controlnet.png">
 <meta property="article:published_time" content="2023-12-01T02:35:11.000Z">
-<meta property="article:modified_time" content="2023-12-13T11:48:52.554Z">
+<meta property="article:modified_time" content="2023-12-23T12:01:19.105Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="AIGC">
@@ -276,7 +276,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.3k 字
+          2.5k 字
         
       </span>
     
@@ -287,7 +287,7 @@
         
         
         
-          20 分钟
+          21 分钟
         
       </span>
     
@@ -448,7 +448,7 @@
 <h3 id="cldmcldm.py">cldm/cldm.py</h3>
 <p>这里是 ControlNet 的核心，定义了三个类：<code>ControlledUNetModel</code>、<code>ControlNet</code> 和 <code>ControlLDM</code>.</p>
 <p><code>ControlledUNetModel</code> 继承自 <code>UNetModel</code>（即 SD 的去噪 UNet），重写了 <code>forward()</code> 方法，从而把 ControlNet 的输出接入 SD 之中。实现上也没有什么 tricky 的地方，就是老老实实抄过来改写。</p>
-<p><code>ControlNet</code> 就是 ControlNet 本体了，是一个 <code>nn.Module</code> 模块。其大部分内容就是把 <code>UNetModel</code> 的 Encoder 部分抄过来，但是需要新添加一个将条件输入压缩到隐空间维度的 8 层卷积，称作 <code>input_hint_block</code>. 另外还加了一些 <code>zero_convs</code>.</p>
+<p><code>ControlNet</code> 就是 ControlNet 本体了，是一个 <code>nn.Module</code> 模块。其大部分内容就是把 <code>UNetModel</code> 的 Encoder 部分抄过来，但是需要新添加一个将条件输入压缩到隐空间维度的 8 层卷积，称作 <code>input_hint_block</code>. 另外还加了一些 <code>zero_convs</code>（其中有一个 <code>middle_block_out</code> 也是零卷积）。</p>
 <p><code>ControlLDM</code> 则继承自 <code>LatentDiffusion</code>，提供 PyTorch Lightning 的接口。其新增了组件 <code>control_model</code>，即 <code>ControlNet</code> 的实例化。</p>
 <h3 id="cldmddim_hacked.py">cldm/ddim_hacked.py</h3>
 <p>该文件主要修复了 <code>ldm/models/diffusion/ddim.py</code> 在采样时的一个 bug，可以直接平替原文件使用。</p>
@@ -488,17 +488,25 @@
 <p>有了上面的基础之后，我们可以深入看一下 ControlNet 发布的权重。</p>
 <h3 id="controlnet-1.0">ControlNet 1.0</h3>
 <p>在 1.0 版本中，ControlNet 权重是和 SD1.5 的权重<strong>放一起发布</strong>的，所以一个文件就有 5.4GB.</p>
-<p>以 <code>control_sd15_canny.pth</code> 为例，它就是 <code>ControlLDM</code> 类的 state_dict. 为了方便查看，如果我们将其所有 keys 按树形结构展开，有：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── alphas_cumprod<br>├── alphas_cumprod_prev<br>├── betas<br>├── log_one_minus_alphas_cumprod<br>├── logvar<br>├── posterior_log_variance_clipped<br>├── posterior_mean_coef1<br>├── posterior_mean_coef2<br>├── posterior_variance<br>├── sqrt_alphas_cumprod<br>├── sqrt_one_minus_alphas_cumprod<br>├── sqrt_recip_alphas_cumprod<br>├── sqrt_recipm1_alphas_cumprod<br>├── cond_stage_model              (FrozenCLIPEmbedder&#x27;s state_dict)<br>│   └── transformer<br>│       └── ...<br>├── control_model                 (ControlNet&#x27;s state_dict)<br>│   ├── input_blocks<br>│   ├── input_hint_block<br>│   ├── middle_block<br>│   ├── middle_block_out<br>│   ├── time_embed<br>│   └── zero_convs<br>├── model                         (DiffusionWrapper&#x27;s state_dict)<br>│   └── diffusion_model           (UNetModel&#x27;s state_dict)<br>│       └── ...<br>└── first_stage_model             (AutoencoderKL&#x27;s state_dict)<br>    ├── decoder<br>    ├── encoder<br>    ├── post_quant_conv<br>    └── quant_conv<br></code></pre></td></tr></table></figure>
+<p>以 <code>control_sd15_canny.pth</code> 为例，它就是 <code>ControlLDM</code> 类的 state_dict，其所有的 keys 包括：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs text">alphas_cumprod <br>alphas_cumprod_prev <br>betas <br>log_one_minus_alphas_cumprod <br>logvar <br>posterior_log_variance_clipped <br>posterior_mean_coef1 <br>posterior_mean_coef2 <br>posterior_variance <br>sqrt_alphas_cumprod<br>sqrt_one_minus_alphas_cumprod <br>sqrt_recip_alphas_cumprod <br>sqrt_recipm1_alphas_cumprod<br><br># Below are FrozenCLIPEmbedder&#x27;s state_dict<br>cond_stage_model.transformer.text_model.embeddings.[xxx]<br>cond_stage_model.transformer.text_model.encoder.[xxx]<br>cond_stage_model.transformer.text_model.final_layer_norm.[xxx]<br><br># Below are AutoencoderKL&#x27;s state_dict<br>first_stage_model.encoder.[xxx]<br>first_stage_model.decoder.[xxx]<br>first_stage_model.quant_conv.[xxx]<br>first_stage_model.post_quant_conv.[xxx]<br><br># Below are DiffusionWrapper&#x27;s state_dict<br>model.diffusion_model.time_embed.[xxx]<br>model.diffusion_model.input_blocks.[xxx]<br>model.diffusion_model.middle_block.[xxx]<br>model.diffusion_model.output_blocks.[xxx]<br>model.diffusion_model.out.[xxx]<br><br># Below are ControlNet&#x27;s state_dict<br>control_model.time_embed.[xxx]<br>control_model.input_blocks.[xxx]<br>control_model.middle_block.[xxx]<br>control_model.middle_block_out.0.bias<br>control_model.middle_block_out.0.weight<br>control_model.input_hint_block.[xxx]<br>control_model.zero_convs.[xxx]<br></code></pre></td></tr></table></figure>
+<ul>
+<li>第一部分是扩散模型的参数，并不是网络的权重</li>
+<li>第二部分是文本编码器，即 <code>FrozenCLIPEmbedder</code> 的权重</li>
+<li>第三部分是自编码器，即 <code>AutoencoderKL</code> 的权重</li>
+<li>第四部分是扩散模型 UNet，即 <code>DiffusionWrapper</code> 的权重（前文提及，<code>DiffusionWrapper</code> 包裹了 <code>UNetModel</code> 类）</li>
+<li>第五部分是 <code>ControlNet</code> 的权重，可以看到确实是在 SD UNet Encoder 的基础上增加了 <code>input_hint_block</code>、<code>zero_convs</code> 和 <code>middle_block_out</code>.（注意 <code>middle_block_out</code> 本身也是一层 zero convolution，这个名字有迷惑性）</li>
+</ul>
 <p>:warning: 论文里说 SD 是固定的，但是深入探究后发现不同条件的模型的 <code>model.diffusion_model.output_blocks</code> 和 <code>model.diffusion_model.out</code> 竟然不一样，这在代码里对应配置了 <code>sd_locked=False</code>，即让 SD UNet decoder 可训练。</p>
 <h3 id="controlnet-1.1">ControlNet 1.1</h3>
 <p>在 1.1 版本中，ControlNet 权重和 SD1.5 的权重是<strong>分开发布</strong>的，所以一个文件只有 1.4GB.</p>
-<p>以 <code>control_v11p_sd15_canny.pth</code> 为例，它只是 <code>ControlNet</code> 类的 state_dict. 为了方便查看，如果我们将其所有 keys 按树形结构展开，有：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>└── control_model                 (ControlNet&#x27;s state_dict)<br>    ├── input_blocks<br>    ├── input_hint_block<br>    ├── middle_block<br>    ├── middle_block_out<br>    ├── time_embed<br>    └── zero_convs<br></code></pre></td></tr></table></figure>
+<p>以 <code>control_v11p_sd15_canny.pth</code> 为例，它只是 <code>ControlNet</code> 类的 state_dict，其所有的 keys 包括：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs text">control_model.time_embed.[xxx]<br>control_model.input_blocks.[xxx]<br>control_model.middle_block.[xxx]<br>control_model.middle_block_out.0.bias<br>control_model.middle_block_out.0.weight<br>control_model.input_hint_block.[xxx]<br>control_model.zero_convs.[xxx]<br></code></pre></td></tr></table></figure>
 <h3 id="control-loras-by-stabilityai">Control-LoRAs by StabilityAI</h3>
-<p>以 <code>control-lora-canny-rank128.safetensors</code> 为例，依旧按树形结构展开，有：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── input_blocks<br>│   ├── ...<br>│   ├── 7.1.transformer_blocks.7.attn2.to_k.up<br>│   └── ...<br>├── input_hint_block<br>├── label_emb<br>│   ├── 0.0.bias<br>│   ├── 0.0.down<br>│   ├── 0.0.up<br>│   ├── 0.2.bias<br>│   ├── 0.2.down<br>│   └── 0.2.up<br>├── lora_controlnet  (an empty tensor: Tensor([]))<br>├── middle_block<br>├── middle_block_out<br>├── time_embed<br>└── zero_convs<br></code></pre></td></tr></table></figure>
-<p>对比 ControlNet 的 keys，可以看见多了两项：<code>label_emb</code> 和 <code>lora_controlnet</code>，后者只是一个空 Tensor，用于方便判断是否是 Control-LoRAs. 那 LoRA 是加到哪里了呢？其实 <code>input_blocks</code>、<code>middle_block</code> 等地方的 linear 层都多了 <code>.up</code> 和 <code>.down</code>，我在上面只画了一个示意，它们正是 LoRA.</p>
+<p>StabilityAI 的 Control-LoRAs 在为 ControlNet 加入了 LoRA，一个 rank128 的文件有 396MB，一个 rank256 的文件有 774 MB.</p>
+<p>以 <code>control-lora-canny-rank128.safetensors</code> 为例，它包含的 keys 有：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs text">lora_controlnet  (an empty tensor: Tensor([]))<br><br>label_emb.0.0.bias<br>label_emb.0.0.up<br>label_emb.0.0.down<br>label_emb.0.2.bias<br>label_emb.0.2.up<br>label_emb.0.2.down<br><br>time_embed.0.up<br>time_embed.0.down<br>time_embed.0.bias<br>time_embed.2.up<br>time_embed.2.down<br>time_embed.2.bias<br><br>input_blocks.[xxx].up<br>input_blocks.[xxx].down<br>input_blocks.[xxx].bias<br><br>middle_block.[xxx].up<br>middle_block.[xxx].down<br>middle_block.[xxx].bias<br><br>middle_block_out.0.bias<br>middle_block_out.0.weight<br>zero_convs.[xxx].weight<br>zero_convs.[xxx].bias<br></code></pre></td></tr></table></figure>
+<p>对比 ControlNet 的 keys，最明显的是多了两项：<code>label_emb</code> 和 <code>lora_controlnet</code>，后者只是一个空 Tensor，用于方便判断加载的是否是 Control-LoRAs 的权重；前者的作用目前并不清楚（因为代码也没有开源）。其他 keys 就是在 ControlNet 的基础上为 Linear 层添加了 <code>.up</code> 和 <code>.down</code>（即 LoRA 的权重），有些层（如归一化层）还调整了 <code>.bias</code>。</p>
 
                 
               </div>
