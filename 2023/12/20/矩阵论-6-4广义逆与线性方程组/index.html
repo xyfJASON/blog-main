@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，其解有无数多个，我们希望求极小范数解，即 \(\min_{Ax&#x3D;b}\Vert x\Vert\)； 如果方程组不相容，即无解，那么我们希望求矛盾方程组的最小二乘解，即 \(\min \Vert Ax-b\Vert\)； 一般而言，最小二乘解也">
+    <meta name="description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，且其解有无数多个，我们希望求极小范数解，即 \(\min_{Ax&#x3D;b}\Vert x\Vert\)； 如果方程组不相容，即无解，那么我们希望求矛盾方程组的最小二乘解，即 \(\min \Vert Ax-b\Vert\)； 一般而言，最小二乘解">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[矩阵论]6.4广义逆与线性方程组">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/20/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-4%E5%B9%BF%E4%B9%89%E9%80%86%E4%B8%8E%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，其解有无数多个，我们希望求极小范数解，即 \(\min_{Ax&#x3D;b}\Vert x\Vert\)； 如果方程组不相容，即无解，那么我们希望求矛盾方程组的最小二乘解，即 \(\min \Vert Ax-b\Vert\)； 一般而言，最小二乘解也">
+<meta property="og:description" content="对于方程组 \(Ax&#x3D;b\)，如果 \(A\) 非奇异，则 \(x&#x3D;A^{-1}b\) 是唯一解。而在其他情况下，我们希望得到类似的结果。  如果方程组相容，且其解有无数多个，我们希望求极小范数解，即 \(\min_{Ax&#x3D;b}\Vert x\Vert\)； 如果方程组不相容，即无解，那么我们希望求矛盾方程组的最小二乘解，即 \(\min \Vert Ax-b\Vert\)； 一般而言，最小二乘解">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/3b1b_transform_basis.png">
 <meta property="article:published_time" content="2023-12-20T14:20:32.000Z">
-<meta property="article:modified_time" content="2023-12-22T09:50:46.304Z">
+<meta property="article:modified_time" content="2023-12-25T15:05:14.748Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          878 字
+          970 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          8 分钟
+          9 分钟
         
       </span>
     
@@ -329,7 +329,7 @@
                 
                 <p>对于方程组 <span class="math inline">\(Ax=b\)</span>，如果 <span class="math inline">\(A\)</span> 非奇异，则 <span class="math inline">\(x=A^{-1}b\)</span> 是唯一解。而在其他情况下，我们希望得到类似的结果。</p>
 <ul>
-<li>如果方程组相容，其解有无数多个，我们希望求<strong>极小范数解</strong>，即 <span class="math inline">\(\min_{Ax=b}\Vert x\Vert\)</span>；</li>
+<li>如果方程组相容，且其解有无数多个，我们希望求<strong>极小范数解</strong>，即 <span class="math inline">\(\min_{Ax=b}\Vert x\Vert\)</span>；</li>
 <li>如果方程组不相容，即无解，那么我们希望求矛盾方程组的<strong>最小二乘解</strong>，即 <span class="math inline">\(\min \Vert Ax-b\Vert\)</span>；</li>
 <li>一般而言，最小二乘解也不唯一，因此我们希望求<strong>极小范数最小二乘解</strong>，即 <span class="math inline">\(\min_{\min\Vert Ax-b\Vert}\Vert x\Vert\)</span>.</li>
 </ul>
@@ -407,6 +407,28 @@ A^HAx=A^Hb
 <div class="note note-secondary">
             <p>证明：方程两边同时行拉直： <span class="math display">\[\overline{\text{vec}}(AXB)=\overline{\text{vec}}(D)\implies (A\otimes B^T)\overline{\text{vec}}(X)=\overline{\text{vec}}(D)\]</span> 其极小范数最小二乘解为： <span class="math display">\[\overline{\text{vec}}(X)=(A\otimes B^T)^+\overline{\text{vec}}(D)=(A^+\otimes (B^T)^+)\overline{\text{vec}}(D)=(A^+\otimes (B^+)^T)\overline{\text{vec}}(D)\]</span> 于是反过来应用拉直算子得 <span class="math inline">\(X=A^+DB^+\)</span>. 证毕。</p><p>注：上述过程应用了 <span class="math inline">\((A\otimes B)^+=A^+\otimes B^+\)</span> 的结论，该结论可以通过定义验证。</p>
           </div>
+<h2 id="小结">小结</h2>
+<h3 id="axb"><span class="math inline">\(Ax=b\)</span></h3>
+<ul>
+<li><span class="math inline">\(Ax=b\)</span> 相容的充要条件是 <span class="math inline">\(AA^{(1)}b=b\)</span></li>
+<li>若 <span class="math inline">\(Ax=b\)</span> 相容，则通解为 <span class="math inline">\(x=A^{(1)}b+(I-A^{(1)}A)y\)</span></li>
+<li>若 <span class="math inline">\(Ax=b\)</span> 相容，则极小范数解为 <span class="math inline">\(x=A^{(1,4)}b\)</span></li>
+<li>若 <span class="math inline">\(Ax=b\)</span> 不相容，则最小二乘解为 <span class="math inline">\(x=A^{(1,3)}b\)</span></li>
+<li>若 <span class="math inline">\(Ax=b\)</span> 不相容，则极小范数最小二乘解为 <span class="math inline">\(x=A^+b\)</span></li>
+</ul>
+<h3 id="axbd"><span class="math inline">\(AXB=D\)</span></h3>
+<ul>
+<li><span class="math inline">\(AXB=D\)</span> 相容的充要条件是 <span class="math inline">\(AA^{(1)}DB^{(1)}B=D\)</span></li>
+<li>若 <span class="math inline">\(AXB=D\)</span> 相容，则通解为 <span class="math inline">\(X=A^{(1)}DB^{(1)}+Y-A^{(1)}AYBB^{(1)}\)</span></li>
+<li>若 <span class="math inline">\(AXB=D\)</span> 不相容，则极小范数最小二乘解为 <span class="math inline">\(X=A^+DB^+\)</span></li>
+</ul>
+<h3 id="广义逆的集合表示">广义逆的集合表示</h3>
+<ul>
+<li><span class="math inline">\(A\{1\}=\{X\mid AXA=A\}=\{A^{(1)}+Z-A^{(1)}AZAA^{(1)}\mid Z\in\mathbb C^{n\times m}\}\)</span></li>
+<li><span class="math inline">\(A\{1,3\}=\{X\mid AX=AA^{(1,3)}\}=\{A^{(1,3)}+(I-A^{(1,3)}A)Z\mid Z\in\mathbb C^{n\times m}\}\)</span></li>
+<li><span class="math inline">\(A\{1,4\}=\{X\mid XA=A^{(1,4)}A\}=\{A^{(1,4)}+Z(I-AA^{(1,4)})\mid Z\in\mathbb C^{n\times m}\}\)</span></li>
+<li><span class="math inline">\(A\{1,2\}=\{X\mid \text{rank}(X)=\text{rank}(A),\,X\in A\{1\}\}\)</span></li>
+</ul>
 
                 
               </div>
