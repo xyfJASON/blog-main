@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>PyCharm ignored inspections</title>
+    <link href="/blog-main/2023/12/26/PyCharm-ignored-inspections/"/>
+    <url>/blog-main/2023/12/26/PyCharm-ignored-inspections/</url>
+    
+    <content type="html"><![CDATA[<p><strong>PEP 8 coding style violation</strong> (<a href="https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes">Error codes</a>):</p><ul><li>E402: module level import not at top of file</li><li>E501: line too long (82 &gt; 79 characters)</li><li>E702: multiple statements on one line (semicolon)</li><li>E741: do not use variables named ‘l’, ‘O’, or ‘I’</li></ul><p><strong>PEP 8 naming convention violation</strong> (<a href="https://github.com/PyCQA/pep8-naming?tab=readme-ov-file#error-codes">Error codes</a>):</p><ul><li>N801: class names should use CapWords convention</li><li>N802: function name should be lowercase</li><li>N803: argument name should be lowercase</li><li>N806: variable in function should be lowercase</li><li>N812: lowercase imported as non-lowercase</li><li>N813: camelcase imported as lowercase</li><li>N814: camelcase imported as constant</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术博客</category>
+      
+      <category>技术栈</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>python</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>[矩阵论]6.4广义逆与线性方程组</title>
     <link href="/blog-main/2023/12/20/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-4%E5%B9%BF%E4%B9%89%E9%80%86%E4%B8%8E%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/"/>
     <url>/blog-main/2023/12/20/%E7%9F%A9%E9%98%B5%E8%AE%BA-6-4%E5%B9%BF%E4%B9%89%E9%80%86%E4%B8%8E%E7%BA%BF%E6%80%A7%E6%96%B9%E7%A8%8B%E7%BB%84/</url>
@@ -2181,8 +2208,6 @@
       
       <category>技术栈</category>
       
-      <category>Git</category>
-      
     </categories>
     
     
@@ -2209,8 +2234,6 @@
       <category>技术博客</category>
       
       <category>技术栈</category>
-      
-      <category>Git</category>
       
     </categories>
     
@@ -3627,8 +3650,6 @@
       <category>技术博客</category>
       
       <category>技术栈</category>
-      
-      <category>Python</category>
       
     </categories>
     
