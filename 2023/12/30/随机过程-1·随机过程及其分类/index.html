@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
 <meta property="article:published_time" content="2023-12-30T07:25:11.000Z">
-<meta property="article:modified_time" content="2023-12-30T13:46:53.761Z">
+<meta property="article:modified_time" content="2024-01-01T04:05:44.186Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          835 字
+          1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          7 分钟
+          9 分钟
         
       </span>
     
@@ -411,6 +411,14 @@ F_X(x_1,x_2,\ldots,x_m,+\infty,\ldots,+\infty;t_1,t_2,\ldots,t_m,t_{m+1},\ldots,
 <div class="note note-info">
             <p>定理说明了随机过程的有限维分布族包含了随机过程的所有概率信息。因此，研究随机过程的统计特征可以通过研究其有限维分布函数族的特性来达到。</p>
           </div>
+<h2 id="离散型随机变量分布列的-delta-函数表示">离散型随机变量分布列的 <span class="math inline">\(\delta\)</span> 函数表示</h2>
+<p>设离散型随机变量 <span class="math inline">\(X\)</span> 的分布列为 <span class="math inline">\(P(X=x_i)=p_i,\,i=1,2,\ldots\)</span>，则定义其分布函数可以表示为： <span class="math display">\[
+F(x)=P(X\leq x)=\sum_{x_i\leq x}p_i=\int_0^x\sum_{i=1}^\infty p_i\delta(u-x_i)\mathrm du
+\]</span> 故而密度函数可以表示为： <span class="math display">\[
+f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
+\]</span> 工程上，常用离散型随机变量分布列的 <span class="math inline">\(\delta\)</span> 函数表示法。它将离散型随机变量的分布列表示成分布密度的形式，因此与连续型随机变量的概率分布密度函数一样，可以进行统一处理。</p>
+<h2 id="条件数学期望">条件数学期望</h2>
+<p>条件数学期望是随机数学中最基本最重要的概念之一，它在随机过程课程中具有广泛的应用。</p>
 
                 
               </div>
