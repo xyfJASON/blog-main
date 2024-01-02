@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-control.png">
 <meta property="article:published_time" content="2023-02-11T05:36:50.000Z">
-<meta property="article:modified_time" content="2024-01-02T04:13:11.097Z">
+<meta property="article:modified_time" content="2024-01-02T06:41:48.997Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.4k 字
+          2.1k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          12 分钟
+          18 分钟
         
       </span>
     
@@ -403,9 +403,22 @@
 <div class="note note-secondary">
             <details><summary><b>点击查看 Uni-ControlNet 的生成样例（摘自<a target="_blank" rel="noopener" href="https://github.com/ShihaoZhaoZSH/Uni-ControlNet">官方 repo</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://raw.githubusercontent.com/ShihaoZhaoZSH/Uni-ControlNet/main/figs/results.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
+<h2 id="anydoor">AnyDoor</h2>
+<p><span class="label label-primary">Alibaba</span> <span class="label label-default">2023.07.18</span></p>
+<p>AnyDoor<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Xi, Lianghua Huang, Yu Liu, Yujun Shen, Deli Zhao, and Hengshuang Zhao. Anydoor: Zero-shot object-level image customization. *arXiv preprint arXiv:2307.09481* (2023).">[8]</span></a></sup> 通过提取物体的 ID 与细节特征对 Stable Diffusion 进行微调，实现在指定位置生成指定物体、移动或交换图中已有物体，可以看作是个性化生成+位置可控生成两种应用的结合。</p>
+<p><img src="anydoor.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>由图可见，在给到扩散模型之前，AnyDoor 由两条分支组成。下面的分支首先分割出感兴趣的物体，然后一个 ID extractor 提取物体的 ID tokens，将作为条件给到扩散模型。上面的分支将场景与分割物体的高通图片缝合在一起，经过一个 frequency-aware detail extractor 来提取保留物体的纹理细节，辅助扩散模型的生成。下面从 ID extractor、detail extractor 和扩散模型条件注入三个方面分别阐述。</p>
+<p><strong>ID extractor</strong>：在提取 identity 之前，为了避免背景的影响，作者首先使用了分割模型分割出物体（自动化或交互式皆可），实验证明这一步对提取干净可判别的特征有帮助。ID extractor 由一个预训练自监督模型加上可训练的线性映射层构成，充分利用现有的自监督模型强大的特征提取能力。作者选用了 DINO-v2 作为自监督 backbone.</p>
+<p><strong>Detail extractor</strong>：作者考虑到 ID extractor 会丢弃细节特征，因此设计了一个对细节敏感的细节提取器作为辅助。作者考虑直接将物体图片缝合到场景指定位置处，然后提取特征。这样做虽然提高了生成的保真度，但导致生成的图像缺少多样性。因此，作者决定添加一个高通滤波器作为 information bottleneck，限制这一分支提供太多关于物体的信息。具体而言，作者采用了水平和垂直方向的 Sobel 算子作为高通滤波器。得到缝合图像后，作者使用一个 detail extractor 提取特征，该提取器架构类似于 ControlNet，输出多分辨率的特征图。</p>
+<p><strong>扩散模型条件注入</strong>：得到 ID tokens 和 detail maps 后，作者需要将其注入预训练的文生图扩散模型 (Stable Diffusion)。作者直接将原本的 text embedding 替换成了 ID tokens，因为 AnyDoor 并不需要文本条件；Detail maps 直接 concat 到 UNet decoder 对应分辨率上。训练时固定 UNet encoder 部分不动而微调 UNet decoder 部分。</p>
+<p>进一步地，为了更好的学习物体的外表变化，作者使用了大规模的图像和视频数据进行训练。作者使用目标跟踪和分割技术从视频中得到同一个物体不同角度的图像，弥补缺乏这样的图像数据集的问题。</p>
+<p>最后，由于视频数据通常质量较差，作者提出了 adaptive timestep sampling 策略，即在训练时，对于视频数据增加采样更大时间步的概率，而对于图像数据增加采样更小时间步的概率。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 AnyDoor 的生成样例（摘自<a target="_blank" rel="noopener" href="https://ali-vilab.github.io/AnyDoor-Page/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://ali-vilab.github.io/AnyDoor-Page/generate_images/images/gifs/image1.gif" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://ali-vilab.github.io/AnyDoor-Page/generate_images/images/gifs/image2.gif" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://ali-vilab.github.io/AnyDoor-Page/generate_images/images/gifs/image3.gif" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://ali-vilab.github.io/AnyDoor-Page/generate_images/images/gifs/image4.gif" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://ali-vilab.github.io/AnyDoor-Page/generate_images/images/gifs/image5.gif" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://ali-vilab.github.io/AnyDoor-Page/generate_images/images/gifs/image6.gif" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
 <h2 id="generative-powers-of-ten">Generative Powers of Ten</h2>
 <p><span class="label label-primary">University of Washington</span> <span class="label label-primary">Google Research</span> <span class="label label-primary">UC Berkeley</span> <span class="label label-default">2023.12.04</span></p>
-<p>给定一个场景在不同放大尺度上的文本描述，Generative Powers of Ten<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wang, Xiaojuan, Janne Kontkanen, Brian Curless, Steve Seitz, Ira Kemelmacher, Ben Mildenhall, Pratul Srinivasan, Dor Verbin, and Aleksander Holynski. Generative Powers of Ten. arXiv preprint arXiv:2312.02149 (2023).">[8]</span></a></sup> 通过操纵、融合扩散模型在多个分辨率下预测的 x0，使用预训练扩散模型实现不断放大(zoom in)一张图像的视频效果。</p>
+<p>给定一个场景在不同放大尺度上的文本描述，Generative Powers of Ten<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wang, Xiaojuan, Janne Kontkanen, Brian Curless, Steve Seitz, Ira Kemelmacher, Ben Mildenhall, Pratul Srinivasan, Dor Verbin, and Aleksander Holynski. Generative Powers of Ten. arXiv preprint arXiv:2312.02149 (2023).">[9]</span></a></sup> 通过操纵、融合扩散模型在多个分辨率下预测的 x0，使用预训练扩散模型实现不断放大(zoom in)一张图像的视频效果。</p>
 <p><img src="powers-of-10.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
 <p>如图所示，作者的思路是操纵模型预测的 <span class="math inline">\(\mathbf x_0\)</span>，使得各尺度重叠的部分有着相同的预测值，从而保证放大过程的连贯统一。<strong>这种融合 <span class="math inline">\(\mathbf x_0\)</span> 的思路与 MultiDiffusion<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Bar-Tal, Omer, Lior Yariv, Yaron Lipman, and Tali Dekel. Multidiffusion: Fusing diffusion paths for controlled image generation. (2023).">[4]</span></a></sup> 是一致的</strong>。进一步地，作者还融合了逆向过程采样的 <span class="math inline">\(\epsilon\)</span>，使得各尺度采样出的 <span class="math inline">\(\mathbf x_{t-1}\)</span> 在重叠部分也是相同的。</p>
 <p>那么具体是如何融合各尺度预测的 <span class="math inline">\(\mathbf x_0\)</span> 呢？作者分两步实现。首先，由于大尺度图像包含了小尺度图像的低分辨率部分，因此作者考虑采用 Laplacian 金字塔进行多分辨率融合，也即概览图中的 Multi-resolution Blending，如下左图所示：</p>
@@ -437,7 +450,10 @@
 <span id="fn:7" class="footnote-text"><span>Zhao, Shihao, Dongdong Chen, Yen-Chun Chen, Jianmin Bao, Shaozhe Hao, Lu Yuan, and Kwan-Yee K. Wong. Uni-ControlNet: All-in-One Control to Text-to-Image Diffusion Models. <em>arXiv preprint arXiv:2305.16322</em> (2023). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:8" class="footnote-text"><span>Wang, Xiaojuan, Janne Kontkanen, Brian Curless, Steve Seitz, Ira Kemelmacher, Ben Mildenhall, Pratul Srinivasan, Dor Verbin, and Aleksander Holynski. Generative Powers of Ten. arXiv preprint arXiv:2312.02149 (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:8" class="footnote-text"><span>Chen, Xi, Lianghua Huang, Yu Liu, Yujun Shen, Deli Zhao, and Hengshuang Zhao. Anydoor: Zero-shot object-level image customization. <em>arXiv preprint arXiv:2307.09481</em> (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>Wang, Xiaojuan, Janne Kontkanen, Brian Curless, Steve Seitz, Ira Kemelmacher, Ben Mildenhall, Pratul Srinivasan, Dor Verbin, and Aleksander Holynski. Generative Powers of Ten. arXiv preprint arXiv:2312.02149 (2023). <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
