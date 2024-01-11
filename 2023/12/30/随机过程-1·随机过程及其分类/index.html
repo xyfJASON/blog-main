@@ -16,24 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="iTerm2 官网：https:&#x2F;&#x2F;iterm2.com&#x2F; 修改按键映射 Preferences → Profiles → Keys → Presets...，选择 Natural Text Editing. 更改之后可以使用 option+方向键以及 command+方向键移动光标。 静音 Preferences → Profiles → Terminal → Notifications，勾上">
+    <meta name="description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 在概率论中，我们研究了随机变量，\(n\) 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、相互有关的随机变量，这就是随机过程。 随机过程的概念 设 \((\Omega,\Sigma,P)\) 是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MacOS terminal and shell configuration">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/31/MacOS-terminal-and-shell-configuration/index.html">
+<meta property="og:title" content="[随机过程]1·随机过程及其分类">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/30/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B-1%C2%B7%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="iTerm2 官网：https:&#x2F;&#x2F;iterm2.com&#x2F; 修改按键映射 Preferences → Profiles → Keys → Presets...，选择 Natural Text Editing. 更改之后可以使用 option+方向键以及 command+方向键移动光标。 静音 Preferences → Profiles → Terminal → Notifications，勾上">
+<meta property="og:description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 在概率论中，我们研究了随机变量，\(n\) 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、相互有关的随机变量，这就是随机过程。 随机过程的概念 设 \((\Omega,\Sigma,P)\) 是">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/oh-my-zsh.png">
-<meta property="article:published_time" content="2023-12-31T02:51:14.000Z">
-<meta property="article:modified_time" content="2024-01-09T04:26:37.175Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
+<meta property="article:published_time" content="2023-12-30T07:25:11.000Z">
+<meta property="article:modified_time" content="2024-01-10T05:55:14.423Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="macos">
+<meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/oh-my-zsh.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
   
   
   
-  <title>MacOS terminal and shell configuration - xyfJASON</title>
+  <title>[随机过程]1·随机过程及其分类 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/oh-my-zsh.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/stoc.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="MacOS terminal and shell configuration"></span>
+            <span id="subtitle" data-typed-text="[随机过程]1·随机过程及其分类"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-31 10:51" pubdate>
-          2023年12月31日 上午
+        <time datetime="2023-12-30 15:25" pubdate>
+          2023年12月30日 下午
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          136 字
+          1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          2 分钟
+          9 分钟
         
       </span>
     
@@ -322,47 +322,115 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">MacOS terminal and shell configuration</h1>
+            <h1 id="seo-header">[随机过程]1·随机过程及其分类</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="iterm2">iTerm2</h2>
-<p>官网：<a target="_blank" rel="noopener" href="https://iterm2.com/" class="uri">https://iterm2.com/</a></p>
-<h3 id="修改按键映射">修改按键映射</h3>
-<p>Preferences → Profiles → Keys → Presets...，选择 Natural Text Editing.</p>
-<p>更改之后可以使用 option+方向键以及 command+方向键移动光标。</p>
-<h3 id="静音">静音</h3>
-<p>Preferences → Profiles → Terminal → Notifications，勾上 Silence bell.</p>
-<h2 id="oh-my-zsh">Oh-my-zsh</h2>
-<p>官网：<a target="_blank" rel="noopener" href="https://ohmyz.sh/" class="uri">https://ohmyz.sh/</a></p>
-<p>GitHub：<a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/ohmyzsh" class="uri">https://github.com/ohmyzsh/ohmyzsh</a></p>
-<h3 id="下载安装">下载安装</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;<br></code></pre></td></tr></table></figure>
-<h3 id="修改默认-shell">修改默认 shell</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cat /etc/shells   # 查看现有 shell<br>chsh -s /bin/zsh  # 修改默认 shell 为 zsh<br>echo $SHELL       # 查看当前 shell<br></code></pre></td></tr></table></figure>
-<h3 id="编辑配置文件">编辑配置文件</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim ~/.zshrc<br></code></pre></td></tr></table></figure>
-<p>个人常用配置在 <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/rc/blob/main/.zshrc" class="uri">https://github.com/xyfJASON/rc/blob/main/.zshrc</a> 中维护。</p>
-<p>使配置生效：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">source ~/.zshrc  # 或者直接新开一个 shell<br></code></pre></td></tr></table></figure>
-<h3 id="插件">插件</h3>
-<h4 id="zsh-autosuggestions">zsh-autosuggestions</h4>
-<p>GitHub: <a target="_blank" rel="noopener" href="https://github.com/zsh-users/zsh-autosuggestions" class="uri">https://github.com/zsh-users/zsh-autosuggestions</a></p>
-<p>下载安装：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/zsh-users/zsh-autosuggestions $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-autosuggestions<br></code></pre></td></tr></table></figure>
-<p>添加 plugins：在 <code>~/.zshrc</code> 中将 zsh-autosuggestions 添加到 plugins 字段中。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=( <br>    # other plugins...<br>    zsh-autosuggestions<br>)<br></code></pre></td></tr></table></figure>
-<p>使配置生效：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">source ~/.zshrc<br></code></pre></td></tr></table></figure>
-<h4 id="zsh-syntax-highlighting">zsh-syntax-highlighting</h4>
-<p>GitHub: <a target="_blank" rel="noopener" href="https://github.com/zsh-users/zsh-syntax-highlighting" class="uri">https://github.com/zsh-users/zsh-syntax-highlighting</a></p>
-<p>下载安装：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting<br></code></pre></td></tr></table></figure>
-<p>添加 plugins：在 <code>~/.zshrc</code> 中将 zsh-syntax-highlighting 添加到 plugins 字段中，注意放在最后一个。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=( <br>    # other plugins...<br>    zsh-syntax-highlighting<br>)<br></code></pre></td></tr></table></figure>
-<p>使配置生效：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">source ~/.zshrc<br></code></pre></td></tr></table></figure>
+                <p><span class="math display">\[
+\newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
+\]</span></p>
+<p>在概率论中，我们研究了随机变量，<span class="math inline">\(n\)</span> 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、<strong>相互有关</strong>的随机变量，这就是随机过程。</p>
+<h2 id="随机过程的概念">随机过程的概念</h2>
+<p>设 <span class="math inline">\((\Omega,\Sigma,P)\)</span> 是一概率空间，对每一个参数 <span class="math inline">\(t\in T\)</span>，<span class="math inline">\(X(t,\omega)\)</span> 是一定义在概率空间 <span class="math inline">\((\Omega,\Sigma,P)\)</span> 上的随机变量，则称随机变量族 <span class="math inline">\(X_T=\{X(t,\omega);t\in T\}\)</span> 为该概率空间上的一<strong>随机过程</strong>。其中 <span class="math inline">\(T\subset\mathbb R\)</span> 是一实数集，称为<strong>指标集</strong>或<strong>参数集</strong>。</p>
+<p>用映射表示 <span class="math inline">\(X_T\)</span>： <span class="math display">\[
+X(t,\omega): T\times\Omega\to\mathbb R
+\]</span></p>
+<ul>
+<li>固定 <span class="math inline">\(t\in T\)</span>，<span class="math inline">\(X(t,\cdot)\)</span> 是一定义在样本空间 <span class="math inline">\(\Omega\)</span> 上的函数，即为一随机变量；</li>
+<li>固定 <span class="math inline">\(\omega\in\Omega\)</span>，<span class="math inline">\(X(\cdot,\omega)\)</span> 是一个关于参数 <span class="math inline">\(t\in T\)</span> 的函数，称作<strong>样本函数</strong>，或随机过程的<strong>一次实现</strong>。</li>
+</ul>
+<p>记号 <span class="math inline">\(X(t,\omega)\)</span> 常常简记为 <span class="math inline">\(X_t(\omega)\)</span> 或 <span class="math inline">\(X(t)\)</span>.</p>
+<p>随机过程 <span class="math inline">\(\{X(t);t\in T\}\)</span> 可能取值的全体所构成的集合称为此随机过程的<strong>状态空间</strong>，记为 <span class="math inline">\(S\)</span>.</p>
+<h2 id="随机过程的分类">随机过程的分类</h2>
+<p><strong>以参数集和状态空间的特性分类</strong>：参数集 <span class="math inline">\(T\)</span> 可分为可列与不可列两大类；状态空间 <span class="math inline">\(S\)</span> 可分为离散和连续两大类。因此随机过程可分为以下四类：</p>
+<ol type="1">
+<li>离散参数离散型随机过程（例如随机游走）；</li>
+<li>连续参数离散型随机过程（例如泊松过程中到达顾客数 <span class="math inline">\(N(t)\)</span>）；</li>
+<li>连续参数连续型随机过程（例如布朗运动）；</li>
+<li>离散参数连续型随机过程（例如泊松过程中顾客到达时刻 <span class="math inline">\(S_n\)</span>）。</li>
+</ol>
+<p><strong>以随机过程的统计特征或概率特征分类</strong>：一般有以下一些：</p>
+<ol type="1">
+<li>独立增量过程；</li>
+<li>Markov 过程；</li>
+<li>二阶矩过程；</li>
+<li>平稳过程；</li>
+<li>鞅；</li>
+<li>更新过程；</li>
+<li>Poisson 过程；</li>
+<li>维纳过程。</li>
+</ol>
+<h2 id="随机过程的数字特征">随机过程的数字特征</h2>
+<h3 id="单个随机过程情形">单个随机过程情形</h3>
+<p>设 <span class="math inline">\(\{X(t);t\in T\}\)</span> 是一随机过程，为了刻画其统计特性，通常用到随机过程的数字特征，即随机过程的均值函数、方差函数、协方差函数和相关函数。</p>
+<ul>
+<li><p><strong>均值函数</strong>（假设存在）： <span class="math display">\[
+\mu_X(t)\coloneqq m(t)=\mathbb E[X(t)]
+\]</span></p></li>
+<li><p><strong>方差函数</strong>（假设存在）： <span class="math display">\[
+\sigma^2_X(t)\coloneqq D_X(t)=\mathbb E\left[(X(t)-\mu_X(t))^2\right]
+\]</span></p></li>
+<li><p><strong>（自）协方差函数</strong>： <span class="math display">\[
+C_X(s,t)\coloneqq \mathbb E[(X(s)-\mu_X(s))(X(t)-\mu_X(t))]
+\]</span></p></li>
+<li><p><strong>（自）相关函数</strong>： <span class="math display">\[
+R_X(s,t)\coloneqq \mathbb E[X(s)X(t)]
+\]</span></p></li>
+</ul>
+<p>数字特征之间的关系： <span class="math display">\[
+\begin{gather}
+C_X(s,t)=R(s,t)-\mu_X(s)\mu_X(t)\\
+\sigma^2_X(t)=D_X(t)=C_x(t,t)=R_X(t,t)-[\mu_X(t)]^2
+\end{gather}
+\]</span></p>
+<h3 id="两个随机过程情形">两个随机过程情形</h3>
+<p>设 <span class="math inline">\(\{X(t);t\in T\},\,\{Y(t);t\in T\}\)</span> 是两个随机过程，它们具有相同的参数集。除了各自的数字特征外，还有：</p>
+<ul>
+<li><p><strong>互协方差函数</strong>： <span class="math display">\[
+C_{XY}(s,t)\coloneqq\mathbb E[(X(s)-\mu_X(s))(Y(t)-\mu_Y(t))]
+\]</span></p></li>
+<li><p><strong>互相关函数</strong>： <span class="math display">\[
+R_{XY}(s,t)\coloneqq\mathbb E[X(s)Y(t)]
+\]</span></p></li>
+</ul>
+<p>二者有关系： <span class="math display">\[
+C_{XY}(s,t)=R_{XY}(s,t)-\mu_X(s)\mu_Y(t)
+\]</span> 若两个随机过程对任意两个参数 <span class="math inline">\(s,t\in T\)</span>，都有 <span class="math inline">\(C_{XY}(s,t)=0\)</span>，则称这两个随机过程<strong>统计不相关</strong>。</p>
+<h3 id="有限维分布族">有限维分布族</h3>
+<p>设 <span class="math inline">\(\{X(t);t\in T\}\)</span> 是一随机过程，记： <span class="math display">\[
+F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n)=P\{X(t_1)\leq x_1,X(t_2)\leq x_2,\ldots,X(t_n)\leq x_n\}
+\]</span> 其全体 <span class="math display">\[
+\{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}
+\]</span> 称为随机过程的<strong>有限维分布族</strong>。随机过程的统计特性完全由它的有限维分布族决定，有限维分布族与有限维特征函数族相互唯一确定。</p>
+<p><strong>对称性</strong>：对 <span class="math inline">\((1,2,\ldots,n)\)</span> 的任意排列 <span class="math inline">\((j_1,j_2,\ldots,j_n)\)</span>，有： <span class="math display">\[
+F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n)=F_X(x_{j_1},x_{j_2},\ldots,x_{j_n};t_{j_1},t_{j_2},\ldots,t_{j_n})
+\]</span> <strong>相容性</strong>：对于 <span class="math inline">\(m&lt;n\)</span>，有： <span class="math display">\[
+F_X(x_1,x_2,\ldots,x_m,+\infty,\ldots,+\infty;t_1,t_2,\ldots,t_m,t_{m+1},\ldots,t_n)=F_X(x_1,x_2,\ldots,x_m;t_1,t_2,\ldots,t_m)
+\]</span> <strong>Kolmogorov 存在性定理</strong>：设分布函数族 <span class="math inline">\(\{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}\)</span> 满足对称性和相容性，则存在唯一的随机过程使得该分布函数族恰好是其有限维分布。</p>
+<div class="note note-info">
+            <p>定理说明了随机过程的有限维分布族包含了随机过程的所有概率信息。因此，研究随机过程的统计特征可以通过研究其有限维分布函数族的特性来达到。</p>
+          </div>
+<h2 id="分布列的-delta-函数表示">分布列的 <span class="math inline">\(\delta\)</span> 函数表示</h2>
+<p>设<strong>离散型</strong>随机变量 <span class="math inline">\(X\)</span> 的分布列为 <span class="math inline">\(P(X=x_i)=p_i,\,i=1,2,\ldots\)</span>，则其分布函数可以表示为： <span class="math display">\[
+F(x)=P(X\leq x)=\sum_{x_i\leq x}p_i=\int_0^x\sum_{i=1}^\infty p_i\delta(u-x_i)\mathrm du
+\]</span> 故而密度函数可以表示为： <span class="math display">\[
+f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
+\]</span> 工程上，常用离散型随机变量分布列的 <span class="math inline">\(\delta\)</span> 函数表示法。它将离散型随机变量的分布列表示成分布密度的形式，因此与连续型随机变量的概率分布密度函数一样，可以进行统一处理。</p>
+<h2 id="条件数学期望">条件数学期望</h2>
+<p>设 <span class="math inline">\(X,Y\)</span> 是随机变量，则 <span class="math inline">\(\mathbb E[X\vert Y=y]\)</span> 是一个数，而条件数学期望 <span class="math inline">\(\mathbb E[X\vert Y]\)</span> 是一个随机变量。</p>
+<p><strong>全期望公式</strong>： <span class="math display">\[
+\mathbb EX=\mathbb E[\mathbb E[X\vert Y]]
+\]</span> <div class="note note-success">
+            <p>用途：当 <span class="math inline">\(\mathbb EX\)</span> 不好求时，引入 <span class="math inline">\(Y\)</span>，转而计算 <span class="math inline">\(\mathbb E[\mathbb E[X\vert Y]]\)</span>.</p>
+          </div></p>
+<p><strong>性质</strong>：</p>
+<ul>
+<li><span class="math inline">\(\mathbb E[\sum_{i=1}^na_iX_i\vert Y]=\sum_{i=1}^na_i\mathbb E[X_i\vert Y]\)</span></li>
+<li><span class="math inline">\(\mathbb E[g(X)h(Y)\vert Y]=h(Y)\mathbb E[g(X)\vert Y]\)</span></li>
+<li><span class="math inline">\(\mathbb E[g(X)h(Y)]=\mathbb E[h(Y)\mathbb E[g(X)\vert Y]]\)</span></li>
+<li>若 <span class="math inline">\(X,Y\)</span> 独立，则 <span class="math inline">\(\mathbb E]X\vert Y]=\mathbb E[X]\)</span></li>
+</ul>
 
                 
               </div>
@@ -381,12 +449,12 @@
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
   
   
     <span>></span>
     
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%8A%80%E6%9C%AF%E6%A0%88/" class="category-chain-item">技术栈</a>
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/" class="category-chain-item">随机过程</a>
   
   
 
@@ -403,7 +471,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/macos/" class="print-no-link">#macos</a>
+        <a href="/blog-main/tags/stochastic-process/" class="print-no-link">#stochastic process</a>
       
     </div>
   
@@ -415,8 +483,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>MacOS terminal and shell configuration</div>
-      <div>https://xyfjason.github.io/blog-main/2023/12/31/MacOS-terminal-and-shell-configuration/</div>
+      <div>[随机过程]1·随机过程及其分类</div>
+      <div>https://xyfjason.github.io/blog-main/2023/12/30/随机过程-1·随机过程及其分类/</div>
     </div>
     <div class="license-meta">
       
@@ -428,7 +496,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月31日</div>
+          <div>2023年12月30日</div>
         </div>
       
       
@@ -460,9 +528,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2024/01/03/Support-Vector-Machine/" title="Support Vector Machine">
+                      <a href="/blog-main/2023/12/31/MacOS-terminal-and-shell-configuration/" title="MacOS terminal and shell configuration">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Support Vector Machine</span>
+                        <span class="hidden-mobile">MacOS terminal and shell configuration</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -470,8 +538,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/12/30/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B-1%C2%B7%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/" title="[随机过程]1·随机过程及其分类">
-                        <span class="hidden-mobile">[随机过程]1·随机过程及其分类</span>
+                      <a href="/blog-main/2023/12/27/Fourier-Transform-1-FS-FT/" title="Fourier Transform 1 (FS, FT)">
+                        <span class="hidden-mobile">Fourier Transform 1 (FS, FT)</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
