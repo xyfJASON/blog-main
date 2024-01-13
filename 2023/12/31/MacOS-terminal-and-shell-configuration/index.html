@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/oh-my-zsh.png">
 <meta property="article:published_time" content="2023-12-31T02:51:14.000Z">
-<meta property="article:modified_time" content="2024-01-09T04:26:37.175Z">
+<meta property="article:modified_time" content="2024-01-12T08:12:23.667Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="macos">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          136 字
+          202 字
         
       </span>
     
@@ -334,35 +334,44 @@
 <p>更改之后可以使用 option+方向键以及 command+方向键移动光标。</p>
 <h3 id="静音">静音</h3>
 <p>Preferences → Profiles → Terminal → Notifications，勾上 Silence bell.</p>
-<h2 id="oh-my-zsh">Oh-my-zsh</h2>
+<h2 id="zsh">zsh</h2>
+<h3 id="修改默认-shell">修改默认 shell</h3>
+<p>Mac 电脑应该默认就是 zsh，可以用如下命令检查或修改。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cat /etc/shells   # 查看现有 shell<br>echo $SHELL       # 查看当前 shell<br>chsh -s /bin/zsh  # 修改默认 shell 为 zsh<br></code></pre></td></tr></table></figure>
+<h3 id="下载安装-ohmyzsh">下载安装 ohmyzsh</h3>
 <p>官网：<a target="_blank" rel="noopener" href="https://ohmyz.sh/" class="uri">https://ohmyz.sh/</a></p>
 <p>GitHub：<a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/ohmyzsh" class="uri">https://github.com/ohmyzsh/ohmyzsh</a></p>
-<h3 id="下载安装">下载安装</h3>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;<br></code></pre></td></tr></table></figure>
-<h3 id="修改默认-shell">修改默认 shell</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">cat /etc/shells   # 查看现有 shell<br>chsh -s /bin/zsh  # 修改默认 shell 为 zsh<br>echo $SHELL       # 查看当前 shell<br></code></pre></td></tr></table></figure>
-<h3 id="编辑配置文件">编辑配置文件</h3>
+<h3 id="编辑-zsh-配置文件">编辑 zsh 配置文件</h3>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">vim ~/.zshrc<br></code></pre></td></tr></table></figure>
 <p>个人常用配置在 <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/rc/blob/main/.zshrc" class="uri">https://github.com/xyfJASON/rc/blob/main/.zshrc</a> 中维护。</p>
 <p>使配置生效：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">source ~/.zshrc  # 或者直接新开一个 shell<br></code></pre></td></tr></table></figure>
 <h3 id="插件">插件</h3>
+<h4 id="sublimeohmyzsh-自带">sublime（ohmyzsh 自带）</h4>
+<p><strong>文档</strong>：<a target="_blank" rel="noopener" href="https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/sublime" class="uri">https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/sublime</a></p>
+<p><strong>介绍</strong>：Ohmyzsh 自带插件，使用 Sublime Text 打开文件。</p>
+<p><strong>添加 plugins</strong>：在 <code>~/.zshrc</code> 中将 sublime 添加到 plugins 字段中。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=(... sublime)<br></code></pre></td></tr></table></figure>
+<p><strong>使用方法</strong>：</p>
+<ul>
+<li><code>st</code>：打开 Sublime Text.</li>
+<li><code>st &lt;file/directory&gt;</code>：使用 Sublime Text 打开文件或目录。</li>
+<li><code>stt</code>：使用 Sublime Text 打开当前目录。</li>
+</ul>
 <h4 id="zsh-autosuggestions">zsh-autosuggestions</h4>
 <p>GitHub: <a target="_blank" rel="noopener" href="https://github.com/zsh-users/zsh-autosuggestions" class="uri">https://github.com/zsh-users/zsh-autosuggestions</a></p>
 <p>下载安装：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/zsh-users/zsh-autosuggestions $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-autosuggestions<br></code></pre></td></tr></table></figure>
 <p>添加 plugins：在 <code>~/.zshrc</code> 中将 zsh-autosuggestions 添加到 plugins 字段中。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=( <br>    # other plugins...<br>    zsh-autosuggestions<br>)<br></code></pre></td></tr></table></figure>
-<p>使配置生效：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">source ~/.zshrc<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=(... zsh-autosuggestions)<br></code></pre></td></tr></table></figure>
 <h4 id="zsh-syntax-highlighting">zsh-syntax-highlighting</h4>
+<p>语法高亮插件，</p>
 <p>GitHub: <a target="_blank" rel="noopener" href="https://github.com/zsh-users/zsh-syntax-highlighting" class="uri">https://github.com/zsh-users/zsh-syntax-highlighting</a></p>
 <p>下载安装：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $&#123;ZSH_CUSTOM:-~/.oh-my-zsh/custom&#125;/plugins/zsh-syntax-highlighting<br></code></pre></td></tr></table></figure>
 <p>添加 plugins：在 <code>~/.zshrc</code> 中将 zsh-syntax-highlighting 添加到 plugins 字段中，注意放在最后一个。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=( <br>    # other plugins...<br>    zsh-syntax-highlighting<br>)<br></code></pre></td></tr></table></figure>
-<p>使配置生效：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">source ~/.zshrc<br></code></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">plugins=(... zsh-syntax-highlighting)<br></code></pre></td></tr></table></figure>
 
                 
               </div>
