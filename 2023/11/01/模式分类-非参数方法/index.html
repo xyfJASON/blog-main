@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pattern-classification.png">
 <meta property="article:published_time" content="2023-11-01T12:41:40.000Z">
-<meta property="article:modified_time" content="2023-11-09T03:26:56.517Z">
+<meta property="article:modified_time" content="2024-01-17T02:46:19.414Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -347,7 +347,7 @@ p_n(\mathbf x)=\frac{k_n/n}{V_n},\quad n=1,2,\ldots\label{1}\tag{1}
 <li><span class="math inline">\(\lim_{n\to\infty} k_n=\infty\)</span></li>
 <li><span class="math inline">\(\lim_{n\to\infty} k_n/n=0\)</span></li>
 </ol>
-<p>为了构造这样的序列，我们有两种方法——<strong>Parzen 窗</strong>和 <strong>k 近邻</strong>。前者取 <span class="math inline">\(V_n\)</span> 为某个关于 <span class="math inline">\(n\)</span> 的函数（例如 <span class="math inline">\(V_n=1/\sqrt{n}\)</span>），而后者取 <span class="math inline">\(k_n\)</span> 为某个关于 <span class="math inline">\(n\)</span> 的函数（例如 <span class="math inline">\(k_n=\sqrt{n}\)</span>）。在 <span class="math inline">\(n\to\infty\)</span> 时二者都能够收敛，但在有限样本情况下很难预测它们的效果。</p>
+<p>为了构造这样的序列，我们有两种方法——<strong>Parzen 窗</strong>和 <strong>k 近邻</strong>。前者取 <span class="math inline">\(V_n\)</span> 为某个关于 <span class="math inline">\(n\)</span> 的函数（例如 <span class="math inline">\(V_n=1/\sqrt{n}\)</span>）、<span class="math inline">\(k_n\)</span> 随之变化；而后者取 <span class="math inline">\(k_n\)</span> 为某个关于 <span class="math inline">\(n\)</span> 的函数（例如 <span class="math inline">\(k_n=\sqrt{n}\)</span>）、<span class="math inline">\(V_n\)</span> 随之变化。两种方法在 <span class="math inline">\(n\to\infty\)</span> 时都能够收敛，但在实际情形中由于样本量有限，并不能保证它们的效果。</p>
 <p><img src="two-methods.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <h2 id="parzen-窗">Parzen 窗</h2>
 <h3 id="基本原理">基本原理</h3>
@@ -367,20 +367,17 @@ p_n(\mathbf x)=\frac{1}{n}\sum_{i=1}^n\frac{1}{V_n}\varphi\left(\frac{\mathbf x-
 <p>从核函数的角度理解，定义： <span class="math display">\[
 K(\mathbf x,\mathbf x_i)=\frac{1}{V_n}\varphi\left(\frac{\mathbf x-\mathbf x_i}{h_n}\right)
 \]</span> 满足： <span class="math display">\[
-K(\mathbf x,\mathbf x_i)\geq 0,\quad\int K(\mathbf x,\mathbf x_i)=1
+K(\mathbf x,\mathbf x_i)\geq 0,\quad\int K(\mathbf x,\mathbf x_i)\mathrm d\mathbf x=1
 \]</span> 那么 <span class="math inline">\(\eqref{parzen}\)</span> 式可以写作： <span class="math display">\[
 p_n(\mathbf x)=\frac{1}{n}\sum_{i=1}^n K(\mathbf x,\mathbf x_i)\tag{3}\label{parzen-kernel}
 \]</span> 因此 Parzen 窗方法也被称作<strong>核密度估计 (KDE)</strong>。<span class="math inline">\(\eqref{parzen-kernel}\)</span> 式意味着 Parzen 窗估计也可以视作<strong>用核函数对样本在取值空间中进行插值</strong>。</p>
 <h3 id="窗函数核函数的选择">窗函数/核函数的选择</h3>
 <p>上面为了推导方便，我们假定了窗函数是单位超立方体，但这只是一种选择而已，我们还可以使用其他形式：</p>
-<ul>
-<li><p><strong>正态窗</strong>： <span class="math display">\[
+<p><strong>正态窗</strong>： <span class="math display">\[
 K(\mathbf x,\mathbf x_i)=\frac{1}{(2\pi)^{d/2}|\Sigma|^{1/2}}\exp\left(-\frac{1}{2}(\mathbf x-\mathbf x_i)^T\Sigma^{-1}(\mathbf x-\mathbf x_i)\right)
-\]</span></p></li>
-<li><p><strong>球窗</strong>： <span class="math display">\[
+\]</span> <strong>球窗</strong>： <span class="math display">\[
 K(\mathbf x,\mathbf x_i)=\begin{cases}\frac{1}{V},&amp;\Vert\mathbf x-\mathbf x_i\Vert\leq r\\0,&amp;\text{otherwise}\end{cases}
-\]</span> 其中 <span class="math inline">\(r\)</span> 是超球体的半径，<span class="math inline">\(V\)</span> 是超球体的体积。</p></li>
-</ul>
+\]</span> 其中 <span class="math inline">\(r\)</span> 是超球体的半径，<span class="math inline">\(V\)</span> 是超球体的体积。</p>
 <h3 id="窗宽的影响">窗宽的影响</h3>
 <p>显然，如果 <span class="math inline">\(h_n\)</span>（或 <span class="math inline">\(V_n\)</span>）选取太大，那么估计不够精确，可以理解为欠拟合；如果太小，那么不够稳定，可以理解为过拟合。下图展示了不同情况下用正态窗做估计的例子，窗宽设置为 <span class="math inline">\(h_n=h_1/\sqrt{n}\)</span>，其中 <span class="math inline">\(h_1\)</span> 是可以调整的参数。</p>
 <p><img src="parzen-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
@@ -401,10 +398,11 @@ p_n(\mathbf x\vert\omega_i)=\frac{k_i/n_i}{V},\quad p_n(\mathbf x,\omega_i)=\fra
 P_n(\omega_i\vert\mathbf x)=\frac{p_n(\mathbf x,\omega_i)}{p(\mathbf x)}=\frac{k_i/n}{V}\cdot\frac{V}{k/n}=\frac{k_i}{k}
 \]</span> 即区域中属于 <span class="math inline">\(\omega_i\)</span> 类的样本数量占区域中所有样本数量的比例。</p>
 <p>根据最大后验准则，有了后验概率，就可以得到一个分类器： <span class="math display">\[
-\omega_m=\mathop{\text{argmax}}_i\{P_n(\omega_i\vert\mathbf x)\}
+\omega_m=\mathop{\text{argmax}}_i\{P_n(\omega_i\vert\mathbf x)\}=\mathop{\text{argmax}}_i\frac{k_i}{k}
 \]</span></p>
+<p>可以看见这就是 <strong>k 近邻分类器</strong>。</p>
 <h3 id="最近邻分类器">最近邻分类器</h3>
-<p>上面提到我们可以用 k 近邻方法估计后验概率，再根据最大后验准则就可以进行分类。但事实上，我们只依赖最近邻就能达到足够好的性能。</p>
+<p>上面提到我们用 k 近邻方法估计后验概率，再根据最大后验准则分类，就得到了 k 近邻分类器。但事实上，我们只依赖最近邻就能达到足够好的性能。</p>
 <p>最近邻分类器的基本思想非常简单，即对于一个新样本，将其与已知样本逐一比较，找出距离最近的已知样本，以该样本的类别作为新样本的类别。如此，特征空间可以被分成一个个小单元（称作 Voronoi 网格），如图所示：</p>
 <p><img src="knn-partition.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
 <p>最近邻分类器有多好呢？可以证明，<strong>在无限训练样本的情形下，其误差率最多不会超过贝叶斯误差率的两倍</strong>。具体而言，设 <span class="math inline">\(P_n(e)\)</span> 为 <span class="math inline">\(n\)</span> 个样本下最近邻分类器的误差率，当 <span class="math inline">\(n\)</span> 趋近无穷时该误差收敛到 <span class="math inline">\(P\)</span>，记 <span class="math inline">\(P^\ast\)</span> 为贝叶斯分类器的误差率，<span class="math inline">\(c\)</span> 为类别数量，那么有： <span class="math display">\[

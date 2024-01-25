@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/controlnet.png">
 <meta property="article:published_time" content="2023-12-01T02:35:11.000Z">
-<meta property="article:modified_time" content="2024-01-06T03:42:23.393Z">
+<meta property="article:modified_time" content="2024-01-20T03:08:36.938Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="AIGC">
@@ -435,8 +435,7 @@
 <p>这些采样器都是普通的类，有 <code>sample()</code> 方法，给定采样步数、batch size、图像大小以及其他参数，就能迭代地从高斯噪声生成最终的图像。</p>
 <p><br/></p>
 <p>还剩下一个 <code>ddpm.py</code> 是整个仓库里最长的文件，有 1800 行，其中定义了 <code>DDPM</code> 类、<code>LatentDiffusion</code> 类、<code>DiffusionWrapper</code> 类以及一系列继承自 <code>LatentDiffusion</code> 来做微调的类。我们着重看前三个。</p>
-<p><code>DiffusionWrapper</code> 类继承自 <code>pl.LightningModule</code>，其主要作用是将不同种类的条件以不同的方式融入扩散模型，包含一个组件 <code>diffusion_model</code>，是上文提到的 <code>UNetModel</code> 的实例。</p>
-<p>其 <code>forward()</code> 函数接受带噪图像 <code>x</code>、时间步 <code>t</code>、条件 <code>c_concat</code>、条件 <code>c_crossattn</code>和条件 <code>c_adm</code>. 顾名思义，后面三个条件的区别在于融入模型的方式不同，融入哪些条件由参数 <code>conditioning_key</code> 决定。回忆上文提到 <code>UNetModel</code> 的 <code>forward()</code> 本身支持两种条件——<code>context</code> 表示交叉注意力、<code>y</code> 表示 adm 方式，因此 <code>DiffusionWrapper</code> 的 <code>forward()</code> 就是基于 <code>UNetModel</code> 的 <code>forward()</code> 上的进一步封装。这个类应该是为了适应更多种类的条件而后来添加的，否则直接在 UNet 的 <code>forward()</code> 函数中处理更好。</p>
+<p><code>DiffusionWrapper</code> 类继承自 <code>pl.LightningModule</code>，其主要作用是将不同种类的条件以不同的方式融入扩散模型，包含一个组件 <code>diffusion_model</code>，是上文提到的 <code>UNetModel</code> 的实例。其 <code>forward()</code> 函数接受带噪图像 <code>x</code>、时间步 <code>t</code>、条件 <code>c_concat</code>、条件 <code>c_crossattn</code>和条件 <code>c_adm</code>. 顾名思义，后面三个条件的区别在于融入模型的方式不同，融入哪些条件由参数 <code>conditioning_key</code> 决定。回忆上文提到 <code>UNetModel</code> 的 <code>forward()</code> 本身支持两种条件——<code>context</code> 表示交叉注意力、<code>y</code> 表示 adm 方式，因此 <code>DiffusionWrapper</code> 的 <code>forward()</code> 就是基于 <code>UNetModel</code> 的 <code>forward()</code> 上的进一步封装。这个类应该是为了适应更多种类的条件而后来添加的，否则直接在 UNet 的 <code>forward()</code> 函数中处理更好。</p>
 <p><code>DDPM</code> 类也继承自 <code>pl.LightningModule</code>，包含一个组件 <code>model</code>，是 <code>DiffusionWrapper</code> 的实例。</p>
 <p><code>LatentDiffusion</code> 类是 SD 最主要的类。它继承自 <code>DDPM</code> 类，在其基础上增加了两个组件：</p>
 <ul>

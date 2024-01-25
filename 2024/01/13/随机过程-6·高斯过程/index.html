@@ -16,26 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Github: https:&#x2F;&#x2F;github.com&#x2F;AUTOMATIC1111&#x2F;stable-diffusion-webui 更新日志  webui 项目更新频繁，不能保证本文内容仍然适用于后续版本。   2024.01.22：更新至 webui v1.7.0 版本 (commit hash 为 cf2772f) 2023.06.14：文章首次发布，基于 v1.3.2 版本 (commit ha">
+    <meta name="description" content="多元正态分布 \(n\) 元正态分布：设 \(\boldsymbol\xi&#x3D;(\xi_1,\ldots,\xi_n)^T\) 是 \(n\) 元随机向量，均值为 \(\boldsymbol\mu&#x3D;(\mu_1,\ldots,\mu_n)^T\)，协方差矩阵为 \(B\). 注意 \(B\) 为半正定对称矩阵，因此有如下两种情形：  若 \(B\) 是正定矩阵，则定义 \(\boldsymbol\x">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[Stable Diffusion]webui部署(Linux)">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/06/14/Stable-Diffusion-webui%E9%83%A8%E7%BD%B2(Linux)/index.html">
+<meta property="og:title" content="[随机过程]6·高斯过程">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/01/13/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B-6%C2%B7%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="Github: https:&#x2F;&#x2F;github.com&#x2F;AUTOMATIC1111&#x2F;stable-diffusion-webui 更新日志  webui 项目更新频繁，不能保证本文内容仍然适用于后续版本。   2024.01.22：更新至 webui v1.7.0 版本 (commit hash 为 cf2772f) 2023.06.14：文章首次发布，基于 v1.3.2 版本 (commit ha">
+<meta property="og:description" content="多元正态分布 \(n\) 元正态分布：设 \(\boldsymbol\xi&#x3D;(\xi_1,\ldots,\xi_n)^T\) 是 \(n\) 元随机向量，均值为 \(\boldsymbol\mu&#x3D;(\mu_1,\ldots,\mu_n)^T\)，协方差矩阵为 \(B\). 注意 \(B\) 为半正定对称矩阵，因此有如下两种情形：  若 \(B\) 是正定矩阵，则定义 \(\boldsymbol\x">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/gwen-spider.png">
-<meta property="article:published_time" content="2023-06-14T08:43:39.000Z">
-<meta property="article:modified_time" content="2024-01-23T05:53:47.006Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
+<meta property="article:published_time" content="2024-01-13T08:27:03.000Z">
+<meta property="article:modified_time" content="2024-01-19T05:16:35.618Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="generative models">
-<meta property="article:tag" content="AIGC">
-<meta property="article:tag" content="stable diffusion">
+<meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/gwen-spider.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
   
   
   
-  <title>[Stable Diffusion]webui部署(Linux) - xyfJASON</title>
+  <title>[随机过程]6·高斯过程 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -247,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/stable-diffusion/gwen-spider.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/stoc.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="[Stable Diffusion]webui部署(Linux)"></span>
+            <span id="subtitle" data-typed-text="[随机过程]6·高斯过程"></span>
           
         </div>
 
@@ -264,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-06-14 16:43" pubdate>
-          2023年6月14日 下午
+        <time datetime="2024-01-13 16:27" pubdate>
+          2024年1月13日 下午
         </time>
       </span>
     
@@ -276,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          592 字
+          376 字
         
       </span>
     
@@ -287,7 +285,7 @@
         
         
         
-          5 分钟
+          4 分钟
         
       </span>
     
@@ -324,76 +322,52 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">[Stable Diffusion]webui部署(Linux)</h1>
+            <h1 id="seo-header">[随机过程]6·高斯过程</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Github: <a target="_blank" rel="noopener" href="https://github.com/AUTOMATIC1111/stable-diffusion-webui" class="uri">https://github.com/AUTOMATIC1111/stable-diffusion-webui</a></p>
-<h2 id="更新日志">更新日志</h2>
-<blockquote>
-<p>webui 项目更新频繁，不能保证本文内容仍然适用于后续版本。</p>
-</blockquote>
-<ul>
-<li>2024.01.22：更新至 webui v1.7.0 版本 (commit hash 为 cf2772f)</li>
-<li>2023.06.14：文章首次发布，基于 v1.3.2 版本 (commit hash 为 baf6946)</li>
-</ul>
-<h2 id="部署环境">部署环境</h2>
-<ul>
-<li>操作系统：Ubuntu Server 22.04（无图形界面）</li>
-<li>GPU：一张 NVIDIA RTX 3080Ti 显卡（12 GB 显存）</li>
-</ul>
-<p>准备部署完成后通过其他电脑的浏览器访问服务器的 webui 服务。</p>
-<h2 id="全自动安装">全自动安装</h2>
-<p>官方给出的 Linux 安装指导非常简单：<strong>下载 <a target="_blank" rel="noopener" href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/master/webui.sh"><code>webui.sh</code></a>，运行它，然后一切都会被全自动地下载、安装完成</strong>。</p>
-<p>但是我是不情愿让别人对我的电脑做手脚而自己却不知情的，所以决定研究一下 <code>webui.sh</code>. 在查看其内容之后，我发现它无非是干这么几件事：下载 webui 仓库、在 <code>./venv</code> 下创建并激活 python 虚拟环境、调用 <code>launch.py</code> 安装需要的包及下载需要的仓库、启动 webui.</p>
-<p>虽然 <code>webui.sh</code> 帮我们全自动地完成了这些工作，但它并不适合以下几种情况：</p>
-<ul>
-<li>希望使用 <strong>conda</strong> 而不是 venv 来管理环境；</li>
-<li>由于<strong>网络原因</strong>且缺少科技手段，<code>pip install</code> 和 <code>git clone</code> 无法稳定执行；</li>
-<li>希望在<strong>无网服务器</strong>上安装 webui；</li>
-<li>……</li>
-</ul>
-<p>于是在这些情况下我们只能手动分解步骤安装了。</p>
-<h2 id="分解步骤安装">分解步骤安装</h2>
-<h3 id="下载-stable-diffusion-webui-仓库">1. 下载 stable-diffusion-webui 仓库</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git<br>cd stable-diffusion-webui<br></code></pre></td></tr></table></figure>
-<h3 id="下载其他仓库">2. 下载其他仓库</h3>
-<p>webui 仅仅是一个外层界面包装，核心功能是通过其他仓库（或以仓库的形式、或以安装包的形式）支撑的。其他仓库需放在 <code>./repositories</code> 文件夹下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">mkdir repositories<br></code></pre></td></tr></table></figure>
-<p>然后依次下载以下仓库，并切换到合适的版本以避免可能的版本适配问题：</p>
-<p><strong>stablediffusion</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/Stability-AI/stablediffusion.git ./repositories/stable-diffusion-stability-ai<br>git -C ./repositories/stable-diffusion-stability-ai checkout cf1d67a6fd5ea1aa600c4df58e5b47da45f6bdbf<br></code></pre></td></tr></table></figure>
-<p><strong>generative-models</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/Stability-AI/generative-models.git ./repositories/generative-models<br>git -C ./repositories/generative-models checkout 45c443b316737a4ab6e40413d7794a7f5657c19f<br></code></pre></td></tr></table></figure>
-<p><strong>k-diffusion</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/crowsonkb/k-diffusion.git ./repositories/k-diffusion<br>git -C ./repositories/k-diffusion checkout ab527a9a6d347f364e3d185ba6d714e22d80cb3c<br></code></pre></td></tr></table></figure>
-<p><strong>CodeFormer</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/sczhou/CodeFormer.git ./repositories/CodeFormer<br>git -C ./repositories/CodeFormer checkout c5b4593074ba6214284d6acd5f1719b6c5d739af<br></code></pre></td></tr></table></figure>
-<p><strong>BLIP</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/salesforce/BLIP.git ./repositories/BLIP<br>git -C ./repositories/BLIP checkout 48211a1594f1321b00f14c9f7a5b4813144b2fb9<br></code></pre></td></tr></table></figure>
-<h3 id="建立并激活新-conda-环境">3. 建立并激活新 conda 环境</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">conda create -n sd-webui python=3.10<br>conda activate sd-webui<br></code></pre></td></tr></table></figure>
-<h3 id="安装-pytorch">4. 安装 pytorch</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cu118<br></code></pre></td></tr></table></figure>
-<h3 id="安装-requirements.txt-中的依赖包">5. 安装 requirements.txt 中的依赖包</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install tb-nightly -i https://mirrors.aliyun.com/pypi/simple/<br>pip install -r requirements_versions.txt -i https://pypi.tuna.tsinghua.edu.cn/simple<br></code></pre></td></tr></table></figure>
-<p>说明：requirements 中的 <code>basicsr</code> 装起来很容易出现问题，一阵摸索后得到的结论是，要先用阿里源安装 <code>tb-nightly</code>，然后用清华源安装 <code>basicsr</code> 才能成功。</p>
-<h3 id="安装其他依赖">6. 安装其他依赖</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install https://github.com/openai/CLIP/archive/d50d76daa670286dd6cacf3bcd80b5e4823fc8e1.zip<br>pip install https://github.com/mlfoundations/open_clip/archive/bb6e834e9c70d9c27d0dc3ecedeebeaeb1ffad6b.zip -i https://pypi.tuna.tsinghua.edu.cn/simple<br>pip install -U -I --no-deps xformers==0.0.20 -i https://pypi.tuna.tsinghua.edu.cn/simple<br>pip install ngrok -i https://pypi.tuna.tsinghua.edu.cn/simple<br>pip install -r repositories/CodeFormer/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple<br></code></pre></td></tr></table></figure>
-<h3 id="下载基础模型">7. 下载基础模型</h3>
-<p>从<a target="_blank" rel="noopener" href="https://huggingface.co/stabilityai/stable-diffusion-2-1/blob/main/v2-1_768-ema-pruned.safetensors">链接</a>下载基础模型（Stable Diffusion v2.1，safetensors 格式，5.21 GB），放在 <code>./models/Stable-diffusion/</code> 下。</p>
-<h3 id="启动-webui">8. 启动 webui</h3>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python webui.py<br></code></pre></td></tr></table></figure>
-<p>服务默认运行在 <code>127.0.0.1:7860</code> 上。</p>
-<p>一些常用参数：</p>
-<ul>
-<li><code>--port PORT</code>：更改端口。</li>
-<li><code>--xformers</code>：使用 xformers 优化时间和空间，<strong>建议使用</strong>。</li>
-<li><code>--listen</code>：如果部署在远程服务器上，想通过其他电脑浏览器访问服务，则需要添加 <code>--listen</code> 参数，这样服务运行在服务器的 <code>0.0.0.0:7860</code> 上，我们在浏览器输入 <code>&lt;server ip&gt;:7860</code> 才能访问。</li>
-</ul>
-<p>启动成功后界面如下：</p>
-<p><img src="success.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+                <h2 id="多元正态分布">多元正态分布</h2>
+<p><strong><span class="math inline">\(n\)</span> 元正态分布</strong>：设 <span class="math inline">\(\boldsymbol\xi=(\xi_1,\ldots,\xi_n)^T\)</span> 是 <span class="math inline">\(n\)</span> 元随机向量，均值为 <span class="math inline">\(\boldsymbol\mu=(\mu_1,\ldots,\mu_n)^T\)</span>，协方差矩阵为 <span class="math inline">\(B\)</span>. 注意 <span class="math inline">\(B\)</span> 为<strong>半正定对称矩阵</strong>，因此有如下两种情形：</p>
+<ol type="1">
+<li><p>若 <span class="math inline">\(B\)</span> 是正定矩阵，则定义 <span class="math inline">\(\boldsymbol\xi\)</span> 服从概率分布密度为： <span class="math display">\[
+f_{\boldsymbol\xi}(\mathbf x)=f_\xi(x_1,\ldots,x_n)=\frac{1}{(2\pi)^{n/2}|B|^{1/2}}\exp\left(-\frac{1}{2}(\mathbf x-\boldsymbol\mu)^TB^{-1}(\mathbf x-\boldsymbol\mu)\right)
+\]</span> 特征函数为： <span class="math display">\[
+\Phi_{\boldsymbol\xi}(\mathbf t)=\Phi_{\boldsymbol\xi}(t_1,\ldots,t_n)=\exp\left(j\ \mathbf t^T\boldsymbol\mu-\frac{1}{2}\mathbf t^TB\mathbf t\right)
+\]</span></p></li>
+<li><p>若 <span class="math inline">\(B\)</span> 不是正定矩阵，则将上述特征函数对应的分布函数定义为 <span class="math inline">\(n\)</span> 元正态分布。</p></li>
+</ol>
+<p><strong>定理</strong>：设 <span class="math inline">\(\boldsymbol\xi\sim N(\boldsymbol\mu,B)\)</span>，则其任一子向量 <span class="math inline">\((\xi_{k_1},\ldots,\xi_{k_m})\)</span> 仍然服从正态分布。</p>
+<p><strong>定理</strong>：<span class="math inline">\(n\)</span> 元正态分布的随机变量 <span class="math inline">\(\xi_1,\ldots,\xi_n\)</span> 相互独立的充要条件是它们两两不相关。</p>
+<div class="note note-warning">
+            <p>前提条件是 <span class="math inline">\((\xi_1,\ldots,\xi_n)\)</span> <strong>联合正态</strong>！分别正态不成立。</p>
+          </div>
+<p><strong>正态随机变量的线性变换</strong>：</p>
+<ol type="1">
+<li>设 <span class="math inline">\(\boldsymbol\xi\sim N(\boldsymbol\mu,B)\)</span>，设 <span class="math inline">\(\zeta=\mathbf a^T\boldsymbol\xi\)</span>，其中 <span class="math inline">\(\mathbf a=(a_1,\ldots,a_n)^T\)</span>，则 <span class="math inline">\(\mathbb E[\zeta]=\mathbf a^T\boldsymbol\mu\)</span>，<span class="math inline">\(D(\zeta)=\mathbf a^TB\mathbf a\)</span>.</li>
+<li>设 <span class="math inline">\(\boldsymbol\xi\sim N(\boldsymbol\mu,B)\)</span>，令 <span class="math inline">\(C=(c_{jk})_{m\times n}\)</span>，则 <span class="math inline">\(\boldsymbol\eta=C\boldsymbol\xi\sim N(C\boldsymbol\mu,CBC^T)\)</span>.</li>
+<li>设 <span class="math inline">\(\boldsymbol\xi\sim N(\boldsymbol\mu,B)\)</span>，则存在正交矩阵 <span class="math inline">\(U\)</span>，使得 <span class="math inline">\(\boldsymbol\eta=U^T\boldsymbol\xi\)</span> 是一独立正态分布随机向量，均值为 <span class="math inline">\(U^T\boldsymbol\mu\)</span>，方差为矩阵 <span class="math inline">\(B\)</span> 的特征值。</li>
+</ol>
+<p><strong>正态分布的四阶矩</strong>：设 <span class="math inline">\(X=(X_1,X_2,X_3,X_4)\sim N(0,\Sigma)\)</span>，则： <span class="math display">\[
+B(X)=\mathbb E[X_1X_2X_3X_4]=\mathbb E[X_1X_2]\mathbb E[X_3X_4]+\mathbb E[X_1X_3]\mathbb E[X_2X_4]+\mathbb E[X_1X_4]\mathbb E[X_2X_3]
+\]</span></p>
+<h2 id="高斯过程正态过程">高斯过程（正态过程）</h2>
+<p><strong>定义</strong>：若随机过程 <span class="math inline">\(\{\xi(t);t\in T\}\)</span> 的有限维分布均为正态分布，则称此随机过程为高斯过程或正态过程。正态过程是二阶矩过程。</p>
+<p>设 <span class="math inline">\(t_1,\ldots,t_n\in T\)</span>，则由正态过程的定义，有： <span class="math display">\[
+f_\xi(x_{t_1},\ldots,x_{t_n})=\frac{1}{(2\pi)^{n/2}|B|^{1/2}}\exp\left(-\frac{1}{2}(\mathbf x_t-\boldsymbol\mu_t)^TB^{-1}(\mathbf x_t-\boldsymbol\mu_t)\right)
+\]</span> 其中： <span class="math display">\[
+\begin{gather}
+\boldsymbol\mu_t=(\mu_{t_1},\ldots,\mu_{t_n})^T,\quad \mu_{t_k}=\mathbb E[\xi(t_k)]\\
+b_{ki}=\mathbb E[(\xi(t_k)-\mu_{t_k})(\xi(t_i)-\mu_{t_i})]=R_\xi(t_k,t_i)-\mu_{t_k}\mu_{t_i},\quad B=(b_{ki})_{n\times n}
+\end{gather}
+\]</span> <strong>定理</strong>：设 <span class="math inline">\(\{\boldsymbol\xi^{(n)};n=1,2,\ldots\}\)</span> 是 <span class="math inline">\(k\)</span> 维实正态随机向量序列，其中 <span class="math inline">\(\boldsymbol\xi^{(n)}=(\xi_1^{(n)},\ldots,\xi_k^{(n)})^T\)</span>，且 <span class="math inline">\(\boldsymbol\xi^{(n)}\)</span> 均方收敛于 <span class="math inline">\(\boldsymbol\xi=(\xi_1,\ldots,\xi_k)^T\)</span>，则 <span class="math inline">\(\boldsymbol\xi\)</span> 也是正态分布的随机向量。</p>
+<p><strong>定理</strong>：若正态过程 <span class="math inline">\(\{\xi(t);t\in T\}\)</span> 在 <span class="math inline">\(T\)</span> 上是均方可导的，则 <span class="math inline">\(\{\xi&#39;(t);t\in T\}\)</span> 也是正态过程。</p>
+<p><strong>定理</strong>：若正态过程 <span class="math inline">\(\{\xi(t);t\in T\}\)</span> 在 <span class="math inline">\(T\)</span> 上是均方可积的，则 <span class="math display">\[
+\eta(t)=\int_a^t\xi(u)\mathrm du,\quad a,t\in T
+\]</span> 以及 <span class="math display">\[
+\eta(t)=\int_a^b\xi(u)h(t,u)\mathrm du
+\]</span> 也是正态过程。</p>
+<h2 id="正态-markov-过程">正态 Markov 过程</h2>
 
                 
               </div>
@@ -412,12 +386,12 @@
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
   
   
     <span>></span>
     
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/AIGC/" class="category-chain-item">AIGC</a>
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/" class="category-chain-item">随机过程</a>
   
   
 
@@ -434,11 +408,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
-      
-        <a href="/blog-main/tags/AIGC/" class="print-no-link">#AIGC</a>
-      
-        <a href="/blog-main/tags/stable-diffusion/" class="print-no-link">#stable diffusion</a>
+        <a href="/blog-main/tags/stochastic-process/" class="print-no-link">#stochastic process</a>
       
     </div>
   
@@ -450,8 +420,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>[Stable Diffusion]webui部署(Linux)</div>
-      <div>https://xyfjason.github.io/blog-main/2023/06/14/Stable-Diffusion-webui部署(Linux)/</div>
+      <div>[随机过程]6·高斯过程</div>
+      <div>https://xyfjason.github.io/blog-main/2024/01/13/随机过程-6·高斯过程/</div>
     </div>
     <div class="license-meta">
       
@@ -463,7 +433,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年6月14日</div>
+          <div>2024年1月13日</div>
         </div>
       
       
@@ -495,18 +465,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2023/06/16/Stable-Diffusion-%E6%A8%A1%E5%9E%8B%E6%A6%82%E8%A7%88/" title="[Stable Diffusion]模型概览">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">[Stable Diffusion]模型概览</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/06/08/StyleGAN-%E7%B3%BB%E5%88%97/" title="StyleGAN 系列">
-                        <span class="hidden-mobile">StyleGAN 系列</span>
+                      <a href="/blog-main/2024/01/12/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B-4%C2%B7%E4%BA%8C%E9%98%B6%E7%9F%A9%E8%BF%87%E7%A8%8B%E3%80%81%E5%B9%B3%E7%A8%B3%E8%BF%87%E7%A8%8B%E5%92%8C%E9%9A%8F%E6%9C%BA%E5%88%86%E6%9E%90/" title="[随机过程]4·二阶矩过程、平稳过程和随机分析">
+                        <span class="hidden-mobile">[随机过程]4·二阶矩过程、平稳过程和随机分析</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
