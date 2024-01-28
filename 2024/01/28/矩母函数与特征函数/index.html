@@ -16,24 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 在概率论中，我们研究了随机变量，\(n\) 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、相互有关的随机变量，这就是随机过程。 随机过程的概念 设 \((\Omega,\Sigma,P)\) 是">
+    <meta name="description" content="矩母函数 矩母函数的定义 设 \(X\) 为一个随机变量，其矩母函数（Moment-Generating Function, MGF）定义为： \[ M_X(t)&#x3D;\mathbb E[e^{tX}]&#x3D;\begin{cases} \displaystyle\sum_xe^{tx}p_{\small X}(x)&amp;\text{discrete}\\ \displaystyle\int_{-\in">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[随机过程]1·随机过程及其分类">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/30/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B-1%C2%B7%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B%E5%8F%8A%E5%85%B6%E5%88%86%E7%B1%BB/index.html">
+<meta property="og:title" content="矩母函数与特征函数">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/01/28/%E7%9F%A9%E6%AF%8D%E5%87%BD%E6%95%B0%E4%B8%8E%E7%89%B9%E5%BE%81%E5%87%BD%E6%95%B0/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 在概率论中，我们研究了随机变量，\(n\) 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、相互有关的随机变量，这就是随机过程。 随机过程的概念 设 \((\Omega,\Sigma,P)\) 是">
+<meta property="og:description" content="矩母函数 矩母函数的定义 设 \(X\) 为一个随机变量，其矩母函数（Moment-Generating Function, MGF）定义为： \[ M_X(t)&#x3D;\mathbb E[e^{tX}]&#x3D;\begin{cases} \displaystyle\sum_xe^{tx}p_{\small X}(x)&amp;\text{discrete}\\ \displaystyle\int_{-\in">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
-<meta property="article:published_time" content="2023-12-30T07:25:11.000Z">
-<meta property="article:modified_time" content="2024-01-12T08:28:20.991Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mgf.png">
+<meta property="article:published_time" content="2024-01-28T09:58:26.000Z">
+<meta property="article:modified_time" content="2024-01-28T14:13:16.318Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="stochastic process">
+<meta property="article:tag" content="statistics">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mgf.png">
   
   
   
-  <title>[随机过程]1·随机过程及其分类 - xyfJASON</title>
+  <title>矩母函数与特征函数 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/stoc.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/mgf.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="[随机过程]1·随机过程及其分类"></span>
+            <span id="subtitle" data-typed-text="矩母函数与特征函数"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-12-30 15:25" pubdate>
-          2023年12月30日 下午
+        <time datetime="2024-01-28 17:58" pubdate>
+          2024年1月28日 下午
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1k 字
+          841 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          9 分钟
+          8 分钟
         
       </span>
     
@@ -322,115 +322,124 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">[随机过程]1·随机过程及其分类</h1>
+            <h1 id="seo-header">矩母函数与特征函数</h1>
             
             
               <div class="markdown-body">
                 
-                <p><span class="math display">\[
-\newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
+                <h2 id="矩母函数">矩母函数</h2>
+<h3 id="矩母函数的定义">矩母函数的定义</h3>
+<p>设 <span class="math inline">\(X\)</span> 为一个随机变量，其<strong>矩母函数（Moment-Generating Function, MGF）</strong>定义为： <span class="math display">\[
+M_X(t)=\mathbb E[e^{tX}]=\begin{cases}
+\displaystyle\sum_xe^{tx}p_{\small X}(x)&amp;\text{discrete}\\
+\displaystyle\int_{-\infty}^{\infty}e^{tx}f_{\small X}(x)\mathrm dx&amp;\text{continuous}
+\end{cases}
+\]</span> 前提是该期望存在。</p>
+<p>可以看到，在连续随机变量情形下，<span class="math inline">\(M_X(-t)\)</span> 是概率密度函数 <span class="math inline">\(f_X(x)\)</span> 的<strong>双边拉普拉斯变换</strong>。</p>
+<h3 id="用矩母函数生成矩">用矩母函数生成矩</h3>
+<p>矩母函数可以用于生成矩。具体而言，矩母函数在 <span class="math inline">\(t=0\)</span> 处的 <span class="math inline">\(n\)</span> 阶导数就是 <span class="math inline">\(X\)</span> 的 <span class="math inline">\(n\)</span> 阶矩： <span class="math display">\[
+M_X^{(n)}(t)=\frac{\mathrm d^n}{\mathrm dt^n}\mathbb E[e^{tX}]=\mathbb E\left[\frac{\mathrm d^n}{\mathrm dt^n}e^{tX}\right]=\mathbb E[X^ne^{tX}]\implies M_X^{(n)}(0)=\mathbb E[X^n]
+\]</span> 例如： <span class="math display">\[
+M_X(0)=1,\quad M_X&#39;(0)=\mathbb E[X],\quad M_X&#39;&#39;(0)=\mathbb E[X^2]
+\]</span> 也可以从泰勒展开的角度理解这一性质： <span class="math display">\[
+M_X(t)=\mathbb E[e^{tX}]=\mathbb E\left[1+tX+\frac{t^2X^2}{2!}+\frac{t^3X^3}{3!}+\cdots\right]=1+tm_1+\frac{t^2}{2!}m_2+\frac{t^3}{3!}m_3+\cdots
+\]</span> 其中，<span class="math inline">\(m_k\)</span> 表示 <span class="math inline">\(X\)</span> 的 <span class="math inline">\(k\)</span> 阶矩。</p>
+<h3 id="独立随机变量的和">独立随机变量的和</h3>
+<p>矩母函数在确定独立随机变量的和的统计量的情形下非常方便。</p>
+<p>设 <span class="math inline">\(X,Y\)</span> 是相互独立的随机变量，矩母函数分别为 <span class="math inline">\(M_X(t),M_Y(t)\)</span>，设 <span class="math inline">\(Z=X+Y\)</span>，则： <span class="math display">\[
+M_Z(t)=\mathbb E[e^{tZ}]=\mathbb E[e^{t(X+Y)}]=\mathbb E[e^{tX}e^{tY}]=\mathbb E[e^{tX}]\mathbb E[e^{tY}]=M_X(t)M_Y(t)
+\]</span> 也就是说，<strong>两个独立随机变量相加，对应于二者的矩母函数相乘</strong>。我们知道独立随机变量之和的概率密度是二者的卷积，但卷积计算起来很麻烦，如果我们只需要结果的统计量（数字特征）而不需要具体的概率分布，用矩母函数就方便很多。</p>
+<p>进一步地，对于 <span class="math inline">\(n\)</span> 个相互独立的随机变量 <span class="math inline">\(X_1,X_2,\ldots,X_n\)</span>，设 <span class="math inline">\(Y=X_1+X_2+\cdots+X_n\)</span>，则有： <span class="math display">\[
+M_Y(t)=M_{X_1}(t)M_{X_2}(t)\cdots M_{X_n}(t)
 \]</span></p>
-<p>在概率论中，我们研究了随机变量，<span class="math inline">\(n\)</span> 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、<strong>相互有关</strong>的随机变量，这就是随机过程。</p>
-<h2 id="随机过程的概念">随机过程的概念</h2>
-<p>设 <span class="math inline">\((\Omega,\Sigma,P)\)</span> 是一概率空间，对每一个参数 <span class="math inline">\(t\in T\)</span>，<span class="math inline">\(X(t,\omega)\)</span> 是一定义在概率空间 <span class="math inline">\((\Omega,\Sigma,P)\)</span> 上的随机变量，则称随机变量族 <span class="math inline">\(X_T=\{X(t,\omega);t\in T\}\)</span> 为该概率空间上的一<strong>随机过程</strong>。其中 <span class="math inline">\(T\subset\mathbb R\)</span> 是一实数集，称为<strong>指标集</strong>或<strong>参数集</strong>。</p>
-<p>用映射表示 <span class="math inline">\(X_T\)</span>： <span class="math display">\[
-X(t,\omega): T\times\Omega\to\mathbb R
-\]</span></p>
+<h3 id="矩母函数的其他性质">矩母函数的其他性质</h3>
+<p>设随机变量 <span class="math inline">\(X\)</span> 的矩母函数为 <span class="math inline">\(M_X(t)\)</span>，则：</p>
 <ul>
-<li>固定 <span class="math inline">\(t\in T\)</span>，<span class="math inline">\(X(t,\cdot)\)</span> 是一定义在样本空间 <span class="math inline">\(\Omega\)</span> 上的函数，即为一随机变量；</li>
-<li>固定 <span class="math inline">\(\omega\in\Omega\)</span>，<span class="math inline">\(X(\cdot,\omega)\)</span> 是一个关于参数 <span class="math inline">\(t\in T\)</span> 的函数，称作<strong>样本函数</strong>，或随机过程的<strong>一次实现</strong>。</li>
+<li>设 <span class="math inline">\(Z=aX\)</span>，其中 <span class="math inline">\(a\)</span> 为常数，则 <span class="math inline">\(M_Z(t)=\mathbb E[e^{tZ}]=\mathbb E[e^{taX}]=M_X(at)\)</span>.</li>
+<li>设 <span class="math inline">\(Z=X+b\)</span>，其中 <span class="math inline">\(b\)</span> 为常数，则 <span class="math inline">\(M_Z(t)=\mathbb E[e^{t(X+b)}]=e^{bt}M_X(t)\)</span>.</li>
 </ul>
-<p>记号 <span class="math inline">\(X(t,\omega)\)</span> 常常简记为 <span class="math inline">\(X_t(\omega)\)</span> 或 <span class="math inline">\(X(t)\)</span>.</p>
-<p>随机过程 <span class="math inline">\(\{X(t);t\in T\}\)</span> 可能取值的全体所构成的集合称为此随机过程的<strong>状态空间</strong>，记为 <span class="math inline">\(S\)</span>.</p>
-<h2 id="随机过程的分类">随机过程的分类</h2>
-<p><strong>以参数集和状态空间的特性分类</strong>：参数集 <span class="math inline">\(T\)</span> 可分为可列与不可列两大类；状态空间 <span class="math inline">\(S\)</span> 可分为离散和连续两大类。因此随机过程可分为以下四类：</p>
+<h3 id="矩母函数的例子">矩母函数的例子</h3>
+<p><strong>二项分布</strong>：设 <span class="math inline">\(X\sim B(n,p)\)</span>，则： <span class="math display">\[
+M_X(t)=\mathbb E[e^{tX}]=\sum_{k=0}^ne^{tk}\binom{n}{k}p^k(1-p)^{n-k}=\sum_{k=0}^n\binom{n}{k}{(pe^t)}^k(1-p)^{n-k}=(pe^t+1-p)^n
+\]</span> <strong>二项分布的和</strong>：设 <span class="math inline">\(X_1\sim B(n_1,p),\,X_2\sim B(n_2,p)\)</span>，则： <span class="math display">\[
+M_{X_1+X_2}(t)=M_{X_1}(t)M_{X_2}(t)=(pe^t+1-p)^{n_1}(pe^t+1-p)^{n_2}=(pe^t+1-p)^{n_1+n_2}
+\]</span> 因此 <span class="math inline">\(X_1+X_2\sim B(n_1+n_2,p)\)</span>.</p>
+<p><strong>泊松分布</strong>：设 <span class="math inline">\(X\sim \text{Poisson}(\lambda)\)</span>​，则： <span class="math display">\[
+M_X(t)=\mathbb E[e^{tX}]=\sum_{k=0}^\infty e^{tk}\frac{\lambda ^k}{k!}e^{-\lambda}=e^{-\lambda}\sum_{k=0}^\infty\frac{(\lambda e^t)^k}{k!}=e^{-\lambda}e^{\lambda e^t}=\exp[\lambda(e^t-1)]
+\]</span> <strong>泊松分布的和</strong>：设 <span class="math inline">\(X_1\sim \text{Poisson}(\lambda_1),\,X_2\sim \text{Poisson}(\lambda_2)\)</span>，则： <span class="math display">\[
+M_{X_1+X_2}(t)=M_{X_1}(t)M_{X_2}(t)=\exp[\lambda_1(e^t-1)]\exp[\lambda_2(e^t-1)]=\exp[(\lambda_1+\lambda_2)(e^t-1)]
+\]</span> 因此 <span class="math inline">\(X_1+X_2\sim\text{Poisson}(\lambda_1+\lambda_2)\)</span>.</p>
+<p><strong>标准正态分布</strong>：设 <span class="math inline">\(X\sim N(0,1)\)</span>，则： <span class="math display">\[
+M_X(t)=\mathbb E[e^{tX}]=\int_{-\infty}^{\infty}e^{tx}\frac{1}{\sqrt{2\pi}}e^{-x^2/2}\mathrm dx=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{(x-t)^2}{2}+\frac{t^2}{2}}\mathrm dx=e^{t^2/2}
+\]</span> <strong>正态分布</strong>：设 <span class="math inline">\(X\sim N(\mu,\sigma^2)\)</span>，则： <span class="math display">\[
+\begin{align}M_X(t)&amp;=\mathbb E[e^{tX}]\\&amp;=\frac{1}{\sqrt{2\pi}\sigma}\int_{-\infty}^{+\infty}e^{tx}e^{-{(x-\mu)^2}/{2\sigma^2}}\mathrm dx\\&amp;=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{t(\sigma s+\mu)}e^{-{s^2}/{2}}\mathrm ds&amp;&amp;s=(x-\mu)/\sigma\\&amp;=\frac{e^{t\mu}}{\sqrt{2\pi}}\int_{-\infty}^{+\infty}e^{t^2\sigma^2/2}e^{-{(s-t\sigma)^2}/{2}}\mathrm ds\\&amp;=e^{\mu t+\sigma^2t^2/2}\end{align}
+\]</span> <strong>指数分布</strong>：设 <span class="math inline">\(X\sim\text{Exp}(\lambda)\)</span>​，则： <span class="math display">\[
+M_X(t)=\mathbb E[e^{tX}]=\int_0^{\infty}e^{tx}\lambda e^{-\lambda x}\mathrm dx=\lambda\int_0^{\infty}e^{-(\lambda-t)x}\mathrm dx=\frac{\lambda}{\lambda-t}\quad(t&lt;\lambda)
+\]</span></p>
+<h2 id="特征函数">特征函数</h2>
+<h3 id="复随机变量">复随机变量</h3>
+<p>设 <span class="math inline">\(X,Y\)</span> 均为<strong>实值</strong>随机变量，称 <span class="math inline">\(\xi=X+iY\)</span> 为一复随机变量，且定义其期望为 <span class="math inline">\(\mathbb E\xi=\mathbb EX+i\mathbb EY\)</span>.</p>
+<p>特别地，对于复随机变量 <span class="math inline">\(e^{itX}\)</span>，有： <span class="math display">\[
+\mathbb E[e^{itX}]=\mathbb E[\cos(tX)+i\sin(tX)]=\mathbb E[\cos(tX)]+i\mathbb E[\sin(tX)]
+\]</span></p>
+<h3 id="特征函数的定义">特征函数的定义</h3>
+<p>设 <span class="math inline">\(X\)</span> 是一个随机变量，其<strong>特征函数（Characteristic Function）</strong>定义为： <span class="math display">\[
+\varphi_X(t)=\mathbb E[e^{itX}]=\int_{-\infty}^{\infty}e^{itx}\mathrm dF_{\small X}(x)
+\]</span> 当概率密度函数 <span class="math inline">\(f_{\small X}(x)\)</span> 存在时，有： <span class="math display">\[
+\varphi_X(t)=\mathbb E[e^{itX}]=\int_{-\infty}^{\infty}e^{itx}f_{\small X}(x)\mathrm dx
+\]</span></p>
+<p>与矩母函数不同的是，<strong>特征函数总是存在的</strong>。</p>
+<p>特征函数可以视为 <span class="math inline">\(iX\)</span> 的矩母函数，或 <span class="math inline">\(X\)</span> 在虚数轴上求得的矩母函数，即： <span class="math display">\[
+\varphi_X(t)=M_{iX}(t)=M_X(it)
+\]</span> 另外可以看到，在连续随机变量情形下，特征函数 <span class="math inline">\(\varphi(t)\)</span> 是概率密度函数 <span class="math inline">\(f_X(x)\)</span> 的（共轭）<strong>傅立叶变换</strong>。</p>
+<h3 id="多元特征函数的定义">多元特征函数的定义</h3>
+<p>若 <span class="math inline">\(X=(X_1,X_2,\ldots,X_n)^T\)</span> 是一个 <span class="math inline">\(n\)</span> 元随机向量，则其特征函数定义为： <span class="math display">\[
+\varphi_X(t)=\mathbb E[e^{it^TX}]=\int_x e^{it^Tx}\mathrm dF_{\small X}(x)=\int_x e^{i(t_1x_1+t_2x_2+\cdots+t_nx_n)}\mathrm dF_{\small X}(x_1,x_2,\ldots,x_n)
+\]</span> 其中 <span class="math inline">\(t=(t_1,t_2,\ldots,t_n)^T\)</span>​.</p>
+<h3 id="特征函数的性质">特征函数的性质</h3>
+<p>特征函数有很多与矩母函数类似的性质。</p>
 <ol type="1">
-<li>离散参数离散型随机过程（例如随机游走）；</li>
-<li>连续参数离散型随机过程（例如泊松过程中到达顾客数 <span class="math inline">\(N(t)\)</span>）；</li>
-<li>连续参数连续型随机过程（例如布朗运动）；</li>
-<li>离散参数连续型随机过程（例如泊松过程中顾客到达时刻 <span class="math inline">\(S_n\)</span>）。</li>
+<li><p><span class="math inline">\(|\varphi_X(t)|\leq\varphi_X(0)=1\)</span>，并且 <span class="math inline">\(\varphi_X(-t)=\overline{\varphi_X(t)}\)</span>；</p></li>
+<li><p><span class="math inline">\(\varphi_X(t)\)</span> 在 <span class="math inline">\((-\infty,+\infty)\)</span> 上一致连续；</p></li>
+<li><p>若 <span class="math inline">\(\mathbb E[X^k]\)</span> 存在，则 <span class="math inline">\(\varphi_X^{(k)}(t)=i^k\mathbb E[X^ke^{itX}]\)</span>，特别有 <span class="math inline">\(\varphi_X^{(k)}(0)=i^k\mathbb E[X^k]\)</span>；</p></li>
+<li><p><span class="math inline">\(\varphi_X(t)\)</span> 是非负定的，即对于任意正整数 <span class="math inline">\(n\)</span> 和任意实数 <span class="math inline">\(t_1,t_2,\ldots,t_n\)</span> 与复数 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_n\)</span>，都有： <span class="math display">\[
+\sum_{k=1}^n\sum_{j=1}^n\varphi_X(t_k-t_j)\lambda_k\overline{\lambda_j}\geq0
+\]</span></p></li>
+<li><p>设 <span class="math inline">\(X_1,X_2,\ldots,X_n\)</span> 相互独立，<span class="math inline">\(Y=X_1+X_2+\cdots+X_n\)</span>，则： <span class="math display">\[
+\varphi_{\small Y}(t)=\varphi_{\small X_1}(t)\varphi_{\small X_2}(t)\cdots\varphi_{\small X_n}(t)
+\]</span></p></li>
+<li><p>反演定理。设随机变量 <span class="math inline">\(X\)</span> 的分布函数为 <span class="math inline">\(F_X(x)\)</span>，特征函数为 <span class="math inline">\(\varphi_X(t)\)</span>，设 <span class="math inline">\(x&lt;y\)</span> 是分布函数的连续点，则： <span class="math display">\[
+F_X(y)-F_X(x)=\lim_{T\to\infty}\frac{1}{2\pi}\int_{-T}^{T}\frac{e^{-itx}-e^{-ity}}{it}\varphi_X(t)\mathrm dt
+\]</span> 特别地，如果 <span class="math inline">\(X\)</span> 为连续型随机变量，密度函数为 <span class="math inline">\(f_X(x)\)</span>，则： <span class="math display">\[
+f_X(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}\varphi_X(t)e^{-itx}\mathrm dt
+\]</span></p></li>
+<li><p>唯一性定理。若两个随机变量有着相同的特征函数，则他们的概率分布也相同，即 <span class="math inline">\(F_X(x)\)</span> 到 <span class="math inline">\(\varphi(t)\)</span> 的变换是一一对应的。</p></li>
+<li><p>设有随机变量序列 <span class="math inline">\(\{X_n,n\geq 1\}\)</span>，其分布函数序列和特征函数序列分别为 <span class="math inline">\(\{F_n(x),n\geq1\},\,\{\varphi_n(t),n\geq 1\}\)</span>，则： <span class="math display">\[
+X_n\xrightarrow{d}X\implies \varphi_n(t)\to\varphi(t)
+\]</span></p></li>
 </ol>
-<p><strong>以随机过程的统计特征或概率特征分类</strong>：一般有以下一些：</p>
-<ol type="1">
-<li>独立增量过程；</li>
-<li>Markov 过程；</li>
-<li>二阶矩过程；</li>
-<li>平稳过程；</li>
-<li>鞅；</li>
-<li>更新过程；</li>
-<li>Poisson 过程；</li>
-<li>维纳过程。</li>
+<h3 id="特征函数的例子">特征函数的例子</h3>
+<p>常见分布的矩母函数和特征函数如下表所示（截图自维基百科）：</p>
+<p><img src="wiki.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Scott Sheffield. 18.440: Lecture 27 Moment generating functions and characteristic functions. MIT. <a target="_blank" rel="noopener" href="https://dspace.mit.edu/bitstream/handle/1721.1/97467/18-440-spring-2011/contents/lecture-notes/MIT18_440S11_Lecture27.pdf">link</a> <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>孙应飞. 中国科学院大学随机过程讲稿 <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>维基百科. 矩生成函数. <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/%E7%9F%A9%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B8">link</a> <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>维基百科. 特征函数 (概率论). <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%89%B9%E5%BE%81%E5%87%BD%E6%95%B0_(%E6%A6%82%E7%8E%87%E8%AE%BA)">link</a> <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
 </ol>
-<h2 id="随机过程的数字特征">随机过程的数字特征</h2>
-<h3 id="单个随机过程情形">单个随机过程情形</h3>
-<p>设 <span class="math inline">\(\{X(t);t\in T\}\)</span> 是一随机过程，为了刻画其统计特性，通常用到随机过程的数字特征，即随机过程的均值函数、方差函数、协方差函数和相关函数。</p>
-<ul>
-<li><p><strong>均值函数</strong>（假设存在）： <span class="math display">\[
-\mu_X(t)\coloneqq m(t)=\mathbb E[X(t)]
-\]</span></p></li>
-<li><p><strong>方差函数</strong>（假设存在）： <span class="math display">\[
-\sigma^2_X(t)\coloneqq D_X(t)=\mathbb E\left[(X(t)-\mu_X(t))^2\right]
-\]</span></p></li>
-<li><p><strong>（自）协方差函数</strong>： <span class="math display">\[
-C_X(s,t)\coloneqq \mathbb E[(X(s)-\mu_X(s))(X(t)-\mu_X(t))]
-\]</span></p></li>
-<li><p><strong>（自）相关函数</strong>： <span class="math display">\[
-R_X(s,t)\coloneqq \mathbb E[X(s)X(t)]
-\]</span></p></li>
-</ul>
-<p>数字特征之间的关系： <span class="math display">\[
-\begin{gather}
-C_X(s,t)=R_X(s,t)-\mu_X(s)\mu_X(t)\\
-\sigma^2_X(t)=D_X(t)=C_X(t,t)=R_X(t,t)-[\mu_X(t)]^2
-\end{gather}
-\]</span></p>
-<h3 id="两个随机过程情形">两个随机过程情形</h3>
-<p>设 <span class="math inline">\(\{X(t);t\in T\},\,\{Y(t);t\in T\}\)</span> 是两个随机过程，它们具有相同的参数集。除了各自的数字特征外，还有：</p>
-<ul>
-<li><p><strong>互协方差函数</strong>： <span class="math display">\[
-C_{XY}(s,t)\coloneqq\mathbb E[(X(s)-\mu_X(s))(Y(t)-\mu_Y(t))]
-\]</span></p></li>
-<li><p><strong>互相关函数</strong>： <span class="math display">\[
-R_{XY}(s,t)\coloneqq\mathbb E[X(s)Y(t)]
-\]</span></p></li>
-</ul>
-<p>二者有关系： <span class="math display">\[
-C_{XY}(s,t)=R_{XY}(s,t)-\mu_X(s)\mu_Y(t)
-\]</span> 若两个随机过程对任意两个参数 <span class="math inline">\(s,t\in T\)</span>，都有 <span class="math inline">\(C_{XY}(s,t)=0\)</span>，则称这两个随机过程<strong>统计不相关</strong>。</p>
-<h3 id="有限维分布族">有限维分布族</h3>
-<p>设 <span class="math inline">\(\{X(t);t\in T\}\)</span> 是一随机过程，记： <span class="math display">\[
-F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n)=P\{X(t_1)\leq x_1,X(t_2)\leq x_2,\ldots,X(t_n)\leq x_n\}
-\]</span> 其全体 <span class="math display">\[
-\{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}
-\]</span> 称为随机过程的<strong>有限维分布族</strong>。随机过程的统计特性完全由它的有限维分布族决定，有限维分布族与有限维特征函数族相互唯一确定。</p>
-<p><strong>对称性</strong>：对 <span class="math inline">\((1,2,\ldots,n)\)</span> 的任意排列 <span class="math inline">\((j_1,j_2,\ldots,j_n)\)</span>，有： <span class="math display">\[
-F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n)=F_X(x_{j_1},x_{j_2},\ldots,x_{j_n};t_{j_1},t_{j_2},\ldots,t_{j_n})
-\]</span> <strong>相容性</strong>：对于 <span class="math inline">\(m&lt;n\)</span>，有： <span class="math display">\[
-F_X(x_1,x_2,\ldots,x_m,+\infty,\ldots,+\infty;t_1,t_2,\ldots,t_m,t_{m+1},\ldots,t_n)=F_X(x_1,x_2,\ldots,x_m;t_1,t_2,\ldots,t_m)
-\]</span> <strong>Kolmogorov 存在性定理</strong>：设分布函数族 <span class="math inline">\(\{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}\)</span> 满足对称性和相容性，则存在唯一的随机过程使得该分布函数族恰好是其有限维分布。</p>
-<div class="note note-info">
-            <p>定理说明了随机过程的有限维分布族包含了随机过程的所有概率信息。因此，研究随机过程的统计特征可以通过研究其有限维分布函数族的特性来达到。</p>
-          </div>
-<h2 id="分布列的-delta-函数表示">分布列的 <span class="math inline">\(\delta\)</span> 函数表示</h2>
-<p>设<strong>离散型</strong>随机变量 <span class="math inline">\(X\)</span> 的分布列为 <span class="math inline">\(P(X=x_i)=p_i,\,i=1,2,\ldots\)</span>，则其分布函数可以表示为： <span class="math display">\[
-F(x)=P(X\leq x)=\sum_{x_i\leq x}p_i=\int_0^x\sum_{i=1}^\infty p_i\delta(u-x_i)\mathrm du
-\]</span> 故而密度函数可以表示为： <span class="math display">\[
-f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
-\]</span> 工程上，常用离散型随机变量分布列的 <span class="math inline">\(\delta\)</span> 函数表示法。它将离散型随机变量的分布列表示成分布密度的形式，因此与连续型随机变量的概率分布密度函数一样，可以进行统一处理。</p>
-<h2 id="条件数学期望">条件数学期望</h2>
-<p>设 <span class="math inline">\(X,Y\)</span> 是随机变量，则 <span class="math inline">\(\mathbb E[X\vert Y=y]\)</span> 是一个数，而条件数学期望 <span class="math inline">\(\mathbb E[X\vert Y]\)</span> 是一个随机变量。</p>
-<p><strong>全期望公式</strong>： <span class="math display">\[
-\mathbb EX=\mathbb E[\mathbb E[X\vert Y]]
-\]</span> <div class="note note-success">
-            <p>用途：当 <span class="math inline">\(\mathbb EX\)</span> 不好求时，引入 <span class="math inline">\(Y\)</span>，转而计算 <span class="math inline">\(\mathbb E[\mathbb E[X\vert Y]]\)</span>.</p>
-          </div></p>
-<p><strong>性质</strong>：</p>
-<ul>
-<li><span class="math inline">\(\mathbb E[\sum_{i=1}^na_iX_i\vert Y]=\sum_{i=1}^na_i\mathbb E[X_i\vert Y]\)</span></li>
-<li><span class="math inline">\(\mathbb E[g(X)h(Y)\vert Y]=h(Y)\mathbb E[g(X)\vert Y]\)</span></li>
-<li><span class="math inline">\(\mathbb E[g(X)h(Y)]=\mathbb E[h(Y)\mathbb E[g(X)\vert Y]]\)</span></li>
-<li>若 <span class="math inline">\(X,Y\)</span> 独立，则 <span class="math inline">\(\mathbb E]X\vert Y]=\mathbb E[X]\)</span></li>
-</ul>
+</div>
+</section>
 
                 
               </div>
@@ -449,12 +458,12 @@ f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
   
   
     <span>></span>
     
-  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B/" class="category-chain-item">随机过程</a>
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%95%B0%E5%AD%A6/" class="category-chain-item">数学</a>
   
   
 
@@ -471,7 +480,7 @@ f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/stochastic-process/" class="print-no-link">#stochastic process</a>
+        <a href="/blog-main/tags/statistics/" class="print-no-link">#statistics</a>
       
     </div>
   
@@ -483,8 +492,8 @@ f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>[随机过程]1·随机过程及其分类</div>
-      <div>https://xyfjason.github.io/blog-main/2023/12/30/随机过程-1·随机过程及其分类/</div>
+      <div>矩母函数与特征函数</div>
+      <div>https://xyfjason.github.io/blog-main/2024/01/28/矩母函数与特征函数/</div>
     </div>
     <div class="license-meta">
       
@@ -496,7 +505,7 @@ f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年12月30日</div>
+          <div>2024年1月28日</div>
         </div>
       
       
@@ -528,18 +537,12 @@ f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2023/12/31/oh-my-zsh/" title="oh my zsh">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">oh my zsh</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/12/27/Fourier-Transform-3-2D-DFT-Image/" title="Fourier Transform 3 (2D DFT, Image)">
-                        <span class="hidden-mobile">Fourier Transform 3 (2D DFT, Image)</span>
+                      <a href="/blog-main/2024/01/13/%E9%9A%8F%E6%9C%BA%E8%BF%87%E7%A8%8B-6%C2%B7%E9%AB%98%E6%96%AF%E8%BF%87%E7%A8%8B/" title="[随机过程]6·高斯过程">
+                        <span class="hidden-mobile">[随机过程]6·高斯过程</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
