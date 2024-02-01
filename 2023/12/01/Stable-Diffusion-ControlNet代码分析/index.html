@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/controlnet.png">
 <meta property="article:published_time" content="2023-12-01T02:35:11.000Z">
-<meta property="article:modified_time" content="2024-01-20T03:08:36.938Z">
+<meta property="article:modified_time" content="2024-01-31T16:43:03.889Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="AIGC">
@@ -276,7 +276,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          1.6k 字
         
       </span>
     
@@ -287,7 +287,7 @@
         
         
         
-          22 分钟
+          13 分钟
         
       </span>
     
@@ -342,117 +342,37 @@
 <h2 id="overview">Overview</h2>
 <p>ControlNet 是基于 Stable Diffusion 的代码库开发的，以下为整个仓库的文件组织结构（排除了非代码文件，如文档、字体、测试图片等）：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── annotator<br>│   ├── canny<br>│   ├── ckpts<br>│   ├── hed<br>│   ├── midas<br>│   ├── mlsd<br>│   ├── openpose<br>│   ├── uniformer<br>│   └── util.py<br>├── cldm<br>│   ├── cldm.py<br>│   ├── ddim_hacked.py<br>│   ├── hack.py<br>│   ├── logger.py<br>│   └── model.py<br>├── config.py<br>├── gradio_annotator.py<br>├── gradio_canny2image.py<br>├── gradio_depth2image.py<br>├── gradio_fake_scribble2image.py<br>├── gradio_hed2image.py<br>├── gradio_hough2image.py<br>├── gradio_normal2image.py<br>├── gradio_pose2image.py<br>├── gradio_scribble2image_interactive.py<br>├── gradio_scribble2image.py<br>├── gradio_seg2image.py<br>├── ldm<br>│   ├── data<br>│   ├── models<br>│   ├── modules<br>│   └── util.py<br>├── models<br>│   ├── cldm_v15.yaml<br>│   └── cldm_v21.yaml<br>├── share.py<br>├── tool_add_control.py<br>├── tool_add_control_sd21.py<br>├── tool_transfer_control.py<br>├── tutorial_dataset.py<br>├── tutorial_dataset_test.py<br>├── tutorial_train.py<br>└── tutorial_train_sd21.py<br></code></pre></td></tr></table></figure>
-<h2 id="details">Details</h2>
-<h3 id="annotator">annotator</h3>
-<p>Annotator 指各种条件提取器，如 canny 边缘检测器、midas 深度和法线估计模型、openpose 人体姿态识别器等，存放在 <code>annotator</code> 下。这些 annotator 既有传统方法，也有基于深度学习的方法，因此有些 annotator 需要模型权重文件，权重文件应放置在 <code>annotator/ckpts</code> 下。</p>
+<h2 id="annotator">annotator</h2>
+<p>Annotator 指各种条件提取器，如 canny 边缘检测器、midas 深度和法线估计模型、openpose 人体姿态识别器等。这些 annotator 既有传统方法，也有基于深度学习的方法，因此有些 annotator 需要模型权重文件，权重文件应放置在 annotator/ckpts 下。</p>
 <p>作者将每一种 annotator 分别放在对应子目录下，并且在各自的 <code>__init__.py</code> 中封装了 <code>xxxDetector</code> 类，例如 <code>CannyDetector</code>、<code>MidasDetector</code>、<code>OpenposeDetector</code> 等。这些 <code>xxxDetector</code> 有 <code>__call__()</code> 方法，接受输入图像（numpy uint8 HWC），返回检测图像（numpy uint8 HWC），因此调用起来非常的方便。</p>
-<p>作者还在 <code>annotator/util.py</code> 中提供了两个工具方法：<code>resize_image()</code> 将图像按小边成比例缩放到指定大小附近的 64 倍率处，<code>HWC3()</code> 将不同通道数的图像统一为 3 通道。</p>
+<p>作者还在 annotator/util.py 中提供了两个工具方法：<code>resize_image()</code> 将图像按小边成比例缩放到指定大小附近的 64 倍率处，<code>HWC3()</code> 将不同通道数的图像统一为 3 通道。</p>
 <p>下面是一个简单的代码片段示例：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image<br><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np<br><br><span class="hljs-keyword">from</span> annotator.canny <span class="hljs-keyword">import</span> CannyDetector<br><span class="hljs-keyword">from</span> annotator.midas <span class="hljs-keyword">import</span> MidasDetector<br><span class="hljs-keyword">from</span> annotator.uniformer <span class="hljs-keyword">import</span> UniformerDetector<br><span class="hljs-keyword">from</span> annotator.util <span class="hljs-keyword">import</span> resize_image, HWC3<br><br><span class="hljs-comment"># read image</span><br>img_path = <span class="hljs-string">&#x27;./test_imgs/building.png&#x27;</span><br>img = HWC3(np.array(Image.<span class="hljs-built_in">open</span>(img_path)))  <span class="hljs-comment"># uint8, (848, 564, 3)</span><br><br><span class="hljs-comment"># apply canny</span><br>apply_canny = CannyDetector()<br>img_canny = apply_canny(img, low_threshold=<span class="hljs-number">128</span>, high_threshold=<span class="hljs-number">200</span>)<br>img_canny = HWC3(img_canny)<br>Image.fromarray(img_canny).save(<span class="hljs-string">&#x27;img_canny.png&#x27;</span>)<br><br><span class="hljs-comment"># apply midas</span><br>apply_midas = MidasDetector()<br>img_r = resize_image(img, <span class="hljs-number">768</span>)  <span class="hljs-comment"># uint8, (1152, 768, 3)</span><br>img_midas_depth, img_midas_normal = apply_midas(img_r)<br>img_midas_depth = HWC3(img_midas_depth)<br>img_midas_normal = HWC3(img_midas_normal)<br>Image.fromarray(img_midas_depth).save(<span class="hljs-string">&#x27;img_midas_depth.png&#x27;</span>)<br>Image.fromarray(img_midas_normal).save(<span class="hljs-string">&#x27;img_midas_normal.png&#x27;</span>)<br><br><span class="hljs-comment"># apply uniformer</span><br>apply_uniformer = UniformerDetector()<br>img_uniformer = apply_uniformer(img)<br>img_uniformer = HWC3(img_uniformer)<br>Image.fromarray(img_uniformer).save(<span class="hljs-string">&#x27;img_uniformer.png&#x27;</span>)<br></code></pre></td></tr></table></figure>
 <div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="building.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div><div class="group-image-wrap"><img src="img_canny.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div><div class="group-image-wrap"><img src="img_midas_depth.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div><div class="group-image-wrap"><img src="img_midas_normal.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div><div class="group-image-wrap"><img src="img_uniformer.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></div></div></div>
-<h3 id="ldm">ldm</h3>
-<p>ldm 摘取自 Stable Diffusion 项目，是 SD 的核心。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs text">ldm<br>├── models<br>│   ├── autoencoder.py<br>│   └── diffusion<br>│       ├── __init__.py<br>│       ├── ddim.py<br>│       ├── ddpm.py<br>│       ├── dpm_solver<br>│       ├── plms.py<br>│       └── sampling_util.py<br>├── modules<br>│   ├── attention.py<br>│   ├── diffusionmodules<br>│   │   ├── __init__.py<br>│   │   ├── model.py<br>│   │   ├── openaimodel.py<br>│   │   ├── upscaling.py<br>│   │   └── util.py<br>│   ├── distributions<br>│   │   ├── __init__.py<br>│   │   └── distributions.py<br>│   ├── ema.py<br>│   ├── encoders<br>│   │   ├── __init__.py<br>│   │   └── modules.py<br>│   ├── image_degradation<br>│   │   ├── __init__.py<br>│   │   ├── bsrgan_light.py<br>│   │   ├── bsrgan.py<br>│   │   ├── utils<br>│   │   └── utils_image.py<br>│   └── midas<br>│       ├── __init__.py<br>│       ├── api.py<br>│       ├── midas<br>│       └── utils.py<br>└── util.py<br></code></pre></td></tr></table></figure>
-<h3 id="ldmutil.py">ldm/util.py</h3>
-<p><code>ldm/util.py</code> 定义了一些工具函数和工具类，其中值得提及的是如下函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">instantiate_from_config</span>(<span class="hljs-params">config</span>):<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-string">&quot;target&quot;</span> <span class="hljs-keyword">in</span> config:<br>        <span class="hljs-keyword">if</span> config == <span class="hljs-string">&#x27;__is_first_stage__&#x27;</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">elif</span> config == <span class="hljs-string">&quot;__is_unconditional__&quot;</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">raise</span> KeyError(<span class="hljs-string">&quot;Expected key `target` to instantiate.&quot;</span>)<br>    <span class="hljs-keyword">return</span> get_obj_from_str(config[<span class="hljs-string">&quot;target&quot;</span>])(**config.get(<span class="hljs-string">&quot;params&quot;</span>, <span class="hljs-built_in">dict</span>()))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_obj_from_str</span>(<span class="hljs-params">string, reload=<span class="hljs-literal">False</span></span>):<br>    module, cls = string.rsplit(<span class="hljs-string">&quot;.&quot;</span>, <span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">if</span> reload:<br>        module_imp = importlib.import_module(module)<br>        importlib.reload(module_imp)<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">getattr</span>(importlib.import_module(module, package=<span class="hljs-literal">None</span>), cls)<br></code></pre></td></tr></table></figure>
-<p>在 Stable Diffusion 项目（以及 ControlNet 项目）中，模型的实例化都是通过调用 <code>instantiate_from_config()</code> 实现的。其中 <code>config</code> 是 <code>OmegaConf</code> 包从配置文件读入的配置字典，字典中 <code>target</code> 字段写要实例化的类，<code>params</code> 字段写类的参数，例如 <code>configs/cldm_v15.yaml</code> 中有这么一段：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">unet_config:</span><br>  <span class="hljs-attr">target:</span> <span class="hljs-string">cldm.cldm.ControlledUnetModel</span><br>  <span class="hljs-attr">params:</span><br>    <span class="hljs-attr">image_size:</span> <span class="hljs-number">32</span> <span class="hljs-comment"># unused</span><br>    <span class="hljs-attr">in_channels:</span> <span class="hljs-number">4</span><br>    <span class="hljs-attr">out_channels:</span> <span class="hljs-number">4</span><br>    <span class="hljs-attr">model_channels:</span> <span class="hljs-number">320</span><br>    <span class="hljs-attr">attention_resolutions:</span> [ <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span> ]<br>    <span class="hljs-attr">num_res_blocks:</span> <span class="hljs-number">2</span><br>    <span class="hljs-attr">channel_mult:</span> [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">4</span> ]<br>    <span class="hljs-attr">num_heads:</span> <span class="hljs-number">8</span><br>    <span class="hljs-attr">use_spatial_transformer:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">transformer_depth:</span> <span class="hljs-number">1</span><br>    <span class="hljs-attr">context_dim:</span> <span class="hljs-number">768</span><br>    <span class="hljs-attr">use_checkpoint:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">legacy:</span> <span class="hljs-literal">False</span><br></code></pre></td></tr></table></figure>
-<p>那么代码就会从 <code>cldm.cldm</code> 模块中 import <code>ControlledUNetModel</code> 这个类，并用上述参数实例化。例如：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> omegaconf <span class="hljs-keyword">import</span> OmegaConf<br><span class="hljs-keyword">from</span> ldm.util <span class="hljs-keyword">import</span> instantiate_from_config<br><br>conf = OmegaConf.load(<span class="hljs-string">&#x27;./models/cldm_v15.yaml&#x27;</span>)<br>unet = instantiate_from_config(conf.model.params.unet_config)<br><span class="hljs-built_in">print</span>(unet)<br></code></pre></td></tr></table></figure>
-<p>执行上述代码后就能看到我们成功实例化了一个 UNet.</p>
-<p>这种实例化方式非常灵活，适合快速修改参数和尝试不同的模型架构，同时保持代码简洁；缺点是看代码的时候必须要找到对应配置文件才知道到底实例化的是什么，以及在 IDE 中不能支持快速跳转和类型提示。</p>
-<h3 id="ldmmodules">ldm/modules</h3>
-<p><code>ldm/modules</code> 下是各种网络模块的定义（即继承 <code>torch.nn.Module</code> 的类）。</p>
-<h3 id="ldmmodulesema.py">ldm/modules/ema.py</h3>
-<p>该文件定义了 <code>LitEMA</code> 类，方便在训练过程中维护 EMA 权重。</p>
-<ul>
-<li>初始化时传入 <code>model</code>，则 <code>LitEMA</code> 会将其参数存入自己的 buffer；</li>
-<li>每次调用 <code>LitEMA</code> 时传入新的 <code>model</code>，则 <code>LitEMA</code> 更新自己的 buffer；</li>
-<li><code>copy_to()</code> 函数把自己的 buffer 复制给传入的 <code>model</code>；</li>
-<li><code>store()</code> 函数将传入的参数暂存起来；</li>
-<li><code>restore()</code> 函数将暂存的参数赋值给传入的参数。</li>
-</ul>
-<h3 id="ldmmodulesattention.py">ldm/modules/attention.py</h3>
-<p>该文件定义了一些注意力模块，包括：</p>
-<ul>
-<li><code>CrossAttention</code>：交叉注意力模块。输入特征 <code>x</code>、条件 <code>context</code> 和掩码 <code>mask</code>，输出与 <code>x</code> 维度相同。如果 <code>context=None</code>，则等价于自注意力。</li>
-<li><code>MemoryEfficientCrossAttention</code>：利用 <code>xformers</code> 包做交叉注意力，功能与 <code>CrossAttention</code> 相同，但更省内存。</li>
-<li><code>BasicTransformerBlock</code>：SelfAttention + CrossAttention + FF 串起来。输入特征 <code>x</code> 和条件 <code>context</code>，输出与 <code>x</code> 维度相同。</li>
-<li><code>SpatialTransformer</code>：支持图片形式输入输出的 <code>BasicTransformerBlock</code> 列表。输入特征图 <code>x</code> 和条件 <code>context</code>，输出与 <code>x</code> 维度相同。</li>
-</ul>
-<h3 id="ldmmodulesencoders">ldm/modules/encoders</h3>
-<p>这里的 encoders 指各种文本编码器。<code>ldm/modules/encoders/modules.py</code> 在 <code>transformer</code> 包和 <code>openclip</code> 包的基础上进行了进一步封装，包括：</p>
-<ul>
-<li><code>FrozenT5Embedder</code></li>
-<li><code>FrozenCLIPEmbedder</code></li>
-<li><code>FrozenOpenCLIPEmbedder</code></li>
-<li><code>FrozenCLIPT5Encoder</code></li>
-</ul>
-<p>它们都有 <code>encode()</code> 方法，调用即可获取输入文本的 embeddings.</p>
-<p>Stable Diffusion v1.5 使用的是 <code>FrozenCLIPEmbedder</code>，加载的权重是 <code>openai/clip-vit-large-patch14</code>.</p>
-<h3 id="ldmmodulesdistributions">ldm/modules/distributions</h3>
-<p><code>ldm/modules/distributions/distributions.py</code> 定义了各种概率分布，包括：</p>
-<ul>
-<li><code>DiracDistribution</code>：狄拉克分布</li>
-<li><code>DiagonalGaussianDistribution</code>：各分量独立高斯分布</li>
-</ul>
-<p>它们都有方法 <code>sample()</code> 和 <code>mode()</code> 用于采样以及返回均值。高斯分布还有 <code>kl()</code> 和 <code>nll()</code> 计算 KL 散度和负对数似然。</p>
-<h3 id="ldmmodulesdiffusionmodules">ldm/modules/diffusionmodules</h3>
-<p><code>ldm/modules/diffusionmodules</code> 下是搭建 VAE 和 UNet 的各种模块。</p>
-<ul>
-<li><code>model.py</code>：仿照 UNet 设计的各种 <code>Encoder</code> 和 <code>Decoder</code>；</li>
-<li><code>openaimodel.py</code>：参考自 openai 代码的 <code>UNetModel</code>. 其 <code>forward()</code> 接受噪声图 <code>x</code>、时间步 <code>timestep</code>、以交叉注意力融入的条件 <code>context</code> 和类别标签 <code>y</code>（即以 adm 的方式融入模型的条件，不一定真的表示类别）。</li>
-</ul>
-<p>Stable Diffusion v1.5 使用的 UNet 就是 <code>openaimodel.py</code> 中定义的 <code>UNetModel</code>；使用的 VAE 就是 <code>model.py</code> 中定义的 <code>Encoder</code> 和 <code>Decoder</code>.</p>
-<h3 id="ldmmodels">ldm/models</h3>
-<p>上文中 <code>ldm/modules</code> 目录下定义了所有 SD 需要用到的网络模块，但由于 Stable Diffusion 项目（包括 ControlNet 项目）采用的是 PyTorch Lightning 训练，因此还需要对接 PL，这就是 <code>ldm/models</code> 的作用。</p>
-<p>PL 要求定义一个继承 <code>pl.LightningModule</code> 的类，其中不仅要在 <code>__init__()</code> 中实例化各个 <code>nn.Module</code> 模块组件，还要重写一些方法。在 Stable Diffusion 项目中，重写的方法包括：</p>
-<ul>
-<li><code>configure_optimizers(self)</code>：返回一个元组，第一个元素为 optimizers 列表，第二个元素为 schedulers 列表。</li>
-<li><code>training_step(self, batch, batch_idx)</code>：参数为一个 batch 的数据和当前 batch 的编号，返回一个 loss 张量或一个含有 <code>loss</code> 字段的字典。</li>
-<li><code>validation_step(self, batch, batch_idx)</code>：参数为一个 batch 的数据和当前 batch 的编号，返回一个 loss 张量或一个含有 <code>loss</code> 字段的字典。</li>
-<li><code>on_train_batch_end(self, outputs, batch, batch_idx)</code>：这是一个 hook，用于在一个 batch 训练结束后执行里面的内容。在 Stable Diffusion 项目中用于更新 EMA 权重。</li>
-</ul>
-<h3 id="ldmmodelsautoencoders.py">ldm/models/autoencoders.py</h3>
-<p>该文件定义了 SD 中的 VAE 模块，主要实现了 <code>AutoencoderKL</code> 类（继承 <code>pl.LightningModule</code>）。</p>
-<p>该类包含四个 <code>nn.Module</code> 组件：</p>
-<ul>
-<li><code>encoder</code>：<code>Encoder</code> 类的实例（上文提及），即编码器；</li>
-<li><code>decoder</code>：<code>Decoder</code> 类的实例（上文提及），即解码器；</li>
-<li><code>quant_conv</code>：一层 1x1 卷积 <code>nn.Conv2d</code>，将编码器隐空间维度 (=512) 映射到 embedding 维度 (=4)；</li>
-<li><code>post_quant_conv</code>：一层 1x1 卷积 <code>nn.Conv2d</code>，将 embedding 维度 (=4) 映射回解码器隐空间维度 (=512)。</li>
-</ul>
-<p><code>forward()</code> 流程为：<code>encoder</code> 编码均值方差 → <code>quant_conv</code> 降维 → 从服从该均值方差的高斯分布中采样 → <code>post_quant_conv</code> 升维 → <code>decoder</code> 解码输出图像。</p>
-<h3 id="ldmmodelsdiffusion">ldm/models/diffusion</h3>
-<p>该目录下定义了扩散模型的 PL 接口以及各种采样器。</p>
-<p>首先来看采样器。项目实现的采样器包括：</p>
-<ul>
-<li><code>DDIMSampler</code>：在 <code>ldm/models/diffusion/ddim.py</code> 中；</li>
-<li><code>PLMSSampler</code>：在 <code>ldm/models/diffusion/plms.py</code> 中；</li>
-<li><code>DPMSolverSampler</code>：在 <code>ldm/models/diffusion/dpm_solver</code> 目录下。</li>
-</ul>
-<p>这些采样器都是普通的类，有 <code>sample()</code> 方法，给定采样步数、batch size、图像大小以及其他参数，就能迭代地从高斯噪声生成最终的图像。</p>
-<p><br/></p>
-<p>还剩下一个 <code>ddpm.py</code> 是整个仓库里最长的文件，有 1800 行，其中定义了 <code>DDPM</code> 类、<code>LatentDiffusion</code> 类、<code>DiffusionWrapper</code> 类以及一系列继承自 <code>LatentDiffusion</code> 来做微调的类。我们着重看前三个。</p>
-<p><code>DiffusionWrapper</code> 类继承自 <code>pl.LightningModule</code>，其主要作用是将不同种类的条件以不同的方式融入扩散模型，包含一个组件 <code>diffusion_model</code>，是上文提到的 <code>UNetModel</code> 的实例。其 <code>forward()</code> 函数接受带噪图像 <code>x</code>、时间步 <code>t</code>、条件 <code>c_concat</code>、条件 <code>c_crossattn</code>和条件 <code>c_adm</code>. 顾名思义，后面三个条件的区别在于融入模型的方式不同，融入哪些条件由参数 <code>conditioning_key</code> 决定。回忆上文提到 <code>UNetModel</code> 的 <code>forward()</code> 本身支持两种条件——<code>context</code> 表示交叉注意力、<code>y</code> 表示 adm 方式，因此 <code>DiffusionWrapper</code> 的 <code>forward()</code> 就是基于 <code>UNetModel</code> 的 <code>forward()</code> 上的进一步封装。这个类应该是为了适应更多种类的条件而后来添加的，否则直接在 UNet 的 <code>forward()</code> 函数中处理更好。</p>
-<p><code>DDPM</code> 类也继承自 <code>pl.LightningModule</code>，包含一个组件 <code>model</code>，是 <code>DiffusionWrapper</code> 的实例。</p>
-<p><code>LatentDiffusion</code> 类是 SD 最主要的类。它继承自 <code>DDPM</code> 类，在其基础上增加了两个组件：</p>
-<ul>
-<li><code>cond_stage_model</code>：<code>FrozenCLIPEmbedder</code> 类的实例，即文本编码器；</li>
-<li><code>first_stage_model</code>：<code>AutoencoderKL</code> 类的实例，即 VAE.</li>
-</ul>
-<h3 id="cldm">cldm</h3>
-<p>上面 <code>ldm</code> 里的一大堆其实都是 Stable Diffusion 的工作，而 <code>cldm</code> 里才是 ControlNet 相关的代码。让我们看看作者是怎么把 ControlNet hack 进 Stable Diffusion 中的。</p>
+<h2 id="ldm">ldm</h2>
+<p>ldm 摘取自 Stable Diffusion 项目，是 SD 的核心，在 <a href="/blog-main/2023/12/01/Stable-Diffusion-SD%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" title="[Stable Diffusion]SD代码分析">SD 代码分析</a>一文中已经进行了分析，这里不再赘述。</p>
+<h2 id="cldm">cldm</h2>
+<p>cldm 里是 ControlNet 相关的代码，包括 5 个文件。作者选择把自己添加的代码单独拿出来而不是直接在 ldm 上改，很大程度上方便了我们阅读和分析。那就让我们看看作者是怎么把 ControlNet 加进 Stable Diffusion 中的吧。</p>
 <h3 id="cldmcldm.py">cldm/cldm.py</h3>
-<p>这里是 ControlNet 的核心，定义了三个类：<code>ControlledUNetModel</code>、<code>ControlNet</code> 和 <code>ControlLDM</code>.</p>
-<p><code>ControlledUNetModel</code> 继承自 <code>UNetModel</code>（即 SD 的去噪 UNet），重写了 <code>forward()</code> 方法，从而把 ControlNet 的输出接入 SD 之中。实现上也没有什么 tricky 的地方，就是老老实实抄过来改写。</p>
-<p><code>ControlNet</code> 就是 ControlNet 本体了，是一个 <code>nn.Module</code> 模块。其大部分内容就是把 <code>UNetModel</code> 的 Encoder 部分抄过来，但是需要新添加一个将条件输入压缩到隐空间维度的 8 层卷积，称作 <code>input_hint_block</code>. 另外还加了一些 <code>zero_convs</code>（其中有一个 <code>middle_block_out</code> 也是零卷积）。</p>
-<p><code>ControlLDM</code> 则继承自 <code>LatentDiffusion</code>，提供 PyTorch Lightning 的接口。其新增了组件 <code>control_model</code>，即 <code>ControlNet</code> 的实例化。</p>
+<p>这里是 ControlNet 的核心，定义了三个类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ControlledUnetModel</span>(<span class="hljs-title class_ inherited__">UNetModel</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, timesteps=<span class="hljs-literal">None</span>, context=<span class="hljs-literal">None</span>, control=<span class="hljs-literal">None</span>, only_mid_control=<span class="hljs-literal">False</span>, **kwargs</span>): ...<br></code></pre></td></tr></table></figure>
+<p><code>ControlledUNetModel</code> 继承自 <code>UNetModel</code>（即 SD 的去噪 UNet），重写了 <code>forward()</code> 方法，从而支持把 ControlNet 的输出接入到 SD 之中。实现上并没有什么 tricky 的地方，就是老老实实抄过来改写。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ControlNet</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, image_size, in_channels, model_channels, hint_channels, ...</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">make_zero_conv</span>(<span class="hljs-params">self, channels</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, hint, timesteps, context, **kwargs</span>): ...<br></code></pre></td></tr></table></figure>
+<p><code>ControlNet</code> 就是 ControlNet 本体了，其大部分内容就是把 <code>UNetModel</code> 的 Encoder 部分抄过来，但是需要新添加一个将条件输入压缩到隐空间维度的 8 层卷积，称作 <code>input_hint_block</code>. 另外还加了一些 <code>zero_convs</code>（注意其中有一个 <code>middle_block_out</code> 也是零卷积）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ControlLDM</span>(<span class="hljs-title class_ inherited__">LatentDiffusion</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, control_stage_config, control_key, only_mid_control, *args, **kwargs</span>):<br>        <span class="hljs-built_in">super</span>().__init__(*args, **kwargs)<br>        self.control_model = instantiate_from_config(control_stage_config)<br>        self.control_key = control_key<br>        self.only_mid_control = only_mid_control<br>        self.control_scales = [<span class="hljs-number">1.0</span>] * <span class="hljs-number">13</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_input</span>(<span class="hljs-params">self, batch, k, bs=<span class="hljs-literal">None</span>, *args, **kwargs</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">apply_model</span>(<span class="hljs-params">self, x_noisy, t, cond, *args, **kwargs</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_unconditional_conditioning</span>(<span class="hljs-params">self, N</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">log_images</span>(<span class="hljs-params">self, batch, N=<span class="hljs-number">4</span>, n_row=<span class="hljs-number">2</span>, sample=<span class="hljs-literal">False</span>, ...</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sample_log</span>(<span class="hljs-params">self, cond, batch_size, ddim, ddim_steps, **kwargs</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">configure_optimizers</span>(<span class="hljs-params">self</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">low_vram_shift</span>(<span class="hljs-params">self, is_diffusing</span>): ...<br></code></pre></td></tr></table></figure>
+<p><code>ControlLDM</code> 则继承自 <code>LatentDiffusion</code>，提供 PyTorch Lightning 的接口。其新增了组件 <code>control_model</code>，即 <code>ControlNet</code> 的实例。另外，它还复写了一些方法，其中比较重要的包括：</p>
+<ul>
+<li><code>get_input()</code>：把条件输入放入字典的 <code>c_concat</code> 字段中。</li>
+<li><code>apply_model()</code>：取出字典 <code>c_concat</code> 字段中的条件输入，经过 ControlNet 后同其他条件一并给到 SD.</li>
+<li><code>configure_optimizers()</code>：将 ControlNet 的参数加入优化器，另外参数 <code>sd_locked</code> 支持同时优化 SD 的 Decoder 部分。</li>
+<li><code>low_vram_shift()</code>：由于 SD 的 pipeline 分为若干阶段，在 VAE 阶段可以将 UNet 放回 cpu，在扩散阶段可以将 VAE 放回 cpu，如此来节省显存消耗。</li>
+</ul>
 <h3 id="cldmddim_hacked.py">cldm/ddim_hacked.py</h3>
 <p>该文件主要修复了 <code>ldm/models/diffusion/ddim.py</code> 在采样时的一个 bug，可以直接平替原文件使用。</p>
 <h3 id="cldmlogger.py">cldm/logger.py</h3>
-<p>这里定义了 <code>ImageLogger</code> 类，它是 PL 的一个 Callback，用于在训练过程中采样图片，方便监视训练过程。</p>
+<p>这里定义了 <code>ImageLogger</code> 类，它是 PL 的一个 callback，用于在训练过程中采样图片，方便监视训练过程。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">ImageLogger</span>(<span class="hljs-title class_ inherited__">Callback</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, batch_frequency=<span class="hljs-number">2000</span>, max_images=<span class="hljs-number">4</span>, ...</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">log_img</span>(<span class="hljs-params">self, pl_module, batch, batch_idx, split=<span class="hljs-string">&quot;train&quot;</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">on_train_batch_end</span>(<span class="hljs-params">self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx</span>):<br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> self.disabled:<br>            self.log_img(pl_module, batch, batch_idx, split=<span class="hljs-string">&quot;train&quot;</span>)<br></code></pre></td></tr></table></figure>
+<p>具体而言，这个 callback 复写了 <code>on_train_batch_end()</code> 方法，因此在每一个训练 batch 结束后会执行里面的代码，即采样一些图片。</p>
 <h3 id="cldmmodel.py">cldm/model.py</h3>
 <p>这里定义了一些加载模型权重的帮助函数：</p>
 <ul>
@@ -460,29 +380,25 @@
 <li><code>load_state_dict(ckpt_path, location='cpu')</code>：从 <code>ckpt_path</code> 加载模型权重，支持 <code>safetensors</code> 格式或普通的 <code>torch</code> 格式；</li>
 <li><code>create_model(config_path)</code>：利用 <code>instantiate_from_config()</code> 从配置文件实例化整个模型。</li>
 </ul>
-<h3 id="gradio_xxx.py">gradio_xxx.py</h3>
-<p>基于 <code>gradio</code> 包制作 webui，每种条件一个 webui. 下面只以 <code>gradio_canny2image.py</code> 为例进行分析。</p>
-<p>首先实例化 <code>CannyDetector</code>、创建模型并加载权重，以及定义采样器 DDIMSampler：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python">apply_canny = CannyDetector()<br><br>model = create_model(<span class="hljs-string">&#x27;./models/cldm_v15.yaml&#x27;</span>).cpu()<br>model.load_state_dict(load_state_dict(<span class="hljs-string">&#x27;./models/control_sd15_canny.pth&#x27;</span>, location=<span class="hljs-string">&#x27;cuda&#x27;</span>))<br>model = model.cuda()<br>ddim_sampler = DDIMSampler(model)<br></code></pre></td></tr></table></figure>
-<p>然后按照 <code>gradio</code> 的语法格式创建 ui，这个不是重点所以略去，主要看处理函数 <code>process()</code>.</p>
-<p>处理函数接收以下输入：</p>
+<h3 id="cldmhack.py">cldm/hack.py</h3>
+<p>该文件 hack 了很多东西，包括：</p>
 <ul>
-<li><code>input_image</code>：numpy uint8 HWC 格式</li>
-<li><code>prompt</code>：文本</li>
-<li><code>a_prompt</code>：额外文本</li>
-<li><code>n_prompt</code>：负向文本</li>
-<li><code>num_samples</code>：采样数量</li>
-<li><code>image_resolution</code>：图像分辨率</li>
-<li><code>ddim_steps</code>：DDIM 采样步数</li>
-<li><code>guess_mode</code>：是否使用 guess mode</li>
-<li><code>strength</code>：ControlNet 加入的强度</li>
-<li><code>scale</code>：CFG scale</li>
-<li><code>seed</code>：随机种子</li>
-<li><code>eta</code>：DDIM eta</li>
-<li><code>low_threshold</code>：canny low threshold</li>
-<li><code>high_threshold</code>：canny high threshold</li>
+<li>屏蔽掉初始化 FrozenCLIPEmbedder 的时候输出的一大段信息（这段信息是未加载的权重）。</li>
+<li>将 ldm 定义的 attention 模块的 <code>forward()</code> 函数换成 sliced attention 的 <code>forward()</code> 函数，用更长的运行时间换取更小的显存占用。</li>
+<li>为 FrozenCLIPEmbedder 设置一个 <code>clip_skip</code> 参数，支持跳过倒数若干层的 CLIP 特征（许多 SD 微调模型用的是 CLIP 倒数第二层特征而不是最后一层特征）。</li>
+<li>当文本 token 长度大于设置长度时，将其拆分成若干段分别编码再拼起来，而不是直接截断。</li>
 </ul>
-<p>处理函数的处理流程在代码里清晰明了，这里就不多赘述了。值得一提的是，作者没有给出非 webui 的推理脚本，而我在使用的时候发现 <code>gradio</code> 的版本似乎存在一些问题。不过根据 gradio 代码，稍微改改写一个非 webui 的推理脚本也并不难。</p>
+<h2 id="config.py-share.py">config.py &amp; share.py</h2>
+<p>config.py 只有一行代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">save_memory = <span class="hljs-literal">False</span><br></code></pre></td></tr></table></figure>
+<p>share.py 代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> config<br><span class="hljs-keyword">from</span> cldm.hack <span class="hljs-keyword">import</span> disable_verbosity, enable_sliced_attention<br><br><br>disable_verbosity()<br><br><span class="hljs-keyword">if</span> config.save_memory:<br>    enable_sliced_attention()<br></code></pre></td></tr></table></figure>
+<p>在文件开头写上 <code>from share import *</code>，即可屏蔽掉实例化 FrozenCLIPEmbedder 时的冗长输出。若同时将 config.py 中的 <code>disable_verbosity</code> 设置为 <code>True</code>，则将使用 sliced attention 来节省显存。</p>
+<h2 id="gradio_xxx.py">gradio_xxx.py</h2>
+<p>这些文件是基于 gradio 包制作的 webui，每种条件一个 webui.</p>
+<p>值得一提的是，作者没有给出非 webui 的推理脚本，不过根据 gradio 代码，稍微改改写一个非 webui 的推理脚本也并不困难。</p>
+<h2 id="tool_xxx.py-tutorial_xxx.py">tool_xxx.py &amp; tutorial_xxx.py</h2>
+<p>这些文件是训练用的，具体使用可以看 <a target="_blank" rel="noopener" href="https://github.com/lllyasviel/ControlNet/blob/main/docs/train.md">ControlNet 训练文档</a>，写得非常详细。</p>
 <h2 id="model-weights">Model weights</h2>
 <p>有了上面的基础之后，我们可以深入看一下 ControlNet 发布的权重。</p>
 <h3 id="overview-1">Overview</h3>
@@ -665,8 +581,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/11/26/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-2%E7%9F%A9%E9%98%B5%E7%9A%84QR%E5%88%86%E8%A7%A3/" title="[矩阵论]4.2矩阵的QR分解">
-                        <span class="hidden-mobile">[矩阵论]4.2矩阵的QR分解</span>
+                      <a href="/blog-main/2023/12/01/Stable-Diffusion-SD%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" title="[Stable Diffusion]SD代码分析">
+                        <span class="hidden-mobile">[Stable Diffusion]SD代码分析</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

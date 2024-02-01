@@ -1,0 +1,877 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Stable Diffusion v2.0 ~ v2.1: https:&#x2F;&#x2F;github.com&#x2F;Stability-AI&#x2F;StableDiffusion Stable Diffusion v1.1 ~ v1.5: https:&#x2F;&#x2F;github.com&#x2F;runwayml&#x2F;stable-diffusion Stable Diffusion v1.1 ~ v1.4: https:&#x2F;&#x2F;github.co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Stable Diffusion]SD代码分析">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/01/Stable-Diffusion-SD%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Stable Diffusion v2.0 ~ v2.1: https:&#x2F;&#x2F;github.com&#x2F;Stability-AI&#x2F;StableDiffusion Stable Diffusion v1.1 ~ v1.5: https:&#x2F;&#x2F;github.com&#x2F;runwayml&#x2F;stable-diffusion Stable Diffusion v1.1 ~ v1.4: https:&#x2F;&#x2F;github.co">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/controlnet.png">
+<meta property="article:published_time" content="2023-12-01T01:54:42.000Z">
+<meta property="article:modified_time" content="2024-01-30T15:27:47.367Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta property="article:tag" content="AIGC">
+<meta property="article:tag" content="stable diffusion">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/controlnet.png">
+  
+  
+  
+  <title>[Stable Diffusion]SD代码分析 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/controlnet.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[Stable Diffusion]SD代码分析"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-01 09:54" pubdate>
+          2023年12月1日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[Stable Diffusion]SD代码分析</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Stable Diffusion v2.0 ~ v2.1: <a target="_blank" rel="noopener" href="https://github.com/Stability-AI/StableDiffusion" class="uri">https://github.com/Stability-AI/StableDiffusion</a></p>
+<p>Stable Diffusion v1.1 ~ v1.5: <a target="_blank" rel="noopener" href="https://github.com/runwayml/stable-diffusion" class="uri">https://github.com/runwayml/stable-diffusion</a></p>
+<p>Stable Diffusion v1.1 ~ v1.4: <a target="_blank" rel="noopener" href="https://github.com/compvis/stable-diffusion" class="uri">https://github.com/compvis/stable-diffusion</a></p>
+<p>Latent Diffusion: <a target="_blank" rel="noopener" href="https://github.com/CompVis/latent-diffusion" class="uri">https://github.com/CompVis/latent-diffusion</a></p>
+<p>关于 Stable Diffusion 这些版本之间的迭代关系参见<a href="/blog-main/2023/06/16/Stable-Diffusion-%E6%A8%A1%E5%9E%8B%E6%A6%82%E8%A7%88/" title="[Stable Diffusion]模型概览">模型概览</a>一文。</p>
+<h2 id="overview">Overview</h2>
+<p>Stable Diffusion（下文简称为 SD）是在 Latent Diffusion 代码库的基础上开发的。尽管 SD 迭代了许多版本，但是代码库结构基本保持不变，因此本文只分析 SDv2 的代码库。以下为整个仓库的组织结构（排除了一些非代码文件，如文档、协议等）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs text">.<br>├── checkpoints<br>│   └── checkpoints.txt<br>├── configs<br>│   ├── karlo<br>│   └── stable-diffusion<br>├── ldm<br>│   ├── data<br>│   ├── models<br>│   ├── modules<br>│   └── util.py<br>├── scripts<br>│   ├── gradio<br>│   ├── img2img.py<br>│   ├── streamlit<br>│   ├── tests<br>│   └── txt2img.py<br>└── setup.py<br></code></pre></td></tr></table></figure>
+<p>可以看到整个仓库基本由三块组成——configs 存放模型推理时用的配置文件，ldm 是实现 SD 的核心代码，scripts 是一些推理脚本。其中 ldm 是 SD 的核心，因此本文着重分析 ldm 的代码。</p>
+<h2 id="ldm">ldm</h2>
+<p>ldm 有四个部分，其中 util.py 定义了一些工具函数和工具类；data 目录下仅有一个类，用于做深度检测，暂且搁置到一边；modules 目录下是模型网络架构的定义；models 目录下是基于 <a target="_blank" rel="noopener" href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning</a>（下文简称为 PL）的封装，便于训练和推理。</p>
+<h3 id="ldmutil.py">ldm/util.py</h3>
+<p>这里定义了一些工具函数和工具类，其中有两个函数值得特别提及：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">instantiate_from_config</span>(<span class="hljs-params">config</span>):<br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-string">&quot;target&quot;</span> <span class="hljs-keyword">in</span> config:<br>        <span class="hljs-keyword">if</span> config == <span class="hljs-string">&#x27;__is_first_stage__&#x27;</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">elif</span> config == <span class="hljs-string">&quot;__is_unconditional__&quot;</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">raise</span> KeyError(<span class="hljs-string">&quot;Expected key `target` to instantiate.&quot;</span>)<br>    <span class="hljs-keyword">return</span> get_obj_from_str(config[<span class="hljs-string">&quot;target&quot;</span>])(**config.get(<span class="hljs-string">&quot;params&quot;</span>, <span class="hljs-built_in">dict</span>()))<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_obj_from_str</span>(<span class="hljs-params">string, reload=<span class="hljs-literal">False</span></span>):<br>    module, cls = string.rsplit(<span class="hljs-string">&quot;.&quot;</span>, <span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">if</span> reload:<br>        module_imp = importlib.import_module(module)<br>        importlib.reload(module_imp)<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">getattr</span>(importlib.import_module(module, package=<span class="hljs-literal">None</span>), cls)<br></code></pre></td></tr></table></figure>
+<p>在 SD 项目中，模型的实例化都是通过调用 <code>instantiate_from_config(config)</code> 实现的。其中 <code>config</code> 是 OmegaConf 包从配置文件读入的配置字典，字典中 target 字段写要实例化的类，params 字段写类的参数，例如 configs/stable-diffusion/v2-inference-v.yaml 中有这么一段：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">unet_config:</span><br>  <span class="hljs-attr">target:</span> <span class="hljs-string">ldm.modules.diffusionmodules.openaimodel.UNetModel</span><br>  <span class="hljs-attr">params:</span><br>    <span class="hljs-attr">use_checkpoint:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">use_fp16:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">image_size:</span> <span class="hljs-number">32</span> <span class="hljs-comment"># unused</span><br>    <span class="hljs-attr">in_channels:</span> <span class="hljs-number">4</span><br>    <span class="hljs-attr">out_channels:</span> <span class="hljs-number">4</span><br>    <span class="hljs-attr">model_channels:</span> <span class="hljs-number">320</span><br>    <span class="hljs-attr">attention_resolutions:</span> [ <span class="hljs-number">4</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span> ]<br>    <span class="hljs-attr">num_res_blocks:</span> <span class="hljs-number">2</span><br>    <span class="hljs-attr">channel_mult:</span> [ <span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">4</span>, <span class="hljs-number">4</span> ]<br>    <span class="hljs-attr">num_head_channels:</span> <span class="hljs-number">64</span> <span class="hljs-comment"># need to fix for flash-attn</span><br>    <span class="hljs-attr">use_spatial_transformer:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">use_linear_in_transformer:</span> <span class="hljs-literal">True</span><br>    <span class="hljs-attr">transformer_depth:</span> <span class="hljs-number">1</span><br>    <span class="hljs-attr">context_dim:</span> <span class="hljs-number">1024</span><br>    <span class="hljs-attr">legacy:</span> <span class="hljs-literal">False</span><br></code></pre></td></tr></table></figure>
+<p>那么代码就会从 <code>ldm.modules.diffusionmodules.openaimodel</code> 模块中 import <code>UNetModel</code> 这个类，并用上述参数实例化。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> omegaconf <span class="hljs-keyword">import</span> OmegaConf<br><span class="hljs-keyword">from</span> ldm.util <span class="hljs-keyword">import</span> instantiate_from_config<br><br>conf = OmegaConf.load(<span class="hljs-string">&#x27;./configs/stable-diffusion/v2-inference-v.yaml&#x27;</span>)<br>unet = instantiate_from_config(conf.model.params.unet_config)<br><span class="hljs-built_in">print</span>(unet)<br></code></pre></td></tr></table></figure>
+<p>执行上述代码后就能看到我们成功实例化了一个 UNet.</p>
+<p>这种实例化方式非常灵活，适合快速修改参数和尝试不同的模型架构，同时保持代码简洁；缺点是看代码的时候必须要找到对应配置文件才知道实例化的到底是什么，以及在 IDE 中不能支持快速跳转和类型提示。</p>
+<h3 id="ldmmodules">ldm/modules</h3>
+<p>该目录下是各种网络模块的定义（即继承 <code>torch.nn.Module</code> 的类），将其展开：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs text">ldm/modules<br>├── attention.py<br>├── diffusionmodules<br>│   ├── __init__.py<br>│   ├── model.py<br>│   ├── openaimodel.py<br>│   ├── upscaling.py<br>│   └── util.py<br>├── distributions<br>│   ├── __init__.py<br>│   └── distributions.py<br>├── ema.py<br>├── encoders<br>│   ├── __init__.py<br>│   └── modules.py<br>├── image_degradation<br>│   ├── __init__.py<br>│   ├── bsrgan_light.py<br>│   ├── bsrgan.py<br>│   ├── utils<br>│   └── utils_image.py<br>├── karlo<br>│   ├── __init__.py<br>│   ├── diffusers_pipeline.py<br>│   └── kakao<br>└── midas<br>    ├── api.py<br>    ├── __init__.py<br>    ├── midas<br>    └── utils.py<br></code></pre></td></tr></table></figure>
+<p>后三个目录与 SD 关系不大，这里只分析前面的部分。</p>
+<h3 id="ldmmodulesema.py">ldm/modules/ema.py</h3>
+<p>该文件定义了 <code>LitEMA</code> 类，用于在训练过程中维护模型的 EMA 权重。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LitEma</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, model, decay=<span class="hljs-number">0.9999</span>, use_num_upates=<span class="hljs-literal">True</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, model</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">copy_to</span>(<span class="hljs-params">self, model</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">store</span>(<span class="hljs-params">self, parameters</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">restore</span>(<span class="hljs-params">self, parameters</span>): ...<br></code></pre></td></tr></table></figure>
+<p>使用方法为：</p>
+<ul>
+<li>初始化时传入模型，则 <code>LitEMA</code> 会将其参数存入自己的 buffer；</li>
+<li>每次调用 <code>LitEMA</code> 时传入新的模型，则 <code>LitEMA</code> 按照 EMA 方式更新 buffer；</li>
+<li><code>copy_to(self, model)</code> 方法把 buffer 复制给传入的模型；</li>
+<li><code>store(self, parameters)</code> 方法将传入的模型参数暂存起来；</li>
+<li><code>restore(self, parameters)</code> 方法将暂存的模型参数赋值给传入的参数。</li>
+</ul>
+<p>于是，在训练 loop 结束、验证 loop 开始之前，我们可以使用 <code>store()</code>、<code>copy_to()</code> 将模型参数换成 EMA 版本，在验证 loop 结束后使用 <code>restore()</code> 恢复成原版本继续训练。</p>
+<h3 id="ldmmodulesattention.py">ldm/modules/attention.py</h3>
+<p>该文件定义了一些与注意力机制相关的网络模块，主要包括以下几种：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CrossAttention</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, query_dim, context_dim=<span class="hljs-literal">None</span>, heads=<span class="hljs-number">8</span>, dim_head=<span class="hljs-number">64</span>, dropout=<span class="hljs-number">0.</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, context=<span class="hljs-literal">None</span>, mask=<span class="hljs-literal">None</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>输入的特征 <code>x</code> 与条件 <code>context</code> 之间做交叉注意力，<code>mask</code> 为注意力掩码，输出特征的维度与 <code>x</code> 相同。如果输入 <code>context=None</code>，则 <code>context</code> 会被赋值为 <code>x</code>，等价于自注意力。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">MemoryEfficientCrossAttention</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, query_dim, context_dim=<span class="hljs-literal">None</span>, heads=<span class="hljs-number">8</span>, dim_head=<span class="hljs-number">64</span>, dropout=<span class="hljs-number">0.0</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, context=<span class="hljs-literal">None</span>, mask=<span class="hljs-literal">None</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>利用 <code>xformers</code> 包做交叉注意力，功能与 <code>CrossAttention</code> 相同，但更省内存。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">BasicTransformerBlock</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, dim, n_heads, d_head, dropout=<span class="hljs-number">0.</span>, context_dim=<span class="hljs-literal">None</span>, gated_ff=<span class="hljs-literal">True</span>, checkpoint=<span class="hljs-literal">True</span>, disable_self_attn=<span class="hljs-literal">False</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, context=<span class="hljs-literal">None</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_forward</span>(<span class="hljs-params">self, x, context=<span class="hljs-literal">None</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>SelfAttention + CrossAttention + FF 串成一个 block.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SpatialTransformer</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_channels, n_heads, d_head, depth=<span class="hljs-number">1</span>, dropout=<span class="hljs-number">0.</span>, context_dim=<span class="hljs-literal">None</span>, disable_self_attn=<span class="hljs-literal">False</span>, use_linear=<span class="hljs-literal">False</span>, use_checkpoint=<span class="hljs-literal">True</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, context=<span class="hljs-literal">None</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>输入输出为图像形式 (BCHW) 的一系列 Transformer block.</p>
+<h3 id="ldmmodulesencoders">ldm/modules/encoders</h3>
+<p>注意这里的 encoders 指各种文本编码器，并不是 SD 的 VAE 或者 UNet 中的编码器。</p>
+<p>SD 在 <code>transformer</code> 包和 <code>open_clip</code> 包的基础上进行了进一步的封装，得到四种文本编码器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">FrozenT5Embedder</span>(<span class="hljs-title class_ inherited__">AbstractEncoder</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, version=<span class="hljs-string">&quot;google/t5-v1_1-large&quot;</span>, device=<span class="hljs-string">&quot;cuda&quot;</span>, max_length=<span class="hljs-number">77</span>, freeze=<span class="hljs-literal">True</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, text</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FrozenCLIPEmbedder</span>(<span class="hljs-title class_ inherited__">AbstractEncoder</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, version=<span class="hljs-string">&quot;openai/clip-vit-large-patch14&quot;</span>, device=<span class="hljs-string">&quot;cuda&quot;</span>, max_length=<span class="hljs-number">77</span>, freeze=<span class="hljs-literal">True</span>, layer=<span class="hljs-string">&quot;last&quot;</span>, layer_idx=<span class="hljs-literal">None</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, text</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FrozenOpenCLIPEmbedder</span>(<span class="hljs-title class_ inherited__">AbstractEncoder</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, arch=<span class="hljs-string">&quot;ViT-H-14&quot;</span>, version=<span class="hljs-string">&quot;laion2b_s32b_b79k&quot;</span>, device=<span class="hljs-string">&quot;cuda&quot;</span>, max_length=<span class="hljs-number">77</span>, freeze=<span class="hljs-literal">True</span>, layer=<span class="hljs-string">&quot;last&quot;</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, text</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FrozenCLIPT5Encoder</span>(<span class="hljs-title class_ inherited__">AbstractEncoder</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, clip_version=<span class="hljs-string">&quot;openai/clip-vit-large-patch14&quot;</span>, t5_version=<span class="hljs-string">&quot;google/t5-v1_1-xl&quot;</span>, device=<span class="hljs-string">&quot;cuda&quot;</span>, clip_max_length=<span class="hljs-number">77</span>, t5_max_length=<span class="hljs-number">77</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, text</span>): ...<br></code></pre></td></tr></table></figure>
+<p>具体实现不重要，只需要知道它们都有 <code>encode()</code> 方法，调用即可获取输入文本的 embeddings，例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> ldm.modules.encoders.modules <span class="hljs-keyword">import</span> FrozenCLIPEmbedder<br><br>encoder = FrozenCLIPEmbedder().cuda()<br>embed = encoder.encode(<span class="hljs-string">&quot;Hello World!&quot;</span>)<br><span class="hljs-built_in">print</span>(embed.shape)<br></code></pre></td></tr></table></figure>
+<p>执行上述代码就可以得到一个 [1, 77, 768] 大小的 embedding. 实例化的过程会输出一大段未被加载的权重，这是正常现象。</p>
+<p>SD v1.5 使用的是 <code>FrozenCLIPEmbedder</code>，加载的权重是 <code>openai/clip-vit-large-patch14</code>；</p>
+<p>SD v2.1 使用的是 <code>FrozenOpenCLIPEmbedder</code>，加载的是 ViT-H-14 架构在 <code>laion2b_s32b_b79k</code> 上预训练的权重。</p>
+<h3 id="ldmmodulesdistributions">ldm/modules/distributions</h3>
+<p>该目录下定义了狄拉克分布和各分量独立高斯分布：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DiracDistribution</span>(<span class="hljs-title class_ inherited__">AbstractDistribution</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, value</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sample</span>(<span class="hljs-params">self</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">mode</span>(<span class="hljs-params">self</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">DiagonalGaussianDistribution</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, parameters, deterministic=<span class="hljs-literal">False</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sample</span>(<span class="hljs-params">self</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">kl</span>(<span class="hljs-params">self, other=<span class="hljs-literal">None</span></span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">nll</span>(<span class="hljs-params">self, sample, dims=[<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>]</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">mode</span>(<span class="hljs-params">self</span>): ...<br></code></pre></td></tr></table></figure>
+<p>它们都有方法 <code>sample()</code> 和 <code>mode()</code> 用于采样以及返回均值。高斯分布还有 <code>kl()</code> 和 <code>nll()</code> 计算 KL 散度和负对数似然。</p>
+<p>另外定义了计算两个高斯分布之间的 KL 散度的函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">normal_kl</span>(<span class="hljs-params">mean1, logvar1, mean2, logvar2</span>): ...<br></code></pre></td></tr></table></figure>
+<h3 id="ldmmodulesdiffusionmodules">ldm/modules/diffusionmodules</h3>
+<p>该目录下定义了搭建 VAE 和 UNet 的各种网络模块。</p>
+<p>其中 <code>model.py</code> 仿照 UNet 设计了图像编码器和解码器，被用作 SD 的 VAE 的编解码器：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Encoder</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, *, ch, out_ch, ch_mult=(<span class="hljs-params"><span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">8</span></span>), num_res_blocks, ...</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Decoder</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, *, ch, out_ch, ch_mult=(<span class="hljs-params"><span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">4</span>,<span class="hljs-number">8</span></span>), num_res_blocks, ...</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, z</span>): ...<br></code></pre></td></tr></table></figure>
+<p>而 <code>openaimodel.py</code> 则参考 openai 的代码设计了 SD 的 UNet：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">UNetModel</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, image_size, in_channels, model_channels, out_channels, ...</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, timesteps=<span class="hljs-literal">None</span>, context=<span class="hljs-literal">None</span>, y=<span class="hljs-literal">None</span>, **kwargs</span>): ...<br></code></pre></td></tr></table></figure>
+<p>其 <code>forward()</code> 接受噪声图 <code>x</code>、时间步 <code>timestep</code>、以交叉注意力方式融入的条件 <code>context</code> 和类别标签 <code>y</code>（即以 adm 的方式融入模型的条件，不一定真的表示类别）。</p>
+<h3 id="ldmmodels">ldm/models</h3>
+<p>上文中 ldm/modules 目录下定义了 SD 需要用到的所有网络模块，但由于 SD 项目采用的是 PyTorch Lightning 训练，因此还需要对接 PL，这就是 ldm/models 的作用。</p>
+<p>PL 要求将整个模型封装为一个继承 <code>pl.LightningModule</code> 的类，其中不仅要在 <code>__init__()</code> 中实例化各个网络模块组件，还要重写一些方法，典型的例子有：</p>
+<ul>
+<li><code>configure_optimizers(self)</code>：返回一个元组，第一个元素为 optimizers 列表，第二个元素为 schedulers 列表。</li>
+<li><code>training_step(self, batch, batch_idx)</code>：参数为一个 batch 的数据和当前 batch 的编号，返回一个 loss 张量或一个含有 <code>loss</code> 字段的字典。</li>
+<li><code>validation_step(self, batch, batch_idx)</code>：参数为一个 batch 的数据和当前 batch 的编号，返回一个 loss 张量或一个含有 <code>loss</code> 字段的字典。</li>
+<li><code>on_train_batch_end(self, outputs, batch, batch_idx)</code>：这是一个 hook，用于在一个 batch 训练结束后执行里面的内容。例如，在 SD 项目中该 hook 被用来更新 EMA 权重。</li>
+</ul>
+<p>具体使用方法可以查阅 Pytorch Lightning 的<a target="_blank" rel="noopener" href="https://lightning.ai/docs/pytorch/stable/common/lightning_module.html">文档</a>。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">ldm/models<br>├── autoencoder.py<br>└── diffusion<br>    ├── __init__.py<br>    ├── ddim.py<br>    ├── ddpm.py<br>    ├── dpm_solver<br>    ├── plms.py<br>    └── sampling_util.py<br></code></pre></td></tr></table></figure>
+<h3 id="ldmmodelsautoencoders.py">ldm/models/autoencoders.py</h3>
+<p>该文件定义了 SD 中的 VAE 模块，主要实现了 <code>AutoencoderKL</code> 类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">AutoencoderKL</span>(pl.LightningModule):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, ddconfig, lossconfig, embed_dim, ...</span>):<br>        ...<br>        self.encoder = Encoder(**ddconfig)<br>        self.decoder = Decoder(**ddconfig)<br>        self.quant_conv = torch.nn.Conv2d(<span class="hljs-number">2</span>*ddconfig[<span class="hljs-string">&quot;z_channels&quot;</span>], <span class="hljs-number">2</span>*embed_dim, <span class="hljs-number">1</span>)<br>        self.post_quant_conv = torch.nn.Conv2d(embed_dim, ddconfig[<span class="hljs-string">&quot;z_channels&quot;</span>], <span class="hljs-number">1</span>)<br>        ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode</span>(<span class="hljs-params">self, x</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decode</span>(<span class="hljs-params">self, z</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, <span class="hljs-built_in">input</span>, sample_posterior=<span class="hljs-literal">True</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>这里我特意写明了 <code>AutoEncoderKL</code> 里实例化的四个网络模块组件：</p>
+<ul>
+<li><code>encoder</code>：上文 <code>Encoder</code> 类的实例，即编码器；</li>
+<li><code>decoder</code>：上文 <code>Decoder</code> 类的实例，即解码器；</li>
+<li><code>quant_conv</code>：一层 1x1 卷积 <code>nn.Conv2d</code>，将编码器隐空间维度 (=512) 映射到 embedding 维度 (=4)；</li>
+<li><code>post_quant_conv</code>：一层 1x1 卷积 <code>nn.Conv2d</code>，将 embedding 维度 (=4) 映射回解码器隐空间维度 (=512)。</li>
+</ul>
+<p><code>forward()</code> 的流程为：<code>encoder</code> 编码均值方差 → <code>quant_conv</code> 降维 → 从服从该均值方差的高斯分布中采样 → <code>post_quant_conv</code> 升维 → <code>decoder</code> 解码输出图像。</p>
+<h3 id="ldmmodelsdiffusion">ldm/models/diffusion</h3>
+<p>该目录下定义了扩散模型的各种采样器，包括：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DDIMSampler</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, model, schedule=<span class="hljs-string">&quot;linear&quot;</span>, device=torch.device(<span class="hljs-params"><span class="hljs-string">&quot;cuda&quot;</span></span>), **kwargs</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sample</span>(<span class="hljs-params">self, S, batch_size, shape, conditioning=<span class="hljs-literal">None</span>, callback=<span class="hljs-literal">None</span>, ...</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">PLMSSampler</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, model, schedule=<span class="hljs-string">&quot;linear&quot;</span>, device=torch.device(<span class="hljs-params"><span class="hljs-string">&quot;cuda&quot;</span></span>), **kwargs</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sample</span>(<span class="hljs-params">self, S, batch_size, shape, conditioning=<span class="hljs-literal">None</span>, callback=<span class="hljs-literal">None</span>, ...</span>): ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">DPMSolverSampler</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, model, device=torch.device(<span class="hljs-params"><span class="hljs-string">&quot;cuda&quot;</span></span>), **kwargs</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">sample</span>(<span class="hljs-params">self, S, batch_size, shape, conditioning=<span class="hljs-literal">None</span>, callback=<span class="hljs-literal">None</span>, ...</span>): ...<br></code></pre></td></tr></table></figure>
+<p>这些采样器都有 <code>sample()</code> 方法，给定采样步数、batch size、图像大小以及其他参数，就能迭代地从高斯噪声生成最终的图像。</p>
+<h3 id="ldmmodelsdiffusionddpm.py">ldm/models/diffusion/ddpm.py</h3>
+<p>ddpm.py 是整个仓库里最长的文件，有 1800 多行，其中定义了 <code>DDPM</code> 类、<code>LatentDiffusion</code> 类、<code>DiffusionWrapper</code> 类以及一系列继承自 <code>LatentDiffusion</code> 来做微调的类，我们着重看前三个。</p>
+<p>首先看 <code>DiffusionWrapper</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DiffusionWrapper</span>(pl.LightningModule):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, diff_model_config, conditioning_key</span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        self.sequential_cross_attn = diff_model_config.pop(<span class="hljs-string">&quot;sequential_crossattn&quot;</span>, <span class="hljs-literal">False</span>)<br>        self.diffusion_model = instantiate_from_config(diff_model_config)<br>        self.conditioning_key = conditioning_key<br>        <span class="hljs-keyword">assert</span> self.conditioning_key <span class="hljs-keyword">in</span> [<span class="hljs-literal">None</span>, <span class="hljs-string">&#x27;concat&#x27;</span>, <span class="hljs-string">&#x27;crossattn&#x27;</span>, <span class="hljs-string">&#x27;hybrid&#x27;</span>, <span class="hljs-string">&#x27;adm&#x27;</span>, <span class="hljs-string">&#x27;hybrid-adm&#x27;</span>, <span class="hljs-string">&#x27;crossattn-adm&#x27;</span>]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x, t, c_concat: <span class="hljs-built_in">list</span> = <span class="hljs-literal">None</span>, c_crossattn: <span class="hljs-built_in">list</span> = <span class="hljs-literal">None</span>, c_adm=<span class="hljs-literal">None</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>可以看见，<code>forward()</code> 接受的输入为噪声图 <code>x</code>、时间步 <code>t</code>、以 concat 的方式融入的条件 <code>c_concat</code>、以交叉注意力方式融入的条件 <code>c_crossattn</code> 和以 adm 方式融入的条件 <code>c_adm</code>. 融入哪些条件由参数 <code>conditioning_key</code> 决定。</p>
+<p>回忆上文中 UNet 本身就支持两种条件——以交叉注意力方式融入和以 adm 方式融入，因此 <code>DiffusionWrapper</code> 就是 UNet 的进一步包装，使得条件融入方式更加的灵活。猜测这个类应该是后来添加的，否则直接在 UNet 的 <code>forward()</code> 函数中处理更简洁。</p>
+<p>接下来看 <code>DDPM</code> 和 <code>LatentDiffusion</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">DDPM</span>(pl.LightningModule):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, unet_config, timesteps=<span class="hljs-number">1000</span>, beta_schedule=<span class="hljs-string">&quot;linear&quot;</span>, ...</span>): ...<br>        ...<br>        self.model = DiffusionWrapper(unet_config, conditioning_key)<br>        <span class="hljs-keyword">if</span> self.use_ema:<br>            self.model_ema = LitEma(self.model)<br>        ...<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">LatentDiffusion</span>(<span class="hljs-title class_ inherited__">DDPM</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, first_stage_config, cond_stage_config, num_timesteps_cond=<span class="hljs-literal">None</span>, ...</span>): ...<br>        ...<br>        <span class="hljs-built_in">super</span>().__init__(conditioning_key=conditioning_key, *args, **kwargs)<br>        ...<br>        self.instantiate_first_stage(first_stage_config)<br>        self.instantiate_cond_stage(cond_stage_config)<br>        ...<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">instantiate_first_stage</span>(<span class="hljs-params">self, config</span>):<br>        model = instantiate_from_config(config)<br>        self.first_stage_model = model.<span class="hljs-built_in">eval</span>()<br>        self.first_stage_model.train = disabled_train<br>        <span class="hljs-keyword">for</span> param <span class="hljs-keyword">in</span> self.first_stage_model.parameters():<br>            param.requires_grad = <span class="hljs-literal">False</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">instantiate_cond_stage</span>(<span class="hljs-params">self, config</span>):<br>        ...<br>        model = instantiate_from_config(config)<br>        self.cond_stage_model = model.<span class="hljs-built_in">eval</span>()<br>        self.cond_stage_model.train = disabled_train<br>        <span class="hljs-keyword">for</span> param <span class="hljs-keyword">in</span> self.cond_stage_model.parameters():<br>            param.requires_grad = <span class="hljs-literal">False</span><br>        ...<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">encode_first_stage</span>(<span class="hljs-params">self, x</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">decode_first_stage</span>(<span class="hljs-params">self, z, predict_cids=<span class="hljs-literal">False</span>, force_not_quantize=<span class="hljs-literal">False</span></span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">get_first_stage_encoding</span>(<span class="hljs-params">self, encoder_posterior</span>): ...<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">apply_model</span>(<span class="hljs-params">self, x_noisy, t, cond, return_ids=<span class="hljs-literal">False</span></span>): ...<br></code></pre></td></tr></table></figure>
+<p>这里依旧特意写明了 LightningModule 里实例化的模块组件。</p>
+<p><code>DDPM</code> 类包含一个网络模块组件 <code>model</code>，是 <code>DiffusionWrapper</code> 的实例；另外还包括模型的 EMA 版本。</p>
+<p><code>LatentDiffusion</code> 类是 SD 最主要的类。它继承自 <code>DDPM</code> 类，在其基础上增加了两个网络模块组件：</p>
+<ul>
+<li><code>cond_stage_model</code>：上文 <code>FrozenCLIPEmbedder</code> 类或 <code>FrozenOpenCLIPEmbedder</code> 的实例，即文本编码器；</li>
+<li><code>first_stage_model</code>：上文 <code>AutoencoderKL</code> 类的实例，即 VAE.</li>
+</ul>
+<p>另外，我还特意写明了几个常用的方法：</p>
+<ul>
+<li><code>encode_first_stage()</code> 即得到 VAE Encoder 输出的高斯分布；</li>
+<li><code>get_first_stage_encoding()</code>：从高斯分布中采样，并且缩放 0.18215 倍使得隐变量方差接近 1；</li>
+<li><code>decode_first_stage()</code>：将隐变量缩放原大小，然后通过 VAE Decoder 得到解码的图像；</li>
+<li><code>apply_model()</code>：调用模型，即初始化时实例化的 <code>DiffusionWrapper</code>.</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/AIGC/" class="category-chain-item">AIGC</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+        <a href="/blog-main/tags/AIGC/" class="print-no-link">#AIGC</a>
+      
+        <a href="/blog-main/tags/stable-diffusion/" class="print-no-link">#stable diffusion</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[Stable Diffusion]SD代码分析</div>
+      <div>https://xyfjason.github.io/blog-main/2023/12/01/Stable-Diffusion-SD代码分析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2023/12/01/Stable-Diffusion-ControlNet%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" title="[Stable Diffusion]ControlNet代码分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[Stable Diffusion]ControlNet代码分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2023/11/26/%E7%9F%A9%E9%98%B5%E8%AE%BA-4-2%E7%9F%A9%E9%98%B5%E7%9A%84QR%E5%88%86%E8%A7%A3/" title="[矩阵论]4.2矩阵的QR分解">
+                        <span class="hidden-mobile">[矩阵论]4.2矩阵的QR分解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
