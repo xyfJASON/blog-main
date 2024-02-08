@@ -18,14 +18,14 @@
   
     <meta name="description" content="在 k-means 聚类中，每一个数据点隶属于一个类，这是一种 hard 的模式。与之相对的，soft clustering 不把一个数据点硬分给一类，而是给出它属于各个类的“置信度”，表示它属于各个类的程度。在有些场景下，我们也许更希望使用 soft 模式。本文试从两种角度推导 soft 版本的 k-means 算法。 角度 1：hard k-means → soft k-means 在之前的文">
 <meta property="og:type" content="article">
-<meta property="og:title" content="k-means探究（二）soft k-means">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/04/k-means%E6%8E%A2%E7%A9%B6%EF%BC%88%E4%BA%8C%EF%BC%89soft-k-means/index.html">
+<meta property="og:title" content="soft k-means">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/04/soft-k-means/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="在 k-means 聚类中，每一个数据点隶属于一个类，这是一种 hard 的模式。与之相对的，soft clustering 不把一个数据点硬分给一类，而是给出它属于各个类的“置信度”，表示它属于各个类的程度。在有些场景下，我们也许更希望使用 soft 模式。本文试从两种角度推导 soft 版本的 k-means 算法。 角度 1：hard k-means → soft k-means 在之前的文">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/kmeans-soft.png">
 <meta property="article:published_time" content="2022-09-04T08:34:45.000Z">
-<meta property="article:modified_time" content="2023-10-02T07:26:44.673Z">
+<meta property="article:modified_time" content="2024-02-07T09:21:14.027Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>k-means探究（二）soft k-means - xyfJASON</title>
+  <title>soft k-means - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="k-means探究（二）soft k-means"></span>
+            <span id="subtitle" data-typed-text="soft k-means"></span>
           
         </div>
 
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          593 字
+          591 字
         
       </span>
     
@@ -322,24 +322,24 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">k-means探究（二）soft k-means</h1>
+            <h1 id="seo-header">soft k-means</h1>
             
             
               <div class="markdown-body">
                 
                 <p>在 k-means 聚类中，每一个数据点隶属于一个类，这是一种 hard 的模式。与之相对的，soft clustering 不把一个数据点硬分给一类，而是给出它属于各个类的“置信度”，表示它属于各个类的程度。在有些场景下，我们也许更希望使用 soft 模式。本文试从两种角度推导 soft 版本的 k-means 算法。</p>
 <h2 id="角度-1hard-k-means-soft-k-means">角度 1：hard k-means → soft k-means</h2>
-<p>在之前的文章<a href="/blog-main/2022/08/12/k-means%E6%8E%A2%E7%A9%B6/" title="k-means探究">k-means探究</a>中，我们知道 k-means 是用迭代的方式优化下述目标： <span class="math display">\[
+<p>在之前的文章 <a href="/blog-main/2022/08/12/k-means%E5%8F%8A%E5%85%B6%E6%8E%A8%E5%B9%BF/" title="k-means及其推广">k-means及其推广</a>中，我们知道 k-means 是用迭代的方式优化下述目标： <span class="math display">\[
 \quad\sum_{l=1}^k\sum_{C(i)=l}\|x_i-m_l\|^2
 \]</span></p>
-<p>其中 <span class="math inline">\(C\)</span> 表示划分，<span class="math inline">\(C(i)=l\)</span> 表示样本 <span class="math inline">\(x_i\)</span> 被划分到类 <span class="math inline">\(l\)</span> 中。我们定义指示变量： <span class="math display">\[
+<p>其中 <span class="math inline">\(C\)</span> 表示划分，<span class="math inline">\(C(i)=l\)</span> 表示样本 <span class="math inline">\(x_i\)</span> 被划分到类 <span class="math inline">\(l\)</span> 中。定义指示变量： <span class="math display">\[
 \gamma_{il}=\begin{cases}1,&amp;\text{if }C(i)=l\\0,&amp;\text{otherwise}\end{cases}
 \]</span> 那么优化目标可以改写为： <span class="math display">\[
 \quad\sum_{l=1}^k\sum_{i=1}^n\gamma_{il}\|x_i-m_l\|^2\tag{1}\label{target}
-\]</span> K-means 硬就硬在 <span class="math inline">\(\gamma_{il}\)</span> 是一个 0/1 变量。<span class="math inline">\(\gamma_{il}=1\)</span> 表示样本 <span class="math inline">\(x_i\)</span> 被划分给了类 <span class="math inline">\(l\)</span>，这意味着在 <span class="math inline">\(x_i\)</span> 到所有聚类中心的距离里面，它到 <span class="math inline">\(m_l\)</span> 最近，写作数学语言即： <span class="math display">\[
+\]</span> k-means 硬就硬在 <span class="math inline">\(\gamma_{il}\)</span> 是一个 0/1 变量。<span class="math inline">\(\gamma_{il}=1\)</span> 表示样本 <span class="math inline">\(x_i\)</span> 被划分给了类 <span class="math inline">\(l\)</span>，这意味着在 <span class="math inline">\(x_i\)</span> 到所有聚类中心的距离里面，它到 <span class="math inline">\(m_l\)</span> 最近，写作数学语言即： <span class="math display">\[
 l=\arg\min_{j}\|x_i-m_j\|^2
 \]</span> 进而 <span class="math inline">\(\gamma_{il}\)</span> 可以写作： <span class="math display">\[
-\gamma_{il}=\text{onehot}\left(\arg\min_j \|x_i-m_j\|^2\right)_l=\text{onehot}\left(\arg\max_j \left(-\|x_i-m_j\|^2\right)\right)_l
+\gamma_{il}=\text{onehot}(\arg\min_j \|x_i-m_j\|^2)_l=\text{onehot}(\arg\max_j (-\|x_i-m_j\|^2))_l
 \]</span> 根据<a href="/blog-main/2022/07/25/%E5%90%84%E7%A7%8D%E5%87%BD%E6%95%B0%E7%9A%84hard%E4%B8%8Esoft%E5%BD%A2%E5%BC%8F/" title="各种函数的hard与soft形式">各种函数的hard与soft形式</a>一文，<span class="math inline">\(\text{onehot}(\arg\max)\)</span> 的平滑近似是 <span class="math inline">\(\text{softmax}\)</span>，所以： <span class="math display">\[
 \gamma_{il}\approx\hat\gamma_{il}=\text{softmax}\left(-\|x_i-m_j\|^2;\tau\right)_l=\frac{e^{-\|x_i-m_l\|^2/\tau}}{\sum_{j=1}^ke^{-\|x_i-m_j\|^2/\tau}}
 \]</span> 并且 <span class="math inline">\(\hat\gamma_{il}\)</span> 可以解释为 <span class="math inline">\(x_i\)</span> 属于第 <span class="math inline">\(l\)</span> 类的概率。将其代回 <span class="math inline">\(\eqref{target}\)</span> 式就得到 soft 版本的优化目标： <span class="math display">\[
@@ -362,9 +362,9 @@ m_l=\frac{\sum_{i=1}^n\hat\gamma_{il}x_i}{\sum_{j=1}^n\hat\gamma_{jl}}\tag{4}\la
 <ol type="1">
 <li><p>随机初始化模型参数 <span class="math inline">\(\alpha_k,\mu_k,\Sigma_k,\,k=1,\ldots,K\)</span></p></li>
 <li><p><strong>E-step</strong>：计算隐变量的概率分布： <span class="math display">\[
-p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i\mid \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i\mid \mu_j^{(t)},\Sigma_j^{(t)})}
-\]</span> 其中 <span class="math inline">\(\phi(x\mid \mu,\Sigma)\)</span> 是高斯分布的 pdf： <span class="math display">\[
-\phi(x\mid \mu,\Sigma)=\frac{1}{ {(\sqrt{2\pi})}^d|\Sigma|^{1/2} }\exp\left(-\frac{(x-\mu)^T\Sigma^{-1}(x-\mu)}{2}\right)
+p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i\vert \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i\vert \mu_j^{(t)},\Sigma_j^{(t)})}
+\]</span> 其中 <span class="math inline">\(\phi(x\vert \mu,\Sigma)\)</span> 是高斯分布的 pdf： <span class="math display">\[
+\phi(x\vert \mu,\Sigma)=\frac{1}{ {(\sqrt{2\pi})}^d|\Sigma|^{1/2} }\exp\left(-\frac{(x-\mu)^T\Sigma^{-1}(x-\mu)}{2}\right)
 \]</span></p></li>
 <li><p><strong>M-step</strong>：计算新参数： <span class="math display">\[
 \begin{align}
@@ -373,21 +373,21 @@ p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i\mid \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^
 &amp;\Sigma_k^{(t+1)}=\frac{\sum_{i=1}^np_{ik}(x_i-\mu_k)^T(x_i-\mu_k)}{\sum_{i=1}^np_{ik}}&amp;&amp; k=1,\ldots,K
 \end{align}
 \]</span></p></li>
-<li><p>迭代执行第 2、3 步</p></li>
+<li><p>迭代执行第 2、3 步。</p></li>
 </ol>
 <p>如果我们取： <span class="math display">\[
 \begin{align}
-&amp;\alpha_1=\cdots=\alpha_K=\frac{1}{K}\\
-&amp;\Sigma_k=I
+&amp;\alpha_k=1/K,&amp;k=1,\ldots,K\\
+&amp;\Sigma_k=I,&amp;k=1,\ldots,K
 \end{align}
 \]</span> 那么 E-step 将简化为： <span class="math display">\[
 p_{ik}=\frac{e^{-(x_i-\mu_k)^T(x_i-\mu_k)/2}}{\sum_{j=1}^Ke^{-(x_i-\mu_j)^T(x_i-\mu_j)/2}}
 \]</span> 这不就是 <span class="math inline">\(\tau=2\)</span> 的 <span class="math inline">\(\eqref{estep}\)</span> 式嘛！如果 <span class="math inline">\(\tau\)</span> 是其他数也没关系，给协方差矩阵乘一个倍数即可。</p>
 <p>M-step 中只需要更新 <span class="math inline">\(\mu\)</span>： <span class="math display">\[
-\mu=\frac{\sum_{i=1}^np_{ik}x_i}{\sum_{i=1}^np_{ik}}
+\mu_k^{(t+1)}=\frac{\sum_{i=1}^np_{ik}x_i}{\sum_{i=1}^np_{ik}}
 \]</span> 与 <span class="math inline">\(\eqref{mstep}\)</span> 式完全一致！所以，<strong>soft k-means 是 GMM 在各高斯分布选择概率相同且协方差矩阵为单位矩阵（或单位矩阵的倍数）下的特殊情况</strong>。</p>
 <p><br/></p>
-<p>现在，让我们回过头来考虑 hard k-means。要从 soft 变回 hard，只需要让 <span class="math inline">\(\text{softmax}\)</span> 里的温度系数 <span class="math inline">\(\tau\)</span> 趋近于 <span class="math inline">\(0\)</span>。对应到 GMM 中，相当于让协方差矩阵 <span class="math inline">\(\Sigma\)</span> 趋近于 <span class="math inline">\(0\)</span>，即高斯分布趋近 Dirac delta 函数（分布）。因此，<strong>k-means 是 GMM 在各高斯分布趋近 Dirac delta 函数且选择概率相同下的特殊情况</strong>。</p>
+<p>现在，让我们回头看看 hard k-means。要从 soft 变回 hard，只需要让 <span class="math inline">\(\text{softmax}\)</span> 里的温度系数 <span class="math inline">\(\tau\)</span> 趋近于 <span class="math inline">\(0\)</span>。对应到 GMM 中，相当于让协方差矩阵 <span class="math inline">\(\Sigma\)</span> 趋近于 <span class="math inline">\(0\)</span>，即高斯分布趋近 Dirac delta 函数（分布）。因此，<strong>k-means 是 GMM 在各高斯分布趋近 Dirac delta 函数且选择概率相同下的特殊情况</strong>。</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -456,8 +456,8 @@ p_{ik}=\frac{e^{-(x_i-\mu_k)^T(x_i-\mu_k)/2}}{\sum_{j=1}^Ke^{-(x_i-\mu_j)^T(x_i-
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>k-means探究（二）soft k-means</div>
-      <div>https://xyfjason.github.io/blog-main/2022/09/04/k-means探究（二）soft-k-means/</div>
+      <div>soft k-means</div>
+      <div>https://xyfjason.github.io/blog-main/2022/09/04/soft-k-means/</div>
     </div>
     <div class="license-meta">
       
