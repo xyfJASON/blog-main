@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vae.png">
 <meta property="article:published_time" content="2022-09-16T16:22:21.000Z">
-<meta property="article:modified_time" content="2023-12-08T05:36:53.553Z">
+<meta property="article:modified_time" content="2024-02-08T06:10:12.250Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2k 字
+          1.9k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          17 分钟
+          16 分钟
         
       </span>
     
@@ -338,38 +338,27 @@
 <p>注意，<span class="math inline">\(z\)</span> 到 <span class="math inline">\(x\)</span> 并不是一一映射，<strong>事实上，在 VAE 中同一个输入 <span class="math inline">\(z\)</span> 可以映射到多个输出 <span class="math inline">\(x\)</span></strong>。</p>
 <p>既然是衡量两个分布的相似度，我们能否直接用各种散度（如 KL 散度）作为损失函数呢？很遗憾不行，因为我们不知道分布的表达式，只知道从分布中采出的样本，而散度的计算需要具体的表达式。</p>
 <p>熟悉 GANs 数学原理的朋友可能已经发现了，GANs 引入判别器，本质上是用一种<strong>隐式</strong>的方式优化了 KL 散度（或者 JS 散度、Wasserstein distance 等各种衡量分布相似度的指标）。</p>
-<p>回到 VAE 来，一个生成网络可以表达为 <span class="math inline">\(p_\theta(x\vert z)\)</span>——其中 <span class="math inline">\(\theta\)</span> 是模型参数，<span class="math inline">\(z\)</span> 是模型输入，并且模型对同一个输入有不止一个可能的输出，因此写作概率分布。那么它能够生成的数据的概率分布为： <span class="math display">\[
+<p>回到 VAE 来，一个生成模型可以表达为 <span class="math inline">\(p_\theta(x\vert z)\)</span>——其中 <span class="math inline">\(\theta\)</span> 是模型参数，<span class="math inline">\(z\)</span> 是模型输入，<span class="math inline">\(x\)</span> 是模型输出（即生成的样本），并且模型对同一个输入有不止一个可能的输出，因此写作概率分布。那么模型能够生成的所有样本的分布为： <span class="math display">\[
 p_\theta(x)=\int_zp_\theta(x\vert z)p(z)\mathrm dz
 \]</span></p>
-<p>我们希望 VAE 生成真实样本的概率变大。考虑用极大似然法，我们采样一些真实样本 <span class="math inline">\(x\)</span> ，并最大化它们的对数似然： <span class="math display">\[
+<p>为了使得 VAE 生成真实样本的概率变大，考虑用极大似然法，采样一些真实样本 <span class="math inline">\(x\)</span> ，并最大化它们的对数似然： <span class="math display">\[
 L(\theta)=\log p_\theta(x)=\log\left(\int_zp_\theta(x\vert z)p(z)\mathrm dz\right)
-\]</span> <span class="math inline">\(\log\)</span> 里有个积分的形式阻碍了我们继续求解，这是否让你想起了什么——没错，EM 算法！</p>
-<blockquote>
-<p>EM 算法回顾（基于<a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">EM算法</a> 1.6 节）：引入概率分布 <span class="math inline">\(q(z)\)</span>，则： <span class="math display">\[
-\begin{align}
-L(\theta)&amp;=\log p_\theta(x)\\
-&amp;=\int_z q(z)\log p_\theta(x)\mathrm dz\\
-&amp;=\int_z q(z)\log \left(\frac{p_\theta(x\vert z)p(z)}{p_\theta(z\vert x)}\cdot\frac{q(z)}{q(z)}\right)\mathrm dz\\
-&amp;=\int_z q(z)\left[\log\frac{p(z)}{q(z)}+\log p_\theta(x\vert z)+\log\frac{q(z)}{p_\theta(z\vert x)}\right]\mathrm dz\\
-&amp;=\underbrace{\mathbb E_{z\sim q(z)}[\log p_\theta(x\vert z)]-\mathrm {KL}(q(z)\|p(z))}_{\mathrm{ELBO}}+\underbrace{\mathrm{KL}(q(z)\|p_\theta(z\vert x))}_{\mathrm {KL}}\label{em}\tag{1}
-\end{align}
-\]</span> 优化过程是迭代执行 E-step 和 M-step：</p>
+\]</span> <span class="math inline">\(\log\)</span>​ 里有个积分的形式阻碍了我们继续求解，这是否让你想起了什么——没错，EM 算法！</p>
+<div class="note note-success">
+            <p>EM 算法回顾（详见<a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">EM算法</a>）：为隐变量 <span class="math inline">\(z\)</span> 引入分布 <span class="math inline">\(q(z)\)</span>，则对数似然可分解为 ELBO 和 KL 两项： <span class="math display">\[\begin{align}L(\theta)&amp;=\log p_\theta(x)\\&amp;=\int_z q(z)\log p_\theta(x)\mathrm dz\\&amp;=\int_z q(z)\log \left(\frac{p_\theta(x\vert z)p(z)}{p_\theta(z\vert x)}\cdot\frac{q(z)}{q(z)}\right)\mathrm dz\\&amp;=\int_z q(z)\left[\log\frac{p(z)}{q(z)}+\log p_\theta(x\vert z)+\log\frac{q(z)}{p_\theta(z\vert x)}\right]\mathrm dz\\&amp;=\underbrace{\mathbb E_{z\sim q(z)}[\log p_\theta(x\vert z)]-\mathrm {KL}(q(z)\|p(z))}_{\mathrm{ELBO}}+\underbrace{\mathrm{KL}(q(z)\|p_\theta(z\vert x))}_{\mathrm {KL}}\label{em}\tag{1}\end{align}\]</span> 优化过程是迭代执行 E-step 和 M-step：</p><ul><li>E-step：固定 <span class="math inline">\(\theta\)</span>，取 <span class="math inline">\(q(z)=p_\theta(z\vert x)\)</span>，即使得 <span class="math inline">\(\mathrm{KL}(q(z)\Vert p_\theta(z\vert x))=0\)</span>，也即让 ELBO 增大到与 <span class="math inline">\(L(\theta)\)</span> 相等。</li><li>M-step：固定 <span class="math inline">\(q\)</span>，最大化 ELBO，从而达到优化 <span class="math inline">\(L(\theta)\)</span>​ 的目的。</li></ul>
+          </div>
+<p>非常可惜的是，EM 算法无法直接应用于此，因为 E-step 要求我们能够表达出后验分布 <span class="math inline">\(p_\theta(z\vert x)\)</span>，但在 VAE 中，后验分布是 <strong>intractable</strong> 的。换句话说，我们无法直接写出 <span class="math inline">\(\min_q \text{KL}(q(z)\Vert p_\theta(z\vert x))\)</span> 的解析解。怎么办呢？注意到 E-step 中 <span class="math inline">\(L(\theta)\)</span> 是定值，观察 <span class="math inline">\(\eqref{em}\)</span> 式可知，最小化 KL 项等价于最大化 ELBO 项，所以我们可以通过<strong>最大化 ELBO 来间接地最小化 KL</strong><sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="原来VAE是这么回事（从EM到VAE） - 市井小民的文章 - 知乎 https://zhuanlan.zhihu.com/p/368959795">[3]</span></a></sup>！（妙啊～</p>
+<p>综上，原本的 EM 算法现在变成了<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="EM的升级打怪之路：EM-变分EM-VAE（part1） - Young Zicon的文章 - 知乎 https://zhuanlan.zhihu.com/p/418203971">[4]</span></a></sup>：</p>
 <ul>
-<li>E-step：固定 <span class="math inline">\(\theta\)</span>，取 <span class="math inline">\(q(z)=p_\theta(z\vert x)\)</span>，即使得 <span class="math inline">\(\mathrm{KL}(q(z)\Vert p_\theta(z\vert x))=0\)</span>，也即让 ELBO 增大到与 <span class="math inline">\(L(\theta)\)</span> 相等。</li>
-<li>M-step：固定 <span class="math inline">\(q(z)\)</span> 不变，最大化 ELBO，从而达到优化 <span class="math inline">\(L(\theta)\)</span> 的目的。</li>
+<li>E-step：固定 <span class="math inline">\(\theta\)</span>，最大化 ELBO，即 <span class="math inline">\(\max_q \text{ELBO}\)</span>.</li>
+<li>M-step：固定 <span class="math inline">\(q\)</span>，最大化 ELBO，即 <span class="math inline">\(\max_\theta\text{ELBO}\)</span>.</li>
 </ul>
-</blockquote>
-<p>非常可惜的是，EM 算法无法直接应用于此，因为 E-step 要求我们能够表达出后验分布 <span class="math inline">\(p_\theta(z\vert x)\)</span>，但在 VAE 中，后验分布是 <strong>intractable</strong> 的。所以我们陷入了这样的境地：我们知道 <span class="math inline">\(p_\theta(z\vert x)\)</span> 是 <span class="math inline">\(q(z)\)</span> 的最优解，但是表达不出来。这就好比我们知道一个方程有解，但是无法显式地把解写出来一样尴尬。怎么办呢？解析走不通，数值法来凑！就好比用数值方法来求方程的根，我们现在用数值优化的方式——比如梯度下降——让 <span class="math inline">\(q(z)\)</span> 去逼近 <span class="math inline">\(p_\theta(z\vert x)\)</span>，即最小化 <span class="math inline">\(\mathrm{KL}(q(z)\Vert p_\theta(z\vert x))\)</span>. 当然，为了用上梯度下降，我们需要把 <span class="math inline">\(q(z)\)</span> 参数化为 <span class="math inline">\(q_\phi(z\vert x)\)</span>，这样对 <span class="math inline">\(\phi\)</span> 求梯度就好了.</p>
+<p>注意 E-step 的优化变量是一个概率分布函数 <span class="math inline">\(q\)</span>，并不好直接优化。为此，我们需要找一个以 <span class="math inline">\(\theta\)</span> 为参数的分布族，将 <span class="math inline">\(q(z)\)</span> 参数化为 <span class="math inline">\(q_\phi(z\vert x)\)</span>.</p>
 <blockquote>
 <p>为什么是 <span class="math inline">\(q_\phi(z\vert x)\)</span> 而不是 <span class="math inline">\(q_\phi(z)\)</span>？因为 EM 算法中找到的最优 <span class="math inline">\(q(z)\)</span>，即 <span class="math inline">\(q^\ast(z)=p_\theta(z\vert x)\)</span>，其实是依赖于 <span class="math inline">\(x\)</span> 的，即不同的数据的最优 <span class="math inline">\(q(z)\)</span> 是不一样的，只是没在记号中体现出来而已。</p>
 </blockquote>
-<p>即便如此，计算 KL 不也得知道 <span class="math inline">\(p_\theta(z\vert x)\)</span> 表达式才行吗？注意，现在我们一直待在 E-step 里，所以 <span class="math inline">\(L(\theta)\)</span> 是定值，观察 <span class="math inline">\(\eqref{em}\)</span> 式，最小化 KL 项，等价于最大化 ELBO 项！所以我们可以通过<strong>最大化 ELBO 来间接地最小化 KL</strong><sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="原来VAE是这么回事（从EM到VAE） - 市井小民的文章 - 知乎 https://zhuanlan.zhihu.com/p/368959795">[3]</span></a></sup>！（妙啊～</p>
-<p>行文至此，原本的 EM 算法已经变成了<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="EM的升级打怪之路：EM-变分EM-VAE（part1） - Young Zicon的文章 - 知乎 https://zhuanlan.zhihu.com/p/418203971">[4]</span></a></sup>：</p>
-<ul>
-<li>E-step：固定 <span class="math inline">\(\theta\)</span>，梯度下降优化 ELBO</li>
-<li>M-step：固定 <span class="math inline">\(q_\phi(z\vert x)\)</span>，优化 ELBO</li>
-</ul>
-<p>鉴于 E-step 一定用的是梯度下降，我们干脆在 M-step 也用梯度下降（而非算解析解），那就没有必要迭代了，直接两步合一步优化 ELBO 即可： <span class="math display">\[
+<p>在下文我们将看到，事实上 <span class="math inline">\(p_\theta(x\vert z)\)</span> 和 <span class="math inline">\(q_\phi(z\vert x)\)</span> 都由神经网络表示，因此我们只能用<strong>梯度下降</strong>来求解上述两个优化问题。既然都是梯度下降，那就没有必要交替迭代了，直接两步合一步最大化 ELBO 即可：</p>
+<p><span class="math display">\[
 \max_{\theta,\phi}\quad\mathrm{ELBO}=\mathbb E_{z\sim q_\phi(z\vert x)}[\log p_\theta(x\vert z)]-\mathrm{KL}(q_\phi(z\vert x)\|p(z))
 \]</span> 取个负号就是 VAE 的损失函数： <span class="math display">\[
 \mathcal L=\mathbb E_{z\sim q_\phi(z\vert x)}[-\log p_\theta(x\vert z)]+\mathrm{KL}(q_\phi(z\vert x)\|p(z))\tag{2}\label{obj}
@@ -377,10 +366,10 @@ L(\theta)&amp;=\log p_\theta(x)\\
 <p><br/></p>
 <p>我们看到，VAE 的损失函数由两部分构成：</p>
 <ol type="1">
-<li><span class="math inline">\(\mathbb E_{z\sim q_\phi(z\vert x)}[-\log p_\theta(x\vert z)]\)</span> 是重构项，最大化 <span class="math inline">\(x\)</span> 被重构的似然；</li>
-<li><span class="math inline">\(\mathrm{KL}(q_\phi(z\vert x)\Vert p(z))\)</span> 可以视作正则项，让估计的后验分布逼近先验分布。</li>
+<li><span class="math inline">\(\mathbb E_{z\sim q_\phi(z\vert x)}[-\log p_\theta(x\vert z)]\)</span> 是<strong>重构项</strong>，最大化 <span class="math inline">\(x\)</span> 被重构的似然；</li>
+<li><span class="math inline">\(\mathrm{KL}(q_\phi(z\vert x)\Vert p(z))\)</span> 可以视作<strong>正则项</strong>，让估计的后验分布逼近先验分布。</li>
 </ol>
-<p>怎么理解呢？假设只有重构项，可以想见为了更好的重构，网络会尽可能地减小不确定性——一方面让分布 <span class="math inline">\(q_\phi(z\vert x)\)</span> 的方差很小，基本集中在一个点上；另一方面对不同的 <span class="math inline">\(x\)</span> 让分布 <span class="math inline">\(q_\phi(z\vert x)\)</span> 均值差异很大，以便更好地区分不同 <span class="math inline">\(x\)</span> 编码出来的 <span class="math inline">\(z\)</span><sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="半小时理解变分自编码器 - 多头注意力的文章 - 知乎 https://zhuanlan.zhihu.com/p/144649293">[8]</span></a></sup>（如下左图所示）。如此一来，VAE 就退化成一般的 auto-encoder 了；而正则项强制让 <span class="math inline">\(q_\phi(z\vert x)\)</span> 逼近 <span class="math inline">\(p(z)\)</span>，一个我们预先设定的分布，就可以约束上述两点的发生（如下右图所示）。所以二者之间存在一种“对抗”的感觉<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Mar. 18, 2018). 《变分自编码器（一）：原来是这么一回事 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/5253">[1]</span></a></sup><sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Mar. 28, 2018). 《变分自编码器（二）：从贝叶斯观点出发 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/5343">[2]</span></a></sup>。如此训练，VAE 被迫在具有一定随机性的噪声下重构出真实数据，自然就比 auto-encoder 有更好的泛化性。</p>
+<p>怎么理解呢？假设只有重构项，可以想见为了更好的重构，网络会尽可能地减小不确定性——一方面让分布 <span class="math inline">\(q_\phi(z\vert x)\)</span> 的方差很小，基本集中在一个点上；另一方面对不同的 <span class="math inline">\(x\)</span> 让分布 <span class="math inline">\(q_\phi(z\vert x)\)</span> 均值差异很大，以便更好地区分不同 <span class="math inline">\(x\)</span> 编码出来的 <span class="math inline">\(z\)</span><sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="半小时理解变分自编码器 - 多头注意力的文章 - 知乎 https://zhuanlan.zhihu.com/p/144649293">[8]</span></a></sup>（如下左图所示）。如此一来，VAE 就退化成一般的 Autoencoder 了；而正则项强制让 <span class="math inline">\(q_\phi(z\vert x)\)</span> 逼近 <span class="math inline">\(p(z)\)</span>，一个我们预先设定的分布，就可以约束上述两点的发生（如下右图所示）。所以二者之间存在一种“对抗”的感觉<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Mar. 18, 2018). 《变分自编码器（一）：原来是这么一回事 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/5253">[1]</span></a></sup><sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Mar. 28, 2018). 《变分自编码器（二）：从贝叶斯观点出发 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/5343">[2]</span></a></sup>。如此训练，VAE 被迫在具有一定随机性的噪声下重构出真实数据，自然就比 Autoencoder 有更好的泛化性。</p>
 <p><img src="reg.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source: https://towardsdatascience.com/understanding-variational-autoencoders-vaes-f70510919f73" width=80% /></p>
 <h2 id="具体化">具体化</h2>
 <p>我们现在得到了 VAE 的损失函数 <span class="math inline">\(\eqref{obj}\)</span>，但其中的 <span class="math inline">\(p(z)\)</span>、<span class="math inline">\(p_\theta(x\vert z)\)</span>、<span class="math inline">\(q_\phi(z\vert x)\)</span> 具体是什么并没有说明。要真正落地，还需要把它们“实例化”。</p>
@@ -392,17 +381,15 @@ L(\theta)&amp;=\log p_\theta(x)\\
 </ul>
 <p>于是<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Doersch, Carl. Tutorial on variational autoencoders. *arXiv preprint arXiv:1606.05908* (2016).">[7]</span></a></sup>： <span class="math display">\[
 \begin{align}
-&amp;\mathrm{KL}(q_\phi(z\vert x)\|p(z))\\
-=&amp;\mathrm{KL}(\N(\mu_\phi(x),\Sigma_\phi(x))\|\N(0,I))\\
-=&amp;\frac{1}{2}\left[\mathrm{tr}(\Sigma_\phi(x))+\mu_\phi(x)^T\mu_\phi(x)-d-\log\det(\Sigma_\phi(x)) \right]
+\mathrm{KL}(q_\phi(z\vert x)\|p(z))&amp;=\mathrm{KL}(\N(\mu_\phi(x),\Sigma_\phi(x))\|\N(0,I))\\
+&amp;=\frac{1}{2}\left[\mathrm{tr}(\Sigma_\phi(x))+\mu_\phi(x)^T\mu_\phi(x)-d-\log\det(\Sigma_\phi(x)) \right]
 \end{align}
 \]</span> 实操时，我们一般会做简化——取 <span class="math inline">\(\Sigma_\phi(x)=\mathrm{diag}(\sigma_\phi^2(x))\)</span>，即各分量独立，协方差矩阵只有对角线有值，那么： <span class="math display">\[
 \begin{align}
-&amp;\mathrm{KL}(q_\phi(z\vert x)\|p(z))\\
-=&amp;\mathrm{KL}(\N(\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x)))\| \N(0,I))\\
-=&amp;\frac{1}{2}\sum_{i=1}^d\left(\mu_\phi^2(x)_i+\sigma_\phi^2(x)_i-\log \sigma_\phi^2(x)_i-1\right)
+\mathrm{KL}(q_\phi(z\vert x)\|p(z))&amp;=\mathrm{KL}(\N(\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x)))\| \N(0,I))\\
+&amp;=\frac{1}{2}\sum_{i=1}^d\left(\mu_\phi^2(x)_i+\sigma_\phi^2(x)_i-\log \sigma_\phi^2(x)_i-1\right)
 \end{align}
-\]</span> 另外，为了避免正负的麻烦，我们可以视 encoder 的输出为 <span class="math inline">\(\log \sigma_\phi^2(x)\)</span> 而非 <span class="math inline">\(\sigma_\phi^2(x)\)</span>，这样就不需要在最后加一个激活函数了。</p>
+\]</span> 另外，为了避免正负的麻烦，我们可以视 encoder 的输出为 <span class="math inline">\(\log \sigma_\phi^2(x)\)</span> 而非 <span class="math inline">\(\sigma_\phi^2(x)\)</span>，这样就不需要在最后加一个激活函数使输出强制非负了。</p>
 <p><img src="vae-enc.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source: cs231n" width=40% /></p>
 <h3 id="decoder-network">Decoder network</h3>
 <p>接下来考虑损失函数中 <span class="math inline">\(\mathbb E_{z\sim q_\phi(z\vert x)}[-\log p_\theta(x\vert z)]\)</span> 一项，也就是生成模型 <span class="math inline">\(p_\theta(x\vert z)\)</span> 的形式，一般有两种选择<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Mar. 28, 2018). 《变分自编码器（二）：从贝叶斯观点出发 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/5343">[2]</span></a></sup>：</p>
@@ -439,7 +426,7 @@ p_\theta(x\vert z)=\frac{1}{(2\pi)^{D/2}(\det\Sigma_\theta(z))^{1/2}}\exp\left(-
 \mathcal L=\underbrace{\frac{1}{2\sigma^2}\|x-\mu_\theta(z)\|^2}_\text{Reconstruction}+\underbrace{\frac{1}{2}\sum_{i=1}^d\left(\mu_\phi^2(x)_i+\sigma_\phi^2(x)_i-\log \sigma_\phi^2(x)_i-1\right)}_\text{KL Regularization},\quad z\sim\mathcal N(\mu_\phi(x),\text{diag}(\sigma_\phi^2(x)))
 \]</span> 可以看到，重构项和 KL 正则项由超参数 <span class="math inline">\(\sigma^2\)</span> 加权。<span class="math inline">\(\sigma^2\)</span> 越小，重构项权重越大，意味着结果更真实，但泛化性下降。一般直接取 <span class="math inline">\(\sigma^2=1\)</span> 即可。</p>
 <h3 id="重参数化技巧">重参数化技巧</h3>
-<p>重参数化技巧在<a href="/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/" title="重参数化技巧 The Reparameterization Trick">之前的文章</a>中已经介绍过了，并且正是用 VAE 举的例子，所以这里不再赘述。简单说来，就是现在 <span class="math inline">\(z\)</span> 是从 <span class="math inline">\(q_\phi(z\vert x)\sim\N(\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x)))\)</span> 中采样的，但梯度无法经过采样传播到参数 <span class="math inline">\(\phi\)</span>。解决方法很简单，先从 <span class="math inline">\(\N(0,I)\)</span> 中采样 <span class="math inline">\(z&#39;\)</span>，再计算 <span class="math inline">\(z=\mu_\phi(x)+z&#39;\ast\sigma_\phi(x)\)</span> 就好了。</p>
+<p>重参数化技巧在<a href="/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/" title="重参数化技巧 The Reparameterization Trick">之前的文章</a>中已经介绍过了，并且正是用 VAE 举的例子，所以这里不再赘述。简单说来，就是现在 <span class="math inline">\(z\)</span> 是从 <span class="math inline">\(q_\phi(z\vert x)\sim\N(\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x)))\)</span> 中采样的，但梯度无法经过采样传播到参数 <span class="math inline">\(\phi\)</span>。解决方法很简单，先从 <span class="math inline">\(\N(0,I)\)</span> 中采样 <span class="math inline">\(z&#39;\)</span>，再计算 <span class="math inline">\(z=\mu_\phi(x)+z&#39;\cdot\sigma_\phi(x)\)</span> 就好了。</p>
 <h2 id="代码实现">代码实现</h2>
 <p>Github repo: <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/VAEs-Implementations" class="uri">https://github.com/xyfJASON/VAEs-Implementations</a></p>
 <p>放个结果：</p>
