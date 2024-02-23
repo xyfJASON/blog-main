@@ -18,14 +18,14 @@
   
     <meta name="description" content="由于扩散模型存在多种解释角度，并且有很多人在研究它，因此大家用的推导体系和书写符号或多或少有一些差异。在 Google 的这两篇论文中——Variational Diffusion Models[1]、Progressive Distillation for Fast Sampling of Diffusion Models[2]，作者将信噪比显式地写入了扩散模型的公式之中，并由此引出了对可学习噪">
 <meta property="og:type" content="article">
-<meta property="og:title" content="扩散模型中的信噪比">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/index.html">
+<meta property="og:title" content="变分扩散模型">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="由于扩散模型存在多种解释角度，并且有很多人在研究它，因此大家用的推导体系和书写符号或多或少有一些差异。在 Google 的这两篇论文中——Variational Diffusion Models[1]、Progressive Distillation for Fast Sampling of Diffusion Models[2]，作者将信噪比显式地写入了扩散模型的公式之中，并由此引出了对可学习噪">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vdm-distill.png">
 <meta property="article:published_time" content="2023-08-08T08:50:35.000Z">
-<meta property="article:modified_time" content="2023-10-12T12:30:18.647Z">
+<meta property="article:modified_time" content="2024-02-20T14:16:58.013Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>扩散模型中的信噪比 - xyfJASON</title>
+  <title>变分扩散模型 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="扩散模型中的信噪比"></span>
+            <span id="subtitle" data-typed-text="变分扩散模型"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">扩散模型中的信噪比</h1>
+            <h1 id="seo-header">变分扩散模型</h1>
             
             
               <div class="markdown-body">
@@ -337,9 +337,9 @@
 <p>记 <span class="math inline">\(\mathbf x\sim p(\mathbf x)\)</span> 为真实数据，<span class="math inline">\(\mathbf z_t\)</span> 为 <span class="math inline">\(t\)</span> 时刻的隐变量，<span class="math inline">\(t\in[0,1]\)</span>. 前向加噪过程定义为： <span class="math display">\[
 q(\mathbf z_t\vert\mathbf x)=\mathcal N\left(\mathbf z_t;\alpha_t\mathbf x,\sigma_t^2\mathbf I\right)\label{1}\tag{1}
 \]</span> 其中 <span class="math inline">\(\alpha_t,\sigma_t^2\)</span> 是关于 <span class="math inline">\(t\)</span> 的光滑可导函数。事实上，DDPM 对应 <span class="math inline">\(\alpha_t=\sqrt{1-\sigma_t^2}\)</span> 的情形，而 SMLD<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. *Advances in neural information processing systems* 32 (2019).">[4]</span></a></sup> 对应 <span class="math inline">\(\alpha_t=1\)</span> 的情形。</p>
-<p>在 <span class="math inline">\(\eqref{1}\)</span> 式的定义下，我们定义<strong>信噪比</strong>为： <span class="math display">\[
-\text{SNR}(t)=\alpha_t^2/\sigma_t^2\label{2}\tag{2}
-\]</span> 并假设信噪比随时间严格单调递减，即随着 <span class="math inline">\(t\)</span> 增大，噪声占比越多。记 <span class="math inline">\(\lambda_t\)</span> 表示对数信噪比，即 <span class="math inline">\(\lambda_t=\log\text{SNR}(t)=\log(\alpha_t^2/\sigma_t^2)\)</span>.</p>
+<p>在 <span class="math inline">\(\eqref{1}\)</span> 式的定义下，我们定义<strong>信噪比</strong>和<strong>对数信噪比</strong>为： <span class="math display">\[
+\text{SNR}(t)=\alpha_t^2/\sigma_t^2,\quad\lambda_t=\log\text{SNR}(t)=\log(\alpha_t^2/\sigma_t^2)\label{2}\tag{2}
+\]</span> 并假设信噪比随时间严格单调递减，即随着 <span class="math inline">\(t\)</span> 增大，噪声占比越多。</p>
 <p>根据 <span class="math inline">\(\eqref{1}\)</span> 式，我们可以仿照 DDPM 的方法推导出 <span class="math inline">\(q(\mathbf z_t\vert\mathbf z_s)\)</span>，其中 <span class="math inline">\(0\leq s&lt;t\leq 1\)</span>： <span class="math display">\[
 \begin{align}
 &amp;q(\mathbf z_t\vert\mathbf z_s)=\mathcal N\left(\mathbf z_t;\alpha_{t|s} \mathbf z_s,\sigma_{t|s}^2\mathbf I\right)\\
@@ -392,13 +392,13 @@ p_\theta(\mathbf z_s\vert\mathbf z_t)=q(\mathbf z_s\vert\mathbf z_t,\mathbf x=\h
 \end{align}
 \]</span> 于是 <span class="math inline">\(\eqref{8}\)</span> 式写作： <span class="math display">\[
 \text{KL}\left(q(\mathbf z_{s}\vert\mathbf z_{t},\mathbf x)\|p_\theta(\mathbf z_{s}\vert\mathbf z_{t})\right)=\frac{1}{2}\left(\exp(\gamma_{\boldsymbol\eta}(t)-\gamma_{\boldsymbol\eta}(s))-1\right)\Big\Vert\boldsymbol\epsilon-\hat{\boldsymbol\epsilon}_\theta(\mathbf z_{t})\Big\Vert^2
-\]</span> 就可以依此训练噪声序列了。值得注意的是，<span class="math inline">\(\exp(\bullet)-1\)</span> 这个操作应使用各大深度学习库的 <code>expm1()</code> 函数以避免数值计算问题。</p>
+\]</span> 就可以依此训练噪声序列了。注意 <span class="math inline">\(\exp(\bullet)-1\)</span> 这个操作应使用各大深度学习库的 <code>expm1()</code> 函数以避免数值计算问题。</p>
 <p>值得注意的是，由于 <span class="math inline">\(\text{SNR}(t)\)</span> 应该是单调递减的，这要求 <span class="math inline">\(\gamma_{\boldsymbol\eta}(t)\)</span> 应该是单调递增的，所以作者将其建模为一个单调神经网络。具体而言，这个神经网络有三层 linear，权重均限制为正数，中间有一个 sigmoid 激活，具体写作： <span class="math display">\[
-\gamma_{\boldsymbol\eta}(t)=l_1(t)+l_2(\phi(l_2(l_1(t))))
+\gamma_{\boldsymbol\eta}(t)=l_1(t)+l_3(\phi(l_2(l_1(t))))
 \]</span> 其中 <span class="math inline">\(l_2\)</span> 有 1024 个输出，其余仅有 1 个。</p>
-<p>作者在论文中展示了学习出来的噪声与其他人为设置的噪声的对比图，如下所示：</p>
+<p>作者在论文中展示了学习出来的信噪比与其他人为设置噪声的信噪比的对比图，如下所示：</p>
 <p><img src="learned.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
-<p>可见，学习出来的噪声信噪比在初期下降远远慢于人为设置的噪声。</p>
+<p>可见，学习出来的信噪比在初期下降远远慢于人为设置的信噪比。</p>
 <h2 id="模型预测目标">模型预测目标</h2>
 <p>众所周知，原始 DDPM 预测的是噪声 <span class="math inline">\(\boldsymbol\epsilon\)</span> 或者原数据 <span class="math inline">\(\mathbf x\)</span>，那么有没有其他的预测目标呢？Progressive Distillation<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[2]</span></a></sup> 这篇论文对此做了讨论。特别说明，本节只考虑 DDPM 情形，即满足 <span class="math inline">\(\sigma_t^2+\alpha_t^2=1\)</span>.</p>
 <p>首先，为什么要寻求新的预测目标？前文提到，<span class="math inline">\(t\)</span> 越大，预测噪声越简单，而预测原数据越困难；反过来，<span class="math inline">\(t\)</span> 越小则前者越困难、后者越简单。所谓简单，就是网络只需要 copy 输入即可，并不需要真的去学习数据分布，这无疑是不好的。因此，一个很直接的想法是让模型同时预测 <span class="math inline">\(\boldsymbol\epsilon\)</span> 和 <span class="math inline">\(\mathbf x\)</span>，推断时可以按照如下方式合并： <span class="math display">\[
@@ -534,8 +534,8 @@ q(\mathbf z_s\vert\mathbf z_t,\mathbf x)&amp;=\frac{q(\mathbf z_t\vert\mathbf z_
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>扩散模型中的信噪比</div>
-      <div>https://xyfjason.github.io/blog-main/2023/08/08/扩散模型中的信噪比/</div>
+      <div>变分扩散模型</div>
+      <div>https://xyfjason.github.io/blog-main/2023/08/08/变分扩散模型/</div>
     </div>
     <div class="license-meta">
       

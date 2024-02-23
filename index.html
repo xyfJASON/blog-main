@@ -742,7 +742,7 @@
       
       <a class="index-excerpt " href="/blog-main/2023/12/26/PyCharm-ignored-inspections/" target="_self">
         <div>
-          PEP 8 coding style violation (Error codes):  E402: module level import not at top of file E501: line too long (82 &gt; 79 characters) E702: multiple statements on one line (semicolon) E741: do not use
+          PEP 8 coding style violation (Error codes):  E402: module level import not at top of file E501: line too long (82 &gt; 79 characters) E702: multiple statements on one line (semicolon) E731: do not ass
         </div>
       </a>
 
@@ -955,7 +955,7 @@
     
       <div class="col-12 col-md-4 m-auto index-img">
         <a href="/blog-main/2023/12/01/Stable-Diffusion-SD%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/" target="_self">
-          <img src="/blog-main/gallery/controlnet.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="[Stable Diffusion]SD代码分析">
+          <img src="/blog-main/gallery/stable-diffusion/fawn.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="[Stable Diffusion]SD代码分析">
         </a>
       </div>
     
@@ -1175,21 +1175,21 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/" target="_self">
-          <img src="/blog-main/gallery/cover/vdm-distill.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="扩散模型中的信噪比">
+        <a href="/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" target="_self">
+          <img src="/blog-main/gallery/cover/vdm-distill.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="变分扩散模型">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/" target="_self">
-          扩散模型中的信噪比
+        <a href="/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" target="_self">
+          变分扩散模型
         </a>
       </h2>
 
       
-      <a class="index-excerpt " href="/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BF%A1%E5%99%AA%E6%AF%94/" target="_self">
+      <a class="index-excerpt " href="/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" target="_self">
         <div>
           由于扩散模型存在多种解释角度，并且有很多人在研究它，因此大家用的推导体系和书写符号或多或少有一些差异。在 Google 的这两篇论文中——Variational Diffusion Models[1]、Progressive Distillation for Fast Sampling of Diffusion Models[2]，作者将信噪比显式地写入了扩散模型的公式之中，并由此引出了对可学习噪
         </div>
@@ -1728,23 +1728,23 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/blog-main/2023/03/29/Vector-Quantization/" target="_self">
-          <img src="/blog-main/gallery/cover/vq.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="Vector-Quantization">
+        <a href="/blog-main/2023/04/25/Calculus-of-Variations/" target="_self">
+          <img src="/blog-main/gallery/cover/variations.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="Calculus of Variations">
         </a>
       </div>
     
     <article class="col-12 col-md-8 mx-auto index-info">
       <h2 class="index-header">
         
-        <a href="/blog-main/2023/03/29/Vector-Quantization/" target="_self">
-          Vector-Quantization
+        <a href="/blog-main/2023/04/25/Calculus-of-Variations/" target="_self">
+          Calculus of Variations
         </a>
       </h2>
 
       
-      <a class="index-excerpt " href="/blog-main/2023/03/29/Vector-Quantization/" target="_self">
+      <a class="index-excerpt " href="/blog-main/2023/04/25/Calculus-of-Variations/" target="_self">
         <div>
-          VQ-VAE VQ-VAE[1] 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规
+          泛函的概念 众所周知，函数是数到数的映射——输入为数值 \(x\)，输出为数值 \(y(x)\). 将函数的概念进行扩展，定义泛函 (functional) 为函数到数的映射——输入为函数 \(y(x)\)，输出为数值 \(F[y]\). 直观地讲，泛函就是“函数的函数”。 Example 1：给定平面上的两点 \((x_1,y_1),(x_2,y_2)\)，穿过它们的路径有无数条。对其中某条路径
         </div>
       </a>
 
@@ -1752,8 +1752,8 @@
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2023-03-29 15:26" pubdate>
-              2023-03-29
+            <time datetime="2023-04-25 16:20" pubdate>
+              2023-04-25
             </time>
           </div>
         
@@ -1773,15 +1773,8 @@
   
     <span>></span>
     
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
   
-  
-    <span>></span>
-    
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/VAEs/" class="category-chain-item">VAEs</a>
-  
-  
-
   
 
   
@@ -1797,7 +1790,7 @@
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
             
-              <a href="/blog-main/tags/generative-models/">#generative models</a>
+              <a href="/blog-main/tags/machine-learning/">#machine learning</a>
             
           </div>
         

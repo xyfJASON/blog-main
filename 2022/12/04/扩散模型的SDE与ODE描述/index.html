@@ -18,14 +18,14 @@
   
     <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\E}{\mathbb E} \newcommand{\f}{\mathbf f} \newcommand{\w}{\mathbf w} \newcommand{\calN}{\mathcal N} \newcommand{\pdata}{p_\text{dat">
 <meta property="og:type" content="article">
-<meta property="og:title" content="连续时间扩散模型——SDE与ODE描述">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/04/%E8%BF%9E%E7%BB%AD%E6%97%B6%E9%97%B4%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E2%80%94%E2%80%94SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/index.html">
+<meta property="og:title" content="扩散模型的SDE与ODE描述">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\E}{\mathbb E} \newcommand{\f}{\mathbf f} \newcommand{\w}{\mathbf w} \newcommand{\calN}{\mathcal N} \newcommand{\pdata}{p_\text{dat">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sde.png">
 <meta property="article:published_time" content="2022-12-04T04:45:07.000Z">
-<meta property="article:modified_time" content="2023-10-12T12:34:07.335Z">
+<meta property="article:modified_time" content="2024-02-20T13:28:40.230Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>连续时间扩散模型——SDE与ODE描述 - xyfJASON</title>
+  <title>扩散模型的SDE与ODE描述 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="连续时间扩散模型——SDE与ODE描述"></span>
+            <span id="subtitle" data-typed-text="扩散模型的SDE与ODE描述"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">连续时间扩散模型——SDE与ODE描述</h1>
+            <h1 id="seo-header">扩散模型的SDE与ODE描述</h1>
             
             
               <div class="markdown-body">
@@ -337,49 +337,39 @@
 \newcommand{\pdata}{p_\text{data}}
 \]</span></p>
 <h2 id="brief-introduction">Brief Introduction</h2>
-<p>我们已经用两篇文章<a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">从VAE到DDPM</a>、<a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score-Based Generative Models</a> 分别介绍了 DDPM (Denoising Diffusion Probabilistic Models) 和 SMLD (Score Matching + Langevin Dynamics)，并说明了它们的本质其实是相同的。进一步，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[1]</span></a></sup>把它们扩展到了连续时间场景并使用<strong>随机微分方程（Stochastic Differential Equations, SDE）</strong>描述。在该视角下，DDPM 和 SMLD 是两个特殊形式 SDE 的离散化。DDPM / SMLD 的加噪过程对应 forward SDE，去噪过程对应 reverse SDE，解 reverse SDE 的过程就是生成过程。除了使用通用的 SDE 数值解法以外，作者根据问题特点提出了 Predictor-Corrector Samplers，统一并扩展了 DDPM / SMLD 的去噪过程。作者还构造了与 SDE 具有相同边缘分布的 ODE，从而得到确定性生成过程。</p>
+<p>我们已经用两篇文章<a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">从VAE到DDPM</a>、<a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score-Based Generative Models</a> 分别介绍了 DDPM (Denoising Diffusion Probabilistic Models) 和 SMLD (Score Matching + Langevin Dynamics)，并说明了它们的本质其实是相同的。进一步，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[1]</span></a></sup>把它们扩展到了连续时间情形并使用<strong>随机微分方程（Stochastic Differential Equations, SDE）</strong>描述。在该视角下，<strong>DDPM 和 SMLD 是两个特殊形式 SDE 的离散化</strong>。DDPM / SMLD 的加噪过程对应 forward SDE，去噪过程对应 reverse SDE，解 reverse SDE 的过程就是生成过程。除了使用通用的 SDE 数值解法以外，作者根据问题特点提出了 Predictor-Corrector Samplers，统一并扩展了 DDPM / SMLD 的去噪过程。作者还构造了与 SDE 具有相同边缘分布的 ODE，从而得到确定性生成过程。</p>
 <h3 id="ddpm-recap">DDPM Recap</h3>
-<ol type="1">
-<li><p>加噪过程（前向过程）</p>
-<p>DDPM 将前向过程构建为一个离散马尔可夫链 <span class="math inline">\(\{\x_0,\x_1,\ldots,\x_N\}\)</span>，转移概率为： <span class="math display">\[
+<p><strong>加噪过程（前向过程）</strong>：DDPM 将前向过程构建为一个离散时间马尔可夫链 <span class="math inline">\(\{\x_0,\x_1,\ldots,\x_N\}\)</span>，转移概率为： <span class="math display">\[
 p(\x_i\vert \x_{i-1})=\calN\left(\x_i;\sqrt{1-\beta_i}\x_{i-1},\beta_i\mathbf I\right)
 \]</span> 其中 <span class="math inline">\(0&lt;\beta_1,\beta_2,\ldots,\beta_N&lt;1\)</span> 是每一步转移的正态分布的方差。上式等价写作： <span class="math display">\[
-\x_i=\sqrt{1-\beta_i}\x_{i-1}+\sqrt{\beta_i}\z_{i-1},\quad i=1,\ldots,N \tag{1}\label{ddpm}
-\]</span> 在该转移概率下，我们有一个优秀的性质： <span class="math display">\[
+\x_i=\sqrt{1-\beta_i}\x_{i-1}+\sqrt{\beta_i}\z_{i-1},\quad \z_{i-1}\sim\calN(\mathbf 0,\mathbf I) \tag{1}\label{ddpm}
+\]</span> 在该转移概率下，可以推得一个优秀的性质： <span class="math display">\[
 p_{\alpha_i}(\x_i\vert \x_0)=\calN\left(\x_{i};\sqrt{\bar\alpha_i}\x_0,(1-\bar\alpha_i)\mathbf I\right)\tag{2}\label{ddpm0}
-\]</span> 其中 <span class="math inline">\(\bar\alpha_i=\prod_{j=1}^i(1-\beta_j)\)</span>.</p></li>
-<li><p>去噪过程（逆向过程）</p>
-<p>去噪过程是前向过程的逆向，若以 score function 为目标构建模型 <span class="math inline">\(s_\theta(\x_i,i)\)</span>，则： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\bar\alpha_i=\prod_{j=1}^i(1-\beta_j)\)</span>.</p>
+<p><strong>去噪过程（逆向过程）</strong>：去噪过程是前向过程的逆向，若以 score function 为目标构建模型 <span class="math inline">\(s_\theta(\x_i,i)\)</span>，则： <span class="math display">\[
 \begin{align}
 p_\theta(\x_{i-1}\vert\x_i)=\calN\left(\x_{i-1};\tfrac{1}{\sqrt{1-\beta_i}}(\x_i+\beta_is_\theta(\x_i,i)),\beta_i\mathbf I\right)
 \end{align}
 \]</span> 或写作： <span class="math display">\[
-\x_{i-1}=\frac{1}{\sqrt{1-\beta_i}}(\x_i+\beta_i s_\theta(\x_i,i))+\sqrt{\beta_i}\z_i,\quad i=N,N-1,\ldots,1 \tag{3}\label{reverse-ddpm}
-\]</span></p></li>
-<li><p>损失函数由 ELBO 推得： <span class="math display">\[
+\x_{i-1}=\frac{1}{\sqrt{1-\beta_i}}(\x_i+\beta_i s_\theta(\x_i,i))+\sqrt{\beta_i}\z_i,\quad \z_i\sim\calN(\mathbf 0,\mathbf I) \tag{3}\label{reverse-ddpm}
+\]</span> <strong>损失函数</strong>：由 ELBO 可推得： <span class="math display">\[
 \mathcal L=\sum_{i=1}^N(1-\alpha_i)\E_{\pdata(\x)}\left[\E_{p_{\alpha_i}(\tilde\x\vert \x)}\left[\left\|s_\theta(\tilde\x,i)-\nabla_{\tilde\x}\log p_{\alpha_i}(\tilde\x\vert\x)\right\|^2\right]\right]
-\]</span></p></li>
-</ol>
+\]</span></p>
 <h3 id="smld-recap">SMLD Recap</h3>
-<ol type="1">
-<li><p>加噪过程</p>
-<p>与 DDPM 不同，SMLD 首先定义了从原数据到以 <span class="math inline">\(\sigma_i\)</span> 加噪的变换： <span class="math display">\[
+<p><strong>加噪过程</strong>：SMLD 首先定义了从原数据到以 <span class="math inline">\(\sigma_i\)</span> 加噪的变换： <span class="math display">\[
 p_{\sigma_i}(\x_i\vert \x_0)=\calN(\x_i;\x_0,\sigma_i^2\mathbf I)\tag{4}\label{smld0}
 \]</span> 逆向思考，该分布可由如下相邻两个 noise scale 的转移得到： <span class="math display">\[
 p(\x_i\vert\x_{i-1})=\calN\left(\x_{i-1};\left(\sigma_i^2-\sigma_{i-1}^2\right)\mathbf I\right)
 \]</span> 或写作： <span class="math display">\[
-\x_i=\x_{i-1}+\sqrt{\sigma_i^2-\sigma_{i-1}^2}\ \z_{i-1},\quad i=1,\ldots,N \tag{5}\label{smld}
-\]</span></p></li>
-<li><p>去噪过程（Annealed Langevin Dynamics）</p>
-<p>在每个 noise scale 加噪的数据分布上，执行 <span class="math inline">\(M\)</span> 步 Langevin dynamics： <span class="math display">\[
-\x_i^m=\x_i^{m-1}+\epsilon_i s_\theta(\x_i^{m-1},\sigma_i)+\sqrt{2\epsilon_i}\ \z_i^m,\quad m=1,\ldots,M
-\]</span> 其中 <span class="math inline">\(\epsilon_i\)</span> 是步长相关参数。对 <span class="math inline">\(i=N,N-1\ldots,1\)</span> 均执行上述过程。</p></li>
-<li><p>损失函数由在每个 noise scale 上做 denoising score matching 推得： <span class="math display">\[
+\x_i=\x_{i-1}+\sqrt{\sigma_i^2-\sigma_{i-1}^2}\ \z_{i-1},\quad \z_{i-1}\sim\calN(\mathbf 0,\mathbf I) \tag{5}\label{smld}
+\]</span> <strong>去噪过程</strong> (Annealed Langevin Dynamics)：在每个 noise scale 加噪的数据分布上，执行 <span class="math inline">\(M\)</span> 步 Langevin dynamics： <span class="math display">\[
+\x_i^m=\x_i^{m-1}+\epsilon_i s_\theta(\x_i^{m-1},\sigma_i)+\sqrt{2\epsilon_i}\ \z_i^m,\quad \z_i^m\sim\calN(\mathbf 0,\mathbf I),\quad m=1,\ldots,M
+\]</span> 其中 <span class="math inline">\(\epsilon_i\)</span> 是步长相关参数。对 <span class="math inline">\(i=N,N-1\ldots,1\)</span> 均执行上述过程。</p>
+<p><strong>损失函数</strong>：由在每个 noise scale 上做 denoising score matching 可推得： <span class="math display">\[
 \mathcal L=\sum_{i=1}^N \sigma_i^2\E_{\pdata(\x)}\left[\E_{p_{\sigma_i}(\tilde\x\vert\x)}\left[\left\|s_\theta(\tilde\x,\sigma_i)-\nabla_{\tilde\x}\log p_{\sigma_i}(\tilde\x\vert\x) \right\|^2\right]\right]
-\]</span></p></li>
-</ol>
+\]</span></p>
 <h2 id="forward-sde">Forward SDE</h2>
-<p>DDPM 和 SMLD 都是在离散时间点扩散的，倘若将时间连续化，那么我们就能够得到对应的 SDE 表达。为了连续化，我们只需要将 <span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{smld}\)</span> 式写作差分形式，取 <span class="math inline">\(\Delta t\to0\)</span>，即得到微分形式。</p>
+<p>DDPM 和 SMLD 都是在离散时间点扩散的，倘若将时间连续化，那么我们就能够得到对应的 SDE 描述。为了连续化，我们只需要将 <span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{smld}\)</span> 式写作差分形式，取 <span class="math inline">\(\Delta t\to0\)</span>，即得到微分形式。</p>
 <h3 id="ddpm-vp-sde">DDPM: VP SDE</h3>
 <p>为了方便叙述，定义 <span class="math inline">\(\bar\beta_i=N\beta_i\)</span>，那么 <span class="math inline">\(\eqref{ddpm}\)</span> 式改写作： <span class="math display">\[
 \x_i=\sqrt{1-\frac{\bar\beta_i}{N}}\ \x_{i-1}+\sqrt{\frac{\bar\beta_i}{N}}\ \mathbf z_{i-1},\quad i=1,\ldots,N
@@ -391,7 +381,7 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_{i-1};\left(\sigma_i^2-\sigma_{i-1}^2\right)\
 \mathrm  d\x=-\frac{1}{2}\beta(t)\x\ \mathrm dt+\sqrt{\beta(t)}\ \mathrm d\w\tag{6}\label{vp-sde}
 \]</span> 其中 <span class="math inline">\(\w\)</span> 是标准维纳过程（也称作布朗运动）。</p>
 <div class="note note-info">
-            <p><strong>维纳过程（布朗运动）直观解释</strong></p><p>考虑一个马尔可夫随机过程 <span class="math inline">\(\w\)</span>，其以一年为时间单位，下一年相比这一年的变化量服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>，即： <span class="math display">\[\w(t+1)=\w(t)+\z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 那么两年后，总变化量就是两个正态随机变量之和，服从 <span class="math inline">\(\calN(\mathbf 0,2\mathbf I)\)</span>： <span class="math display">\[\w(t+2)=\w(t)+\sqrt{2}\ \z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 反过来想，一年的变化量是两个半年变化量之和，所以半年的变化量应该服从 <span class="math inline">\(\calN(\mathbf 0,0.5\ \mathbf I)\)</span>： <span class="math display">\[\w(t+0.5)=\w(t)+\sqrt{0.5}\ \z(t),\quad\z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 以此类推，如果考虑 <span class="math inline">\(\Delta t\)</span> 的时间，变化量就应该服从 <span class="math inline">\(\calN(\mathbf 0,\Delta t\ \mathbf I)\)</span>： <span class="math display">\[\w(t+\Delta t)=\w(t)+\sqrt{\Delta t}\ \z(t),\quad\z(t)\sim \calN(\mathbf 0,\mathbf I)\]</span> 令 <span class="math inline">\(\Delta t\to 0\)</span>，则： <span class="math display">\[\mathrm d\w=\lim_{\Delta t\to0}\sqrt{\Delta t}\ \z(t)\]</span></p><p>这就是 <span class="math inline">\(\eqref{vp-sde}\)</span> 式后一项的由来。</p>
+            <p><strong>维纳过程（布朗运动）直观解释</strong></p><p>考虑一个马尔可夫随机过程 <span class="math inline">\(\w\)</span>，其以一年为时间单位，下一年相比这一年的变化量服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>，即： <span class="math display">\[\w(t+1)=\w(t)+\z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 那么两年后，总变化量就是两个正态随机变量之和，服从 <span class="math inline">\(\calN(\mathbf 0,2\mathbf I)\)</span>： <span class="math display">\[\w(t+2)=\w(t)+\sqrt{2}\ \z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 反过来想，一年的变化量是两个半年变化量之和，所以半年的变化量应该服从 <span class="math inline">\(\calN(\mathbf 0,0.5\ \mathbf I)\)</span>： <span class="math display">\[\w(t+0.5)=\w(t)+\sqrt{0.5}\ \z(t),\quad\z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 以此类推，如果考虑 <span class="math inline">\(\Delta t\)</span> 的时间，变化量就应该服从 <span class="math inline">\(\calN(\mathbf 0,\Delta t\ \mathbf I)\)</span>： <span class="math display">\[\w(t+\Delta t)=\w(t)+\sqrt{\Delta t}\ \z(t),\quad\z(t)\sim \calN(\mathbf 0,\mathbf I)\]</span> 令 <span class="math inline">\(\Delta t\to 0\)</span>，则： <span class="math display">\[\mathrm d\w=\lim_{\Delta t\to0}\sqrt{\Delta t}\ \z(t)\]</span></p><p>这就是 <span class="math inline">\(\eqref{vp-sde}\)</span> 式的后一项。</p>
           </div>
 <p>论文作者称 <span class="math inline">\(\eqref{vp-sde}\)</span> 式为 Variance Preserving (VP) SDE，因为当初始分布有单位方差时，该 SDE 描述的随机过程也始终有固定的方差。为了说明这点，作者直接给出了如下关于方差演进过程的 ODE： <span class="math display">\[
 \frac{\mathrm d\Sigma_\text{VP}(t)}{\mathrm dt}=\beta(t)(\mathbf I-\Sigma_\text{VP}(t))
@@ -420,7 +410,7 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_{i-1};\left(\sigma_i^2-\sigma_{i-1}^2\right)\
 \mathrm d\x=\left[\f(\x,t)-g^2(t)\nabla_\x\log p_t(\x)\right]\mathrm  dt+g(t)\mathrm d\bar\w \tag{9}\label{reverse-sde}
 \]</span> 其中 <span class="math inline">\(\bar\w\)</span> 是一个标准维纳过程（布朗运动）。</p>
 <p><br/></p>
-<p>我们又看到了老朋友 score function <span class="math inline">\(\nabla_\x\log p_t(\x)\)</span>，依旧使用 denoising score matching 来训练模型： <span class="math display">\[
+<p>我们又看到了老朋友 score function <span class="math inline">\(\nabla_\x\log p_t(\x)\)</span>，因此依旧可以使用 denoising score matching 来训练模型： <span class="math display">\[
 \E_t\left[\lambda(t)\E_{\x(0)}\E_{\x(t)\vert\x(0)}\left[\left\|s_\theta(\x(t),t)-\nabla_{\x(t)}\log p_{0t}(\x(t)\vert\x(0)) \right\|_2^2\right]\right] \tag{10}\label{loss}
 \]</span> 其中 <span class="math inline">\(\lambda:[0,T]\to \mathbb R_{&gt;0}\)</span> 是加权系数。与 DDPM / SMLD 类似，可以选取 <span class="math inline">\(\lambda(t)\propto1/\E[\Vert\nabla_{\x(t)}\log p_{0t}(\x(t)\vert\x(0)) \Vert^2]\)</span>.</p>
 <p>在训练好模型之后，用模型替换 <span class="math inline">\(\eqref{reverse-sde}\)</span> 式中的 score function 即可： <span class="math display">\[
@@ -431,16 +421,16 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_{i-1};\left(\sigma_i^2-\sigma_{i-1}^2\right)\
 <h3 id="numerical-sde-solvers">Numerical SDE Solvers</h3>
 <p>存在一些广泛适用的 SDE 数值解法，例如 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Euler%E2%80%93Maruyama_method">Euler-Maruyama</a> 和 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_method_(SDE)">stochastic Runge-Kutta</a>，它们分别是求解 ODE 的 Euler 法和 Runge-Kutta 法在 SDE 上的扩展。</p>
 <div class="note note-info">
-            <p><strong>Euler 法回顾</strong>（摘自《计算方法》课程笔记）</p><p>对于初值问题： <span class="math display">\[\begin{cases}\frac{\mathrm dy}{\mathrm dx}=f(x,y)&amp;&amp;a\leq x\leq b\\y(a)=\eta\end{cases}\]</span> 数值求解方法是指：取定步长 <span class="math inline">\(h\)</span>，在一系列点 <span class="math inline">\(\{x_0=a,\,x_1=a+h,\,x_2=a+2h,\,\ldots\}\)</span> 上求 <span class="math inline">\(y_i=y(x_i)\)</span>.</p><p><strong>Euler 法</strong>是最简单的数值求解方法之一。考虑在 <span class="math inline">\([x_n,x_{n+1}]\)</span> 上对 <span class="math inline">\(y&#39;(x)=f(x,y(x))\)</span> 积分，有： <span class="math display">\[\begin{align}y(x_{n+1})&amp;=y(x_n)+\int_{x_n}^{x_{n+1}}f(x,y(x))\mathrm d x\\&amp;\approx y(x_n)+ hf(x_n,y(x_n))&amp;&amp;\text{左矩形近似积分}\\&amp;=y_n+ hf(x_n,y_n)\end{align}\]</span> 以此公式迭代求解即可。若做出图来，<span class="math inline">\(y_i\)</span> 其实就是不断沿当前导数方向走折线，因此也称作 <strong>Euler 折线法</strong>。</p><p><img src="euler.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://www.researchgate.net/figure/Eulers-method-The-dashed-line-shows-the-solution-computed-by-successive-iterations-of_fig1_333678760" width=50% /></p><p>如果用更准确的梯形公式而非矩形来近似积分，可得： <span class="math display">\[y_{n+1}=y_n+\frac{h}{2}[f(x_n,y_n)+f(x_{n+1},y_{n+1})]\]</span> 但这是关于 <span class="math inline">\(y_{n+1}\)</span> 的隐格式，无法直接求解。故一般先使用 Euler 折线法求出一个初始值，再依梯形公式迭代。</p><p>特别地，如果只迭代一次，称作<strong>改进 Euler 法</strong>： <span class="math display">\[\begin{cases}y_{n+1}^{(0)}=y_n+h f(x_n,y_n)\\y_{n+1}=y_{n+1}^{(0)}+\frac{h}{2}\left[f(x_n,y_n)+f\left(x_{n+1},y_{n+1}^{(0)}\right)\right]\end{cases}\]</span></p>
+            <p><strong>Euler 法回顾</strong>（摘自《计算方法》课程笔记）</p><p>对于初值问题： <span class="math display">\[\begin{cases}\dfrac{\mathrm dy}{\mathrm dx}=f(x,y)&amp;&amp;a\leq x\leq b\\y(a)=\eta\end{cases}\]</span> 数值求解方法是指：取定步长 <span class="math inline">\(h\)</span>，在一系列点 <span class="math inline">\(\{x_0=a,\,x_1=a+h,\,x_2=a+2h,\,\ldots\}\)</span> 上求 <span class="math inline">\(y_i=y(x_i)\)</span>.</p><p><strong>Euler 法</strong>是最简单的数值求解方法之一。考虑在 <span class="math inline">\([x_n,x_{n+1}]\)</span> 上对 <span class="math inline">\(y&#39;(x)=f(x,y(x))\)</span> 积分，有： <span class="math display">\[\begin{align}y(x_{n+1})&amp;=y(x_n)+\int_{x_n}^{x_{n+1}}f(x,y(x))\mathrm d x\\&amp;\approx y(x_n)+ hf(x_n,y(x_n))&amp;&amp;\text{左矩形近似积分}\\&amp;=y_n+ hf(x_n,y_n)\end{align}\]</span> 以此公式迭代求解即可。若做出图来，<span class="math inline">\(y_i\)</span> 其实就是不断沿当前导数方向走折线，因此也称作 <strong>Euler 折线法</strong>。</p><p><img src="euler.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://www.researchgate.net/figure/Eulers-method-The-dashed-line-shows-the-solution-computed-by-successive-iterations-of_fig1_333678760" width=50% /></p><p>如果用更准确的梯形公式而非矩形来近似积分，可得： <span class="math display">\[y_{n+1}=y_n+\frac{h}{2}[f(x_n,y_n)+f(x_{n+1},y_{n+1})]\]</span> 但这是关于 <span class="math inline">\(y_{n+1}\)</span> 的隐格式，无法直接求解。故一般先使用 Euler 折线法求出一个初始值，再依梯形公式迭代。</p><p>特别地，如果只迭代一次，称作<strong>改进 Euler 法</strong>： <span class="math display">\[\begin{cases}y_{n+1}^{(0)}=y_n+h f(x_n,y_n)\\y_{n+1}=y_{n+1}^{(0)}+\dfrac{h}{2}\left[f(x_n,y_n)+f\left(x_{n+1},y_{n+1}^{(0)}\right)\right]\end{cases}\]</span></p>
           </div>
 <div class="note note-info">
             <p><strong>Runge-Kutta 法回顾</strong>（摘自《计算方法）课程笔记）</p><p>理论上，<span class="math inline">\(y(x_{n+1})\)</span> 和 <span class="math inline">\(y(x_n)\)</span> 的差距由泰勒展开给出： <span class="math display">\[y(x_{n+1})=y(x_n)+h y&#39;(x_n)+\frac{h^2}{2!}y&#39;&#39;(x_n)+\cdots\]</span> 如果允许，我们可以截断到任意精度，让解更加准确。Euler 法只有 <span class="math inline">\(h f(x_n,y_n)\)</span> 一项，其实是截断到一阶；利用泰勒展开可以证明，改进 Euler 法截断到了二阶。然而直接计算高阶导数非常麻烦，Runge-Kutta 法提供了一种巧妙的构造，间接地利用了这种思想。</p><p>我们可以将 Euler 法写作： <span class="math display">\[\begin{cases}y_{n+1}=y_n+h K_1\\K_1=f(x_n,y_n)\end{cases}\]</span> 改进 Euler 法写作： <span class="math display">\[\begin{cases}y_{n+1}=y_n+\frac{1}{2}hK_1+\frac{1}{2}hK_2\\K_1=f(x_n,y_n)\\K_2=f(x_n+h,y_n+hK_1)\end{cases}\]</span> 以此类推，<span class="math inline">\(s\)</span> 阶 R-K 法写作： <span class="math display">\[\begin{cases}y_{n+1}=y_n+h\sum_{i=1}^s R_iK_i\\K_1=f(x_n,y_n)\\K_i=f(x_n+a_ih,y_n+h\sum_{j=1}^{i-1}b_{ij}K_j),&amp;&amp;i=2,3,\ldots,s\end{cases}\]</span> 其中 <span class="math inline">\(R_i,\,a_i,\,b_{ij}\)</span> 为参数，以使得 <span class="math inline">\(y(x_{n+1})-y_{n+1}\)</span> 泰勒展开后 <span class="math inline">\(h^i\)</span> 系数为 <span class="math inline">\(0\)</span> (<span class="math inline">\(i=1,2,\ldots,s\)</span>)，即截断到 <span class="math inline">\(s\)</span> 阶。</p>
           </div>
 <p>Euler-Maruyama 法和 Euler 法类似，只需要从初值开始，选定步长反复迭代即可。具体而言，对于 <span class="math inline">\(\eqref{reverse-sde-est}\)</span> 式，选择一个小步长 <span class="math inline">\(\Delta t\approx 0\)</span>，初始化 <span class="math inline">\(t\gets T\)</span>，然后迭代执行下述过程直至 <span class="math inline">\(t\approx 0\)</span>： <span class="math display">\[
 \begin{align}
-\Delta \mathbf{x} &amp;\gets \left[\mathbf{f}(\mathbf{x}, t) - g^2(t) \mathbf{s}_\theta(\mathbf{x}, t)\right]\Delta t + g(t) \sqrt{\vert \Delta t\vert }\mathbf{z}_t ,&amp;&amp;\z_t\sim \calN(\mathbf 0,\mathbf I)\\ 
-\mathbf{x} &amp;\gets \mathbf{x} + \Delta \mathbf{x}\\ 
-t &amp;\gets t + \Delta t
+&amp;\Delta \mathbf{x} \gets \left[\mathbf{f}(\mathbf{x}, t) - g^2(t) \mathbf{s}_\theta(\mathbf{x}, t)\right]\Delta t + g(t) \sqrt{\vert \Delta t\vert }\mathbf{z}_t ,&amp;&amp;\z_t\sim \calN(\mathbf 0,\mathbf I)\\ 
+&amp;\mathbf{x} \gets \mathbf{x} + \Delta \mathbf{x}\\ 
+&amp;t \gets t + \Delta t
 \end{align}
 \]</span></p>
 <h3 id="reverse-diffusion-samplers">Reverse Diffusion Samplers</h3>
@@ -456,7 +446,7 @@ t &amp;\gets t + \Delta t
 <h2 id="probability-flow-ode">Probability Flow ODE</h2>
 <p>上文中，我们已经构建了连续时间扩散模型的 SDE 描述。宋飏等人提出，对于任一 SDE 描述的扩散过程，都存在一个 ODE 描述的确定性过程与之有相同的边缘分布 <span class="math inline">\(\{p_t(\x)\}_{t=0}^T\)</span>. 具体地，<span class="math inline">\(\eqref{reverse-sde}\)</span> 式对应的 ODE 为： <span class="math display">\[
 \mathrm d\x=\left[\f(\x,t)-\frac{1}{2}g^2(t)\nabla_\x\log p_t(\x)\right]\mathrm dt \tag{11}\label{reverse-ode}
-\]</span> 同上一节类似，我们可以用常用的 RK45 来解上式，也可以将其离散化为 <span class="math inline">\(\x_{i}=\x_{i+1}-\f_{i+1}(\x_{i+1})+\frac{1}{2}g_{i+1}^2s_\theta(\x_{i+1},i+1)\)</span> 求解，predictor-corrector samplers 的思想也依然适用。但是作者指出，尽管解 ODE 比解 SDE 更快，其生成图片的质量往往不如 SDE.</p>
+\]</span> 同上一节类似，我们可以用通用的 ODE 求解器（如 RK45）来解上式，也可以将其离散化为 <span class="math inline">\(\x_{i}=\x_{i+1}-\f_{i+1}(\x_{i+1})+\frac{1}{2}g_{i+1}^2s_\theta(\x_{i+1},i+1)\)</span> 求解，并且 predictor-corrector samplers 的思想也依然适用。但是作者指出，尽管解 ODE 比解 SDE 更快，其生成图片的质量往往不如 SDE.</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -550,8 +540,8 @@ t &amp;\gets t + \Delta t
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>连续时间扩散模型——SDE与ODE描述</div>
-      <div>https://xyfjason.github.io/blog-main/2022/12/04/连续时间扩散模型——SDE与ODE描述/</div>
+      <div>扩散模型的SDE与ODE描述</div>
+      <div>https://xyfjason.github.io/blog-main/2022/12/04/扩散模型的SDE与ODE描述/</div>
     </div>
     <div class="license-meta">
       
