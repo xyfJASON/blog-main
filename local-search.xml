@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>拉格朗日对偶</title>
+    <link href="/blog-main/2024/02/27/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6/"/>
+    <url>/blog-main/2024/02/27/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6/</url>
+    
+    <content type="html"><![CDATA[<h2 id="拉格朗日函数">拉格朗日函数</h2><p>考虑如下带约束的优化问题： <span class="math display">\[\begin{align}\min&amp;\quad f(\mathbf x)\\\text{s.t.}&amp;\quad g_i(\mathbf x)\leq 0,\quad i=1,\ldots,m\\&amp;\quad h_i(\mathbf x)=0,\quad i=1,\ldots,k\end{align}\]</span> 我们可以将其等价转换为无约束优化问题： <span class="math display">\[\min\quad f(\mathbf x)+\sum_{i=1}^mI_-(g_i(\mathbf x))+\sum_{i=1}^kI_0(h_i(\mathbf x))\]</span> 其中，<span class="math inline">\(I_-(u)\)</span> 与 <span class="math inline">\(I_0(u)\)</span> 定义为： <span class="math display">\[I_-(u)=\begin{cases}0,&amp;u\leq 0\\\infty,&amp;u&gt;0\end{cases}\quad\quad I_0(u)=\begin{cases}0,&amp;u=0\\\infty,&amp;u\neq 0\end{cases}\]</span> <img src="I.png" width=40% /></p><p>直观上，如果 <span class="math inline">\(g_i(\mathbf x)&gt;0\)</span>，那么 <span class="math inline">\(I_-(g_i(\mathbf x))=\infty\)</span>，因此为了最小化目标函数，必须有 <span class="math inline">\(g_i(\mathbf x)\leq 0\)</span>；同理，如果 <span class="math inline">\(h_i(\mathbf x)\neq0\)</span>，那么 <span class="math inline">\(I_0(h_i(\mathbf x))=\infty\)</span>，因此为了最小化目标函数，必须有 <span class="math inline">\(h_i(\mathbf x)=0\)</span>. 故二者等价。</p><p>然而，<span class="math inline">\(I_-(u)\)</span> 和 <span class="math inline">\(I_0(u)\)</span> 都有不可导点，这让我们难以求解问题。为此，一个常见的技巧就是<strong>用方便优化的函数代替它们</strong>。</p><p>例如，我们可以用如下的 <strong>logarithm barrier function</strong> 代替 <span class="math inline">\(I_-(u)\)</span>： <span class="math display">\[\hat I_-(u)=-\frac{1}{t}\log(-u),\quad t&gt;0\]</span> 也可以用如下的 <strong>penalty function</strong> 代替 <span class="math inline">\(I_-(u)\)</span>​： <span class="math display">\[\hat I_-(u)=\Phi(u)=\begin{cases}u^t,&amp;u\geq 0\quad(t&gt;1)\\0,&amp;\text{otherwise}\end{cases}\]</span> 还可以用 <strong>ReLU</strong> 代替 <span class="math inline">\(I_-(u)\)</span>： <span class="math display">\[\hat I_-(u)=\Phi(u)=\begin{cases}ku,&amp;u\geq 0\quad(k\geq 0)\\0,&amp;\text{otherwise}\end{cases}\]</span> 甚至可以用<strong>线性函数</strong>代替 <span class="math inline">\(I_-(u)\)</span>： <span class="math display">\[\hat I_-(u)=-\lambda u\quad(\lambda\leq0)\]</span> 上面四种函数都是 <span class="math inline">\(I_-(u)\)</span> 的下界，如下靠左四图所示：</p><p><img src="surrogate.png" width=100% /></p><p>这里我们特别考虑<strong>线性函数</strong>情形。对 <span class="math inline">\(I_0(u)\)</span> 也用线性函数做类似的代替，如上最右图所示： <span class="math display">\[\hat I_0(u)=-\nu u\quad(\nu\in\mathbb R)\]</span> 那么，用 <span class="math inline">\(\hat I_-(u)\)</span> 和 <span class="math inline">\(\hat I_0(u)\)</span> 代替 <span class="math inline">\(I_-(u)\)</span> 和 <span class="math inline">\(I_0(u)\)</span>，则优化目标变成： <span class="math display">\[L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)=f(\mathbf x)-\sum_{i=1}^m\lambda_ig_i(\mathbf x)-\sum_{i=1}^k\nu_ih_i(\mathbf x)\quad (\lambda_i\leq0,\,i=1,2,\ldots,m)\]</span> 这就是<strong>拉格朗日函数</strong>，其中 <span class="math inline">\(\lambda_i\)</span> 和 <span class="math inline">\(\nu_i\)</span> 称作<strong>拉格朗日乘子</strong>。</p><p>从推导过程可以看出，<strong>对于任意合法的解 <span class="math inline">\(\mathbf x\)</span>，拉格朗日函数都是原优化目标 <span class="math inline">\(f(\mathbf x)\)</span> 的下界</strong>： <span class="math display">\[L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)\leq f(\mathbf x),\quad \mathbf x\in \{\text{feasible solutions}\},\,\boldsymbol\lambda\leq0\]</span></p><h2 id="拉格朗日对偶函数">拉格朗日对偶函数</h2><p><strong>拉格朗日对偶函数</strong>定义为拉格朗日函数的下确界： <span class="math display">\[g(\boldsymbol\lambda, \boldsymbol\nu)=\inf_{\mathbf x}L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)\]</span> 于是对于合法的解 <span class="math inline">\(\mathbf x\)</span>，拉格朗日对偶函数 <span class="math inline">\(g(\boldsymbol\lambda,\boldsymbol\nu)\)</span>、拉格朗日函数 <span class="math inline">\(L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)\)</span> 和原优化目标 <span class="math inline">\(f(\mathbf x)\)</span> 有关系： <span class="math display">\[g(\boldsymbol\lambda,\boldsymbol\nu)\leq L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)\leq f(\mathbf x),\quad \mathbf x\in\{\text{feasible solutions}\},\,\boldsymbol\lambda\leq0\]</span> 注意对偶函数 <span class="math inline">\(g(\boldsymbol\lambda,\boldsymbol\nu)\)</span> 是 <span class="math inline">\(\boldsymbol\lambda,\boldsymbol\nu\)</span> 的函数，原函数 <span class="math inline">\(f(\mathbf x)\)</span> 是 <span class="math inline">\(\mathbf x\)</span> 的函数，<strong>二者通过拉格朗日函数 <span class="math inline">\(L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)\)</span> 作为桥梁相连接</strong>。</p><p><img src="rel.png" width=60% /></p><p>由于对偶函数是原函数的下界，所以对偶函数的最大值小于等于原函数的最小值。<strong>如果二者正好相等</strong>（即具有强对偶性，见下一节），那么原问题就可以转化为如下的<strong>对偶问题</strong>： <span class="math display">\[\begin{align}\max_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\quad g(\boldsymbol\lambda,\boldsymbol\nu)\\\text{s.t.}&amp;\quad\boldsymbol\lambda\leq\mathbf0\end{align}\]</span> 转化成对偶问题的好处在于——<strong>对偶函数一定是凹函数</strong>（即使原函数不是凸的或凹的），这是因为： <span class="math display">\[g(\boldsymbol\lambda,\boldsymbol\nu)=\inf_{\mathbf x}L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)=\inf_\mathbf x\left\{f(\mathbf x)-\sum_{i=1}^m\lambda_ig_i(\mathbf x)-\sum_{i=1}^k\nu_ih_i(\mathbf x)\right\}\]</span> 括号内是关于 <span class="math inline">\(\boldsymbol\lambda,\boldsymbol\nu\)</span> 的<strong>仿射函数</strong>，而 <span class="math inline">\(g(\boldsymbol\lambda,\boldsymbol\nu)\)</span> 是该仿射函数的逐点下确界，因而一定是凹函数。证明如下：为书写简便起见，记 <span class="math inline">\(\boldsymbol\gamma=(\boldsymbol\lambda,\boldsymbol\nu)\)</span>，设 <span class="math inline">\(0&lt;\theta&lt;1\)</span>，则： <span class="math display">\[\begin{align}g(\theta\boldsymbol\gamma_1+(1-\theta)\boldsymbol\gamma_2)&amp;=\inf_\mathbf xL(\mathbf x,\theta\boldsymbol\gamma_1+(1-\theta)\boldsymbol\gamma_2)\\&amp;=\inf_\mathbf x \big\{\theta L(\mathbf x,\boldsymbol\gamma_1)+(1-\theta)L(\mathbf x,\boldsymbol\gamma_2)\big\}&amp;&amp;L\text{ is affine}\\&amp;\geq\theta\inf_\mathbf xL(\mathbf x,\boldsymbol\gamma_1)+(1-\theta)\inf_\mathbf xL(\mathbf x,\boldsymbol\gamma_2)&amp;&amp;\text{inf&#39;s property}\\&amp;=\theta g(\boldsymbol\gamma_1)+(1-\theta)g(\boldsymbol\gamma_2)\end{align}\]</span> 因此 <span class="math inline">\(g(\boldsymbol\lambda,\boldsymbol\nu)\)</span> 是凹函数。于是，对偶问题一定是一个凸优化问题，有时会比原问题更容易求解。</p><h2 id="弱强对偶性">弱/强对偶性</h2><p>尽管对偶问题有着非常好的性质（一定是凸优化问题），但是一般情况下我们只能保证其最优解<strong>小于等于</strong>原问题最优解，这就是<strong>弱对偶性</strong>。如果对偶问题最优解<strong>一定等于</strong>原问题最优解，那么称该问题具有<strong>强对偶性</strong>。</p><p><strong>Slater 条件</strong>是强对偶性成立的<strong>充分非必要条件</strong>：设原问题是<strong>凸优化问题</strong>，即 <span class="math inline">\(f(\mathbf x),\,g_i(\mathbf x)\)</span> 均为<strong>凸函数</strong>且 <span class="math inline">\(h_i(\mathbf x)\)</span> 为<strong>仿射函数</strong>，若存在 <span class="math inline">\(\mathbf x\in\text{relint}(\mathcal D)\)</span> 使得 <span class="math display">\[\begin{align}&amp;g_i(\mathbf x)&lt;0,\quad i=1,\ldots,m\\&amp;h_i(\mathbf x)=0,\quad i=1,\ldots,k\end{align}\]</span> 成立，则强对偶性成立。其中 <span class="math inline">\(\text{relint}(\mathcal D)\)</span> 表示定义域的相对内部 (relative interior)，即定义域去除边界的所有点构成的集合。</p><p>注意 Slater 条件是充分非必要条件，因此满足 Slater 条件一定具有强对偶性，但不满足 Slater 条件也可能具有强对偶性。</p><h2 id="几何视角与-kkt-条件">几何视角与 KKT 条件</h2><h3 id="等式约束">等式约束</h3><p>考虑如下只有一个<strong>等式约束</strong>的优化问题： <span class="math display">\[\begin{align}\min&amp;\quad f(\mathbf x)\\\text{s.t.}&amp;\quad h(\mathbf x)=0\end{align}\]</span> 为方便可视化，假设 <span class="math inline">\(\mathbf x=(x,y)^T\in\mathbb R^2\)</span>，作出 <span class="math inline">\(f(\mathbf x)\)</span> 的等值面以及 <span class="math inline">\(h(\mathbf x)=0\)</span> 代表的约束曲面，如下图所示：</p><p><img src="geo1.png" width=30% /></p><p>首先注意到<strong>约束曲面上任一点 <span class="math inline">\(\mathbf x\)</span> 关于 <span class="math inline">\(h\)</span> 的梯度 <span class="math inline">\(\nabla h(\mathbf x)\)</span> 与约束曲面是正交的</strong>。为了说明这一点，考虑约束曲面上的一点 <span class="math inline">\(\mathbf x\)</span> 和也在约束曲面上的邻近的一点 <span class="math inline">\(\mathbf x+\epsilon\)</span>. 在 <span class="math inline">\(\mathbf x\)</span> 处做泰勒展开： <span class="math display">\[h(\mathbf x+\epsilon)\simeq h(\mathbf x)+\epsilon^T\nabla h(\mathbf x)\]</span> 由于 <span class="math inline">\(\mathbf x,\mathbf x+\epsilon\)</span> 都在约束曲面上，所以 <span class="math inline">\(h(\mathbf x+\epsilon)=h(\mathbf x)=0\)</span>，于是 <span class="math inline">\(\epsilon^T\nabla h(\mathbf x)≃0\)</span>. 当 <span class="math inline">\(\Vert\epsilon\Vert\to0\)</span> 时，有 <span class="math inline">\(\epsilon^T\nabla h(\mathbf x)\to0\)</span>. 由于 <span class="math inline">\(\epsilon\)</span> 是平行于约束曲面的，所以 <span class="math inline">\(\nabla h(\mathbf x)\)</span> 就是约束曲面的法向量方向，即与之正交。</p><p>现在我们想找到一个 <span class="math inline">\(\mathbf x^\ast\)</span> 使得 <span class="math inline">\(f(\mathbf x^\ast)\)</span> 达到最小。<strong>这样的点一定满足 <span class="math inline">\(\nabla f(\mathbf x^\ast)\)</span> 也与约束曲面正交，否则我们可以将其继续在约束曲面上沿梯度反方向移动，使得 <span class="math inline">\(f(\mathbf x^\ast)\)</span></strong> 更小。综上，<span class="math inline">\(\nabla f(\mathbf x^\ast)\)</span> 与 <span class="math inline">\(\nabla h(\mathbf x^\ast)\)</span> 平行，即存在一个 <span class="math inline">\(\boldsymbol\nu^\ast\)</span>，使得： <span class="math display">\[\nabla f(\mathbf x^\ast)=\boldsymbol\nu^\ast\nabla h(\mathbf x^\ast)\]</span> 如果我们聪明地构造函数： <span class="math display">\[L(\mathbf x,\boldsymbol\nu)=f(\mathbf x)-\boldsymbol\nu h(\mathbf x)\]</span> 那么 <span class="math inline">\(\mathbf x^\ast\)</span> 就是 <span class="math inline">\(\nabla_\mathbf x L(\mathbf x,\boldsymbol\nu)=\mathbf0\)</span> 的解。进一步地，令 <span class="math inline">\(\nabla_\boldsymbol\nu L(\mathbf x,\boldsymbol\nu)=\mathbf 0\)</span> 就恰好得到了约束条件 <span class="math inline">\(h(\mathbf x)=0\)</span>. 因此，求解原问题就相当于在求解拉格朗日函数 <span class="math inline">\(L(\mathbf x,\boldsymbol\nu)\)</span> 的驻点。换句话说，<span class="math inline">\(\mathbf x^\ast,\boldsymbol\nu^\ast\)</span> 为最优解的<strong>必要条件</strong>为： <span class="math display">\[\begin{align}\nabla_\mathbf x L(\mathbf x^\ast,\boldsymbol\nu^\ast)&amp;=\nabla f(\mathbf x^\ast)-\boldsymbol\nu^\ast\nabla h(\mathbf x^\ast)=\mathbf 0\\\nabla_\boldsymbol\nu L(\mathbf x^\ast,\boldsymbol\nu^\ast)&amp;=h(\mathbf x^\ast)=0\end{align}\]</span></p><h3 id="不等约束">不等约束</h3><p>接下来考虑具有<strong>不等约束</strong>的优化问题： <span class="math display">\[\begin{align}\min&amp;\quad f(\mathbf x)\\\text{s.t.}&amp;\quad g(\mathbf x)\leq0\end{align}\]</span> 此时可行域不再是一个约束曲面，而是曲面所包围的一个区域。仍然构造拉格朗日函数： <span class="math display">\[L(\mathbf x,\boldsymbol\lambda)=f(\mathbf x)-\boldsymbol\lambda g(\mathbf x)\]</span> 分两种情形讨论：</p><ol type="1"><li>最优解落在约束区域内，即 <span class="math inline">\(g(\mathbf x^\ast)&lt;0\)</span>，如下右图所示。此时约束条件并没有发挥作用，问题退化为无约束情形。因此若 <span class="math inline">\(\mathbf x^\ast\)</span> 是最优解，则满足 <span class="math inline">\(\nabla f(\mathbf x^\ast)=\mathbf 0\)</span>，对应拉格朗日乘子 <span class="math inline">\(\boldsymbol\lambda^\ast=\mathbf0\)</span>；</li><li>最优解落在约束区域边界上，即 <span class="math inline">\(g(\mathbf x^\ast)=0\)</span>，如下左图所示。此时回到了等式约束下的优化问题，可以通过解拉格朗日函数的驻点求解。但是为了让 <span class="math inline">\(f(\mathbf x^\ast)\)</span> 最小，<span class="math inline">\(\nabla f(\mathbf x^\ast)\)</span> 必须朝向区域 <span class="math inline">\(g(\mathbf x)&lt;0\)</span> 的内部，否则沿着梯度反方向移动就可以在 <span class="math inline">\(g(\mathbf x)&lt;0\)</span> 区域内找到更小的 <span class="math inline">\(f(\mathbf x^\ast)\)</span>. 由于 <span class="math inline">\(\nabla f(\mathbf x^\ast)=\boldsymbol\lambda^\ast\nabla g(\mathbf x^\ast)\)</span>，所以此时 <span class="math inline">\(\boldsymbol\lambda^\ast&lt;\mathbf0\)</span>.</li></ol><p><img src="geo2.png" width=60% /></p><p>上述两种情形可以通过 <span class="math inline">\(\boldsymbol\lambda^\ast g(\mathbf x^\ast)=\mathbf0\)</span> 统一起来。所以综上所述，<span class="math inline">\(\mathbf x^\ast,\boldsymbol\lambda^\ast\)</span> 是最优解的<strong>必要条件</strong>为： <span class="math display">\[\begin{align}\nabla_\mathbf xL(\mathbf x^\ast,\boldsymbol\lambda^\ast)&amp;=\mathbf0\\g(\mathbf x^\ast)&amp;\leq 0\\\boldsymbol\lambda^\ast&amp;\leq \mathbf0\\\boldsymbol\lambda^\ast g(\mathbf x^\ast)&amp;=\mathbf0\end{align}\]</span></p><h3 id="kkt-条件">KKT 条件</h3><p>将上述结果推广到多个等式和不等式约束的情况下，考虑一般性的优化问题及其对偶问题： <span class="math display">\[\begin{align}\min&amp;\quad f(\mathbf x)\\\text{s.t.}&amp;\quad g_i(\mathbf x)\leq 0,\quad i=1,\ldots,m\\&amp;\quad h_i(\mathbf x)=0,\quad i=1,\ldots,k\\\\\max_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\quad g(\boldsymbol\lambda,\boldsymbol\nu)\\\text{s.t.}&amp;\quad\boldsymbol\lambda\leq\mathbf0\end{align}\]</span> 构造拉格朗日函数： <span class="math display">\[L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)=f(\mathbf x)-\sum_{i=1}^m\lambda_ig_i(\mathbf x)-\sum_{i=1}^k\nu_ih_i(\mathbf x)\quad (\lambda_i\leq0,\,i=1,2,\ldots,m)\]</span> <strong>假设强对偶性成立</strong>，则 <span class="math inline">\(\mathbf x^\ast,\boldsymbol\lambda^\ast,\boldsymbol\nu^\ast\)</span> 是原问题和对偶问题的最优解的<strong>必要条件</strong>为： <span class="math display">\[\begin{align}\nabla_\mathbf xL(\mathbf x^\ast,\boldsymbol\lambda^\ast,\boldsymbol\nu^\ast)&amp;=0&amp;&amp;\text{(Stationary point)}\\g_i(\mathbf x^\ast)\leq0,\,h_i(\mathbf x^\ast)&amp;=0&amp;&amp;\text{(Primal feasibility)}\\\lambda_i^\ast&amp;\leq0&amp;&amp;\text{(Dual feasibility)}\\\lambda_i^\ast g_i(\mathbf x^\ast)&amp;=0&amp;&amp;\text{(Complementary slackness)}\end{align}\]</span> 上述条件统称作 <strong>KKT (Karush-Kuhn-Tucker) 条件</strong>。</p><div class="note note-secondary">            <p>上文从几何视角直观地展现了 KKT 条件的意义，但不是严谨证明。下面给出互补松弛性条件的证明： <span class="math display">\[\begin{align}f(\mathbf x^\ast)&amp;=g(\boldsymbol\lambda^\ast,\boldsymbol\nu^\ast)\\&amp;=\inf_\mathbf x\left\{f(\mathbf x)-\sum_{i=1}^m\lambda_i^\ast g_i(\mathbf x)-\sum_{i=1}^k\nu_i^\ast h_i(\mathbf x)\right\}\\&amp;\leq f(\mathbf x^\ast)-\sum_{i=1}^m\lambda_i^\ast g_i(\mathbf x^\ast)-\sum_{i=1}^k\nu_i^\ast h_i(\mathbf x^\ast)\\&amp;\leq f(\mathbf x^\ast)\end{align}\]</span> 注意第一个等号需要强对偶性的支持。上式中的小于等于都只能取等，易知： <span class="math display">\[\sum_{i=1}^m\lambda_i^\ast g_i(\mathbf x^\ast)=0\]</span> 又由于 <span class="math inline">\(\lambda_i^\ast\leq0,\,g_i(\mathbf x^\ast)\leq0\implies \lambda_i^\ast g_i(\mathbf x^\ast)\geq0\)</span>，所以只能是 <span class="math inline">\(\lambda_i^\ast g_i(\mathbf x^\ast)=0\)</span>，即互补松弛性条件成立。</p>          </div><h2 id="参考资料">参考资料</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Dongbo Bu. CS711008Z Algorithm Design and Analysis. Lecture 9. Algorithm design technique: Linear programming and duality. https://deltadbu.github.io/UCAS_algorithm_course/Lectures/Lec9.pdf <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>Bishop, Christopher. Pattern recognition and machine learning. <em>Springer google schola</em> 2 (2006): 5-43. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
+    
+    
+    <categories>
+      
+      <category>技术博客</category>
+      
+      <category>数学</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>algorithms</tag>
+      
+      <tag>math</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>扩散模型统一框架</title>
     <link href="/blog-main/2024/02/20/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%BB%9F%E4%B8%80%E6%A1%86%E6%9E%B6/"/>
     <url>/blog-main/2024/02/20/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%BB%9F%E4%B8%80%E6%A1%86%E6%9E%B6/</url>
@@ -24,9 +53,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -1478,9 +1507,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -1509,9 +1538,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -1540,9 +1569,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -1571,9 +1600,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -1602,9 +1631,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -1633,9 +1662,9 @@
     
     <tags>
       
-      <tag>generative models</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>generative models</tag>
       
     </tags>
     
@@ -2023,9 +2052,9 @@
     
     <tags>
       
-      <tag>pytorch</tag>
-      
       <tag>deep learning</tag>
+      
+      <tag>pytorch</tag>
       
     </tags>
     
@@ -2160,9 +2189,9 @@
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>deep learning</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -2650,9 +2679,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2938,9 +2967,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3040,9 +3069,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3123,9 +3152,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3171,9 +3200,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3200,9 +3229,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3229,9 +3258,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3258,9 +3287,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3287,9 +3316,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3316,9 +3345,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3345,9 +3374,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3374,9 +3403,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
