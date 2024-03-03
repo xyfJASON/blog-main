@@ -1,0 +1,879 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="在机器学习研究中，我们有时会遇到以“一个集合的向量”而非“一个向量”为基本元素的问题，为此需要定义这些向量集合之间的距离。特别地，如果允许我们将每个向量集合视作一个线性子空间，那么问题就变成了如何度量两个线性子空间之间的距离。 Grassmann Manifold 用数学语言描述，设 \(a_1,\ldots,a_k\in\mathbb R^n\) 和 \(b_1,\ldots,b_k\in\ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="子空间的距离">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/02/%E5%AD%90%E7%A9%BA%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="在机器学习研究中，我们有时会遇到以“一个集合的向量”而非“一个向量”为基本元素的问题，为此需要定义这些向量集合之间的距离。特别地，如果允许我们将每个向量集合视作一个线性子空间，那么问题就变成了如何度量两个线性子空间之间的距离。 Grassmann Manifold 用数学语言描述，设 \(a_1,\ldots,a_k\in\mathbb R^n\) 和 \(b_1,\ldots,b_k\in\ma">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/distance-subspace.png">
+<meta property="article:published_time" content="2024-03-02T12:30:11.000Z">
+<meta property="article:modified_time" content="2024-03-03T08:41:12.521Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta property="article:tag" content="linear algebra">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/distance-subspace.png">
+  
+  
+  
+  <title>子空间的距离 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/distance-subspace.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="子空间的距离"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-02 20:30" pubdate>
+          2024年3月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">子空间的距离</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>在机器学习研究中，我们有时会遇到以“一个集合的向量”而非“一个向量”为基本元素的问题，为此需要定义这些向量集合之间的距离。特别地，如果允许我们将每个向量集合视作一个线性子空间，那么问题就变成了如何度量两个线性子空间之间的距离。</p>
+<h2 id="grassmann-manifold">Grassmann Manifold</h2>
+<p>用数学语言描述，设 <span class="math inline">\(a_1,\ldots,a_k\in\mathbb R^n\)</span> 和 <span class="math inline">\(b_1,\ldots,b_k\in\mathbb R^n\)</span> 是两个线性无关向量组 (<span class="math inline">\(1\leq k\leq n\)</span>)，分别张成 <span class="math inline">\(k\)</span> 维子空间： <span class="math display">\[
+\mathcal A=\text{Span}\{a_1,\ldots,a_k\}\subset\mathbb R^n,\quad \mathcal B=\text{Span}\{b_1,\ldots,b_k\}\subset\mathbb R^n
+\]</span> 我们希望寻求一个度量 <span class="math inline">\(d(\mathcal A,\mathcal B)\)</span> 来衡量子空间 <span class="math inline">\(\mathcal A\)</span> 和 <span class="math inline">\(\mathcal B\)</span>​​​ 之间的距离。</p>
+<p>严谨来讲，“距离”应该放在一个抽象空间中。因此，定义 <strong>Grassmann manifold</strong> 为 <span class="math inline">\(\mathbb R^n\)</span> 上所有 <span class="math inline">\(k\)</span> 维线性子空间构成的集合： <span class="math display">\[
+\text{Gr}(k,n)=\{k\text{-dim linear subspaces of }\mathbb R^n\}
+\]</span> 那么 <span class="math inline">\(\mathcal A,\mathcal B\in \text{Gr}(k,n)\)</span>. 也就是说，从 Grassmann manifold 的角度，子空间 <span class="math inline">\(\mathcal A,\mathcal B\)</span> 可以视为 <span class="math inline">\(\text{Gr}(k,n)\)</span> 上的两个点，<span class="math inline">\(d(\mathcal A,\mathcal B)\)</span> 是这两个点之间的距离。</p>
+<p><img src="manifold.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% alt="Grassmann Discriminant Analysis: a Unifying View on Subspace-Based Learning. 符号与本文略有不同" /></p>
+<h2 id="principle-angles">Principle Angles</h2>
+<p>为了寻求 <span class="math inline">\(d(\mathcal A,\mathcal B)\)</span>，我们从最简单的情形入手。当 <span class="math inline">\(n=2,k=1\)</span> 时，<span class="math inline">\(\mathcal A,\mathcal B\)</span> 是二维平面上的过原点的直线，那么一个自然的想法是用直线间的夹角作为距离度量： <span class="math display">\[
+d(\mathcal A,\mathcal B)=\theta,\quad\text{where }\cos\theta=a^Tb\;(\Vert a\Vert=\Vert b\Vert=1)
+\]</span> 受到二维情形的启发，当 <span class="math inline">\(n&gt;2\)</span>​ 时，我们先在 <span class="math inline">\(\mathcal A,\mathcal B\)</span> 中分别找一个方向，使得夹角尽可能小（点积尽可能大）： <span class="math display">\[
+\begin{align}
+\max\quad&amp; a^Tb\\
+\text{s.t.}\quad&amp;a\in \mathcal A,\,b\in \mathcal B\\
+&amp;\Vert a\Vert=\Vert b\Vert=1
+\end{align}
+\]</span> 设最优解为 <span class="math inline">\(a_1^\ast,b_1^\ast\)</span>. 接下来再分别找一个方向，使得夹角尽可能小，但要求与前一个方向正交： <span class="math display">\[
+\begin{align}
+\max\quad&amp; a^Tb\\
+\text{s.t.}\quad&amp; a\in \mathcal A,\,b\in \mathcal B\\
+&amp;\Vert a\Vert=1,\,a^Ta_1^\ast=0\\
+&amp;\Vert b\Vert=1,\,b^Tb_1^\ast=0
+\end{align}
+\]</span> 以此类推，我们不断地找与已知方向正交的、夹角最小的方向： <span class="math display">\[
+\begin{align}
+\max\quad&amp;a^Tb\\
+\text{s.t.}\quad&amp; a\in \mathcal A,b\in \mathcal B\\
+&amp;\Vert a\Vert=1,\,a^Ta_1^\ast=\cdots=a^Ta_{j-1}^\ast=0\\
+&amp;\Vert b\Vert=1,\,b^Tb_1^\ast=\cdots=b^Tb_{j-1}^\ast=0\\
+\end{align}
+\]</span> 这样定义了 <span class="math inline">\(k\)</span> 个优化问题。设它们的最优解分别为 <span class="math inline">\(a_1^\ast,b_1^\ast,\ldots,a_k^\ast,b_k^\ast\)</span>，则每一对解之间的夹角余弦值为： <span class="math display">\[
+\cos\theta_j={a_j^\ast}^T b_j^\ast,\quad j=1,\ldots,k
+\]</span> 称这些夹角 <span class="math inline">\(\{\theta_1,\ldots,\theta_k\}\)</span> 为 <strong>principle angles</strong>.</p>
+<p>由于这 <span class="math inline">\(k\)</span> 个优化问题是顺序求解的，所以一定有 <span class="math inline">\(\theta_1\leq\cdots\leq\theta_k\)</span>；又因为 <span class="math inline">\(0\leq {a_j^\ast}^Tb_j^\ast\leq 1\)</span>，所以 <span class="math inline">\(0\leq\theta_j\leq\pi/2\)</span>.</p>
+<h2 id="grassmann-distance">Grassmann Distance</h2>
+<p>在 principle angles 的基础上，定义 <strong>Grassmann distance</strong> 为： <span class="math display">\[
+d(\mathcal A,\mathcal B)=\left(\sum_{i=1}^k\theta_i^2\right)^{1/2}
+\]</span></p>
+<p>也即向量 <span class="math inline">\((\theta_1,\ldots,\theta_k)\)</span> 的 2-范数。有文献指出 Grassmann distance 等价于 Grassmann manifold 上的测地距离。</p>
+<p>众所周知，距离要满足三个性质——非负性、对称性和三角不等式，下面证明 Grassmann distance 满足这些性质。</p>
+<ul>
+<li><strong>非负性</strong>：<span class="math inline">\(d(\mathcal A,\mathcal B)\geq 0\)</span> 显然；并且 <span class="math inline">\(d(\mathcal A,\mathcal B)=0\iff \theta_i=0\iff a_i^\ast=b_i^\ast\iff \mathcal A=\mathcal B\)</span>.</li>
+<li><strong>对称性</strong>：显然成立。</li>
+<li><strong>三角不等式</strong>：由于 <span class="math inline">\(d(\mathcal A,\mathcal B)\)</span> 是 2-范数的形式，因此满足三角不等式。</li>
+</ul>
+<p>综上，Grassmann distance 是一个合法的距离。</p>
+<p>事实上，除了 Grassmann distance，基于 principle angles 还可以定义很多距离：</p>
+<p><img src="distances.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% alt="Lek-Heng Lim. distances between objects of different dimensions. 符号与本文略有不同" /></p>
+<h2 id="computation-svd">Computation: SVD</h2>
+<p>至此，虽然我们用 <span class="math inline">\(k\)</span> 个优化问题定义出了 principle angles，进而定义出了 Grassmann distance，但显然不能真的靠依次解优化问题来计算。事实上，principle angles 可以通过<strong>奇异值分解</strong>计算，下面进行推导。</p>
+<p>不妨设 <span class="math inline">\(a_1,\ldots,a_k\)</span> 和 <span class="math inline">\(b_1,\ldots,b_k\)</span> 都是单位正交向量，不然可以通过 Gram-Schmidt 正交化过程做到。设 <span class="math inline">\(A=[a_1,\ldots,a_k]\in\mathbb R^{n\times k}\)</span>，<span class="math inline">\(B=[b_1,\ldots,b_k]\in\mathbb R^{n\times k}\)</span>，则 <span class="math inline">\(A,B\)</span> 均是 orthonormal 矩阵。于是第一个优化问题可以改写作： <span class="math display">\[
+\begin{align}
+\max\quad&amp; (Ax)^T(By)\\
+\text{s.t.}\quad&amp;\Vert Ax\Vert=\Vert By\Vert=1\\
+&amp;x\in\mathbb R^k,\;y\in\mathbb R^k
+\end{align}
+\]</span> 根据正交性，<span class="math inline">\(A\)</span> 不改变 <span class="math inline">\(x\)</span> 的长度，所以 <span class="math inline">\(\Vert Ax\Vert=1\iff \Vert x\Vert=1\iff x^Tx=1\)</span>，<span class="math inline">\(\Vert By\Vert\)</span> 同理，因此问题等价于： <span class="math display">\[
+\begin{align}
+\max\quad&amp; x^TA^TBy\\
+\text{s.t.}\quad&amp;x^Tx=y^Ty=1\\
+&amp;x\in\mathbb R^k,\;y\in\mathbb R^k
+\end{align}
+\]</span> 定义拉格朗日函数： <span class="math display">\[
+L(x,y,\lambda,\mu)=x^TA^TBy-\lambda(x^Tx-1)-\mu(y^Ty-1)
+\]</span> 求导令为零： <span class="math display">\[
+\dfrac{\partial L}{\partial x}=A^TBy-2\lambda x=0\implies A^TBy=2\lambda x
+\]</span> 这意味着 <span class="math inline">\(x,y\)</span> 是 <span class="math inline">\(A^TB\)</span> 的左右奇异向量，<span class="math inline">\(2\lambda\)</span> 是对应奇异值。进一步地，为了最大化优化目标 <span class="math inline">\(x^TA^TBy=2\lambda\)</span>，应取 <span class="math inline">\(2\lambda\)</span> 为最大奇异值。依据同样的道理，第二个优化问题的最优解就是次大奇异值和对应奇异向量……第 <span class="math inline">\(k\)</span> 个优化问题的最优解就是第 <span class="math inline">\(k\)</span> 大的奇异值和对应奇异向量。</p>
+<p>综上，principle angles 可以按如下方式计算：</p>
+<ol type="1">
+<li><p>首先对 <span class="math inline">\(A^TB\in\mathbb R^{k\times k}\)</span> 做 SVD： <span class="math display">\[
+A^TB=U\Sigma V^T
+\]</span> 其中 <span class="math inline">\(\Sigma=\text{diag}(\sigma_1,\ldots,\sigma_k)\)</span> 且 <span class="math inline">\(\sigma_1\geq \cdots\geq\sigma_k\)</span>.</p></li>
+<li><p>计算 principle angles： <span class="math display">\[
+\cos\theta_i=\sigma_i,\quad i=1,\ldots,k
+\]</span></p></li>
+</ol>
+<p>简便起见，这两步也可以合起来写作： <span class="math display">\[
+A^TB=U\cos(\Theta)V^T,\quad \Theta=\text{diag}(\theta_1,\ldots,\theta_k),\quad \theta_1\leq\cdots\leq\theta_k
+\]</span></p>
+<p>有了 principle angles，Grassmann distance 就好计算了： <span class="math display">\[
+d(\mathcal A,\mathcal B)=\left(\sum_{i=1}^k\theta_i^2\right)^{1/2}
+\]</span> 特别地，对于上一节最后表格中的 Chordal distance，有： <span class="math display">\[
+d^\kappa(\mathcal A,\mathcal B)=\left(\sum_{i=1}^k\sin^2\theta_i\right)^{1/2}=\left(\sum_{i=1}^k\left(1-\cos^2\theta_i\right)\right)^{1/2}=\left(\sum_{i=1}^k\left(1-\sigma_i^2\right)\right)^{1/2}=\left(k-\sum_{i=1}^k\sigma_i^2\right)^{1/2}
+\]</span> 由于奇异值的平方和等于矩阵 F-范数的平方，所以： <span class="math display">\[
+d^\kappa(\mathcal A,\mathcal B)=\left(k-\Vert A^TB\Vert_F^2\right)^{1/2}
+\]</span> 因此使用 Chordal distance 时我们甚至用不着做 SVD，直接算 <span class="math inline">\(A^TB\)</span> 的 F-范数（所有元素的平方和）就够了，非常方便。</p>
+<h2 id="extension-different-dimensions">Extension: Different Dimensions</h2>
+<p>截至目前，我们假设 <span class="math inline">\(\mathcal A\)</span> 和 <span class="math inline">\(\mathcal B\)</span> 具有相同的维度 <span class="math inline">\(k\)</span>，但如果 <span class="math inline">\(\mathcal A,\mathcal B\)</span> 维度不同（不妨设 <span class="math inline">\(\mathcal A\)</span> 比 <span class="math inline">\(\mathcal B\)</span> 维度更小）该怎么办呢？一个想法是：将 <span class="math inline">\(\mathcal A\)</span> “膨胀”到后再与 <span class="math inline">\(\mathcal B\)</span> 比较，或者将 <span class="math inline">\(\mathcal B\)</span> “缩减”后再与 <span class="math inline">\(\mathcal A\)</span> 比较。</p>
+<p>具体而言，设 <span class="math inline">\(\mathcal A\)</span> 是 <span class="math inline">\(\mathbb R^n\)</span> 中的 <span class="math inline">\(k\)</span> 维子空间而 <span class="math inline">\(B\)</span> 是 <span class="math inline">\(l\)</span> 维子空间，其中 <span class="math inline">\(1\leq k\leq l\leq n\)</span>，即： <span class="math display">\[
+\mathcal A\in\text{Gr}(k,n),\quad\mathcal B\in\text{Gr}(l,n),\quad1\leq k\leq l\leq n
+\]</span> 定义 <strong>Schubert varieties</strong> 为： <span class="math display">\[
+\begin{align}
+\Omega_+(\mathcal A)&amp;=\{\mathcal P\in\text{Gr}(l,n)\mid \mathcal A\subseteq\mathcal P\}\\
+\Omega_-(\mathcal B)&amp;=\{\mathcal P\in\text{Gr}(k,n)\mid \mathcal P\subseteq\mathcal B\}
+\end{align}
+\]</span> 例如，一条直线的 <span class="math inline">\(\Omega_+\)</span> 可以是包含这条直线的所有平面；反过来，一个平面的 <span class="math inline">\(\Omega_-\)</span> 可以是该平面包含的所有直线。</p>
+<p>于是 <span class="math inline">\(\Omega_+(\mathcal A)\)</span> 与 <span class="math inline">\(\mathcal B\)</span> 之间的距离可以定义为： <span class="math display">\[
+\delta_+(\mathcal A,\mathcal B)=\min\{d(\mathcal P,\mathcal B)\mid\mathcal P\in\Omega_+(\mathcal A)\}
+\]</span> 类似的，<span class="math inline">\(\mathcal A\)</span> 与 <span class="math inline">\(\Omega_-(\mathcal B)\)</span> 之间的距离可以定义为： <span class="math display">\[
+\delta_-(\mathcal A,\mathcal B)=\min\{d(\mathcal A,\mathcal P)\mid\mathcal P\in\Omega_-(\mathcal B)\}
+\]</span> 文献 (Ye-Lim, 2016) 证明： <span class="math display">\[
+\delta_+(\mathcal A,\mathcal B)=\delta_-(\mathcal A,\mathcal B)=\left(\sum_{i=1}^{\min(k,l)}\theta_i^2\right)^{1/2}
+\]</span> 其中： <span class="math display">\[
+A^TB=U\cos(\Theta)V^T,\quad \Theta=\text{diag}\left(\theta_1,\ldots,\theta_{\min(k,l)},\pi/2,\ldots,\pi/2\right),\quad \theta_1\leq\cdots\leq\theta_{\min(k,l)}
+\]</span> 因此即便 <span class="math inline">\(\mathcal A,\mathcal B\)</span> 维度不同，也可以用与上一节相同的方法计算二者的距离。</p>
+<p>值得说明的是，此时 <span class="math inline">\(\delta(\mathcal A,\mathcal B)\)</span> 其实并不满足距离的性质。例如，当 <span class="math inline">\(\mathcal A\subset \mathcal B\)</span> 时，有 <span class="math inline">\(\delta(\mathcal A,\mathcal B)=0\)</span>，不满足非负性，进而不满足三角不等式，但满足对称性。</p>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Hamm, Jihun, and Daniel D. Lee. Grassmann discriminant analysis: a unifying view on subspace-based learning. In <em>Proceedings of the 25th international conference on Machine learning</em>, pp. 376-383. 2008. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Ye, Ke, and Lek-Heng Lim. Schubert varieties and distances between subspaces of different dimensions. <em>SIAM Journal on Matrix Analysis and Applications</em> 37, no. 3 (2016): 1176-1197. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Jackson Van Dyke. Distances between subspaces. <a target="_blank" rel="noopener" href="https://web.ma.utexas.edu/users/vandyke/notes/deep_learning_presentation/presentation.pdf">link</a> <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Lek-Heng Lim. distances between objects of different dimensions. <a target="_blank" rel="noopener" href="http://helper.ipam.ucla.edu/publications/glws1/glws1_15465.pdf">link</a> <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+        <a href="/blog-main/tags/linear-algebra/" class="print-no-link">#linear algebra</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>子空间的距离</div>
+      <div>https://xyfjason.github.io/blog-main/2024/03/02/子空间的距离/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2024/02/27/%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AF%B9%E5%81%B6/" title="拉格朗日对偶">
+                        <span class="hidden-mobile">拉格朗日对偶</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
