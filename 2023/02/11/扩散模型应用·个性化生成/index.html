@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-personalized.png">
 <meta property="article:published_time" content="2023-02-11T05:36:49.000Z">
-<meta property="article:modified_time" content="2023-10-12T12:17:34.193Z">
+<meta property="article:modified_time" content="2024-03-04T09:37:46.725Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.8k 字
+          2.3k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          16 分钟
+          20 分钟
         
       </span>
     
@@ -336,9 +336,8 @@
 <p><span class="label label-primary">Tel Aviv University</span> <span class="label label-primary">NVIDIA</span> <span class="label label-default">2022.08.02</span></p>
 <p>顾名思义，Textual Inversion<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Gal, Rinon, Yuval Alaluf, Yuval Atzmon, Or Patashnik, Amit H. Bermano, Gal Chechik, and Daniel Cohen-Or. An image is worth one word: Personalizing text-to-image generation using textual inversion. *arXiv preprint arXiv:2208.01618* (2022).">[1]</span></a></sup> 采用类似于 GAN Inversion 的方式——在 text embedding 空间中寻找一个向量来重建原图。具体而言，给定 3-5 张描述某概念的图像，通过如下优化目标找到 word embedding <span class="math inline">\(v_\ast\)</span>，使得提示词 <span class="math inline">\(\text{A photo of }S_\ast\)</span> 能够重建输入图像： <span class="math display">\[
 v_\ast=\arg\min_v \mathbb E_{z\sim\mathcal E(x),\,y,\,\epsilon\sim\mathcal N(0,1),\,t}\left[\Vert\epsilon-\epsilon_\theta(z_t,t,c_\theta(y,v_\ast))\Vert_2^2\right]
-\]</span> 流程图如下：</p>
-<p><img src="textual-inversion.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p>Textual Inversion 的主体内容就是这些，简单有效，并且最后只需要保存 embedding vector，所以文件非常小；但是效果会比微调整个模型的 DreamBooth（见下文）和微调额外网络的 LoRA 更差一些。</p>
+\]</span> <img src="textual-inversion.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>Textual Inversion 简单有效，并且最后只需要保存 embedding vector，所以文件非常小；但是效果会比微调整个模型的 DreamBooth 和微调额外网络的 LoRA（见下文）更差一些。</p>
 <div class="note note-secondary">
             <details><summary><b>点击查看 Textual Inversion 的生成样例（摘自<a target="_blank" rel="noopener" href="https://textual-inversion.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://textual-inversion.github.io/static/images/editing/fluffy.JPG" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://textual-inversion.github.io/static/images/editing/elephant.JPG" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://textual-inversion.github.io/static/images/style/style.JPG" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
@@ -399,6 +398,30 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 <div class="note note-secondary">
             <details><summary><b>点击查看 SVDiff 的生成样例（摘自<a target="_blank" rel="noopener" href="https://svdiff.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://svdiff.github.io/images/teaser_large.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
+<h2 id="ziplora">ZipLoRA</h2>
+<p><span class="label label-primary">Google</span> <span class="label label-primary">UIUC</span> <span class="label label-default">2023.11.22</span></p>
+<p>自 DreamBooth + LoRA 提出后，该方法得到了人们的广泛使用。但是随之而来了一个问题：能否同时使用多个 LoRA？早期人们的解决方案是直接将两个 LoRA 的权重按比例加起来： <span class="math display">\[
+\Delta W_\text{merge}=w_1\cdot\Delta W_1+w_2\cdot\Delta W_2
+\]</span> 其中 <span class="math inline">\(w_1,w_2\)</span> 是超参数，控制各个 LoRA 的“强度”。不过，为了达到理想的效果，这两个超参数往往需要仔细调整，非常不方便。</p>
+<p>为此，研究人员提出 ZipLoRA<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote">&lt;span class="hint--top hint--rounded" aria-label="Shah, Viraj, Nataniel Ruiz, Forrester Cole, Erika Lu, Svetlana Lazebnik, Yuanzhen Li, and Varun Jampani. "Ziplora: Any subject in any style by effectively merging loras." <em>arXiv preprint arXiv:2311.13600</em> (2023)."&gt;[8]</span></a></sup>，试图不依赖任何超参数地合并两个 LoRA 权重。具体而言，作者关注的是合并一个内容 LoRA <span class="math inline">\(\Delta W_c\)</span> 和一个风格 LoRA <span class="math inline">\(\Delta W_s\)</span>，使可以生成指定风格的指定主体。作者首先分析了已有的 LoRA 的权重，有两个重要发现：</p>
+<ol type="1">
+<li>LoRA 权重的绝大部分都接近于零，甚至将 90% 的权重置为零都不怎么影响生成效果。</li>
+<li>如果两个 LoRA 权重的对应列的余弦相似度很高，那么按直接相加的方式合并的效果很差；相反，如果列与列之间是正交的，那么效果就不错。</li>
+</ol>
+<p>于是，作者认为我们应该尽可能在合并两个 LoRA 权重时使它们对应列正交，为此设计了如下合并方案： <span class="math display">\[
+\Delta W_\text{merge}=m_c\otimes \Delta W_c+m_s\otimes\Delta W_s
+\]</span> 其中 <span class="math inline">\(m_c,m_s\)</span> 是可学习向量，维度等于 <span class="math inline">\(\Delta W_c,\Delta W_s\)</span> 的列数。上式的含义是对 <span class="math inline">\(\Delta W_c\)</span> 和 <span class="math inline">\(\Delta W_s\)</span> 的各列加权求和。</p>
+<p><img src="ziplora.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>如图所示，损失函数为： <span class="math display">\[
+\begin{align}
+\mathcal L_\text{merge}&amp;=\Vert(D\oplus L_m)(x_c,p_c)-(D\oplus L_c)(x_c,p_c)\Vert_2\\
+&amp;+\Vert(D\oplus L_m)(x_s,p_s)-(D\oplus L_s)(x_s,p_s)\Vert_2\\
+&amp;+\lambda\sum_i|m_c^{(i)}\cdot m_s^{(i)}|
+\end{align}
+\]</span> 其中 <span class="math inline">\(D\)</span> 表示预训练权重，<span class="math inline">\(L_m,L_c,L_s\)</span> 表示 LoRA 层的集合，<span class="math inline">\(D\oplus L\)</span> 表示配备了 LoRA 的模型。<span class="math inline">\(x_c,x_s\)</span> 为训练用的内容图像和风格图像，<span class="math inline">\(p_c,p_s\)</span> 为文本 prompt. 损失函数的前两项是正常的重构损失，最后一项是为了鼓励各自 LoRA 权重列之间的正交性。【说实话我并没有看出来怎么鼓励正交性了？】基础模型和要合并的 LoRA 权重都是固定的，只训练合并系数 <span class="math inline">\(m_c,m_s\)</span>，因此非常高效。实验在 SDXL 上进行，只需要 100 次梯度更新即可。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 ZipLoRA 的生成样例（摘自<a target="_blank" rel="noopener" href="https://ziplora.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://ziplora.github.io/ZipLoRA_files/recontext3.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -423,6 +446,9 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 </li>
 <li>
 <span id="fn:7" class="footnote-text"><span>Robb, Esther, Wen-Sheng Chu, Abhishek Kumar, and Jia-Bin Huang. Few-shot adaptation of generative adversarial networks. <em>arXiv preprint arXiv:2010.11943</em> (2020). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Shah, Viraj, Nataniel Ruiz, Forrester Cole, Erika Lu, Svetlana Lazebnik, Yuanzhen Li, and Varun Jampani. "Ziplora: Any subject in any style by effectively merging loras." <em>arXiv preprint arXiv:2311.13600</em> (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
