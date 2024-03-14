@@ -18,14 +18,14 @@
   
     <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] Preface 我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量">
 <meta property="og:type" content="article">
-<meta property="og:title" content="扩散模型条件引导生成">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E6%9D%A1%E4%BB%B6%E5%BC%95%E5%AF%BC%E7%94%9F%E6%88%90/index.html">
+<meta property="og:title" content="扩散模型理论·条件引导生成">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E6%9D%A1%E4%BB%B6%E5%BC%95%E5%AF%BC%E7%94%9F%E6%88%90/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] Preface 我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-guidance.png">
 <meta property="article:published_time" content="2022-12-29T10:08:30.000Z">
-<meta property="article:modified_time" content="2023-10-12T12:16:40.068Z">
+<meta property="article:modified_time" content="2024-03-14T05:46:45.521Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>扩散模型条件引导生成 - xyfJASON</title>
+  <title>扩散模型理论·条件引导生成 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="扩散模型条件引导生成"></span>
+            <span id="subtitle" data-typed-text="扩散模型理论·条件引导生成"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">扩散模型条件引导生成</h1>
+            <h1 id="seo-header">扩散模型理论·条件引导生成</h1>
             
             
               <div class="markdown-body">
@@ -379,7 +379,7 @@ p(\x_t\vert \x_{t+1},y)\sim\calN(\x_t;\mu+\Sigma g,\Sigma)
 &amp;=\underbrace{\nabla_{\x_t}\log{p}(\x_t)}_{\text{unconditional score}}+\underbrace{\nabla_{\x_t}\log{p}(y\vert \x_t)}_\text{classifier guidance} \tag{2}\label{classifier-guidance}
 \end{align}
 \]</span> 可以看见，<strong>有条件的 score function，等于无条件的 score function 加上分类器关于输入的梯度</strong>。由于我们知道扩散模型的采样其实就是沿着 score function 的方向走，所以 unconditional score 一项是在增大 <span class="math inline">\(p(\x_t)\)</span>，即让样本越来越真实；classifier guidance 一项是在增大 <span class="math inline">\(p(y\vert \x_t)\)</span>，即让样本更能匹配上输入的条件 <span class="math inline">\(y\)</span>，从而实现条件生成。</p>
-<p>由于 DDPM / DDIM 中的噪声 <span class="math inline">\(\epsilon(\x_t)\)</span> 和 score function 有如下联系（详见 <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score Based Generative Models</a> 一文）： <span class="math display">\[
+<p>由于 DDPM / DDIM 中的噪声 <span class="math inline">\(\epsilon(\x_t)\)</span> 和 score function 有如下联系（详见 <a href="/blog-main/2022/10/13/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7Score-Based-Generative-Models/" title="扩散模型理论·Score-Based Generative Models">Score-Based Generative Models</a> 一文）： <span class="math display">\[
 \nabla_{\x_t}\log{p}(\x_t)=-\frac{1}{\sqrt{1-\bar\alpha_t}}\epsilon(\x_t)
 \]</span> 所以我们只需要定义一个新的噪声： <span class="math display">\[
 \hat\epsilon(\x_t)=\epsilon(\x_t)-\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log{p}(y\vert\x_t)
@@ -512,8 +512,8 @@ p(\x_t\vert \x_{t+1},y)\sim\calN(\x_t;\mu+\Sigma g,\Sigma)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>扩散模型条件引导生成</div>
-      <div>https://xyfjason.github.io/blog-main/2022/12/29/扩散模型条件引导生成/</div>
+      <div>扩散模型理论·条件引导生成</div>
+      <div>https://xyfjason.github.io/blog-main/2022/12/29/扩散模型理论·条件引导生成/</div>
     </div>
     <div class="license-meta">
       

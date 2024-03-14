@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vae.png">
 <meta property="article:published_time" content="2022-09-16T16:22:21.000Z">
-<meta property="article:modified_time" content="2024-02-15T04:41:05.744Z">
+<meta property="article:modified_time" content="2024-03-08T04:25:23.237Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2k 字
+          2.1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          17 分钟
+          18 分钟
         
       </span>
     
@@ -344,7 +344,7 @@ p_\theta(x)=\int_zp_\theta(x\vert z)p(z)\mathrm dz
 L(\theta)=\log p_\theta(x)=\log\left(\int_zp_\theta(x\vert z)p(z)\mathrm dz\right)
 \]</span> <span class="math inline">\(\log\)</span>​ 里有个积分的形式阻碍了我们继续求解，这是否让你想起了什么——没错，EM 算法！</p>
 <div class="note note-success">
-            <p>EM 算法回顾（详见<a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">EM算法</a>）：为隐变量 <span class="math inline">\(z\)</span> 引入分布 <span class="math inline">\(q(z)\)</span>，则对数似然可分解为 ELBO 和 KL 两项： <span class="math display">\[\begin{align}L(\theta)&amp;=\log p_\theta(x)\\&amp;=\int_z q(z)\log p_\theta(x)\mathrm dz\\&amp;=\int_z q(z)\log \left(\frac{p_\theta(x\vert z)p(z)}{p_\theta(z\vert x)}\cdot\frac{q(z)}{q(z)}\right)\mathrm dz\\&amp;=\int_z q(z)\left[\log\frac{p(z)}{q(z)}+\log p_\theta(x\vert z)+\log\frac{q(z)}{p_\theta(z\vert x)}\right]\mathrm dz\\&amp;=\underbrace{\mathbb E_{z\sim q(z)}[\log p_\theta(x\vert z)]-\mathrm {KL}(q(z)\|p(z))}_{\mathrm{ELBO}}+\underbrace{\mathrm{KL}(q(z)\|p_\theta(z\vert x))}_{\mathrm {KL}}\label{em}\tag{1}\end{align}\]</span> 优化过程是迭代执行 E-step 和 M-step：</p><ul><li>E-step：固定 <span class="math inline">\(\theta\)</span>，取 <span class="math inline">\(q(z)=p_\theta(z\vert x)\)</span>，即使得 <span class="math inline">\(\mathrm{KL}(q(z)\Vert p_\theta(z\vert x))=0\)</span>，也即让 ELBO 增大到与 <span class="math inline">\(L(\theta)\)</span> 相等。</li><li>M-step：固定 <span class="math inline">\(q\)</span>，最大化 ELBO，从而达到优化 <span class="math inline">\(L(\theta)\)</span>​ 的目的。</li></ul>
+            <p>EM 算法回顾（详见<a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">链接</a>）：为隐变量 <span class="math inline">\(z\)</span> 引入分布 <span class="math inline">\(q(z)\)</span>，则对数似然可分解为 ELBO 和 KL 两项： <span class="math display">\[\begin{align}L(\theta)&amp;=\log p_\theta(x)\\&amp;=\int_z q(z)\log p_\theta(x)\mathrm dz\\&amp;=\int_z q(z)\log \left(\frac{p_\theta(x\vert z)p(z)}{p_\theta(z\vert x)}\cdot\frac{q(z)}{q(z)}\right)\mathrm dz\\&amp;=\int_z q(z)\left[\log\frac{p(z)}{q(z)}+\log p_\theta(x\vert z)+\log\frac{q(z)}{p_\theta(z\vert x)}\right]\mathrm dz\\&amp;=\underbrace{\mathbb E_{z\sim q(z)}[\log p_\theta(x\vert z)]-\mathrm {KL}(q(z)\|p(z))}_{\mathrm{ELBO}}+\underbrace{\mathrm{KL}(q(z)\|p_\theta(z\vert x))}_{\mathrm {KL}}\label{em}\tag{1}\end{align}\]</span> 优化过程是迭代执行 E-step 和 M-step：</p><ul><li>E-step：固定 <span class="math inline">\(\theta\)</span>，取 <span class="math inline">\(q(z)=p_\theta(z\vert x)\)</span>，即使得 <span class="math inline">\(\mathrm{KL}(q(z)\Vert p_\theta(z\vert x))=0\)</span>，也即让 ELBO 增大到与 <span class="math inline">\(L(\theta)\)</span> 相等。</li><li>M-step：固定 <span class="math inline">\(q\)</span>，最大化 ELBO，从而达到优化 <span class="math inline">\(L(\theta)\)</span>​ 的目的。</li></ul>
           </div>
 <p>非常可惜的是，EM 算法无法直接应用于此，因为 E-step 要求我们能够表达出后验分布 <span class="math inline">\(p_\theta(z\vert x)\)</span>，但在 VAE 中，后验分布是<strong>不可解</strong> (intractable) 的。换句话说，我们无法直接写出 <span class="math inline">\(\min_q \text{KL}(q(z)\Vert p_\theta(z\vert x))\)</span> 的解析解。怎么办呢？注意到 E-step 中 <span class="math inline">\(L(\theta)\)</span> 是定值，观察 <span class="math inline">\(\eqref{em}\)</span> 式可知，最小化 KL 项等价于最大化 ELBO 项，所以我们可以通过<strong>最大化 ELBO 来达到最小化 KL 的目的</strong><sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="原来VAE是这么回事（从EM到VAE） - 市井小民的文章 - 知乎 https://zhuanlan.zhihu.com/p/368959795">[3]</span></a></sup>！（妙啊～</p>
 <p>综上，原本的 EM 算法现在变成了<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="EM的升级打怪之路：EM-变分EM-VAE（part1） - Young Zicon的文章 - 知乎 https://zhuanlan.zhihu.com/p/418203971">[4]</span></a></sup>：</p>
@@ -353,7 +353,7 @@ L(\theta)=\log p_\theta(x)=\log\left(\int_zp_\theta(x\vert z)p(z)\mathrm dz\righ
 <li>M-step：固定 <span class="math inline">\(q\)</span>，最大化 ELBO，即 <span class="math inline">\(\max_\theta\text{ELBO}\)</span>.</li>
 </ul>
 <p>值得注意的是，E-step 的优化变量是一个概率分布<strong>函数</strong> <span class="math inline">\(q\)</span>，并不好直接优化（用相关术语来讲，ELBO 是关于函数 <span class="math inline">\(q\)</span> 的<strong>泛函</strong>）。为了解决这个问题，我们可以将 <span class="math inline">\(q(z)\)</span> 限制为以 <span class="math inline">\(\phi\)</span> 为参数的某<strong>可解</strong>分布族 <span class="math inline">\(q_\phi(z\vert x)\)</span>，这样优化变量就从函数 <span class="math inline">\(q\)</span> 变成了参数 <span class="math inline">\(\phi\)</span>. 不过，由于我们限制了 <span class="math inline">\(q\)</span> 的形式，所以即便能求出最优的参数 <span class="math inline">\(\phi\)</span>，也大概率不是 E-step 的最优解。显然，为了尽可能逼近最优解，我们应该让选取的分布族越复杂越好。</p>
-<p>这里有一个小问题——为什么 <span class="math inline">\(q(z)\)</span> 参数化后写作 <span class="math inline">\(q_\phi(z\vert x)\)</span> 而不是 <span class="math inline">\(q_\phi(z)\)</span>？这是因为 EM 算法中找到的最优 <span class="math inline">\(q(z)\)</span>，即 <span class="math inline">\(q^\ast(z)=p_\theta(z\vert x)\)</span>，其实是依赖于 <span class="math inline">\(x\)</span> 的，即不同的数据的最优 <span class="math inline">\(q(z)\)</span> 是不一样的，只是没在记号中体现出来而已。</p>
+<p>这里有一个小问题——为什么 <span class="math inline">\(q(z)\)</span> 参数化后写作 <span class="math inline">\(q_\phi(z\vert x)\)</span> 而不是 <span class="math inline">\(q_\phi(z)\)</span>？首先，<span class="math inline">\(q\)</span> 本来就是我们人为引入的，它是否以 <span class="math inline">\(x\)</span> 为条件完全是我们的设计，且并不与之前的推导冲突；其次，EM 算法中找到的最优 <span class="math inline">\(q(z)\)</span>，即 <span class="math inline">\(q^\ast(z)=p_\theta(z\vert x)\)</span>，其实是依赖于 <span class="math inline">\(x\)</span> 的，即不同的数据的最优 <span class="math inline">\(q(z)\)</span> 是不一样的，只是没在记号中体现出来而已。</p>
 <p>在下文我们将看到，VAE 的 <span class="math inline">\(p_\theta(x\vert z)\)</span> 和 <span class="math inline">\(q_\phi(z\vert x)\)</span> 都由神经网络表示，因此我们只能用<strong>梯度下降</strong>来求解上述两个优化问题。既然都是梯度下降，那就没有必要交替迭代了，直接两步合一步最大化 ELBO 即可：</p>
 <p><span class="math display">\[
 \max_{\theta,\phi}\quad\mathrm{ELBO}=\mathbb E_{z\sim q_\phi(z\vert x)}[\log p_\theta(x\vert z)]-\mathrm{KL}(q_\phi(z\vert x)\|p(z))
@@ -563,9 +563,9 @@ p_\theta(x\vert z)=\frac{1}{(2\pi)^{D/2}(\det\Sigma_\theta(z))^{1/2}}\exp\left(-
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">
+                      <a href="/blog-main/2022/09/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E4%BB%8EVAE%E5%88%B0DDPM/" title="扩散模型理论·从VAE到DDPM">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">从VAE到DDPM</span>
+                        <span class="hidden-mobile">扩散模型理论·从VAE到DDPM</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
 <meta property="article:published_time" content="2024-03-05T08:23:28.000Z">
-<meta property="article:modified_time" content="2024-03-05T17:19:04.209Z">
+<meta property="article:modified_time" content="2024-03-08T04:35:01.033Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.2k 字
+          1.3k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          10 分钟
+          12 分钟
         
       </span>
     
@@ -343,13 +343,14 @@ p(z\vert x)=\frac{p(x\vert z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\int_{z
 &amp;=\int_zq(z)\log\frac{p(x,z)}{q(z)}\mathrm dz+\int_zq(z)\log\frac{q(z)}{p(z\vert x)}\mathrm dz\\
 &amp;=\mathcal L(q)+\text{KL}(q(z)\Vert p(z\vert x))
 \end{align}
-\]</span> 我们可以通过最大化 <span class="math inline">\(\mathcal L(q)\)</span> 来最大化对数似然 <span class="math inline">\(\log p(x)\)</span>，这等价于最小化 KL 项。如果不限制 <span class="math inline">\(q(z)\)</span> 的形式，那么显然当 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 时 KL 项达到最小值 <span class="math inline">\(0\)</span>，这就是 EM 算法做的事情。但是现在问题的基本假设是 <span class="math inline">\(p(z\vert x)\)</span> 是不可解的，因此无法通过直接令 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 求解。为此，我们考虑为 <span class="math inline">\(q(z)\)</span> <strong>引入一些假设</strong>以使得问题可解。值得注意的是，人为引入假设意味着 <span class="math inline">\(q(z)\)</span> 的形式被限制了，因此这样求出的解并不是真正的最优解，这就是为什么变分推断属于近似推断而非精确推断。</p>
+\]</span> 值得注意的是，这里没有将模型参数 <span class="math inline">\(\theta\)</span> 显式写出来。从频率派的角度而言，可以认为我们目前并不关心 <span class="math inline">\(\theta\)</span>，所以省略了；从贝叶斯的角度而言，可以认为参数被吸收进了隐变量 <span class="math inline">\(z\)</span> 之中，因而不再单独列出来。</p>
+<p>通过上面的推导，我们得到了对数似然的下界 <span class="math inline">\(\mathcal L(q)\)</span>，于是可以通过最大化 <span class="math inline">\(\mathcal L(q)\)</span> 来最大化对数似然 <span class="math inline">\(\log p(x)\)</span>. 显然，这个下界应该越紧越好，也就是说我们希望 KL 项越小越好。如果不限制 <span class="math inline">\(q(z)\)</span> 的形式，那么当 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 时 KL 项达到最小值 <span class="math inline">\(0\)</span>，这就是 EM 算法做的事情。但是现在问题的基本假设是 <span class="math inline">\(p(z\vert x)\)</span> 是不可解的，因此无法通过直接令 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 求解。为此，我们考虑为 <span class="math inline">\(q(z)\)</span> <strong>引入一些假设</strong>以使得问题可解。值得注意的是，人为引入假设意味着 <span class="math inline">\(q(z)\)</span> 的形式被限制了，因此这样求出的解并不是真正的最优解，这就是为什么变分推断属于近似推断而非精确推断。</p>
 <p>根据引入的假设的不同，我们就得到了不同的变分推断方法，例如：</p>
 <ul>
 <li><strong>平均场变分推断</strong>：假设 <span class="math inline">\(q(z)\)</span>​ 可分解为各分量密度函数之乘积；</li>
 <li><strong>随机梯度变分推断</strong>：假设 <span class="math inline">\(q(z)\)</span> 是以 <span class="math inline">\(\phi\)</span> 为参数的分布族并使用随机梯度下降优化之。</li>
 </ul>
-<p>顺便补充一点，由于 <span class="math inline">\(\mathcal L(q)\)</span> 的自变量是概率密度<strong>函数</strong> <span class="math inline">\(q(z)\)</span>，所以 <span class="math inline">\(\mathcal L(q)\)</span> 是一个<strong>泛函</strong>。求泛函极值的方法被称作<strong>变分法</strong>，这就是变分推断这个名称的由来。</p>
+<p>顺便补充一点，由于 <span class="math inline">\(\mathcal L(q)\)</span> 的自变量是概率密度<strong>函数</strong> <span class="math inline">\(q(z)\)</span>，所以 <span class="math inline">\(\mathcal L(q)\)</span> 是一个<strong>泛函</strong>。求泛函极值的方法被称作<strong>变分法</strong>，这就是变分推断这个名称的由来，也因此我们常称 <span class="math inline">\(\mathcal L(q)\)</span> 为变分下界。</p>
 <h3 id="平均场变分推断">平均场变分推断</h3>
 <p>设隐变量 <span class="math inline">\(z=(z_1,\ldots,z_m)\in\mathbb R^m\)</span>，并且假设 <span class="math inline">\(q(z)\)</span> 可分解为各分量密度函数之乘积： <span class="math display">\[
 q(z)=\prod_{i=1}^mq_i(z_i)

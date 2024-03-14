@@ -18,14 +18,14 @@
   
     <meta name="description" content="Introduction 扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究者坐不住了，在论文[1]中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：  Formulation：扩散和去噪过程可以从概率分布角度描述，也可以从">
 <meta property="og:type" content="article">
-<meta property="og:title" content="扩散模型统一框架">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/02/20/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%BB%9F%E4%B8%80%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:title" content="扩散模型理论·阐明设计空间">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/02/20/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E9%98%90%E6%98%8E%E8%AE%BE%E8%AE%A1%E7%A9%BA%E9%97%B4/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="Introduction 扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究者坐不住了，在论文[1]中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：  Formulation：扩散和去噪过程可以从概率分布角度描述，也可以从">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/edm.png">
 <meta property="article:published_time" content="2024-02-20T14:34:58.000Z">
-<meta property="article:modified_time" content="2024-02-26T13:09:40.898Z">
+<meta property="article:modified_time" content="2024-03-14T05:35:30.490Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -34,7 +34,7 @@
   
   
   
-  <title>扩散模型统一框架 - xyfJASON</title>
+  <title>扩散模型理论·阐明设计空间 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -252,7 +252,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="扩散模型统一框架"></span>
+            <span id="subtitle" data-typed-text="扩散模型理论·阐明设计空间"></span>
           
         </div>
 
@@ -323,7 +323,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">扩散模型统一框架</h1>
+            <h1 id="seo-header">扩散模型理论·阐明设计空间</h1>
             
             
               <div class="markdown-body">
@@ -337,11 +337,11 @@
 </ul>
 <p>将这些部分解耦并分别研究后，研究者将各部分的最优实践组合起来，提出了 EDM，达到了扩散模型的 SOTA.</p>
 <h2 id="formulation">Formulation</h2>
-<p>在<a href="/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/" title="扩散模型的SDE与ODE描述">扩散模型的SDE与ODE描述</a>一文中我们看到，Song 等人<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>通过将 DDPM 和 SMLD 连续化，指出扩散过程可以描述为如下的 SDE 形式： <span class="math display">\[
+<p>在<a href="/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/" title="扩散模型理论·SDE与ODE描述">扩散模型理论·SDE与ODE描述</a>一文中我们看到，Song 等人<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>通过将 DDPM 和 SMLD 连续化，指出扩散过程可以描述为如下的 SDE 形式： <span class="math display">\[
 \mathrm d\mathbf x=f(\mathbf x,t)\mathrm dt+g(t)\mathrm d\mathbf w
 \]</span> 由于无论是 VP SDE（对应 DDPM）还是 VE SDE（对应 SMLD），<span class="math inline">\(f(\mathbf x,t)\)</span> 都是 <span class="math inline">\(f(t)\mathbf x\)</span> 的形式，所以该 SDE 也可以改写作： <span class="math display">\[
 \mathrm d\mathbf x=f(t)\mathbf x\mathrm dt+g(t)\mathrm d\mathbf w\tag{1}\label{sde}
-\]</span> 另一方面，在<a href="/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" title="变分扩散模型">变分扩散模型</a>一文中，Kingma 等人<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. *Advances in neural information processing systems* 34 (2021): 21696-21707.">[3]</span></a></sup>用如下概率分布表示扩散过程： <span class="math display">\[
+\]</span> 另一方面，在<a href="/blog-main/2023/08/08/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" title="扩散模型理论·变分扩散模型">变分扩散模型</a>一文中，Kingma 等人<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. *Advances in neural information processing systems* 34 (2021): 21696-21707.">[3]</span></a></sup>用如下概率分布表示扩散过程： <span class="math display">\[
 q(\mathbf x_t\vert\mathbf x_0)=\mathcal N\left(\mathbf x_t;\alpha_t\mathbf x_0,\sigma_t^2\mathbf I\right),\quad t\in[0,1]
 \]</span> 为方便后续推导，我们将其改写作： <span class="math display">\[
 q(\mathbf x_t\vert\mathbf x_0)=\mathcal N\left(\mathbf x_t;s(t)\mathbf x_0,s^2(t)\sigma^2(t)\mathbf I\right),\quad t\in [0,1]\tag{2}\label{p}
@@ -512,8 +512,8 @@ c_\text{skip}(\sigma)=\frac{\sigma_\text{data}^2}{\sigma^2+\sigma_\text{data}^2}
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>扩散模型统一框架</div>
-      <div>https://xyfjason.github.io/blog-main/2024/02/20/扩散模型统一框架/</div>
+      <div>扩散模型理论·阐明设计空间</div>
+      <div>https://xyfjason.github.io/blog-main/2024/02/20/扩散模型理论·阐明设计空间/</div>
     </div>
     <div class="license-meta">
       

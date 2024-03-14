@@ -18,14 +18,14 @@
   
     <meta name="description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\KL}{\mathrm{KL}} \newcommand{\calN}{\mathcal N} \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}">
 <meta property="og:type" content="article">
-<meta property="og:title" content="从VAE到DDPM">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/index.html">
+<meta property="og:title" content="扩散模型理论·从VAE到DDPM">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E4%BB%8EVAE%E5%88%B0DDPM/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="\[ \newcommand{\E}{\mathbb E} \newcommand{\KL}{\mathrm{KL}} \newcommand{\calN}{\mathcal N} \newcommand{\x}{\mathbf x} \newcommand{\z}{\mathbf z} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddpm.png">
 <meta property="article:published_time" content="2022-09-29T15:56:27.000Z">
-<meta property="article:modified_time" content="2023-10-12T12:05:02.912Z">
+<meta property="article:modified_time" content="2024-03-14T05:28:59.551Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>从VAE到DDPM - xyfJASON</title>
+  <title>扩散模型理论·从VAE到DDPM - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="从VAE到DDPM"></span>
+            <span id="subtitle" data-typed-text="扩散模型理论·从VAE到DDPM"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">从VAE到DDPM</h1>
+            <h1 id="seo-header">扩散模型理论·从VAE到DDPM</h1>
             
             
               <div class="markdown-body">
@@ -338,7 +338,7 @@
 <h2 id="vae-回顾">VAE 回顾</h2>
 <p>在<a href="/blog-main/2022/09/17/VAE%E6%A2%B3%E7%90%86/" title="VAE梳理">之前的文章</a>中，我们详细地梳理了一遍 VAE，这里做一个简单回顾。</p>
 <p><img src="1vae.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Angus Turner. Diffusion Models as a kind of VAE" width=20% /></p>
-<p>在 VAE 中，为了最大化对数似然 <span class="math display">\[
+<p>在 VAE 中，为了最大化对数似然： <span class="math display">\[
 L(\theta)=\log p_\theta(x)=\log\left(\int_zp_\theta(x\vert z)p(z)\mathrm dz\right)
 \]</span> 我们引入变分后验 <span class="math inline">\(q_\phi(z\vert x)\)</span>： <span class="math display">\[
 \begin{align}
@@ -363,7 +363,7 @@ L(\theta)&amp;=\log p_\theta(x)\\
 \end{align}
 \]</span> 代入 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式即可得到损失函数： <span class="math display">\[
 \mathcal L=\underbrace{\frac{1}{2\sigma^2}\|x-\mu_\theta(z)\|^2}_\text{reconstruction}+\underbrace{\frac{1}{2}\sum_{i=1}^d\left(\mu_\phi^2(x)_i+\sigma_\phi^2(x)_i-\log \sigma_\phi^2(x)_i-1\right)}_\text{KL regularization}
-\]</span> 正态分布的假设虽然便于计算，但也限制了 VAE 的表达能力，导致生成的图片很模糊。毕竟，从隐变量一步到位映射到数据分布确实不是一件容易的事，那我们能不能把这个过程拆解成若干步呢？</p>
+\]</span> 正态分布的假设虽然便于计算，但限制了变分后验的形式，使之不能很好地近似真实后验分布，从而限制了 VAE 的能力。因此，一个自然的改进思路就是用更强的方式去建模变分后验——比如再套一个 VAE？</p>
 <h2 id="双层-vae">双层 VAE</h2>
 <p>把 VAE 中的单个隐变量 <span class="math inline">\(z\)</span> 换成两个隐变量 <span class="math inline">\(z_1,z_2\)</span>，形成如下马尔可夫链：</p>
 <p><img src="2vae.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Angus Turner. Diffusion Models as a kind of VAE" width=30% /></p>
@@ -683,8 +683,8 @@ p_\theta(\x_{t-1}\vert\x_t)=\calN(\x_{t-1};\mu_\theta(\x_t,t),\sigma_t^2\mathbf{
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>从VAE到DDPM</div>
-      <div>https://xyfjason.github.io/blog-main/2022/09/29/从VAE到DDPM/</div>
+      <div>扩散模型理论·从VAE到DDPM</div>
+      <div>https://xyfjason.github.io/blog-main/2022/09/29/扩散模型理论·从VAE到DDPM/</div>
     </div>
     <div class="license-meta">
       
@@ -728,9 +728,9 @@ p_\theta(\x_{t-1}\vert\x_t)=\calN(\x_{t-1};\mu_\theta(\x_t,t),\sigma_t^2\mathbf{
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">
+                      <a href="/blog-main/2022/10/13/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7Score-Based-Generative-Models/" title="扩散模型理论·Score-Based Generative Models">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Score-Based Generative Models</span>
+                        <span class="hidden-mobile">扩散模型理论·Score-Based Generative Models</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
