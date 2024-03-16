@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/score-based.png">
 <meta property="article:published_time" content="2022-10-13T09:14:18.000Z">
-<meta property="article:modified_time" content="2024-03-14T05:29:28.071Z">
+<meta property="article:modified_time" content="2024-03-14T07:27:59.004Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -336,24 +336,23 @@
 \newcommand{\T}{\mathsf T}
 \]</span></p>
 <h2 id="brief-introduction">Brief Introduction</h2>
-<p>在<a href="/blog-main/2022/09/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E4%BB%8EVAE%E5%88%B0DDPM/" title="扩散模型理论·从VAE到DDPM">从VAE到DDPM</a>一文中，我们从 VAE 出发得到了 DDPM 的理论框架，发现 DDPM 可以看作是具有人为指定的后验分布（即前向过程）的层次化 VAE。这一角度的代表论文是 2015 年的 Sohl-Dickstein et al.<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. Deep unsupervised learning using nonequilibrium thermodynamics. In *International Conference on Machine Learning*, pp. 2256-2265. PMLR, 2015.">[1]</span></a></sup> 和 2020 年的 DDPM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. *Advances in Neural Information Processing Systems* 33 (2020): 6840-6851.">[2]</span></a></sup>。与此同时，以<a target="_blank" rel="noopener" href="https://yang-song.net/">宋飏</a>博士的几篇论文<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. *Advances in Neural Information Processing Systems* 32 (2019).">[3]</span></a></sup><sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[4]</span></a></sup>为代表，人们从 score matching + Langevin dynamics (SMLD) 的角度出发得到了与 DDPM 本质相同的模型，称为 score-based generative models。两个角度出发点截然不同，但殊途同归，也是非常有意思了。</p>
+<p>在<a href="/blog-main/2022/09/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E4%BB%8EVAE%E5%88%B0DDPM/" title="扩散模型理论·从VAE到DDPM">从VAE到DDPM</a>一文中，我们从 VAE 出发得到了 DDPM 的理论框架，发现 DDPM 可以看作是具有人为指定的后验分布（即前向过程）的层次化 VAE。这一角度的代表论文是 2015 年的 Sohl-Dickstein et al.<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. Deep unsupervised learning using nonequilibrium thermodynamics. In *International Conference on Machine Learning*, pp. 2256-2265. PMLR, 2015.">[1]</span></a></sup> 和 2020 年的 DDPM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. *Advances in Neural Information Processing Systems* 33 (2020): 6840-6851.">[2]</span></a></sup>。与此同时，<a target="_blank" rel="noopener" href="https://yang-song.net/">宋飏</a>博士从 score matching + Langevin dynamics (SMLD)<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. *Advances in Neural Information Processing Systems* 32 (2019).">[3]</span></a></sup> 的角度出发得到了与 DDPM 本质相同的模型，称为 score-based generative models。两个角度出发点截然不同，但殊途同归，也是非常有意思了。</p>
 <h2 id="score-function">Score Function</h2>
 <p>所谓生成模型，就是希望对数据分布 <span class="math inline">\(\pdata(\x)\)</span> 建模，使得我们能够从该分布中随意采样。假设我们构建了一个以 <span class="math inline">\(\theta\)</span> 为参数的模型 <span class="math inline">\(f_\theta:\R^d\to\R\)</span>，那么可用以下形式获得一个概率分布： <span class="math display">\[
 p_\theta(\x)=\frac{e^{-f_\theta(\x)}}{Z_\theta}\tag{1}\label{p}
 \]</span> 这里称 <span class="math inline">\(f_\theta\)</span> 为 Energy-Based Model (EBM)，其中 <span class="math inline">\(Z_\theta=\int_\x e^{-f_\theta(\x)}\mathrm{d}\x\)</span> 是归一化因子。</p>
-<p>训练生成模型无非就是希望极大化数据的对数似然： <span class="math display">\[
+<p>训练生成模型无非就是希望极大化样本的对数似然： <span class="math display">\[
 \max_\theta\quad \E_{\pdata(\x)}[\log p_\theta(\x)]
-\]</span> 但是直接计算对数似然存在一个问题：<span class="math inline">\(Z_\theta\)</span> 通常是 intractable 的。不同的生成模型采用了不同的思路来解决这个问题，而 score-based generative models 使用 <strong>score function</strong> 来巧妙地回避开 <span class="math inline">\(Z_\theta\)</span>.</p>
-<p>Score function 定义为对数 pdf 对数据的梯度： <span class="math display">\[
+\]</span> 但是直接计算对数似然存在一个问题：<span class="math inline">\(Z_\theta\)</span> 通常是 intractable 的。为此，score-based generative models 使用 <strong>score function</strong> 来巧妙地回避开 <span class="math inline">\(Z_\theta\)</span>. Score function 定义为概率密度函数的对数的梯度：</p>
+<p><span class="math display">\[
 s(\x)=\nabla_\x\log p(\x)
-\]</span> 那么对于 <span class="math inline">\(\eqref{p}\)</span> 式来说，其 score function 为： <span class="math display">\[
+\]</span> 它是一个向量场，指示了从当前点去到分布密度更大的地方的方向，如下图所示：</p>
+<p><img src="https://yang-song.net/assets/img/score/score_contour.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=40% /></p>
+<p>对 <span class="math inline">\(\eqref{p}\)</span> 式而言，其 score function 为： <span class="math display">\[
 s_\theta(\x)=\nabla_\x \log p_\theta(\x)=\nabla_\x \log \frac{e^{-f_\theta(\x)}}{Z_\theta}=-\nabla_\x f_\theta(\x)
 \]</span> 可以看见<strong>由于 <span class="math inline">\(Z_\theta\)</span> 与 <span class="math inline">\(\x\)</span> 无关，对 <span class="math inline">\(\x\)</span> 求梯度后就直接变成零了</strong>！这启发我们直接对 score function 建模，即构建一个模型 <span class="math inline">\(s_\theta(\x)\)</span>，用它去近似真实数据分布的 score function： <span class="math display">\[
 s_\theta(\x)\xrightarrow{\text{approximate}} s_\text{data}(\x)=\nabla_\x\log \pdata(\x)
-\]</span> 此过程称作 <strong>score matching</strong>.</p>
-<p>Score function 是一个向量场，指示了从当前点去到分布密度更大的地方的方向，如下图所示：</p>
-<p><img src="https://yang-song.net/assets/img/score/score_contour.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=40% /></p>
-<p>因此模型学习到了 score function，也就相当于学到了数据分布。</p>
+\]</span> 此过程称作 <strong>score matching</strong>. 如果模型学习到了数据的 score function，也就相当于学到了数据分布。</p>
 <h2 id="score-matching">Score Matching</h2>
 <p>为了训练模型 <span class="math inline">\(s_\theta(\x)\)</span>，我们最小化它与 <span class="math inline">\(s_\text{data}(\x)\)</span> 的均方距离（也即是模型给出的分布和数据分布之间的 Fisher Divergence）： <span class="math display">\[
 \min_\theta\quad J_\text{ESM}(\theta)=\frac{1}{2}\E_{\pdata(\x)}\left[\|s_\text{data}(\x)-s_\theta(\x)\|_2^2\right]\tag{2}\label{esm}
@@ -521,41 +520,39 @@ s_\theta(\x, \sigma_i)\xrightarrow{\text{approximate}} \nabla_\x\log q_{\sigma_i
 <p>具体内容和分析本文不再叙述，感兴趣的读者可以去看论文。</p>
 <h2 id="connection-to-ddpm">Connection to DDPM</h2>
 <p>在引言里，我们说 SMLD 和 DDPM 本质是相同的，现在来看看为什么。</p>
-<h3 id="loss-function">Loss Function</h3>
-<p>首先回顾一下 DDPM 的损失函数： <span class="math display">\[
-\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\tag{9}\label{ddpm-eps}
-\]</span> 对 <span class="math inline">\(q(\x_t\vert \x_0)=\mathcal N\left(\x_t;\sqrt{\bar\alpha_t}\x_0,(1-\bar\alpha_t)\mathbf I\right)\)</span> 求 score function： <span class="math display">\[
+<h3 id="forward-process">Forward Process</h3>
+<p>DDPM 与 SMLD 的加噪过程分别为： <span class="math display">\[
+\begin{align}
+&amp;q(\x_t\vert \x_0)=\mathcal N\left(\x_t;{\color{darkred}{\sqrt{\bar\alpha_t}\x_0}},(1-\bar\alpha_t)\mathbf I\right)&amp;&amp;\text{DDPM}\\
+&amp;q_{\sigma_i}(\tilde\x\vert \x)=\mathcal N\left(\tilde \x;{\color{darkred}{\x}},\sigma_i^2\mathbf I\right)&amp;&amp;\text{SMLD}
+\end{align}
+\]</span> 可见它们都是选择高斯分布的转移形式，但对于均值处是否加权略有分歧。DDPM 为均值加权，效果就是随着扩散过程的进行，数据的均值往 <span class="math inline">\(\mathbf 0\)</span> 移动，并且一直维持着有限的方差且越来越接近 <span class="math inline">\(\mathbf I\)</span>，最后服从 <span class="math inline">\(\mathcal N(\mathbf 0,\mathbf I)\)</span>；而 SMLD 均值没有加权，所以无论怎么加噪数据的中心始终在原本的位置，因此加噪过程其实是依靠增大 <span class="math inline">\(\sigma_i^2\)</span> 来让数据弥散到整个空间。正因如此，在之后的文章中我们可以看到，宋飏等人将前者称为 Variance Preserving，而后者称为 Variance Exploding. <strong>但其实这个差别不是很重要，如果把 SMLD 的均值也加上权重，并不影响任何推导过程</strong>。</p>
+<p>为进一步探索二者的关系，考虑对 <span class="math inline">\(q(\x_t\vert \x_0)=\mathcal N\left(\x_t;\sqrt{\bar\alpha_t}\x_0,(1-\bar\alpha_t)\mathbf I\right)\)</span> 求 score function： <span class="math display">\[
 \begin{align}
 \nabla_{\x_t}\log q(\x_t\vert\x_0)&amp;=-\frac{1}{2(1-\bar\alpha_t)}\nabla_{\x_t}\left\|\x_t-\sqrt{\bar\alpha_t}\x_0\right\|^2\\
 &amp;=-\frac{1}{1-\bar\alpha_t}\left(\x_t-\sqrt{\bar\alpha_t}\x_0\right)\\
 &amp;=-\frac{1}{1-\bar\alpha_t}\left(\sqrt{\bar\alpha_t}\x_0+\sqrt{1-\bar\alpha_t}\epsilon-\sqrt{\bar\alpha_t}\x_0\right)\\
 &amp;=-\frac{\epsilon}{\sqrt{1-\bar\alpha_t}}
-\end{align}\tag{10}\label{qscore}
-\]</span> 代入 <span class="math inline">\(\eqref{ddpm-eps}\)</span> 式： <span class="math display">\[
+\end{align}\tag{9}\label{qscore}
+\]</span> 我们发现，DDPM 中添加的噪声 <span class="math inline">\(\epsilon\)</span>，其实就是 score function 的反方向。因此，DDPM 预测噪声和 SMLD 预测 score function 的模型之间有如下关系： <span class="math display">\[
+s_\theta(\x_t,t)=-\frac{1}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\tag{10}\label{score-eps}
+\]</span> 为了看得更明显，将 <span class="math inline">\(\eqref{qscore},\eqref{score-eps}\)</span> 式代入 DDPM 的损失函数得： <span class="math display">\[
 \begin{align}
-&amp;\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\\
-=&amp;\E_{t,\x_0,\epsilon}\left[\left\|-\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log q(\x_t\vert \x_0)-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\\
-=&amp;\E_{t,\x_0,\epsilon}\left[(1-\bar\alpha_t)\left\|\nabla_{\x_t}\log q(\x_t\vert \x_0)-s_\theta\left(\x_t,t\right) \right\|^2\right]
+\mathcal L_\text{ddpm}&amp;=\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta\left(\x_t,t\right) \right\|^2\right]\\
+&amp;=\E_{t,\x_0,\epsilon}\left[\left\|-\sqrt{1-\bar\alpha_t}\nabla_{\x_t}\log q(\x_t\vert \x_0)+\sqrt{1-\bar\alpha_t}s_\theta\left(\x_t,t\right) \right\|^2\right]\\
+&amp;=\E_{t,\x_0,\epsilon}\left[(1-\bar\alpha_t)\left\|\nabla_{\x_t}\log q(\x_t\vert \x_0)-s_\theta\left(\x_t,t\right) \right\|^2\right]
 \end{align}
-\]</span> 其中做了一个变量替换：<span class="math inline">\(s_\theta(\x_t,t)=-\frac{1}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\)</span>.</p>
-<p>为了方便比较，将其改写一下： <span class="math display">\[
-\frac{1}{T}\sum_{t=1}^T(1-\bar\alpha_t)\E_{\pdata(\x_0)}\E_{q(\x_t\vert \x_0)}\left[\left\|\nabla_{\x_t} \log q(\x_t\vert \x_0)-s_\theta\left(\x_t,t\right) \right\|^2 \right]\tag{9&#39;}\label{ddpm}
+\]</span> 为了方便比较，将其改写一下： <span class="math display">\[
+\frac{1}{T}\sum_{t=1}^T(1-\bar\alpha_t)\E_{\pdata(\x_0)}\E_{q(\x_t\vert \x_0)}\left[\left\|\nabla_{\x_t} \log q(\x_t\vert \x_0)-s_\theta\left(\x_t,t\right) \right\|^2 \right]\tag{11}\label{ddpm}
 \]</span> 对比 <span class="math inline">\(\eqref{ncsn}\)</span> 式： <span class="math display">\[
-\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\nabla_{\tilde\x}\log q_{\sigma_i}(\tilde \x\vert\x) -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]
-\]</span> 可以看到，<span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{ncsn}\)</span> 式<strong>几乎</strong>完全相同！二者甚至连系数都保持了一致：</p>
+\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\nabla_{\tilde\x}\log q_{\sigma_i}(\tilde \x\vert\x) -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]\tag{8}
+\]</span> 可以看到，<span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{ncsn}\)</span> 式完全相同！甚至连系数都保持了一致：</p>
 <ul>
 <li>根据 <span class="math inline">\(\eqref{qscore}\)</span> 式有：<span class="math inline">\(1-\bar\alpha_t\propto 1/\E[\Vert\nabla_{\x_t}\log q(\x_t\vert \x_0)\Vert^2]\)</span></li>
 <li>根据 <span class="math inline">\(\eqref{score-gauss}\)</span> 式有：<span class="math inline">\(\lambda(\sigma_i)=\sigma_i^2\propto1/\E[\Vert\nabla_{\tilde\x}\log q_\sigma(\tilde \x\vert\x)\Vert^2]\)</span></li>
 </ul>
-<p>唯一能揪出来的一点不同是： <span class="math display">\[
-\begin{align}
-&amp;q(\x_t\vert \x_0)=\mathcal N\left(\x_t;{\color{darkred}{\sqrt{\bar\alpha_t}\x_0}},(1-\bar\alpha_t)\mathbf I\right)&amp;&amp;\text{DDPM}\\
-&amp;q_{\sigma_i}(\tilde\x\vert \x)=\mathcal N\left(\tilde \x;{\color{darkred}{\x}},\sigma_i^2\mathbf I\right)&amp;&amp;\text{SMLD}
-\end{align}
-\]</span> 它们对于均值处是否加权略有分歧。DDPM 为均值加权，效果就是随着扩散过程的进行，数据的均值往 <span class="math inline">\(\mathbf 0\)</span> 移动，并且一直维持着有限的方差且越来越接近 <span class="math inline">\(\mathbf I\)</span>，最后服从 <span class="math inline">\(\mathcal N(\mathbf 0,\mathbf I)\)</span>；而 SMLD 均值没有加权，所以无论怎么加噪数据的中心始终在原本的位置，因此加噪过程其实是依靠增大 <span class="math inline">\(\sigma_i^2\)</span> 来让数据弥散到整个空间。正因如此，在之后的文章中我们可以看到，宋飏等人将前者称为 Variance Preserving，而后者称为 Variance Exploding.</p>
-<p>但其实这个差别不是很重要，如果把 SMLD 的均值也加上权重，并不影响任何推导过程。</p>
 <h3 id="reverse-process">Reverse Process</h3>
-<p>虽然二者在损失函数上保持了惊人的一致，但是在生成过程上还是有一些区别。对于 DDPM，我们构建逆向的马尔可夫链，每一步从 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 中采样： <span class="math display">\[
+<p>虽然 DDPM 和 SMLD 在加噪过程和优化目标上保持了惊人的一致，但是在生成过程上还是有所区别。对于 DDPM，我们构建逆向的马尔可夫链，每一步从 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 中采样： <span class="math display">\[
 \begin{align}
 &amp;p_\theta(\x_{t-1}\vert \x_t)=\mathcal N(\x_{t-1}; \mu_\theta(\x_t,t),\sigma_t^2\mathbf I)\\
 &amp;\mu_\theta(\x_t,t)=\frac{1}{\sqrt{\alpha_t}}\left(\x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\right)=\frac{1}{\sqrt{\alpha_t}}\left(\x_t+(1-\alpha_t)s_\theta(\x_t,t)\right)
@@ -564,7 +561,7 @@ s_\theta(\x, \sigma_i)\xrightarrow{\text{approximate}} \nabla_\x\log q_{\sigma_i
 \x_{t-1}=\frac{1}{\sqrt{\alpha_t}}(\x_t+(1-\alpha_t)s_\theta(\x_t,t))+\sigma_t\mathbf z_t
 \]</span> 而对于 SMLD，我们在每一个 noise level <span class="math inline">\(\sigma_t\)</span> 下都进行 <span class="math inline">\(K\)</span> 步的 Langevin dynamics 游走： <span class="math display">\[
 \x_t^{k}\gets\x_t^{k-1}+\frac{\epsilon_t}{2}s_\theta(\x_t^{k-1},\sigma_{t})+\sqrt{\epsilon_t} \mathbf z_t^k,\quad k=1,\ldots,K
-\]</span> 上述过程重复 <span class="math inline">\(T\)</span> 次。换句话说，二者对同一个 score model 应用了不同的“采样器”来生成样本，而针对采样器的研究在后来成为了扩散模型的热点研究方向之一。</p>
+\]</span> 上述过程重复 <span class="math inline">\(T\)</span> 次。根据 Predictor-Corrector 的思想，可以认为 DDPM 只做了相邻时间步之间的 prediction，没有同一时间步内的 correction；SMLD 则只有同一时间步内的 correction，而没有相邻时间步之间的 prediction.</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">

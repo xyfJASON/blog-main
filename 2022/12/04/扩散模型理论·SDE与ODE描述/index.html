@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sde.png">
 <meta property="article:published_time" content="2022-12-04T04:45:07.000Z">
-<meta property="article:modified_time" content="2024-03-14T05:29:37.831Z">
+<meta property="article:modified_time" content="2024-03-14T07:29:46.781Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -337,7 +337,7 @@
 \newcommand{\pdata}{p_\text{data}}
 \]</span></p>
 <h2 id="brief-introduction">Brief Introduction</h2>
-<p>我们已经用两篇文章<a href="/blog-main/2022/09/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E4%BB%8EVAE%E5%88%B0DDPM/" title="扩散模型理论·从VAE到DDPM">从VAE到DDPM</a>、<a href="/blog-main/2022/10/13/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7Score-Based-Generative-Models/" title="扩散模型理论·Score-Based Generative Models">Score-Based Generative Models</a> 分别介绍了 DDPM (Denoising Diffusion Probabilistic Models) 和 SMLD (Score Matching + Langevin Dynamics)，并说明了它们的本质其实是相同的。进一步，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[1]</span></a></sup>把它们扩展到了连续时间情形并使用<strong>随机微分方程（Stochastic Differential Equations, SDE）</strong>描述。在该视角下，<strong>DDPM 和 SMLD 是两个特殊形式 SDE 的离散化</strong>。DDPM / SMLD 的加噪过程对应 forward SDE，去噪过程对应 reverse SDE，解 reverse SDE 的过程就是生成过程。除了使用通用的 SDE 数值解法以外，作者根据问题特点提出了 Predictor-Corrector Samplers，统一并扩展了 DDPM / SMLD 的去噪过程。作者还构造了与 SDE 具有相同边缘分布的 ODE，从而得到确定性生成过程。</p>
+<p>我们已经用两篇文章<a href="/blog-main/2022/09/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E4%BB%8EVAE%E5%88%B0DDPM/" title="扩散模型理论·从VAE到DDPM">从VAE到DDPM</a>、<a href="/blog-main/2022/10/13/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7Score-Based-Generative-Models/" title="扩散模型理论·Score-Based Generative Models">Score-Based Generative Models</a> 分别介绍了 DDPM 和 SMLD，并说明了它们的本质其实是相同的。进一步，论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[1]</span></a></sup>把它们扩展到了连续时间情形并使用<strong>随机微分方程（Stochastic Differential Equations, SDE）</strong>描述。在该视角下，<strong>DDPM 和 SMLD 是两个特殊形式 SDE 的离散化</strong>。DDPM / SMLD 的加噪过程对应 forward SDE，去噪过程对应 reverse SDE，解 reverse SDE 的过程就是生成过程。除了使用通用的 SDE 数值解法以外，作者根据问题特点提出了 Predictor-Corrector Samplers，统一并扩展了 DDPM / SMLD 的去噪过程。作者还构造了与 SDE 具有相同边缘分布的 ODE，从而得到确定性生成过程。</p>
 <h3 id="ddpm-recap">DDPM Recap</h3>
 <p><strong>加噪过程（前向过程）</strong>：DDPM 将前向过程构建为一个离散时间马尔可夫链 <span class="math inline">\(\{\x_0,\x_1,\ldots,\x_N\}\)</span>，转移概率为： <span class="math display">\[
 p(\x_i\vert \x_{i-1})=\calN\left(\x_i;\sqrt{1-\beta_i}\x_{i-1},\beta_i\mathbf I\right)

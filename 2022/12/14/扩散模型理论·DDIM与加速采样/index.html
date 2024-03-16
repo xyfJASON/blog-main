@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddim.png">
 <meta property="article:published_time" content="2022-12-14T07:53:54.000Z">
-<meta property="article:modified_time" content="2024-03-14T05:28:23.948Z">
+<meta property="article:modified_time" content="2024-03-15T12:34:01.574Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -363,7 +363,7 @@ p_\theta(\x_{t-1}\vert \x_t)=\calN(\x_{t-1};\ \mu_\theta(\x_t,t),\sigma_t^2\I)
 \mathcal L_\text{simple}=\E_{t,\x_0,\epsilon}\left[\left\|\epsilon-\epsilon_\theta\left(\sqrt{\bar\alpha_t}\x_0+\sqrt{1-\bar\alpha_t}\epsilon,t\right) \right\|^2\right] \tag{4}\label{ddpm-loss}
 \]</span></p>
 <h2 id="respaced-timesteps">Respaced Timesteps</h2>
-<p>在 Improved DDPM<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Nichol, Alexander Quinn, and Prafulla Dhariwal. Improved denoising diffusion probabilistic models. In *International Conference on Machine Learning*, pp. 8162-8171. PMLR, 2021.">[1]</span></a></sup>中，作者阐述了一种直接简便的加速采样方法，即不要一步一步地走逆向过程，而是跳着走。受益于 DDPM 前向过程的特殊构造，运用从 <span class="math inline">\(\eqref{ddpm-forward}\)</span> 式推导出 <span class="math inline">\(\eqref{ddpm-forward0}\)</span> 式的思想，我们能轻松地导出任意两个 timestep 之间的转移概率： <span class="math display">\[
+<p>在 Improved DDPM<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Nichol, Alexander Quinn, and Prafulla Dhariwal. Improved denoising diffusion probabilistic models. In *International Conference on Machine Learning*, pp. 8162-8171. PMLR, 2021.">[1]</span></a></sup>中，作者阐述了一种直接简便的加速采样方法，即不要一步一步地走逆向过程，而是跳着走。受益于 DDPM 前向过程的特殊构造，运用从 <span class="math inline">\(\eqref{ddpm-forward}\)</span> 式推导出 <span class="math inline">\(\eqref{ddpm-forward0}\)</span> 式的思想，我们能轻松地导出任意两个 timesteps 之间的转移概率： <span class="math display">\[
 q(\x_t\vert \x_s)=\calN\left(\x_t;\ \sqrt{\frac{\bar\alpha_t}{\bar\alpha_s}}\x_s,\left(1-\frac{\bar\alpha_t}{\bar\alpha_s}\right)\I\right),\quad  \quad 0\leq s&lt;t\leq T
 \]</span> 因此，我们可以选取一个子序列 <span class="math inline">\(0=\tau_0&lt;\tau_1&lt;\cdots&lt;\tau_K=N\)</span>，构建一个新的 <span class="math inline">\(K\)</span> 步马尔可夫链： <span class="math display">\[
 q(\x_{\tau_i}\vert \x_{\tau_{i-1}})=\calN\left(\x_{\tau_i};\ \sqrt{\frac{\bar\alpha_{\tau_i}}{\bar\alpha_{\tau_{i-1}}}}\x_{\tau_{i-1}},\left(1-\frac{\bar\alpha_{\tau_i}}{\bar\alpha_{\tau_{i-1}}}\right)\I\right),\quad 1\leq i\leq K\tag{5}\label{skip}
@@ -371,17 +371,17 @@ q(\x_{\tau_i}\vert \x_{\tau_{i-1}})=\calN\left(\x_{\tau_i};\ \sqrt{\frac{\bar\al
 <p>由于新马尔可夫链更短（<span class="math inline">\(K&lt;N\)</span>），所以在其上采样即可达到加速采样的目的。另外，由于新马尔可夫链是原马尔可夫链的一个子序列，原来的训练本就包括了对子序列的训练，所以我们可以直接加载训练好的 DDPM 模型。</p>
 <p>对比 <span class="math inline">\(\eqref{skip}\)</span> 式与 <span class="math inline">\(\eqref{ddpm-forward}\)</span> 式，容易知道新马尔可夫链对应的 <span class="math inline">\(\beta\)</span> 序列为： <span class="math display">\[
 {\color{purple}\beta_{\tau_i}}=1-\frac{\bar\alpha_{\tau_i}}{\bar\alpha_{\tau_{i-1}}},\quad i=1,2,\ldots ,K
-\]</span> 为与原来的 <span class="math inline">\(\beta\)</span> 作区分，这里用紫色来表示新的 <span class="math inline">\(\beta\)</span>. 以新的 <span class="math inline">\(\beta\)</span> 为基础，重新定义一套新的参数： <span class="math display">\[
+\]</span> 为与原来的 <span class="math inline">\(\beta\)</span> 作区分，这里用紫色来表示新的 <span class="math inline">\(\color{purple}{\beta}\)</span>. 以新的 <span class="math inline">\(\color{purple}{\beta}\)</span> 为基础，重新定义一套新的参数： <span class="math display">\[
 \begin{align}
 &amp;{\color{purple}{\alpha_{\tau_i}}}=1-{\color{purple}{\beta_{\tau_i}}}\\
 &amp;{\color{purple}{\bar\alpha_{\tau_i}}}=\prod_{j=1}^i{\color{purple}{\alpha_{\tau_j}}}\\
 &amp;{\color{purple}{\tilde\beta_{\tau_i}}}=\frac{1-{\color{purple}\bar\alpha_{\tau_{i-1}}}}{1-{\color{purple}\bar\alpha_{\tau_i}}}{\color{purple}\beta_{\tau_i}}
 \end{align}
-\]</span> 那么原来的所有结论在新的参数下都适用。（其实 <span class="math inline">\(\color{purple}{\bar\alpha}\)</span> 和 <span class="math inline">\(\bar\alpha\)</span> 是一样的，毕竟新的 <span class="math inline">\(\color{purple}{\beta}\)</span> 就是用 <span class="math inline">\(\bar\alpha\)</span> 定义出来的。）</p>
+\]</span> 那么原来的所有结论在新的参数下都适用。（其实 <span class="math inline">\(\color{purple}{\bar\alpha}\)</span> 和 <span class="math inline">\(\bar\alpha\)</span> 是一样的，毕竟新的 <span class="math inline">\(\color{purple}{\beta}\)</span> 就是用 <span class="math inline">\(\bar\alpha\)</span> 定义出来的。换句话说，<span class="math inline">\(\bar\alpha\)</span> 才是决定扩散过程的最本质的参数。）</p>
 <p>在具体实现上，我们有两种方案：</p>
 <ol type="1">
-<li><p>第一种方案是 <a target="_blank" rel="noopener" href="https://github.com/openai/improved-diffusion/blob/main/improved_diffusion/respace.py#L63">Improved DDPM GitHub repo</a> 所采用的。我们继承原来的 DDPM 类，更新 <span class="math inline">\(\beta\)</span> 序列并重新初始化其他参数，就可以直接调用原本 DDPM 的方法了。唯一值得注意的一点是，给到模型的 timestep 要映射回原来的 timestep，见 repo 中的 <code>_WrappedModel</code> 类。</p></li>
-<li><p>第二种方案是 <a target="_blank" rel="noopener" href="https://github.com/ermongroup/ddim/blob/main/functions/denoising.py#L35">DDIM GitHub repo</a> 所采用的，更加简单粗暴，即直接在采样函数里面重新计算 <span class="math inline">\(\beta\)</span> 等参数。</p></li>
+<li><p>第一种方案是 <a target="_blank" rel="noopener" href="https://github.com/openai/improved-diffusion/blob/main/improved_diffusion/respace.py#L63">Improved DDPM GitHub repo</a> 所采用的。我们继承原来的 DDPM 类，更新 <span class="math inline">\(\beta\)</span> 序列为新的 <span class="math inline">\(\color{purple}{\beta}\)</span> 序列并重新初始化其他参数，就可以直接调用原本 DDPM 的方法了。值得注意的一点是，给到模型的 timestep 要映射回原来的 timestep，见 repo 中的 <code>_WrappedModel</code> 类。</p></li>
+<li><p>第二种方案是 <a target="_blank" rel="noopener" href="https://github.com/ermongroup/ddim/blob/main/functions/denoising.py#L35">DDIM GitHub repo</a> 所采用的，更加简单粗暴，即直接在采样时重新计算 <span class="math inline">\(\beta\)</span> 等参数。</p></li>
 </ol>
 <h2 id="ddim">DDIM</h2>
 <h3 id="idea">Idea</h3>
@@ -393,35 +393,33 @@ q(\x_t\vert\x_0)=\calN\left(\x_t;\ \sqrt{\bar\alpha_t}\x_0,(1-\bar\alpha_t)\I\ri
 \]</span> 其次，考虑 <span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)\)</span>，我们发现仅从已定义的 <span class="math inline">\(q(\x_t\vert \x_0)\)</span> 是无法唯一确定下 <span class="math inline">\(q(\x_{t-1}\vert \x_t,\x_0)\)</span> 的（无视掉 <span class="math inline">\(\x_0\)</span> 的条件能看得更明显），只要它们俩满足以下关系式就行： <span class="math display">\[
 q(\x_{t-1}\vert \x_0)=\int q(\x_{t-1}\vert \x_t,\x_0)q(\x_t\vert \x_0)\mathrm d\x_t
 \]</span></p>
-<p>论文给出的一族满足条件的解是： <span class="math display">\[
+<p>论文给出的<strong>一族</strong>满足条件的解是： <span class="math display">\[
 q_\sigma(\x_{t-1}\vert\x_t,\x_0)=\calN\left(\x_{t-1};\ \sqrt{\bar\alpha_{t-1}}\x_0+\sqrt{1-\bar\alpha_{t-1}-\sigma_t^2}\cdot\frac{\x_t-\sqrt{\bar\alpha_t}\x_0}{\sqrt{1-\bar\alpha_t}},\sigma_t^2\I \right)\tag{7}\label{ddim-reverse}
 \]</span> 这里给 <span class="math inline">\(q\)</span> 加上了下标 <span class="math inline">\(\sigma=(\sigma_1,\ldots,\sigma_T)\)</span> 来明确地表示 <span class="math inline">\(q\)</span> 是关于 <span class="math inline">\(\sigma\)</span> 的一族解，改变 <span class="math inline">\(\sigma\)</span> 就能改变 <span class="math inline">\(q\)</span>.</p>
-<blockquote>
-<p>论文的发展顺序是先直接给出了 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span>，然后用数学归纳法证明 <span class="math inline">\(q(\x_t\vert \x_0)\)</span> 满足我们的定义。按这样的顺序写论文比较方便，但显然与人的正常思考过程相反，不具有参考意义。</p>
-<p>参考资料<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Jul. 27, 2022). 《生成扩散模型漫谈（四）：DDIM = 高观点DDPM 》[Blog post]. Retrieved from https://kexue.fm/archives/9181">[3]</span></a></sup>使用了待定系数法求解 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span>，是一个不错的方案。</p>
-</blockquote>
-<p>根据 <span class="math inline">\(\eqref{xtx0},\eqref{ddim-reverse}\)</span> 式，我们从不同于 DDPM 的角度定义了一个新的扩散过程。在实际采样时，我们依旧用 <span class="math inline">\(p_{\theta,\sigma}(\x_{t-1}\vert \x_t)\)</span> 来近似 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span>： <span class="math display">\[
+<div class="note note-secondary">
+            <p>论文的发展顺序是先直接给出了 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span>，然后用数学归纳法证明 <span class="math inline">\(q(\x_t\vert \x_0)\)</span> 满足我们的定义。按这样的顺序写论文比较方便，但显然与人的正常思考过程相反，不具有参考意义。参考资料<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Jul. 27, 2022). 《生成扩散模型漫谈（四）：DDIM = 高观点DDPM 》[Blog post]. Retrieved from https://kexue.fm/archives/9181">[3]</span></a></sup>使用了待定系数法求解 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span>，是一个不错的方案。</p>
+          </div>
+<p>根据 <span class="math inline">\(\eqref{xtx0},\eqref{ddim-reverse}\)</span>​ 式，我们从不同于 DDPM 的角度定义了一个新的扩散/去噪过程。特别地，我们回过来算一下这个新扩散过程的一个前向步是什么： <span class="math display">\[
+q_\sigma(\x_t\vert\x_{t-1},\x_0)=\frac{q_\sigma(\x_{t-1}\vert\x_t,\x_0)q(\x_t\vert\x_0)}{q(\x_{t-1}\vert\x_0)}
+\]</span> 其具体形式不重要，重要的是现在 <span class="math inline">\(\x_t\)</span> 同时依赖于 <span class="math inline">\(\x_{t-1}\)</span> 和 <span class="math inline">\(\x_0\)</span>，所以不再是一个马尔可夫过程了，如下图所示：</p>
+<p><img src="ddim.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>在实际采样时，我们依旧用 <span class="math inline">\(p_{\theta,\sigma}(\x_{t-1}\vert \x_t)\)</span> 去近似 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span>​： <span class="math display">\[
 \begin{align}
 &amp;p_{\theta,\sigma}(\x_{t-1}\vert \x_t)=\calN\left(\x_{t-1};\sqrt{\bar\alpha_{t-1}}\ \x_\theta(\x_t,t)+\sqrt{1-\bar\alpha_{t-1}-\sigma_t^2}\cdot\epsilon_\theta(\x_t,t),\sigma_t^2\mathbf I\right)\\
 \text{where}\quad&amp;\x_\theta(\x_t,t)\xrightarrow{\text{approximates}}\x_0\\
 &amp;\epsilon_\theta(\x_t,t)\xrightarrow{\text{approximates}}\epsilon=\frac{\x_t-\sqrt{\bar\alpha_t}\x_0}{\sqrt{1-\bar\alpha_t}}
 \end{align}
 \]</span></p>
-<h3 id="non-markovian">Non-Markovian</h3>
-<p>对于新的扩散过程，其一步前向过程为： <span class="math display">\[
-q_\sigma(\x_t\vert\x_{t-1},\x_0)=\frac{q_\sigma(\x_{t-1}\vert\x_t,\x_0)q(\x_t\vert\x_0)}{q(\x_{t-1}\vert\x_0)}
-\]</span> 这依旧是一个高斯分布，具体参数是什么不重要，重要的是 <span class="math inline">\(\x_t\)</span> 同时依赖于 <span class="math inline">\(\x_{t-1}\)</span> 和 <span class="math inline">\(\x_0\)</span>，所以不再是一个马尔可夫过程了。因此，<strong>新的扩散过程放宽了马尔可夫条件这个约束，带来了一个新的自由变量 <span class="math inline">\(\sigma=(\sigma_1,\ldots,\sigma_T)\)</span>，即去噪过程的方差</strong>。</p>
-<p><img src="ddim.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p>虽然新的扩散过程把马尔可夫过程扩展为了非马尔可夫过程，但是它的损失函数与 DDPM 仍然一致（因为两同方差正态分布的 KL 散度正比于二者均值相减的平方，又两个均值有着相同的形式，所以最后都能归约到 <span class="math inline">\(\Vert \epsilon-\epsilon_\theta(\x_t,t)\Vert|^2\)</span>，仅仅系数略有差别），因此我们可以<strong>直接加载 DDPM 训练好的模型，无需重新训练</strong>。</p>
+<p>虽然 DDIM 与 DDPM 的 <span class="math inline">\(q_\sigma(\x_{t-1}\vert\x_t,\x_0)\)</span> 形式不同，但是损失函数仍然基本保持一致。这是因为两同方差正态分布的 KL 散度正比于二者均值相减的平方，又两个均值有着相同的形式，所以最后都能归约到 <span class="math inline">\(\Vert \epsilon-\epsilon_\theta(\x_t,t)\Vert|^2\)</span>，仅仅系数有差别。尽管后续的研究表明系数对训练效果有一定影响，但一般认为我们可以<strong>直接加载 DDPM 训练好的模型而无需重新训练</strong>。</p>
 <h3 id="two-special-cases">Two Special Cases</h3>
-<p>现在我们考虑两种特殊的方差选取方案：</p>
-<p>第一种，取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t\)</span> . 代入 <span class="math inline">\(\eqref{ddim-reverse}\)</span> 式，会发现化简后的结果与 <span class="math inline">\(\eqref{ddpm-reverse}\)</span> 式完全一致，即得到了 DDPM. 因此，<strong>我们也许可以称新的扩散过程为 generalized DDPM</strong>.</p>
-<p>第二种，取 <span class="math inline">\(\sigma_t^2=0\)</span>. 这意味着逆向过程变成了一个<strong>确定性过程</strong>： <span class="math display">\[
+<p><span class="math inline">\(\eqref{ddim-reverse}\)</span> 式是关于 <span class="math inline">\(\sigma\)</span> 的一族解，现在我们考虑两种特殊的选取方案：</p>
+<p>第一种方案，取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t\)</span> . 代入 <span class="math inline">\(\eqref{ddim-reverse}\)</span> 式，会发现化简后的结果与 <span class="math inline">\(\eqref{ddpm-reverse}\)</span> 式完全一致，即得到了 DDPM. 因此，<strong>DDPM 是新扩散过程的一个特例</strong>。</p>
+<p>第二种方案，取 <span class="math inline">\(\sigma_t^2=0\)</span>. 这意味着逆向过程变成了一个<strong>确定性过程</strong>： <span class="math display">\[
 \x_{t-1}=\sqrt{\bar\alpha_{t-1}}\x_0+\sqrt{1-\bar\alpha_{t-1}}\cdot\frac{\x_t-\sqrt{\bar\alpha_t}\x_0}{\sqrt{1-\bar\alpha_t}}
 \]</span> 代入模型，即： <span class="math display">\[
 \x_{t-1}=\sqrt{\bar\alpha_{t-1}}\x_\theta(\x_t,t)+\sqrt{1-\bar\alpha_{t-1}}\epsilon_\theta(\x_t,t)\label{ddim}\tag{8}
-\]</span> 确定性也意味着每个图像都唯一对应了一个隐变量，作者称之为 <strong>Denoising Diffusion Implicit Models (DDIM)</strong>.</p>
-<p>确定性还意味着我们可以对隐变量插值来获取语义平滑变化的图像了。但是这里有一个小 trick：作者采用的不是一般的线性插值，而是球面线性插值： <span class="math display">\[
+\]</span> 作者称之为 <strong>Denoising Diffusion Implicit Models (DDIM)</strong>.</p>
+<p>确定性意味着每个图像 <span class="math inline">\(\x_0\)</span> 都唯一对应了一个隐变量 <span class="math inline">\(\x_T\)</span>，因此可以对隐变量插值来获取平滑变化的图像。但是这里有一个小 trick：作者采用的不是一般的线性插值，而是球面线性插值： <span class="math display">\[
 \x_T^{(\alpha)}=\frac{\sin((1-\alpha)\theta)}{\sin(\theta)}\x_T^{(1)}+\frac{\sin(\alpha\theta)}{\sin(\theta)}\x_T^{(2)}
 \]</span> 其中，<span class="math inline">\(\theta\)</span> 是两向量 <span class="math inline">\(\x_T^{(1)}\)</span> 和 <span class="math inline">\(\x_T^{(2)}\)</span> 的夹角。</p>
 <div class="note note-info">
@@ -432,7 +430,7 @@ q_\sigma(\x_t\vert\x_{t-1},\x_0)=\frac{q_\sigma(\x_{t-1}\vert\x_t,\x_0)q(\x_t\ve
 <h3 id="faster-sampling">Faster Sampling</h3>
 <p>截至目前，我们似乎并没有看出 DDIM 有什么加速之处。其实，DDIM 的加速采样思想和上一节是类似的，即取子序列 <span class="math inline">\(0= \tau_0&lt;\tau_1&lt;\cdots&lt;\tau_K=N\)</span>，只做 <span class="math inline">\(K\)</span> 步采样。具体而言，新的采样过程为： <span class="math display">\[
 p_{\theta,\sigma}(\x_{\tau_{i-1}}\vert \x_{\tau_i},\x_0)=\calN\left(\x_{\tau_{i-1}};\sqrt{\bar\alpha_{\tau_{i-1}}}\ \x_\theta(\x_{\tau_i},\tau_i)+\sqrt{1-\bar\alpha_{\tau_{i-1}}-\sigma_{\tau_i}^2}\cdot\epsilon_\theta(\x_{\tau_i},\tau_i),\sigma_{\tau_i}^2\mathbf I\right)
-\]</span> 可以看见，DDIM 的加速采样其实并没有什么新的东西。那为什么人们每每提到 DDIM，总会想到加速采样呢？因为实验发现，当采样步数小于 100 步时（假设训练是 1000 步），DDIM 的采样质量比 DDPM 显著更好；特别是在 50 到 100 步左右时，人眼其实不怎么看得出和 1000 步的区别。</p>
+\]</span> 那为什么人们每每提到 DDIM，总会想到加速采样呢？因为实验发现，当采样步数小于 100 步时（假设训练是 1000 步），DDIM 的采样质量比 DDPM 显著更好；特别是在 50 到 100 步左右时，人眼其实不怎么看得出和 1000 步的区别。</p>
 <h3 id="neural-ode">Neural ODE</h3>
 <p>在「<a href="/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/" title="扩散模型理论·SDE与ODE描述">扩散模型理论·SDE与ODE描述</a>」一文中，我们介绍了如何将离散时间的 DDPM 连续化为 SDE 形式，同时还说明了每个 SDE 都对应着一个确定性的 ODE. 而 DDIM 恰是一种确定性情形，所以我们自然会想到——能不能用 ODE 来描述一个 DDIM 呢？答案是肯定的。</p>
 <p>首先，我们把 <span class="math inline">\(\eqref{ddim}\)</span> 式中的 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 也换做 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 表示： <span class="math display">\[
@@ -450,11 +448,14 @@ p_{\theta,\sigma}(\x_{\tau_{i-1}}\vert \x_{\tau_i},\x_0)=\calN\left(\x_{\tau_{i-
 \]</span> 记 <span class="math inline">\(\x(t)=\x_t,\,\bar\alpha(t)=\bar\alpha_t\)</span>，将 <span class="math inline">\(t-1\)</span> 换成 <span class="math inline">\(t-\Delta t\)</span> 并令 <span class="math inline">\(\Delta t\to0\)</span>，得： <span class="math display">\[
 \mathrm d\x=\frac{\mathrm d\bar\alpha(t)}{\sqrt{\bar\alpha(t)}}\left(\frac{\x(t)}{2\sqrt{\bar\alpha(t)}}-\frac{\epsilon_\theta(\x(t),t)}{2\sqrt{\bar\alpha(t)(1-\bar\alpha(t))}}\right)=\frac{\bar\alpha&#39;(t)}{2\bar\alpha(t)}\left(\x(t)-\frac{\epsilon_\theta(\x(t),t)}{\sqrt{1-\bar\alpha(t)}}\right)\mathrm dt\tag{9}\label{ddim-ode}
 \]</span> 这就是 DDIM 的 ODE 描述<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Liu, Luping, Yi Ren, Zhijie Lin, and Zhou Zhao. Pseudo numerical methods for diffusion models on manifolds. *arXiv preprint arXiv:2202.09778* (2022).">[6]</span></a></sup>。</p>
-<p>事实上，该 ODE 与「扩散模型的SDE与ODE描述」一文的结果是相同的。回顾当时我们得到的 ODE 为： <span class="math display">\[
+<p>事实上，该 ODE 与「扩散模型的SDE与ODE描述」一文的结果是等价的。回顾当时我们得到的 ODE 为： <span class="math display">\[
 \mathrm d\x=\left[\mathbf f(\x,t)-\frac{1}{2}g^2(t)s_\theta(\x,t)\right]\mathrm dt
 \]</span> 在 DDPM 的设置下，有 <span class="math inline">\(\mathbf f(\x,t)=-\frac{1}{2}\beta(t)\x,\ g(t)=\sqrt{\beta(t)}\)</span>，代入得： <span class="math display">\[
-\mathrm d\x=\left[-\frac{1}{2}\beta(t)\x-\frac{1}{2}\beta(t)s_\theta(\x,t)\right]\mathrm dt=-\frac{1}{2}\beta(t)\left[\x+s_\theta(\x,t)\right]\mathrm dt
-\]</span> 通过解 SDE 的高斯转移概率并与 DDPM 相比较，可以知道 <span class="math inline">\(\beta(t)\)</span> 与 <span class="math inline">\(\bar\alpha(t)\)</span> 有关系 <span class="math inline">\(\beta(t)=-\frac{\bar\alpha&#39;(t)}{\bar\alpha(t)}\)</span>；另外我们也知道 score model 和噪声预测模型有关系 <span class="math inline">\(s_\theta(\x,t)=-\frac{\epsilon_\theta(\x,t)}{\sqrt{1-\bar\alpha(t)}}\)</span>，代入上式即可发现我们重新推出了 <span class="math inline">\(\eqref{ddim-ode}\)</span> 式。</p>
+\mathrm d\x=\left[-\frac{1}{2}\beta(t)\x-\frac{1}{2}\beta(t)s_\theta(\x,t)\right]\mathrm dt=-\frac{1}{2}\beta(t)\left[\x+s_\theta(\x,t)\right]\mathrm dt\tag{10}\label{ddim-ode2}
+\]</span> 通过解 SDE 的高斯转移概率并与 DDPM 相比较，可以知道 <span class="math inline">\(\beta(t)\)</span> 与 <span class="math inline">\(\bar\alpha(t)\)</span> 有关系 <span class="math inline">\(\beta(t)=-\frac{\bar\alpha&#39;(t)}{\bar\alpha(t)}\)</span>；另外我们也知道 score model 和噪声预测模型有关系 <span class="math inline">\(s_\theta(\x,t)=-\frac{\epsilon_\theta(\x,t)}{\sqrt{1-\bar\alpha(t)}}\)</span>，代入上式即可重新推得 <span class="math inline">\(\eqref{ddim-ode}\)</span>​ 式。</p>
+<p>另外，如果对 <span class="math inline">\(\eqref{ddim-ode}\)</span> 式做变量替换 <span class="math inline">\(\sigma(t)=\sqrt{\frac{1}{\bar\alpha(t)}-1},\,\bar{\mathbf x}(t)=\sqrt{1+\sigma^2(t)}\mathbf x(t)\)</span>，则整理后得： <span class="math display">\[
+\mathrm d\bar{\mathbf x}=\epsilon_\theta\left(\frac{\bar{\mathbf x}(t)}{\sqrt{1+\sigma^2(t)}},t\right)\sigma&#39;(t)\mathrm dt\tag{11}\label{ddim-ode3}
+\]</span> 这正是 DDIM 原论文中给出的 ODE 形式。综上，<span class="math inline">\(\eqref{ddim-ode},\eqref{ddim-ode2},\eqref{ddim-ode3}\)</span> 式都是 DDIM 的等价的 ODE 形式。</p>
 <h3 id="ddim-inversion">DDIM Inversion</h3>
 <p>前文提及，DDIM 使得每个图像都唯一对应了一个隐变量，但并没有说明如何求这个隐变量。现在有了 ODE，事情就变得简单了。如果说采样过程是沿着 <span class="math inline">\(T\to 0\)</span> 的时间求解 ODE，那么反过来，沿着 <span class="math inline">\(0\to T\)</span> 的时间解同一个 ODE 就是逆过程，这种技术被称作 <strong>DDIM inversion</strong>. 实现上，只需要将 <span class="math inline">\(\eqref{ddim}\)</span> 式中的 <span class="math inline">\(t-1\)</span> 替换为 <span class="math inline">\(t+1\)</span> 即可： <span class="math display">\[
 \x_{t+1}=\sqrt{\bar\alpha_{t+1}}\x_\theta(\x_t,t)+\sqrt{1-\bar\alpha_{t+1}}\epsilon_\theta(\x_t,t)

@@ -16,24 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{z\sim p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference)。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期">
+    <meta name="description" content="封面图片来自链接。  Brief Introduction 生成模型的目标是最大化训练样本的对数似然 \(\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]\)，但直接计算对数似然是十分困难的。为此，各种生成模型想方设法地绕过似然的直接计算。例如，VAE 优化的是对数似然的一个下界；Score-based Models 建模的是对数似然的梯度场 (sco">
 <meta property="og:type" content="article">
-<meta property="og:title" content="变分推断">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/05/%E5%8F%98%E5%88%86%E6%8E%A8%E6%96%AD/index.html">
+<meta property="og:title" content="Flow-based Generative Models">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/07/Flow-based-Generative-Models/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{z\sim p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference)。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期">
+<meta property="og:description" content="封面图片来自链接。  Brief Introduction 生成模型的目标是最大化训练样本的对数似然 \(\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]\)，但直接计算对数似然是十分困难的。为此，各种生成模型想方设法地绕过似然的直接计算。例如，VAE 优化的是对数似然的一个下界；Score-based Models 建模的是对数似然的梯度场 (sco">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
-<meta property="article:published_time" content="2024-03-05T08:23:28.000Z">
-<meta property="article:modified_time" content="2024-03-08T04:35:01.033Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/flow.png">
+<meta property="article:published_time" content="2024-03-07T11:38:45.000Z">
+<meta property="article:modified_time" content="2024-03-16T08:56:49.124Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="machine learning">
+<meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/flow.png">
   
   
   
-  <title>变分推断 - xyfJASON</title>
+  <title>Flow-based Generative Models - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/vi.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/flow.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="变分推断"></span>
+            <span id="subtitle" data-typed-text="Flow-based Generative Models"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-03-05 16:23" pubdate>
-          2024年3月5日 下午
+        <time datetime="2024-03-07 19:38" pubdate>
+          2024年3月7日 晚上
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.3k 字
+          687 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          12 分钟
+          6 分钟
         
       </span>
     
@@ -322,106 +322,93 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">变分推断</h1>
+            <h1 id="seo-header">Flow-based Generative Models</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="近似推断">近似推断</h2>
-<p>在许多机器学习问题中，一个核心任务是给定观测数据 <span class="math inline">\(x\)</span>，估计隐变量 <span class="math inline">\(z\)</span> 的后验分布 <span class="math inline">\(p(z\vert x)\)</span>，或者估计某函数 <span class="math inline">\(f(z)\)</span> 关于后验分布的期望 <span class="math inline">\(\mathbb E_{z\sim p(z\vert x)}[f(z)]\)</span>. 这样的估计过程就是所谓的<strong>推断 (inference)</strong>。例如，在 <a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">EM 算法</a>中我们就需要估计完整数据的对数似然关于后验分布的期望。</p>
-<p>然而，许多问题的后验分布是<strong>不可解 (intractable)</strong> 的，因为根据贝叶斯公式，后验分布为： <span class="math display">\[
-p(z\vert x)=\frac{p(x\vert z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\int_{z&#39;}p(x\vert z&#39;)p(z&#39;)\mathrm dz&#39;}
-\]</span> 其分母涉及对全体隐变量的积分，只有隐空间取值离散且维度较小时才有可能精确计算。因此，人们提出了许多<strong>近似推断 (approximate inference)</strong> 方法来解决这个问题。</p>
-<p>近似推断方法可以大体分为两类——确定性方法和随机性方法。确定性方法的典型代表就是<strong>变分推断 (variational inference)</strong>，而随机性方法的典型代表是<strong>马尔可夫链蒙特卡洛 (MCMC)</strong>。注意变分推断和 MCMC 都是一类方法的统称。本文主要探究变分推断方法。</p>
-<p><img src="inference.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<h2 id="变分推断">变分推断</h2>
-<p>设观测数据为 <span class="math inline">\(x\)</span>，隐变量为 <span class="math inline">\(z\)</span>，同 EM 算法的推导一样，为 <span class="math inline">\(z\)</span> 引入一个分布 <span class="math inline">\(q(z)\)</span>，则有： <span class="math display">\[
+                <blockquote>
+<p>封面图片来自<a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2018-10-13-flow-models/">链接</a>。</p>
+</blockquote>
+<h2 id="brief-introduction">Brief Introduction</h2>
+<p>生成模型的目标是最大化训练样本的对数似然 <span class="math inline">\(\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]\)</span>，但直接计算对数似然是十分困难的。为此，各种生成模型想方设法地绕过似然的直接计算。例如，VAE 优化的是对数似然的一个下界；Score-based Models 建模的是对数似然的梯度场 (score function)；GANs 则通过对抗训练隐式地优化对数似然。与这些模型不同，Flow 模型通过巧妙设计网络架构，使之能够直接计算似然函数。</p>
+<p>Flow 模型最早由 NICE<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dinh, Laurent, David Krueger, and Yoshua Bengio. Nice: Non-linear independent components estimation. *arXiv preprint arXiv:1410.8516* (2014).">[1]</span></a></sup>提出，后续由 Real-NVP<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dinh, Laurent, Jascha Sohl-Dickstein, and Samy Bengio. Density estimation using real nvp. *arXiv preprint arXiv:1605.08803* (2016).">[2]</span></a></sup>和 Glow<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Durk P., and Prafulla Dhariwal. Glow: Generative flow with invertible 1x1 convolutions. *Advances in neural information processing systems* 31 (2018).">[3]</span></a></sup>做出改进。值得一提的是，将 Flow 模型连续化可得到连续归一化流 CNF<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. *Advances in neural information processing systems* 31 (2018).">[4]</span></a></sup>. 由于 CNF 可以用 ODE 描述，因而能够与 Score-based Models 和 Diffusion Models 紧密联系在一起，代表工作有近年的 Rectified Flow<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. *arXiv preprint arXiv:2209.03003* (2022).">[5]</span></a></sup>和 Flow Matching<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. *arXiv preprint arXiv:2210.02747* (2022).">[6]</span></a></sup>等。不过本文的内容主要还是集中在 NICE、Real-NVP 和 Glow 上。</p>
+<h2 id="change-of-variables">Change of Variables</h2>
+<p>Flow 模型希望构建一个<strong>可逆</strong>非线性变换 <span class="math inline">\(f_\theta\)</span>，将输入 <span class="math inline">\(x\)</span> 映射到 <span class="math inline">\(z\)</span>，使得 <span class="math inline">\(p_Z(z)\)</span> 是一个简单分布（例如标准高斯分布）：</p>
+<p><img src="f.png" srcset="/blog-main/logo/imageloading.png" lazyload width=35% /></p>
+<p>根据概率论的知识，有<strong>变量替换公式 (change of variables)</strong>： <span class="math display">\[
+p_\theta(x)=p_Z(f_\theta(x))\left|\det\left(\frac{\partial f_\theta(x)}{\partial x}\right)\right|
+\]</span> 其中 <span class="math inline">\(\det(\partial f_\theta(x)/\partial x)\)</span> 表示 <span class="math inline">\(f_\theta\)</span> 的 Jacobian 行列式。那么现在对数似然为： <span class="math display">\[
+\log p_\theta(x)=\log p_Z(f_\theta(x))+\log\left|\det\left(\frac{\partial f_\theta(x)}{\partial x}\right)\right|
+\]</span> 因此，如果 Jacobian 行列式是容易计算的，那么对数似然就可以直接计算出来，从而可以优化求解 <span class="math inline">\(f_\theta\)</span> 了。</p>
+<p>进一步地，当训练完成后，由于 <span class="math inline">\(f_\theta\)</span> 可逆，所以只需要通过简单的 ancestral sampling 就可以生成新的数据： <span class="math display">\[
+z\sim p(z),\quad x=f_\theta^{-1}(z)
+\]</span> 因此，现在问题的关键就在于如何设计变换 <span class="math inline">\(f_\theta\)</span>，使之满足：<strong>1. 可逆；2. Jacobian 行列式容易计算；3. 有足够强大的非线性变换能力</strong>。</p>
+<h2 id="nice">NICE</h2>
+<p>NICE 的核心设计是 <strong>additive coupling layer</strong>. 首先将数据 <span class="math inline">\(x\)</span> 划分为两部分 <span class="math inline">\(x_1\in\mathbb R^{d_1},x_2\in\mathbb R^{d_2}\)</span>，然后定义 <span class="math inline">\(z=(z_1,z_2)\)</span> 为： <span class="math display">\[
 \begin{align}
-\log p(x)&amp;=\int_zq(z)\log p(x)\mathrm dz\\
-&amp;=\int_zq(z)\log\frac{p(x,z)}{p(z\vert x)}\mathrm dz\\
-&amp;=\int_zq(z)\log\left(\frac{p(x,z)}{q(z)}\cdot\frac{q(z)}{p(z\vert x)}\right)\mathrm d z\\
-&amp;=\int_zq(z)\log\frac{p(x,z)}{q(z)}\mathrm dz+\int_zq(z)\log\frac{q(z)}{p(z\vert x)}\mathrm dz\\
-&amp;=\mathcal L(q)+\text{KL}(q(z)\Vert p(z\vert x))
+&amp;z_1=x_1\\
+&amp;z_2=m_\theta(x_1)+x_2
 \end{align}
-\]</span> 值得注意的是，这里没有将模型参数 <span class="math inline">\(\theta\)</span> 显式写出来。从频率派的角度而言，可以认为我们目前并不关心 <span class="math inline">\(\theta\)</span>，所以省略了；从贝叶斯的角度而言，可以认为参数被吸收进了隐变量 <span class="math inline">\(z\)</span> 之中，因而不再单独列出来。</p>
-<p>通过上面的推导，我们得到了对数似然的下界 <span class="math inline">\(\mathcal L(q)\)</span>，于是可以通过最大化 <span class="math inline">\(\mathcal L(q)\)</span> 来最大化对数似然 <span class="math inline">\(\log p(x)\)</span>. 显然，这个下界应该越紧越好，也就是说我们希望 KL 项越小越好。如果不限制 <span class="math inline">\(q(z)\)</span> 的形式，那么当 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 时 KL 项达到最小值 <span class="math inline">\(0\)</span>，这就是 EM 算法做的事情。但是现在问题的基本假设是 <span class="math inline">\(p(z\vert x)\)</span> 是不可解的，因此无法通过直接令 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 求解。为此，我们考虑为 <span class="math inline">\(q(z)\)</span> <strong>引入一些假设</strong>以使得问题可解。值得注意的是，人为引入假设意味着 <span class="math inline">\(q(z)\)</span> 的形式被限制了，因此这样求出的解并不是真正的最优解，这就是为什么变分推断属于近似推断而非精确推断。</p>
-<p>根据引入的假设的不同，我们就得到了不同的变分推断方法，例如：</p>
-<ul>
-<li><strong>平均场变分推断</strong>：假设 <span class="math inline">\(q(z)\)</span>​ 可分解为各分量密度函数之乘积；</li>
-<li><strong>随机梯度变分推断</strong>：假设 <span class="math inline">\(q(z)\)</span> 是以 <span class="math inline">\(\phi\)</span> 为参数的分布族并使用随机梯度下降优化之。</li>
-</ul>
-<p>顺便补充一点，由于 <span class="math inline">\(\mathcal L(q)\)</span> 的自变量是概率密度<strong>函数</strong> <span class="math inline">\(q(z)\)</span>，所以 <span class="math inline">\(\mathcal L(q)\)</span> 是一个<strong>泛函</strong>。求泛函极值的方法被称作<strong>变分法</strong>，这就是变分推断这个名称的由来，也因此我们常称 <span class="math inline">\(\mathcal L(q)\)</span> 为变分下界。</p>
-<h3 id="平均场变分推断">平均场变分推断</h3>
-<p>设隐变量 <span class="math inline">\(z=(z_1,\ldots,z_m)\in\mathbb R^m\)</span>，并且假设 <span class="math inline">\(q(z)\)</span> 可分解为各分量密度函数之乘积： <span class="math display">\[
-q(z)=\prod_{i=1}^mq_i(z_i)
-\]</span> &gt; 注：其实 <span class="math inline">\(z_i\)</span> 不一定真的是一个分量，也可以是一些分量形成的一个组，但本质一样的，不影响推导。</p>
-<p>由于这种假设来源于统计力学中的平均场理论 (mean-field theory)，因此称该假设下的变分推断为<strong>平均场变分推断</strong>。</p>
-<p>将上式代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(m_\theta:\mathbb R^{d_1}\to\mathbb R^{d_1}\)</span> 可以是任意复杂函数（如一个神经网络），如图所示：</p>
+<p><img src="coupling.png" srcset="/blog-main/logo/imageloading.png" lazyload width=35% /></p>
+<p>在这样的设计下，可逆性非常容易满足： <span class="math display">\[
 \begin{align}
-\mathcal L(q)&amp;=\int_zq(z)\Big(\log p(x,z)-\log q(z)\Big)\mathrm dz\\
-&amp;=\int_z\prod_{i=1}^mq_i(z_i)\bigg(\log p(x,z)-\sum_{k=1}^m\log q_k(z_k)\bigg)\mathrm dz\\
-&amp;=\int_z\prod_{i=1}^mq_i(z_i)\log p(x,z)\mathrm dz-\int_z\prod_{i=1}^mq_i(z_i)\sum_{k=1}^m\log q_k(z_k)\mathrm dz
+&amp;x_1=z_1\\
+&amp;x_2=z_2-m_\theta(z_1)
 \end{align}
-\]</span> 为了最大化 <span class="math inline">\(L(q)\)</span>，可以逐个优化 <span class="math inline">\(q_j(z_j)\)</span> 并不断迭代。为此，固定 <span class="math inline">\(z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_m\)</span> 不动，将 <span class="math inline">\(z_j\)</span> 视为变量，则： <span class="math display">\[
-\begin{align}
-\mathcal L(q)&amp;=\int_{z_j}q_j(z_j)\left[\int_{z_{/j}}\log p(x,z)\prod_{i\neq j}q_i(z_i)\mathrm dz_{/j}\right]\mathrm dz_j-\int_{z_j}q_j(z_j)\log q_j(z_j)\mathrm dz_j+\text{const}\\
-&amp;=\int_{z_j}q_j(z_j)\mathbb E_{i\neq j}[\log p(x,z)]\mathrm dz_j-\int_{z_j}q_j(z_j)\log q_j(z_j)\mathrm dz_j+\text{const}\\
-&amp;=\int_{z_j}q_j(z_j)\Big(\mathbb E_{i\neq j}[\log p(x,z)]-\log q_j(z_j)\Big)\mathrm dz_j+\text{const}
-\end{align}
-\]</span></p>
-<p>其中 <span class="math inline">\(z_{/j}\)</span> 表示 <span class="math inline">\((z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_m)\)</span>，而 <span class="math inline">\(\mathbb E_{i\neq j}\)</span> 表示对 <span class="math inline">\(\prod_{i\neq j}q_i(z_i)\)</span> 求期望。注意到 <span class="math inline">\(\mathbb E_{i\neq j}[\log p(x,z)]\)</span> 是关于 <span class="math inline">\(x,z_j\)</span> 的函数，可以将其视作能量并构建玻尔兹曼分布 <span class="math inline">\(\tilde p(x,z_j)\)</span>： <span class="math display">\[
-\log \tilde p(x,z_j)=\mathbb E_{i\neq j}[\log p(x,z)]+\text{const}
-\]</span> 于是： <span class="math display">\[
-\mathcal L(q)=\int_{z_j}q_j(z_j)\log\frac{\tilde p(x,z_j)}{q_j(z_j)}\mathrm dz_j+\text{const}=-\text{KL}(q_j(z_j)\Vert \tilde p(x,z_j))+\text{const}
-\]</span> 因此最优解 <span class="math inline">\(q^\ast_j(z_j)\)</span> 为： <span class="math display">\[
-q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
-\]</span> 或写作： <span class="math display">\[
-\log q^\ast_j(z_j)=\mathbb E_{i\neq j}[\log p(x,z)]+\text{const}
-\]</span> 正如上文所言，整个优化过程是一个轮转迭代的过程——首先初始化所有的 <span class="math inline">\(q_i(z_i),\,i=1,\ldots,m\)</span>，然后根据上式循环更新各个分量——即坐标上升法。可以证明迭代过程能够收敛。</p>
-<h3 id="随机梯度变分推断">随机梯度变分推断</h3>
-<p>对于泛函优化问题，一个常用的方法是将作为自变量的那个函数参数化，这样优化对象就从函数变成了参数，问题从而转化成了一般的函数优化问题。在变分推断的语境中，就是将 <span class="math inline">\(q(z)\)</span> 限制为一个以 <span class="math inline">\(\phi\)</span> 为参数的分布族 <span class="math inline">\(q_\phi(z)\)</span>，那么此时 <span class="math inline">\(\mathcal L(q)\)</span> 就变成了关于 <span class="math inline">\(\phi\)</span> 的函数 <span class="math inline">\(\mathcal L(\phi)\)</span> ，于是使用随机梯度下降即可求解。这就是<strong>随机梯度变分推断 (SGVI)</strong> 或<strong>随机梯度贝叶斯方法 (SGVB)</strong>。</p>
-<p>具体而言，将 <span class="math inline">\(q_\phi(z)\)</span> 代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
-\mathcal L(\phi)=\int_zq_\phi(z)\log\frac{p(x,z)}{q_\phi(z)}\mathrm dz=\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
-\]</span> 对参数 <span class="math inline">\(\phi\)</span> 求梯度： <span class="math display">\[
-\begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz=\int_z\nabla_\phi\Big[q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\Big]\mathrm dz\\
-&amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz+\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
-\end{align}
-\]</span> 其中第二项： <span class="math display">\[
-\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz=-\int_z\nabla_\phi q_\phi(z)\mathrm dz=-\nabla_\phi\int_zq_\phi(z)\mathrm dz=0
-\]</span> 于是只剩下第一项。再利用 <span class="math inline">\(\nabla_\phi q_\phi(z)=q_\phi(z)\nabla_\phi \log q_\phi(z)\)</span>，可以将第一项写作期望的形式： <span class="math display">\[
-\begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\int_z q_\phi(z)\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\mathbb E_{q_\phi(z)}\Big[\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\Big]
-\end{align}
-\]</span> 训练时用采样近似期望，这样就求出了梯度。然而，用这种方式估计的梯度的方差很大，导致训练不稳定，因此并不实用。</p>
-<p>一种解决方案是<strong>重参数化技巧</strong>，相关内容在<a href="/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/" title="重参数化技巧 The Reparameterization Trick">之前的文章</a>中有详细介绍。对于特定的分布（例如高斯分布或离散类别分布），我们可以构造函数 <span class="math inline">\(g_\phi\)</span> 使得 <span class="math inline">\(z=g_\phi(\epsilon)\)</span>，满足 <span class="math inline">\(z\sim q_\phi(z)\)</span> 并且 <span class="math inline">\(\epsilon\sim p(\epsilon)\)</span>，其中 <span class="math inline">\(p(\epsilon)\)</span> 是一个简单的分布。于是有： <span class="math display">\[
-\mathrm dz=g&#39;_\phi(\epsilon)\mathrm d\epsilon,\quad q_\phi(z)=\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)
+\]</span> 而 Jacobian 行列式为： <span class="math display">\[
+\det\left(\frac{\partial (z_1,z_2)}{\partial (x_1,x_2)}\right)=
+\det\begin{pmatrix}
+\frac{\partial z_1}{\partial x_1}&amp;\frac{\partial z_1}{\partial x_2}\\
+\frac{\partial z_2}{\partial x_1}&amp;\frac{\partial z_2}{\partial x_2}
+\end{pmatrix}=
+\det\begin{pmatrix}
+I_{d_1}&amp;0\\
+\frac{\partial{z_2}}{\partial x_1}&amp;I_{d_2}
+\end{pmatrix}=1
+\]</span> 因此前两点要求都满足了。但一层 coupling layer 的复杂程度有限，特别是其中有一部分是直接复制的，因此我们考虑<strong>堆叠多层 coupling layers</strong>. 不过，直接堆叠将得到下面的结构：</p>
+<p><img src="stacking1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>可以看见，上面的分支始终是直接复制的前一层的，最终也没有发生过改变，这不是我们希望的。为此，只需要相邻两层交换上下分支就可以解决这个问题：</p>
+<p><img src="stacking2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>堆叠多层 coupling layers 显然并不改变可逆性，且 Jacobian 行列式也只是每一层 Jacobian 行列式的累乘： <span class="math display">\[
+\det\left(\frac{\partial(z_1^{(2)},z_2^{(2)})}{\partial(x_1,x_2)}\right)=\det\left(\frac{\partial(z_1^{(2)},z_2^{(2)})}{\partial(z_1^{(1)},z_2^{(1)})}\cdot\frac{\partial(z_1^{(1)},z_2^{(1)})}{\partial(x_1,x_2)}\right)=\det\left(\frac{\partial(z_1^{(2)},z_2^{(2)})}{\partial(z_1^{(1)},z_2^{(1)})}\right)\det\left(\frac{\partial(z_1^{(1)},z_2^{(1)})}{\partial(x_1,x_2)}\right)=1\cdot 1=1
+\]</span> 不过 Jacobian 行列式为 1 也意味着目前的结构不具备尺度缩放能力。为此，我们在最后添加一个尺度缩放层： <span class="math display">\[
+z=Sz^{(n)}=\text{diag}(s)z^{(n)}=\begin{bmatrix}S_{11}z_1^{(n)}\\S_{22}z_2^{(n)}\\\vdots\\S_{dd}z_d^{(n)}\end{bmatrix}
 \]</span> 那么： <span class="math display">\[
-\begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_z q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\nabla_\phi\int_z\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\nabla_\phi\int_\epsilon\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big)g&#39;_\phi(\epsilon)\mathrm d\epsilon\\
-&amp;=\nabla_\phi\int_\epsilon p(\epsilon)\Big(\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big)\mathrm d\epsilon\\
-&amp;=\nabla_\phi\mathbb E_{p(\epsilon)}\Big[\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big]
-\end{align}
-\]</span> 用采样近似期望即可估计梯度。</p>
+\det\left(\frac{\partial z}{\partial z^{(n)}}\right)=
+\det\begin{pmatrix}
+S_{11}&amp;0&amp;\cdots&amp;0\\
+0&amp;S_{22}&amp;\cdots&amp;0\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+0&amp;0&amp;\cdots&amp;S_{dd}
+\end{pmatrix}=\prod_{i=1}^d S_{ii}
+\]</span> 这就完成了整个非线性映射 <span class="math inline">\(f_\theta\)</span> 的设计。</p>
+<h2 id="real-nvp">Real NVP</h2>
+<p>未完待续。</p>
+<h2 id="glow">Glow</h2>
+<p>未完待续。</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
 <ol>
 <li>
-<span id="fn:1" class="footnote-text"><span>Bishop, Christopher. Pattern Recognition and Machine Learning. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:1" class="footnote-text"><span>Dinh, Laurent, David Krueger, and Yoshua Bengio. Nice: Non-linear independent components estimation. <em>arXiv preprint arXiv:1410.8516</em> (2014). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>Dinh, Laurent, Jascha Sohl-Dickstein, and Samy Bengio. Density estimation using real nvp. <em>arXiv preprint arXiv:1605.08803</em> (2016). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:3" class="footnote-text"><span>Kingma, Diederik P., and Max Welling. Auto-encoding variational bayes. <em>arXiv preprint arXiv:1312.6114</em> (2013). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:3" class="footnote-text"><span>Kingma, Durk P., and Prafulla Dhariwal. Glow: Generative flow with invertible 1x1 convolutions. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:4" class="footnote-text"><span>【机器学习-白板推导系列(十二)-变分推断（Variational Inference）】 https://www.bilibili.com/video/BV1DW41167vr/?p=4&amp;share_source=copy_web&amp;vd_source=a43b4442e295a96065c7ae919b4866d3 <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:4" class="footnote-text"><span>Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. <em>arXiv preprint arXiv:2209.03003</em> (2022). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. <em>arXiv preprint arXiv:2210.02747</em> (2022). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
@@ -449,8 +436,15 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
   
     <span>></span>
     
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
   
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Flow/" class="category-chain-item">Flow</a>
+  
+  
+
   
 
   
@@ -466,7 +460,7 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
       
     </div>
   
@@ -478,8 +472,8 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>变分推断</div>
-      <div>https://xyfjason.github.io/blog-main/2024/03/05/变分推断/</div>
+      <div>Flow-based Generative Models</div>
+      <div>https://xyfjason.github.io/blog-main/2024/03/07/Flow-based-Generative-Models/</div>
     </div>
     <div class="license-meta">
       
@@ -491,7 +485,7 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年3月5日</div>
+          <div>2024年3月7日</div>
         </div>
       
       
@@ -523,18 +517,12 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2024/03/07/Flow-based-Generative-Models/" title="Flow-based Generative Models">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Flow-based Generative Models</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2024/03/02/%E5%AD%90%E7%A9%BA%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB/" title="子空间的距离">
-                        <span class="hidden-mobile">子空间的距离</span>
+                      <a href="/blog-main/2024/03/05/%E5%8F%98%E5%88%86%E6%8E%A8%E6%96%AD/" title="变分推断">
+                        <span class="hidden-mobile">变分推断</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
