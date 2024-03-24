@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
 <meta property="article:published_time" content="2023-12-30T07:25:11.000Z">
-<meta property="article:modified_time" content="2024-01-12T08:28:20.991Z">
+<meta property="article:modified_time" content="2024-03-19T04:54:08.089Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -330,7 +330,7 @@
                 <p><span class="math display">\[
 \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
 \]</span></p>
-<p>在概率论中，我们研究了随机变量，<span class="math inline">\(n\)</span> 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族无穷多个、<strong>相互有关</strong>的随机变量，这就是随机过程。</p>
+<p>在概率论中，我们研究了随机变量，<span class="math inline">\(n\)</span> 维随机向量。在极限定理中我们研究了无穷多个随机变量，但只局限在它们之间相互独立的情形。将上述情形加以推广，即研究一族<strong>无穷多个</strong>、<strong>相互有关</strong>的随机变量，这就是随机过程。</p>
 <h2 id="随机过程的概念">随机过程的概念</h2>
 <p>设 <span class="math inline">\((\Omega,\Sigma,P)\)</span> 是一概率空间，对每一个参数 <span class="math inline">\(t\in T\)</span>，<span class="math inline">\(X(t,\omega)\)</span> 是一定义在概率空间 <span class="math inline">\((\Omega,\Sigma,P)\)</span> 上的随机变量，则称随机变量族 <span class="math inline">\(X_T=\{X(t,\omega);t\in T\}\)</span> 为该概率空间上的一<strong>随机过程</strong>。其中 <span class="math inline">\(T\subset\mathbb R\)</span> 是一实数集，称为<strong>指标集</strong>或<strong>参数集</strong>。</p>
 <p>用映射表示 <span class="math inline">\(X_T\)</span>： <span class="math display">\[
@@ -364,21 +364,17 @@ X(t,\omega): T\times\Omega\to\mathbb R
 <h2 id="随机过程的数字特征">随机过程的数字特征</h2>
 <h3 id="单个随机过程情形">单个随机过程情形</h3>
 <p>设 <span class="math inline">\(\{X(t);t\in T\}\)</span> 是一随机过程，为了刻画其统计特性，通常用到随机过程的数字特征，即随机过程的均值函数、方差函数、协方差函数和相关函数。</p>
-<ul>
-<li><p><strong>均值函数</strong>（假设存在）： <span class="math display">\[
+<p><strong>均值函数</strong>（假设存在）： <span class="math display">\[
 \mu_X(t)\coloneqq m(t)=\mathbb E[X(t)]
-\]</span></p></li>
-<li><p><strong>方差函数</strong>（假设存在）： <span class="math display">\[
+\]</span> <strong>方差函数</strong>（假设存在）： <span class="math display">\[
 \sigma^2_X(t)\coloneqq D_X(t)=\mathbb E\left[(X(t)-\mu_X(t))^2\right]
-\]</span></p></li>
-<li><p><strong>（自）协方差函数</strong>： <span class="math display">\[
+\]</span> <strong>(自) 协方差函数</strong>： <span class="math display">\[
 C_X(s,t)\coloneqq \mathbb E[(X(s)-\mu_X(s))(X(t)-\mu_X(t))]
-\]</span></p></li>
-<li><p><strong>（自）相关函数</strong>： <span class="math display">\[
+\]</span> <strong>(自) 相关函数</strong>： <span class="math display">\[
 R_X(s,t)\coloneqq \mathbb E[X(s)X(t)]
-\]</span></p></li>
-</ul>
-<p>数字特征之间的关系： <span class="math display">\[
+\]</span> <strong>有限维特征函数族</strong>： <span class="math display">\[
+\phi_X(u_1,\ldots,u_n;t_1,\ldots,t_n)=\mathbb E\left[e^{i(u_1X(t_1)+\cdots+u_nX(t_n))}\right]
+\]</span> 数字特征之间的关系： <span class="math display">\[
 \begin{gather}
 C_X(s,t)=R_X(s,t)-\mu_X(s)\mu_X(t)\\
 \sigma^2_X(t)=D_X(t)=C_X(t,t)=R_X(t,t)-[\mu_X(t)]^2
@@ -386,15 +382,11 @@ C_X(s,t)=R_X(s,t)-\mu_X(s)\mu_X(t)\\
 \]</span></p>
 <h3 id="两个随机过程情形">两个随机过程情形</h3>
 <p>设 <span class="math inline">\(\{X(t);t\in T\},\,\{Y(t);t\in T\}\)</span> 是两个随机过程，它们具有相同的参数集。除了各自的数字特征外，还有：</p>
-<ul>
-<li><p><strong>互协方差函数</strong>： <span class="math display">\[
+<p><strong>互协方差函数</strong>： <span class="math display">\[
 C_{XY}(s,t)\coloneqq\mathbb E[(X(s)-\mu_X(s))(Y(t)-\mu_Y(t))]
-\]</span></p></li>
-<li><p><strong>互相关函数</strong>： <span class="math display">\[
+\]</span> <strong>互相关函数</strong>： <span class="math display">\[
 R_{XY}(s,t)\coloneqq\mathbb E[X(s)Y(t)]
-\]</span></p></li>
-</ul>
-<p>二者有关系： <span class="math display">\[
+\]</span> 二者有关系： <span class="math display">\[
 C_{XY}(s,t)=R_{XY}(s,t)-\mu_X(s)\mu_Y(t)
 \]</span> 若两个随机过程对任意两个参数 <span class="math inline">\(s,t\in T\)</span>，都有 <span class="math inline">\(C_{XY}(s,t)=0\)</span>，则称这两个随机过程<strong>统计不相关</strong>。</p>
 <h3 id="有限维分布族">有限维分布族</h3>
@@ -403,22 +395,27 @@ F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n)=P\{X(t_1)\leq x_1,X(t_2)\leq x_2,\ldo
 \]</span> 其全体 <span class="math display">\[
 \{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}
 \]</span> 称为随机过程的<strong>有限维分布族</strong>。随机过程的统计特性完全由它的有限维分布族决定，有限维分布族与有限维特征函数族相互唯一确定。</p>
-<p><strong>对称性</strong>：对 <span class="math inline">\((1,2,\ldots,n)\)</span> 的任意排列 <span class="math inline">\((j_1,j_2,\ldots,j_n)\)</span>，有： <span class="math display">\[
+<p>有限维分布族具有以下的性质：</p>
+<ul>
+<li><p><strong>对称性</strong>：对 <span class="math inline">\((1,2,\ldots,n)\)</span> 的任意排列 <span class="math inline">\((j_1,j_2,\ldots,j_n)\)</span>，有： <span class="math display">\[
 F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n)=F_X(x_{j_1},x_{j_2},\ldots,x_{j_n};t_{j_1},t_{j_2},\ldots,t_{j_n})
-\]</span> <strong>相容性</strong>：对于 <span class="math inline">\(m&lt;n\)</span>，有： <span class="math display">\[
+\]</span></p></li>
+<li><p><strong>相容性</strong>：对于 <span class="math inline">\(m&lt;n\)</span>，有： <span class="math display">\[
 F_X(x_1,x_2,\ldots,x_m,+\infty,\ldots,+\infty;t_1,t_2,\ldots,t_m,t_{m+1},\ldots,t_n)=F_X(x_1,x_2,\ldots,x_m;t_1,t_2,\ldots,t_m)
-\]</span> <strong>Kolmogorov 存在性定理</strong>：设分布函数族 <span class="math inline">\(\{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}\)</span> 满足对称性和相容性，则存在唯一的随机过程使得该分布函数族恰好是其有限维分布。</p>
+\]</span></p></li>
+</ul>
+<p><strong>Kolmogorov 存在性定理</strong>：设分布函数族 <span class="math inline">\(\{F_X(x_1,x_2,\ldots,x_n;t_1,t_2,\ldots,t_n),\,t_1,t_2,\ldots,t_n\in T,\,n\geq 1\}\)</span> 满足对称性和相容性，则存在唯一的随机过程使得该分布函数族恰好是其有限维分布。</p>
 <div class="note note-info">
             <p>定理说明了随机过程的有限维分布族包含了随机过程的所有概率信息。因此，研究随机过程的统计特征可以通过研究其有限维分布函数族的特性来达到。</p>
           </div>
 <h2 id="分布列的-delta-函数表示">分布列的 <span class="math inline">\(\delta\)</span> 函数表示</h2>
-<p>设<strong>离散型</strong>随机变量 <span class="math inline">\(X\)</span> 的分布列为 <span class="math inline">\(P(X=x_i)=p_i,\,i=1,2,\ldots\)</span>，则其分布函数可以表示为： <span class="math display">\[
+<p>设<strong>离散型</strong>随机变量 <span class="math inline">\(X\)</span> 的分布列为 <span class="math inline">\(P(X=x_i)=p_i,\,i=1,2,\ldots\)</span>，则利用 Dirac <span class="math inline">\(\delta\)</span> 函数，其分布函数可以表示为： <span class="math display">\[
 F(x)=P(X\leq x)=\sum_{x_i\leq x}p_i=\int_0^x\sum_{i=1}^\infty p_i\delta(u-x_i)\mathrm du
 \]</span> 故而密度函数可以表示为： <span class="math display">\[
 f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
 \]</span> 工程上，常用离散型随机变量分布列的 <span class="math inline">\(\delta\)</span> 函数表示法。它将离散型随机变量的分布列表示成分布密度的形式，因此与连续型随机变量的概率分布密度函数一样，可以进行统一处理。</p>
 <h2 id="条件数学期望">条件数学期望</h2>
-<p>设 <span class="math inline">\(X,Y\)</span> 是随机变量，则 <span class="math inline">\(\mathbb E[X\vert Y=y]\)</span> 是一个数，而条件数学期望 <span class="math inline">\(\mathbb E[X\vert Y]\)</span> 是一个随机变量。</p>
+<p>设 <span class="math inline">\(X,Y\)</span> 是随机变量，则 <span class="math inline">\(\mathbb E[X\vert Y=y]\)</span> 是一个数，因而条件数学期望 <span class="math inline">\(\mathbb E[X\vert Y]\)</span> 是关于随机变量 <span class="math inline">\(Y\)</span> 的函数，也是一个随机变量。</p>
 <p><strong>全期望公式</strong>： <span class="math display">\[
 \mathbb EX=\mathbb E[\mathbb E[X\vert Y]]
 \]</span> <div class="note note-success">
@@ -429,7 +426,7 @@ f(x)=\sum_{i=1}^\infty p_i\delta(x-x_i)
 <li><span class="math inline">\(\mathbb E[\sum_{i=1}^na_iX_i\vert Y]=\sum_{i=1}^na_i\mathbb E[X_i\vert Y]\)</span></li>
 <li><span class="math inline">\(\mathbb E[g(X)h(Y)\vert Y]=h(Y)\mathbb E[g(X)\vert Y]\)</span></li>
 <li><span class="math inline">\(\mathbb E[g(X)h(Y)]=\mathbb E[h(Y)\mathbb E[g(X)\vert Y]]\)</span></li>
-<li>若 <span class="math inline">\(X,Y\)</span> 独立，则 <span class="math inline">\(\mathbb E]X\vert Y]=\mathbb E[X]\)</span></li>
+<li>若 <span class="math inline">\(X,Y\)</span> 独立，则 <span class="math inline">\(\mathbb E[X\vert Y]=\mathbb E[X]\)</span></li>
 </ul>
 
                 

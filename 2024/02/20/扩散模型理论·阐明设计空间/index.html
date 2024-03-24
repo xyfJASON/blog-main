@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/edm.png">
 <meta property="article:published_time" content="2024-02-20T14:34:58.000Z">
-<meta property="article:modified_time" content="2024-03-14T05:35:30.490Z">
+<meta property="article:modified_time" content="2024-03-20T07:05:01.769Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.7k 字
+          1.9k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          14 分钟
+          17 分钟
         
       </span>
     
@@ -404,6 +404,16 @@ p_t(\mathbf x)&amp;=\int_{\mathbb R^d}p_{0t}(\mathbf x\vert\mathbf x_0)p_\text{d
 <p>可以看见 DDIM 的轨迹曲率最小，任意噪声下轨迹的切线都基本指向去噪结果。实验也发现在 VP ODE 和 VE ODE 的预训练模型的基础上使用 DDIM 的设置，图像质量相比原设置有着明显的提升。DDIM 的轨迹对应 <span class="math inline">\(\sigma(t)=t,\,s(t)=1\)</span>，此时对应 ODE 方程 <span class="math inline">\(\eqref{ode-real}\)</span> 式简化为： <span class="math display">\[
 \mathrm d\mathbf x=\frac{\mathbf x-D_\theta(\mathbf x;t)}{t}\mathrm dt
 \]</span></p>
+<h3 id="stochastic-sampling">Stochastic sampling</h3>
+<p>可以证明，ODE <span class="math inline">\(\eqref{ode-simple}\)</span> 式 (即取 <span class="math inline">\(s(t)\equiv 1\)</span>) 对应一族与之具有相同边缘分布的 SDE： <span class="math display">\[
+\mathrm d\mathbf x_{\pm}=
+\underbrace{-\dot\sigma(t)\sigma(t)\nabla_\mathbf x\log p(\mathbf x;\sigma(t))\mathrm dt}_{\text{probability flow ODE }\eqref{ode-simple}}\pm
+\underbrace{\underbrace{\beta(t)\sigma^2(t)\nabla_\mathbf x\log p(\mathbf x;\sigma(t))\mathrm dt}_\text{deterministic noise decay}+
+\underbrace{\sqrt{2\beta(t)}\sigma(t)\mathrm d\mathbf w}_\text{noise injection}}_\text{Langevin diffusion SDE}
+\]</span> 其中，<span class="math inline">\(\mathrm d\mathbf x_+\)</span> 和 <span class="math inline">\(\mathrm d\mathbf x_-\)</span> 分别是正向和逆向的 SDE. 事实上，论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>提出的 reverse SDE <span class="math inline">\(\eqref{reverse-sde-old}\)</span> 式其实只是上述 SDE 取 <span class="math inline">\(\beta(t)=\dot\sigma(t)/\sigma(t)\)</span> 的一个特殊情形。上式表明，SDE 是在 ODE 的基础上添加了基于 Langevin diffusion 过程作为修正，从而相比 ODE 有更好的采样效果。</p>
+<p>基于上述理论，当取 <span class="math inline">\(\sigma(t)=t,s(t)=1\)</span> 时，作者在针对 ODE 的 Heun 采样器的基础上设计了如下针对 SDE 的采样方法：</p>
+<p><img src="heun-sde.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>其中 4、5、6 行在执行 Euler 步前添加一定量的噪声来模拟 Langevin 动力学过程。这不是一个通用的 SDE 求解器，其正确性保证来源于 Langevin 步在理论上是保持边缘分布不变的，因此可以在 ODE 求解过程中引入一些 Langevin 步。不过，由于模型具有预测误差，Langevin 步本身也不是精确的，因此作者对引入的噪声做了限制，即上图中 <span class="math inline">\(\gamma_i\)</span> 的作用。这与论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>的 Predictor-Corrector 采样器有着类似的思想。</p>
 <h2 id="training">Training</h2>
 <h3 id="network">Network</h3>
 <p>在实际训练时，我们不一定用神经网络直接对 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 建模，例如 DDPM 原文预测的就是噪声，而 Progressive Distillation<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[4]</span></a></sup>提出预测 <span class="math inline">\(\mathbf v\)</span>. 为将不同的设计统一起来，作者将 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 建模为： <span class="math display">\[

@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stoc.png">
 <meta property="article:published_time" content="2024-01-09T04:24:31.000Z">
-<meta property="article:modified_time" content="2024-01-12T03:54:33.379Z">
+<meta property="article:modified_time" content="2024-03-19T06:02:42.291Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2k 字
+          2.1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          17 分钟
+          18 分钟
         
       </span>
     
@@ -334,39 +334,36 @@
 <h2 id="markov-链的定义">Markov 链的定义</h2>
 <p><strong>定义</strong>：设随机序列 <span class="math inline">\(\{X(n);n\geq 0\}\)</span> 的状态空间为 <span class="math inline">\(S\)</span>（离散），如果对 <span class="math inline">\(\forall n\in N_0\)</span> 及 <span class="math inline">\(i_0,i_1,\ldots,i_n,i_{n+1}\in S\)</span>，且 <span class="math inline">\(P(X(0)=i_0,X(1)=i_1,\ldots,X(n)=i_n)&gt;0\)</span>，有： <span class="math display">\[
 P(X(n+1)=i_{n+1}\vert X(0)=i_0,X(1)=i_1,\ldots,X(n)=i_n)=P(X(n+1)=i_{n+1}\vert X(n)=i_n)
-\]</span> 则称 <span class="math inline">\(\{X(n);n\geq0\}\)</span> 为 <strong>Markov 链</strong>。</p>
-<p>注：<span class="math inline">\(\{X(n);n\geq0\}\)</span> 也可记作 <span class="math inline">\(\{X_n;n\geq0\}\)</span>.</p>
-<p>注：上述定义刻画了 Markov 链的<strong>无后效性</strong>（Markov 性），即随机过程将来所处各个状态可能性只与现在所处状态有关，而与过去无关）。</p>
-<p><strong>一步转移概率</strong>： <span class="math display">\[
-p_{ij}(n)\coloneqq P(X(n+1)=j\vert X(n)=i)
-\]</span> 对于<strong>齐次 Markov 链</strong>，一步转移概率与时刻 <span class="math inline">\(n\)</span> 无关： <span class="math display">\[
-p_{ij}\equiv p_{ij}(n)\coloneqq P(X(n+1)=j\vert X(n)=i)
-\]</span> 齐次 Markov 链的<strong>转移矩阵</strong>： <span class="math display">\[
+\]</span> 则称 <span class="math inline">\(\{X(n);n\geq0\}\)</span> 为 <strong>Markov 链</strong>，也可记作 <span class="math inline">\(\{X_n;n\geq0\}\)</span>. 该定义刻画了 Markov 链的<strong>无后效性</strong>（Markov 性），即随机过程将来所处各个状态可能性只与现在所处状态有关，而与过去无关。</p>
+<p>Markov 链在 <span class="math inline">\(n\)</span> 时刻的<strong>一步转移概率</strong>为： <span class="math display">\[
+p_{ij}(n)\coloneqq P(X(n+1)=j\vert X(n)=i),\quad i,j\in S
+\]</span> 一步转移概率满足： <span class="math display">\[
+\begin{gather}
+p_{ij}(n)\geq 0,\quad i,j\in S\\
+\sum_{j\in S}p_{ij}(n)=1,\quad i\in S
+\end{gather}
+\]</span> 若一步转移概率与时刻 <span class="math inline">\(n\)</span> 无关，则称该 Markov 链为<strong>齐次 Markov 链</strong>： <span class="math display">\[
+p_{ij}\equiv p_{ij}(n)\coloneqq P(X(n+1)=j\vert X(n)=i),\quad i,j\in S
+\]</span> 对于齐次 Markov 链，其一步转移概率构成<strong>一步转移矩阵</strong>： <span class="math display">\[
 P\coloneqq\left[p_{ij}\right]
-\]</span> <strong>初始分布</strong>： <span class="math display">\[
-\{\pi_i(0),i\in S\},\quad\text{where}\quad \pi_i(0)=P(X_0=i)
+\]</span> 称 <span class="math inline">\(\{\pi_i(0),i\in S\}\)</span> 为 Markov 链的<strong>初始分布</strong>，其中： <span class="math display">\[
+\pi_i(0)=P(X_0=i),\quad i\in S
 \]</span> 只要得到了马氏链的一步转移概率及初始分布，就可以求得马氏链的任意前 <span class="math inline">\(n+1\)</span> 维的联合分布。特别地，若马氏链是齐次的，则由转移矩阵及初始分布，就可以得到齐次马氏链的任意前 <span class="math inline">\(n+1\)</span> 维的联合分布。</p>
-<p>注：一步转移概率满足 <span class="math display">\[
-\begin{align}
-&amp;p_{ij}(n)\geq 0,\quad i,j\in S\\
-&amp;\sum_{j\in S}p_{ij}(n)=1,\quad i\in S
-\end{align}
-\]</span></p>
 <h2 id="c-k-方程">C-K 方程</h2>
-<p><strong><span class="math inline">\(m\)</span> 步转移概率</strong>： <span class="math display">\[
+<p>定义 <strong><span class="math inline">\(m\)</span> 步转移概率</strong>为： <span class="math display">\[
 p_{ij}^{(m)}(n)\coloneqq P(X(n+m)=j\vert X(n)=i)
-\]</span> 规定： <span class="math display">\[
+\]</span> 特别规定 <span class="math inline">\(m=0\)</span> 时： <span class="math display">\[
 p_{ij}^{(0)}=\delta_{ij}=\begin{cases}1&amp;i=j\\0&amp;i\neq j\end{cases}
-\]</span> 齐次情形下与 <span class="math inline">\(n\)</span> 无关： <span class="math display">\[
+\]</span> 若 Markov 链是齐次的，则 <span class="math inline">\(m\)</span> 步转移概率与 <span class="math inline">\(n\)</span> 无关： <span class="math display">\[
 p_{ij}^{(m)}\equiv p_{ij}^{(m)}(n)\coloneqq P(X(n+m)=j\vert X(n)=i)
-\]</span> 有 m 步转移矩阵： <span class="math display">\[
+\]</span> 此时可以定义 <strong><span class="math inline">\(m\)</span> 步转移矩阵</strong>： <span class="math display">\[
 P^{(m)}\coloneqq\left[p_{ij}^{(m)}\right]
-\]</span> <strong>C-K 方程</strong>： <span class="math display">\[
+\]</span> <strong>Chapman-Kolmogorov (C-K) 方程</strong>： <span class="math display">\[
 p_{ij}^{(m+r)}(n)=\sum_{k\in S}p_{ik}^{(m)}(n)p_{kj}^{(r)}(n+m)
 \]</span> <img src="ck.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
-<p>对于齐次 Markov 链： <span class="math display">\[
+<p>对于齐次 Markov 链，C-K 方程为： <span class="math display">\[
 p_{ij}^{(m+r)}=\sum_{k\in S}p_{ik}^{(m)}p_{kj}^{(r)}
-\]</span> 写作矩阵形式： <span class="math display">\[
+\]</span> 写作矩阵形式为： <span class="math display">\[
 P^{(m+r)}=P^{(m)}P^{(r)}
 \]</span> 由此可以推出： <span class="math display">\[
 P^{(m)}=P^m
@@ -376,8 +373,8 @@ P^{(m)}=P^m
 <h2 id="markov-链状态分类">Markov 链状态分类</h2>
 <h3 id="到达与相通">到达与相通</h3>
 <p><strong>到达</strong>：设 <span class="math inline">\(i,j\in S\)</span>，若存在 <span class="math inline">\(n\geq 1\)</span>，使得 <span class="math inline">\(p_{ij}^{(n)}&gt;0\)</span>，则称从状态 <span class="math inline">\(i\)</span> 可到达状态 <span class="math inline">\(j\)</span>，记作 <span class="math inline">\(i\to j\)</span>.</p>
-<p><strong>相通</strong>：<span class="math inline">\(i\to j,j\to i\iff i\leftrightarrow j\)</span>.</p>
-<p>定理：到达和相通都具有传递性（利用 C-K 方程可证）。</p>
+<p><strong>相通</strong>：若 <span class="math inline">\(i\to j\)</span> 且 <span class="math inline">\(j\to i\)</span>，则称状态 <span class="math inline">\(i\)</span> 与状态 <span class="math inline">\(j\)</span> 相通，记做 <span class="math inline">\(i\leftrightarrow j\)</span>.</p>
+<p><strong>定理</strong>：到达和相通都具有传递性（利用 C-K 方程可证）。</p>
 <h3 id="首达时间与首达概率">首达时间与首达概率</h3>
 <p><strong>首达时间</strong>：设 <span class="math inline">\(i,j\in S\)</span>，定义状态 <span class="math inline">\(i\)</span> 到状态 <span class="math inline">\(j\)</span> 的首达时间为： <span class="math display">\[
 T_{ij}(\omega)\coloneqq \min\{n:X_0=i,\,X_n(\omega)=j,\,n\geq1\}

@@ -1,0 +1,872 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="基础蒙特卡洛 设 \(X\) 为一随机变量，其 PDF 为 \(p(x)\)，又设 \(f\) 为关于 \(X\) 的函数，考虑如下期望： \[ \mathbb E[f]&#x3D;\int_xf(x)p(x)\mathrm dx \] 当 \(p(x)\) 或 \(f(x)\) 比较复杂时，上述积分往往是无法计算的。蒙特卡洛方法的思想是用随机采样去近似期望： \[ \hat f&#x3D;\frac{1}{L}\s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="蒙特卡洛采样">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/21/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E9%87%87%E6%A0%B7/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="基础蒙特卡洛 设 \(X\) 为一随机变量，其 PDF 为 \(p(x)\)，又设 \(f\) 为关于 \(X\) 的函数，考虑如下期望： \[ \mathbb E[f]&#x3D;\int_xf(x)p(x)\mathrm dx \] 当 \(p(x)\) 或 \(f(x)\) 比较复杂时，上述积分往往是无法计算的。蒙特卡洛方法的思想是用随机采样去近似期望： \[ \hat f&#x3D;\frac{1}{L}\s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sampling.png">
+<meta property="article:published_time" content="2024-03-21T12:38:44.000Z">
+<meta property="article:modified_time" content="2024-03-24T08:33:48.671Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="machine learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sampling.png">
+  
+  
+  
+  <title>蒙特卡洛采样 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/sampling.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="蒙特卡洛采样"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-03-21 20:38" pubdate>
+          2024年3月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          20 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">蒙特卡洛采样</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="基础蒙特卡洛">基础蒙特卡洛</h2>
+<p>设 <span class="math inline">\(X\)</span> 为一随机变量，其 PDF 为 <span class="math inline">\(p(x)\)</span>，又设 <span class="math inline">\(f\)</span> 为关于 <span class="math inline">\(X\)</span> 的函数，考虑如下期望： <span class="math display">\[
+\mathbb E[f]=\int_xf(x)p(x)\mathrm dx
+\]</span> 当 <span class="math inline">\(p(x)\)</span> 或 <span class="math inline">\(f(x)\)</span> 比较复杂时，上述积分往往是无法计算的。<strong>蒙特卡洛方法</strong>的思想是用随机采样去近似期望： <span class="math display">\[
+\hat f=\frac{1}{L}\sum_{l=1}^Lf(x^{(l)}),\quad\text{where }x^{(l)}\sim p(x)
+\]</span> 容易知道，该结果是真实结果的无偏估计，即 <span class="math inline">\(\mathbb E[\hat f]=\mathbb E[f]\)</span>，而方差为： <span class="math display">\[
+\text{var}(\hat f)=\frac{1}{L}\mathbb E\left[(f-\mathbb E[f])^2\right]
+\]</span> 可见样本量 <span class="math inline">\(L\)</span> 越大，方差越小，近似就越准确。不过，直接使用蒙特卡洛方法要求我们能够从 <span class="math inline">\(p(x)\)</span> 中采样——对于简单分布（如均匀分布）这是容易做到的；对于稍微复杂一些但可写出 PDF 或 CDF 分布，可以利用变量替换定理做到；而对于更复杂的分布，我们介绍拒绝采样和重要性采样来实现这一点。</p>
+<h3 id="变量替换">变量替换</h3>
+<p>设 <span class="math inline">\(p_X(x)\)</span> 为随机变量 <span class="math inline">\(X\)</span> 的 PDF，单调函数 <span class="math inline">\(f\)</span> 将 <span class="math inline">\(X\)</span> 映射到 <span class="math inline">\(Y\)</span>，即 <span class="math inline">\(Y=f(X)\)</span>，则有： <span class="math display">\[
+F_Y(y)=P(Y\leq y)=P(f(X)\leq y)=\begin{cases}
+P(X\leq x)=F_X(x)&amp;&amp;\text{if }f\text{ is increasing}\\
+P(X\geq x)=1-F_X(x)&amp;&amp;\text{if }f\text{ is decreasing}
+\end{cases}
+\]</span> 求导得： <span class="math display">\[
+p_Y(y)=p_X(x)\left|\frac{\mathrm dx}{\mathrm dy}\right|
+\]</span> 对于多维变量有类似结论： <span class="math display">\[
+p_Y(y_1,\ldots,y_M)=p_X(x_1,\ldots,x_M)\left|\frac{\partial (x_1,\ldots,x_M)}{\partial (y_1,\ldots,y_M)}\right|
+\]</span> 其中 <span class="math inline">\(\frac{\partial (x_1,\ldots,x_M)}{\partial (y_1,\ldots,y_M)}\)</span>​ 表示 Jacobian 行列式。这就是随机变量的<strong>变量替换定理 (change of variables theorem)</strong>.</p>
+<div class="note note-secondary">
+            <p>例子：<strong>Box-Muller 方法</strong>是从二维正态分布中采样的方法。首先生成 <span class="math inline">\(x_1,x_2\sim U(0,1)\)</span>，然后设： <span class="math display">\[y_1=\sqrt{-2\ln x_1}\cos(2\pi x_2),\quad y_2=\sqrt{-2\ln x_1}\sin(2\pi x_2)\]</span> 那么可以证明 <span class="math inline">\((y_1,y_2)\)</span> 服从各分量独立的标准二维正态分布： <span class="math display">\[\begin{align}p_Y(y_1,y_2)&amp;=p_X(x_1,x_2)\left|\frac{\partial (x_1,x_2)}{\partial(y_1,y_2)}\right|=\left|\frac{\partial(y_1,y_2)}{\partial (x_1,x_2)}\right|^{-1}\\&amp;=\left|\det\begin{pmatrix}-\frac{\cos(2\pi x_2)}{x_1\sqrt{-2\ln x_1}}&amp;-2\pi\sqrt{-2\ln x_1}\sin(2\pi x_2)\\-\frac{\sin(2\pi x_1)}{x_1\sqrt{-2\ln x_1}}&amp;2\pi\sqrt{-2\ln x_1}\cos(2\pi x_2)\end{pmatrix}\right|^{-1}\\&amp;=\left|-\frac{2\pi}{x_1}\cos^2(2\pi x_2)-\frac{2\pi}{x_1}\sin^2(2\pi x_2)\right|^{-1}\\&amp;=\frac{x_1}{2\pi}=\frac{1}{2\pi}\exp\left(-\frac{y_1^2+y_2^2}{2}\right)\\&amp;=\left[\frac{1}{\sqrt{2\pi}}\exp\left(-y_1^2/2\right)\right]\left[\frac{1}{\sqrt{2\pi}}\exp\left(-y_2^2/2\right)\right]\end{align}\]</span> 直观上看，可以认为 <span class="math inline">\(\sqrt{-2 \ln x_1}\)</span> 在采样向量的模长，而 <span class="math inline">\(2\pi x_2\)</span> 在采样向量的幅角。</p><p>上述过程生成的是标准正态随机变量 <span class="math inline">\(y\sim\mathcal N(0,I)\)</span>，若要获取 <span class="math inline">\(\mathcal N(\mu,\Sigma)\)</span>，只需对 <span class="math inline">\(\Sigma\)</span> 做 Cholesky 分解 <span class="math inline">\(\Sigma=LL^T\)</span>，然后做变换 <span class="math inline">\(y&#39;=\mu+Ly\)</span> 即可。</p>
+          </div>
+<div class="note note-secondary">
+            <p>例子：对于可写出 CDF 及其反函数的简单分布 <span class="math inline">\(p_Y(y)\)</span>，有一种从均匀分布变换到该分布的方法，一些书籍称之为<strong>概率积分变换</strong>。设 <span class="math inline">\(x\sim U(0,1)\)</span>，我们希望找到一个变换函数 <span class="math inline">\(f\)</span> 使得 <span class="math inline">\(y=f(x)\)</span> 服从 <span class="math inline">\(p_Y(y)\)</span>. 假设 <span class="math inline">\(f\)</span> 单调递增并且取值在 <span class="math inline">\((0,1)\)</span> 之间，则： <span class="math display">\[F_Y(y)=P(Y\leq y)=P(f(X)\leq y)=P(X\leq f^{-1}(y))=f^{-1}(y)\implies f(y)=F_Y^{-1}(y)\]</span> 这说明我们要找的 <span class="math inline">\(f\)</span> 就是随机变量 <span class="math inline">\(Y\)</span> 的 CDF 的逆 <span class="math inline">\(F_Y^{-1}\)</span>. 例如，对于指数分布： <span class="math display">\[p_Y(y)=\lambda\exp(-\lambda y)\]</span> 其 CDF 为： <span class="math display">\[F_Y(y)=\int_{0}^y \lambda\exp(-\lambda t)\mathrm dt=1-\exp(-\lambda y)\]</span> 其逆为： <span class="math display">\[F_Y^{-1}(y)=-\frac{1}{\lambda}\ln(1-y)\]</span> 因此对于 <span class="math inline">\(x\sim U(0,1)\)</span>，只需要做变换 <span class="math inline">\(y=-\frac{1}{\lambda}\ln(1-x)\)</span>，就有 <span class="math inline">\(y\sim p_Y(y)\)</span>.</p>
+          </div>
+<p>该方法要求目标分布的 PDF 或 CDF 具有解析形式，因此只对比较简单的分布有效。对于更为复杂的分布，我们可以考虑拒绝采样和重要性采样。</p>
+<h3 id="拒绝采样">拒绝采样</h3>
+<p>假设要采样的分布 <span class="math inline">\(p(x)\)</span> 在任意一点 <span class="math inline">\(x\)</span> 处的值（在不考虑归一化常数下）是可计算的，即设： <span class="math display">\[
+p(x)=\tilde p(x)/Z_p
+\]</span> 其中 <span class="math inline">\(\tilde p(x)\)</span> 是已知的，<span class="math inline">\(Z_p\)</span> 为未知的归一化常数，那么我们可以使用<strong>拒绝采样 (rejection sampling)</strong> 方法进行采样。</p>
+<p>首先引入一个<strong>提议分布 (proposal distribution)</strong> <span class="math inline">\(q(x)\)</span>，满足该提议分布是容易采样的，并且存在常数 <span class="math inline">\(k\)</span> 使得 <span class="math inline">\(kq(x)\geq \tilde p(x),\forall x\)</span>，如图所示：</p>
+<p><img src="rejection.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>拒绝采样方法先从 <span class="math inline">\(q(x)\)</span> 中采样一个 <span class="math inline">\(x_0\)</span>，然后以 <span class="math inline">\(\tilde p(x_0)/kq(x_0)\)</span> 的概率接受该采样结果。直观来看，就是拒绝掉上图中的灰色区域。如此，<span class="math inline">\(x_0\)</span> 最终被采出来的概率就是： <span class="math display">\[
+\frac{q(x_0)\dfrac{\tilde p(x_0)}{kq(x_0)}}{\displaystyle\int_x q(x)\frac{\tilde p(x)}{kq(x)}\mathrm dx}=\frac{\tilde p(x_0)}{\displaystyle\int_x \tilde p(x)\mathrm dx}=p(x_0)
+\]</span> 即相当于是从 <span class="math inline">\(p(x)\)</span> 中采样的，这验证了拒绝采样的正确性。容易知道，拒绝采样的总接受率为： <span class="math display">\[
+p(\text{accept})=\int_x \frac{\tilde p(x)}{kq(x)}q(x)\mathrm dx=\frac{1}{k}\int_x\tilde p(x)\mathrm dx
+\]</span> 因此 <span class="math inline">\(k\)</span> 越小，总接受率越大，算法效率越高。然而，<span class="math inline">\(k\)</span> 小也意味着 <span class="math inline">\(q(x)\)</span> 本身就要与 <span class="math inline">\(p(x)\)</span> 比较相似，对于复杂的 <span class="math inline">\(p(x)\)</span> 而言寻找到一个合适的 <span class="math inline">\(q(x)\)</span> 非常困难的。</p>
+<h3 id="重要性采样">重要性采样</h3>
+<p>与拒绝采样不同，<strong>重要性采样 (importance sampling)</strong> 并不能从 <span class="math inline">\(p(x)\)</span> 中采样出样本，而是直接近似 <span class="math inline">\(\mathbb E_{p(x)}[f(x)]\)</span>.</p>
+<p>假设 <span class="math inline">\(p(x)\)</span> 在任意一点 <span class="math inline">\(x\)</span> 处的值都是可计算的，仍然引入一个<strong>提议分布</strong> <span class="math inline">\(q(x)\)</span>，满足该提议分布是容易采样的。重要性采样的思路是将对 <span class="math inline">\(p(x)\)</span> 的采样转化为对 <span class="math inline">\(q(x)\)</span> 的采样。具体而言，有： <span class="math display">\[
+\mathbb E_{p(x)}[f(x)]=\int_xf(x)p(x)\mathrm dx=\int_x f(x)\frac{p(x)}{q(x)}q(x)\mathrm dx=\mathbb E_{q(x)}\left[f(x)\frac{p(x)}{q(x)}\right]
+\]</span> 于是只需要从 <span class="math inline">\(q(x)\)</span> 中采样若干样本 <span class="math inline">\(\{x^{(l)}\}_{l=1}^L\)</span> 即可近似上式： <span class="math display">\[
+\mathbb E_{p(x)}[f(x)]\approx \frac{1}{L}\sum_{l=1}^K f(x^{(l)})\frac{p(x^{(l)})}{q(x^{(l)})}=\frac{1}{L}\sum_{l=1}^K r^{(l)}f(x^{(l)})
+\]</span> 其中系数 <span class="math inline">\(r^{(l)}=p(x^{(l)})/q(x^{(l)})\)</span>​​ 称作<strong>重要性权重 (importance weights)</strong>。</p>
+<p><img src="importance.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<p>进一步地，假设 <span class="math inline">\(p(x)=\tilde p(x)/Z_p\)</span> 且我们只能计算 <span class="math inline">\(\tilde p(x)\)</span> 而归一化系数未知，类似地假设 <span class="math inline">\(q(x)=\tilde q(x)/Z_q\)</span> 并且只能计算 <span class="math inline">\(\tilde q(x)\)</span> 而归一化系数未知，那么： <span class="math display">\[
+\begin{align}
+\mathbb E_{p(x)}[f(x)]&amp;=\int_xf(x)p(x)\mathrm dx=\frac{Z_q}{Z_p}\int_xf(x)\frac{\tilde p(x)}{\tilde q(x)}q(x)\mathrm dx\\
+&amp;\approx\frac{Z_q}{Z_p}\frac{1}{L}\sum_{l=1}^L f(x^{(l)})\frac{\tilde p(x^{(l)})}{\tilde q(x^{(l)})}=\frac{Z_q}{Z_p}\frac{1}{L}\sum_{l=1}^L\tilde r^{(l)}f(x^{(l)})
+\end{align}
+\]</span> 其中系数 <span class="math inline">\(Z_q/Z_p\)</span> 可以通过同一套样本估计： <span class="math display">\[
+\frac{Z_p}{Z_q}=\frac{1}{Z_q}\int_x\tilde p(x)\mathrm dx=\int_x\frac{\tilde p(x)}{\tilde q(x)}q(x)\mathrm dx\approx\frac{1}{L}\sum_{l=1}^L\frac{\tilde p(x^{(l)})}{\tilde q(x^{(l)})}=\frac{1}{L}\sum_{l=1}^L\tilde r^{(l)}
+\]</span> 代入得： <span class="math display">\[
+\mathbb E_{p(x)}[f(x)]\approx\frac{\sum_{l=1}^L\tilde r^{(l)}f(x^{(l)})}{\sum_{l=1}^L\tilde r^{(l)}}=\sum_{l=1}^Lw_lf(x^{(l)}),\quad\text{where}\ w_l=\frac{\tilde r^{(l)}}{\sum_m\tilde r^{(m)}}
+\]</span> 与拒绝采样一样，重要性采样的效果与提议分布 <span class="math inline">\(q(x)\)</span> 同 <span class="math inline">\(p(x)\)</span> 的接近程度紧密相关。当 <span class="math inline">\(p(x)\)</span> 比较复杂时，选择合适的 <span class="math inline">\(q(x)\)</span> 是非常困难的。</p>
+<h2 id="马尔可夫链蒙特卡洛">马尔可夫链蒙特卡洛</h2>
+<p>在高维场景下，通常难以为拒绝采样和重要性采样找到合适的提议分布，导致采样效率低下。此时我们可以考虑<strong>马尔可夫链蒙特卡洛 (MCMC)</strong> 方法。顾名思义，MCMC 指基于马尔可夫链的随机采样方法，主要包括 Metropolis-Hastings 采样和 Gibbs 采样。</p>
+<h3 id="马尔可夫链">马尔可夫链</h3>
+<p>首先回顾一下有关马尔可夫链的基本知识。</p>
+<div class="note note-info">
+            <p><strong>马尔可夫链</strong>：若离散随机变量序列 <span class="math inline">\(\{X^{(n)};n\geq 1\}\)</span> 满足如下条件（马尔可夫性质）： <span class="math display">\[P(X^{(n+1)}=s_{n+1}\vert X^{(n)}=s_n,\ldots,X^{(1)}=s_1)=P(X^{(n+1)}=s_{n+1}\vert X^{(n)}=s_n),\quad s_n\in S,\,n=1,2,\ldots\]</span> 其中 <span class="math inline">\(S\)</span> 为随机变量的状态空间，称 <span class="math inline">\(\{X^{(n)};n\geq 1\}\)</span> 为马尔可夫链。</p><p><strong>一步转移概率</strong>：<span class="math inline">\(n\)</span> 时刻从状态 <span class="math inline">\(s\)</span> 转移到状态 <span class="math inline">\(t\)</span> 的概率： <span class="math display">\[p_{st}^{(n)}=P(X^{(n+1)}=t\vert X^{(n)}=s),\quad\forall\ s,t\in S\]</span> <strong>齐次马尔可夫链</strong>：若一步转移概率与时刻 <span class="math inline">\(n\)</span> 无关，则称该马尔可夫链为齐次马尔可夫链： <span class="math display">\[p_{st}\equiv p_{st}^{(n)},\quad\forall n\geq 1,\,\forall\ s,t\in S\]</span> <strong>一步转移矩阵</strong>：齐次马尔可夫链的一步转移概率构成矩阵： <span class="math display">\[P=[p_{st}],\quad\forall\ s,t\in S\]</span> 转移矩阵的每一行之和为 1.</p><p><strong>平稳分布</strong>：若状态空间上的分布 <span class="math inline">\(\pi^\ast=(\pi^\ast_1,\ldots,\pi^\ast_s,\ldots)\)</span> 满足方程： <span class="math display">\[\pi^\ast_s=\sum_{t}p_{ts}\pi^\ast_t\iff \pi=\pi P\]</span> 则称 <span class="math inline">\(\pi^\ast\)</span> 为马尔可夫链的平稳分布（不变分布）。值得注意的是，平稳分布不一定存在，存在也不一定唯一。下面给出平稳分布存在的一个充分条件。</p><p><strong>细致平衡 (detailed balance) 条件</strong>：若分布 <span class="math inline">\(\pi^\ast\)</span> 满足如下条件，则 <span class="math inline">\(\pi^\ast\)</span> 是该马尔可夫链的平稳分布： <span class="math display">\[\pi^\ast_sp_{st}=\pi^\ast_tp_{ts},\quad\forall\ s,t\in S\]</span> 证明很简单： <span class="math display">\[\sum_{t}p_{ts}\pi^\ast_t=\sum_{t}\pi^\ast_sp_{st}=\pi^\ast_s\sum_{t}p_{st}=\pi^\ast_s\]</span> 称满足细致平衡条件的马尔可夫链为可逆的 (reversible) 马尔可夫链。</p><p><strong>极限分布</strong>：若 <span class="math inline">\(\pi_s^\ast=\displaystyle\lim_{n\to\infty}\pi_s^{(n)}\)</span> 对任意状态 <span class="math inline">\(s\in S\)</span> 都存在，则称 <span class="math inline">\(\pi^\ast\)</span> 为马尔可夫链的极限分布。极限分布如果存在，则是唯一的，且与初始分布无关。</p><p>可以证明，在一些约束条件下，齐次马尔可夫链存在极限分布，且该极限分布就是平稳分布。</p>
+          </div>
+<p>有了上述的基础知识作为铺垫，我们可以想到一种基于马尔可夫链的采样方式——为了从某分布中采样，构建一个马尔可夫链，使其极限分布就是要采样的分布。这样，只需要从任意一个初始分布出发，采样 <span class="math inline">\(x^{(0)}\)</span>，然后采样 <span class="math inline">\(x^{(1)}\)</span>……当迭代次数足够多时，<span class="math inline">\(x^{(n)}\)</span> 开始服从极限分布，那么 <span class="math inline">\(\{x^{(n)},x^{(n+1)},\ldots\}\)</span> 就相当于是从极限分布中采样出来的样本了。</p>
+<p>所以问题的关键是如何构建这样的马尔可夫链，也就是设计转移矩阵 <span class="math inline">\(P\)</span> 使其极限分布为给定的分布。在极限分布就是平稳分布的假设下，我们只需要让 <span class="math inline">\(P\)</span> 满足细致平衡条件即可，但这依旧不是一件容易的事。受到拒绝采样的启发，M-H 采样通过引入一个提议转移矩阵 <span class="math inline">\(Q\)</span> 和接受率 <span class="math inline">\(\alpha\)</span> 解决该问题。</p>
+<h3 id="metropolis-hastings-采样">Metropolis-Hastings 采样</h3>
+<p>如上一节所说，现在我们的目标是找到一个满足细致平稳条件的转移矩阵 <span class="math inline">\(P\)</span>. 为此，首先随机找一个转移矩阵 <span class="math inline">\(Q=[q_{st}]\)</span>，那么对不相同的两个状态 <span class="math inline">\(s\neq t\)</span>，它大概率并不满足细致平稳条件： <span class="math display">\[
+\pi_s^\ast q_{st}\neq \pi_t^\ast q_{ts},\quad\forall\ s,t\in S,\,s\neq t
+\]</span> 注：<span class="math inline">\(s=t\)</span> 时等式恒成立，因此这里只考虑 <span class="math inline">\(s\neq t\)</span>.</p>
+<p>为了让细致平稳条件成立，引入接受率 <span class="math inline">\(\alpha_{st}=\pi_t^\ast q_{ts},(s\neq t)\)</span>，容易验证： <span class="math display">\[
+\pi_s^\ast q_{st}\alpha_{st}=\pi_t^\ast q_{ts}\alpha_{ts},\quad\forall\ s,t\in S,\,s\neq t
+\]</span> 因此只需要令： <span class="math display">\[
+p_{st}=\begin{cases}q_{st}\alpha_{st},&amp;s\neq t\\1-\sum_{k\neq s}q_{sk}\alpha_{sk},&amp;s=t\end{cases}
+\]</span> 就找到了要求的 <span class="math inline">\(P\)</span>. 等价地，这样的一步转移相当于先按照 <span class="math inline">\(Q\)</span> 从 <span class="math inline">\(s\)</span> 转移到 <span class="math inline">\(t\)</span>，如果 <span class="math inline">\(s\neq t\)</span>，则以 <span class="math inline">\(\alpha_{st}\)</span> 的概率接受转移，否则不转移。</p>
+<p>不过上述方法有一个问题：接受率 <span class="math inline">\(\alpha_{st}\)</span> 可能会很小，影响算法效率。注意到等比放大 <span class="math inline">\(\alpha_{st},\alpha_{ts}\)</span> 并不影响细致平稳条件的成立，因此做出如下改进： <span class="math display">\[
+\alpha_{st}=\min\left\{\frac{\pi^\ast_t q_{ts}}{\pi^\ast_s q_{st}},1\right\},\quad\forall\ s,t\in S
+\]</span> 简单来说，就是等比放大 <span class="math inline">\(\alpha_{st},\alpha_{ts}\)</span>​ 直到其中一个变成 1 为止，这样任意两个状态之间至少有一个方向是始终能转移成功的。</p>
+<p>综上，M-H 采样的算法伪代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs pseudocode">def MHSampling(p, Q):<br>    // p is the target distribution<br>    // Q is the proposal transfer matrix<br>    sample s from any distribution<br>    while True:<br>        sample t from Q[s,t]<br>        sample u from U(0,1)<br>        alpha = min((p[t]*Q[t,s]) / (p[s]*Q[s,t]), 1)<br>        if u &lt;= alpha:<br>            s = t<br>        if sufficiently large time:<br>            yield s<br></code></pre></td></tr></table></figure>
+<p>最后，尽管上述推导建立在离散状态空间的马尔可夫链上，但对连续状态空间的马尔可夫过程依旧成立。为了记号上的规范，此时将状态转移矩阵 <span class="math inline">\(Q=[q_{st}]\)</span> 写作状态转移概率 <span class="math inline">\(q(t\vert s)\)</span>，接受率 <span class="math inline">\(\alpha_{st}\)</span> 写作 <span class="math inline">\(\alpha(t\vert s)\)</span> 即可。</p>
+<h3 id="gibbs-采样">Gibbs 采样</h3>
+<p>Gibbs 采样可以视为 M-H 采样的一种特殊形式。在 M-H 采样中，如果每个状态都是高维向量，那么状态数量十分巨大，选择合适的状态转移矩阵或状态转移概率 <span class="math inline">\(q\)</span> 比较困难。为了解决这个问题，Gibbs 采样限制<strong>每次转移时只改动一个维度</strong>。假设当前状态为： <span class="math display">\[
+\mathbf x^{(n)}=\left(x_1^{(n)},x_2^{(n)},\ldots,x_d^{(n)}\right)^T\in\mathbb R^d
+\]</span> 转移时只改动第 <span class="math inline">\(i\)</span>​ 维，转移到： <span class="math display">\[
+\mathbf x&#39;^{(n)}=\left(x_1^{(n)},\ldots,x_{i-1}^{(n)},x_i^{(n+1)},x_{i+1}^{(n)},\ldots,x_d^{(n)}\right)^T=\left(\mathbf x_{-i}^{(n)},x_i^{(n+1)}\right)^T\in\mathbb R^d
+\]</span> 其中 <span class="math inline">\(\mathbf x_{-i}^{(n)}\)</span> 表示 <span class="math inline">\(x_1^{(n)},\ldots,x_{i-1}^{(n)},x_{i+1}^{(n)},\ldots,x_d^{(n)}\)</span>，即除了第 <span class="math inline">\(i\)</span> 维以外的其他维度。Gibbs 采样<strong>用目标分布的条件概率来定义这个转移概率</strong>： <span class="math display">\[
+q(\mathbf x&#39;^{(n)}\vert\mathbf x^{(n)})
+\mathrel{\mathrel{\vcenter{:}}=}
+\pi^\ast(x_i^{(n+1)}\vert\mathbf x_{-i}^{(n)})
+\]</span> 如此接受率为： <span class="math display">\[
+\begin{align}
+\alpha(\mathbf x&#39;^{(n)}\vert\mathbf x^{(n)})&amp;=\min\left\{\frac{\pi^\ast(\mathbf x&#39;^{(n)})q(\mathbf x^{(n)}\vert\mathbf x&#39;^{(n)})}{\pi^\ast(\mathbf x^{(n)})q(\mathbf x&#39;^{(n)}\vert\mathbf x^{(n)})},1\right\}\\
+&amp;=\min\left\{\frac{\pi^\ast(\mathbf x_{-i}^{(n)},x_i^{(n+1)})\cdot\pi^\ast(x_i^{(n)}\vert\mathbf x_{-i}^{(n)})}{\pi^\ast(\mathbf x_{-i}^{(n)},x_i^{(n)})\cdot\pi^\ast(x_i^{(n+1)}\vert\mathbf x_{-i}^{(n)})},1\right\}\\
+&amp;=\min\left\{\frac{\pi^\ast(x_i^{(n+1)}\vert\mathbf x_{-i}^{(n)})\cdot\pi^\ast(\mathbf x_{-i}^{(n)})\cdot\pi^\ast(x_i^{(n)}\vert\mathbf x_{-i}^{(n)})}{\pi^\ast(x_i^{(n)}\vert\mathbf x_{-i}^{(n)})\cdot\pi^\ast(\mathbf x_{-i}^{(n)})\cdot\pi^\ast(x_i^{(n+1)}\vert\mathbf x_{-i}^{(n)})},1\right\}\\
+&amp;=\min\{1,1\}=1
+\end{align}
+\]</span> 我们发现 Gibbs 采样的接受率为 1，这说明它在实际应用中有着较高的效率，因此是最广为使用的 MCMC 方法之一。</p>
+<p>Gibbs 采样每次转移只改动一个维度，所以使用时需要指定维度顺序，具体顺序与具体问题相关，一般依次选择即可。综上，Gibbs 采样的算法流程如下：</p>
+<p><img src="gibbs.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<h2 id="参考资料">参考资料</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Bishop, Christopher. Pattern recognition and machine learning. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>刘建平Pinard. MCMC(一)蒙特卡罗方法. http://www.cnblogs.com/pinard/p/6625739.html <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>刘建平Pinard. MCMC(二)马尔科夫链. http://www.cnblogs.com/pinard/p/6632399.html <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>刘建平Pinard. MCMC(三)MCMC采样和M-H采样. https://www.cnblogs.com/pinard/p/6638955.html <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>刘建平Pinard. MCMC(四)Gibbs采样. http://www.cnblogs.com/pinard/p/6645766.html <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>机器学习-白板推导系列(十三)-MCMC(Markov Chain Monte Carlo). https://www.bilibili.com/video/BV1dW411z7qs <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/" class="category-chain-item">技术博客</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>蒙特卡洛采样</div>
+      <div>https://xyfjason.github.io/blog-main/2024/03/21/蒙特卡洛采样/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年3月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2024/03/07/Flow-based-Generative-Models/" title="Flow-based Generative Models">
+                        <span class="hidden-mobile">Flow-based Generative Models</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
