@@ -4,6 +4,60 @@
   
   
   <entry>
+    <title>[Evans Intro SDE]2·Brownian Motion</title>
+    <link href="/blog-main/2024/03/25/Evans-Intro-SDE-2%C2%B7Brownian-Motion/"/>
+    <url>/blog-main/2024/03/25/Evans-Intro-SDE-2%C2%B7Brownian-Motion/</url>
+    
+    <content type="html"><![CDATA[<p>参考书籍：<strong>An Introduction to Stochastic Differential Equations Version 1.2</strong> by Lawrence C. Evans. <a href="https://www.math.uh.edu/~sanders/Math3338/LawrenceEvans-SDE-course.pdf">link</a></p><h2 id="动机与定义">动机与定义</h2><h3 id="墨水粒子的扩散">墨水粒子的扩散</h3><p>考虑一条装满水的细长试管，在 <span class="math inline">\(t=0\)</span> 时刻向 <span class="math inline">\(x=0\)</span> 处滴入一滴墨水。设 <span class="math inline">\(f(x,t)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(x\)</span> 位置处墨水粒子的密度，则 0 时刻有： <span class="math display">\[f(x,0)=\delta_0,\text{ the unit mass at 0.}\]</span> 又设在一段小时间 <span class="math inline">\(\tau\)</span> 内，墨水粒子从 <span class="math inline">\(x-y\)</span> 位置移动到 <span class="math inline">\(x\)</span> 位置的概率为 <span class="math inline">\(\rho(\tau,y)\)</span>，那么： <span class="math display">\[f(x,t+\tau)=\int_{-\infty}^{\infty}f(x-y,t)\rho(\tau,y)\mathrm dy=\int_{-\infty}^{\infty}\left(f-f_xy+\frac{1}{2}f_{xx}y^2+\cdots\right)\rho(\tau,y)\mathrm dy\]</span> 由于 <span class="math inline">\(\rho\)</span> 是概率分布，故 <span class="math inline">\(\int_{-\infty}^{\infty}\rho\mathrm dy=1\)</span>；又由于 <span class="math inline">\(\rho(\tau,y)=\rho(\tau,-y)\)</span>，所以 <span class="math inline">\(\int_{-\infty}^{\infty}y\rho\mathrm dy=0\)</span>. 进一步地，假设 <span class="math inline">\(\int_{-\infty}^{\infty}y^2\rho\mathrm dy\)</span>，即 <span class="math inline">\(y\)</span> 的方差，与 <span class="math inline">\(\tau\)</span> 成线性关系，即： <span class="math display">\[\int_{-\infty}^{\infty}y^2\rho\mathrm dy=D\tau,\quad D&gt;0\]</span> 其中 <span class="math inline">\(D\)</span> 为常数。那么有： <span class="math display">\[f(x,t+\tau)=f(x,t)+\frac{1}{2}f_{xx}(x,t)D\tau+\cdots\implies\frac{f(x,t+\tau)-f(x,t)}{\tau}=\frac{1}{2}f_{xx}(x,t)D\]</span> 令 <span class="math inline">\(\tau\to0\)</span>，得： <span class="math display">\[f_t=\frac{D}{2}f_{xx}\quad\text{or}\quad\frac{\partial f}{\partial t}=\frac{D}{2}\frac{\partial^2f}{\partial x^2}\]</span> 这个偏微分方程就是<strong>扩散方程 (diffusion equation)</strong> 或<strong>热方程 (heat equation)</strong>。给定初值条件 <span class="math inline">\(f(x,0)=\delta_0\)</span>，该 PDE 的解为： <span class="math display">\[f(x,t)=\frac{1}{(2\pi Dt)^{1/2}}e^{-\frac{x^2}{2Dt}}\]</span> 也就是说时刻 <span class="math inline">\(t\)</span> 各位置墨水粒子密度的分布服从 <span class="math inline">\(\mathcal N(0,Dt)\)</span>.</p><h3 id="随机游走">随机游走</h3><p>设有一粒子在直线上随机游走。<span class="math inline">\(t=0\)</span> 时粒子位于 <span class="math inline">\(x=0\)</span> 处，每隔 <span class="math inline">\(\Delta t\)</span> 时间以 <span class="math inline">\(1/2\)</span> 的概率向左移动 <span class="math inline">\(\Delta x\)</span> 距离，以 <span class="math inline">\(1/2\)</span> 的概率向右移动 <span class="math inline">\(\Delta x\)</span> 距离。设 <span class="math inline">\(p(m,n)\)</span> 表示粒子在 <span class="math inline">\(n\Delta t\)</span> 时刻位于 <span class="math inline">\(m\Delta x\)</span> 处的概率，<span class="math inline">\(m=0,\pm1,\pm2,\ldots\)</span>，<span class="math inline">\(n=0,1,2,\ldots\)</span>，那么： <span class="math display">\[p(m,0)=\begin{cases}0&amp;m\neq 0\\1&amp;m=0\end{cases}\]</span> 并且： <span class="math display">\[p(m,n+1)=\frac{1}{2}p(m-1,n)+\frac{1}{2}p(m+1,n)\]</span> 于是： <span class="math display">\[p(m,n+1)-p(m,n)=\frac{1}{2}(p(m-1,n)-2p(m,n)+p(m+1,n))\]</span> 假设 <span class="math inline">\((\Delta x)^2\)</span> 与 <span class="math inline">\(\Delta t\)</span> 之间有线性关系： <span class="math display">\[\frac{(\Delta x)^2}{\Delta t}=D\]</span> 其中 <span class="math inline">\(D\)</span> 为常数。那么有： <span class="math display">\[\frac{p(m,n+1)-p(m,n)}{\Delta t}=\frac{D}{2}\cdot\frac{p(m-1,n)-2p(m,n)+p(m+1,n)}{(\Delta x)^2}\]</span> 令 <span class="math inline">\(\Delta t\to0,\Delta x\to0,\,m\Delta x\to x,\,n\Delta t\to t\)</span>，这意味着 <span class="math inline">\(p(m,n)\to f(x,t)\)</span>，表示粒子在 <span class="math inline">\(t\)</span> 时刻位于 <span class="math inline">\(x\)</span> 处的概率密度。那么上述方程变成： <span class="math display">\[f_t=\frac{D}{2}f_{xx}\quad\text{or}\quad\frac{\partial f}{\partial t}=\frac{D}{2}\frac{\partial^2f}{\partial x^2}\]</span> 我们再次得到了扩散方程。</p><h3 id="布朗运动维纳过程">布朗运动（维纳过程）</h3><p>基于上述两例的启发，取 <span class="math inline">\(D=1\)</span>，我们定义布朗运动（维纳过程）如下。</p><p><strong>定义</strong>：若一个实值随机过程 <span class="math inline">\(W(\cdot)\)</span> 满足：</p><ol type="1"><li><span class="math inline">\(W(0)=0\)</span>, almost surely.</li><li>随机变量 <span class="math inline">\(W(t)-W(s)\)</span> 服从 <span class="math inline">\(\mathcal N(0,t-s)\)</span>，<span class="math inline">\(\forall\ t\geq s\geq0\)</span>.</li><li>对任意 <span class="math inline">\(0&lt;t_1&lt;t_2&lt;\cdots&lt;t_n\)</span>，随机变量 <span class="math inline">\(W(t_1),W(t_2)-W(t_1),\cdots,W(t_n)-W(t_{n-1})\)</span> 独立（增量独立）。</li></ol><p>则称该随机过程为布朗运动或维纳过程。</p><p>容易知道，布朗运动的均值函数和方差函数分别为： <span class="math display">\[\mathbb E[W(t)]=0,\quad \text{Var}(W(t))=\mathbb E[W^2(t)]=t,\quad \forall\ t\geq0\]</span></p><h2 id="构造布朗运动">构造布朗运动</h2><h3 id="联合分布的计算">联合分布的计算</h3>]]></content>
+    
+    
+    <categories>
+      
+      <category>课程书籍笔记</category>
+      
+      <category>Evans Intro SDE</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>stochastic process</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>[Evans Intro SDE]1·Introduction</title>
+    <link href="/blog-main/2024/03/25/Evans-Intro-SDE-1%C2%B7Introduction/"/>
+    <url>/blog-main/2024/03/25/Evans-Intro-SDE-1%C2%B7Introduction/</url>
+    
+    <content type="html"><![CDATA[<p>参考书籍：<strong>An Introduction to Stochastic Differential Equations Version 1.2</strong> by Lawrence C. Evans. <a href="https://www.math.uh.edu/~sanders/Math3338/LawrenceEvans-SDE-course.pdf">link</a></p><h2 id="动机">动机</h2><p>给定 <span class="math inline">\(x_0\in\mathbb R^n\)</span>，考虑这样一个 ODE： <span class="math display">\[\begin{cases}\dot{\mathbf x}(t)=\mathbf b(\mathbf x(t))&amp;(t&gt;0)\\\mathbf x(0)=x_0\end{cases}\]</span> 其中 <span class="math inline">\(\mathbf b:\mathbb R^n\to\mathbb R^n\)</span> 是一个给定的光滑向量场。该 ODE 的解是一条轨迹 <span class="math inline">\(\mathbf x(\cdot):[0,\infty]\to\mathbb R^n\)</span>，如下图所示：</p><p><img src="intro.png" width=80% /></p><p>然而在许多应用中，实验测试得到的轨迹往往受到很多随机因素的影响，如下图所示：</p><p><img src="intro2.png" width=80% /></p><p>因此我们需要在 ODE 的基础上添加一个噪声项： <span class="math display">\[\begin{cases}\dot{\mathbf X}(t)=\mathbf b(\mathbf X(t))+\mathbf B(\mathbf X(t))\boldsymbol\xi(t)&amp;(t&gt;0)\\\mathbf X(0)=x_0\end{cases}\tag{1}\label{intro}\]</span> 其中 <span class="math inline">\(\mathbf B:\mathbb R^n\to\mathbb M^{n\times m}\)</span> 且 <span class="math inline">\(\boldsymbol\xi(\cdot)\)</span> 表示某种 <span class="math inline">\(m\)</span> 维“白噪声”。基于此，我们现在需要解决以下问题：</p><ul><li>在数学上严格地定义“白噪声” <span class="math inline">\(\boldsymbol\xi(\cdot)\)</span>；</li><li>定义什么是 <span class="math inline">\(\eqref{intro}\)</span> 式的解 <span class="math inline">\(\mathbf X(\cdot)\)</span>；</li><li>讨论 <span class="math inline">\(\eqref{intro}\)</span> 式是否有解，解是否唯一，其渐进行为，与 <span class="math inline">\(x_0,\mathbf b,\mathbf B\)</span>​ 的关系……</li></ul><h2 id="启发">启发</h2><p>我们首先从简单的情形入手。设 <span class="math inline">\(m=n,\,x_0=0,\,\mathbf b\equiv 0,\,\mathbf B\equiv I\)</span>，此时 <span class="math inline">\(\eqref{intro}\)</span> 式的解称作<strong>维纳过程 (Wiener process)</strong> 或<strong>布朗运动 (Brownian motion)</strong>，记作 <span class="math inline">\(\mathbf W(\cdot)\)</span>，于是有： <span class="math display">\[\dot{\mathbf W}(t)=\boldsymbol\xi(t)\]</span> 即我们定义“白噪声”是维纳过程的导数过程。</p><p>基于维纳过程，<span class="math inline">\(\eqref{intro}\)</span> 式可改写作： <span class="math display">\[\begin{cases}\mathrm d\mathbf X(t)=\mathbf b(\mathbf X(t))\mathrm dt+\mathbf B(\mathbf X(t))\mathrm d\mathbf W(t)\\\mathbf X(0)=x_0\end{cases}\tag{2}\label{intro-sde}\]</span> 称如此形式的方程为<strong>随机微分方程 (SDE)</strong>. 进一步地，如果 <span class="math inline">\(\mathbf X(\cdot)\)</span> 满足： <span class="math display">\[\mathbf X(t)=x_0+\int_0^t\mathbf b(\mathbf X(s))\mathrm ds+\int_0^t\mathbf B(\mathbf X(s))\mathrm d\mathbf W,\quad\forall\ t&gt;0\]</span> 则称 <span class="math inline">\(\mathbf X(\cdot)\)</span> 是该 SDE 的解。在本书中，我们将构造 <span class="math inline">\(\mathbf W(\cdot)\)</span>、定义随机积分 <span class="math inline">\(\int_0^t\cdots\mathrm d\mathbf W\)</span>、表明 <span class="math inline">\(\eqref{intro-sde}\)</span> 式有解……</p><h2 id="伊藤公式">伊藤公式</h2><p>假设 <span class="math inline">\(n=1\)</span> 并且 <span class="math inline">\(X(\cdot)\)</span> 是如下 SDE 的解： <span class="math display">\[\mathrm dX=b(X)\mathrm dt+\mathrm dW\]</span> 设 <span class="math inline">\(u:\mathbb R\to\mathbb R\)</span> 是一给定光滑函数，问： <span class="math display">\[Y(t)=u(X(t))\quad (t\geq0)\]</span> 是哪个 SDE 的解？如果凭微积分中链式法则的知识，我们可能会猜想： <span class="math display">\[\mathrm dY=u&#39;\mathrm dX=u&#39;b\mathrm dt+u&#39;\mathrm dW\]</span> 但是这是<strong>错误的</strong>！在 SDE 中，我们将会看到，从某种程度上来说，可以认为 <span class="math inline">\(\mathrm dW=(\mathrm dt)^{1/2}\)</span>，因此计算 <span class="math inline">\(\mathrm dY\)</span> 时需要保留 <span class="math inline">\(\mathrm dt\)</span> 和 <span class="math inline">\((\mathrm dt)^{1/2}\)</span>： <span class="math display">\[\begin{align}\mathrm dY&amp;=u&#39;\mathrm dX+\frac{1}{2}u&#39;&#39;(\mathrm dX)^2+\cdots\\&amp;=u&#39;(b\mathrm dt+\mathrm dW)+\frac{1}{2}u&#39;&#39;(b\mathrm dt+\mathrm dW)^2\\&amp;=\left(u&#39;b+\frac{1}{2}u&#39;&#39;\right)\mathrm dt+u&#39;\mathrm dW+o((\mathrm dt)^{3/2})\end{align}\]</span> 丢弃高阶项，有： <span class="math display">\[\mathrm dY=\left(u&#39;b+\frac{1}{2}u&#39;&#39;\right)\mathrm dt+u&#39;\mathrm dW\]</span> 可以看见相比一般微积分，结果多了一项 <span class="math inline">\(\frac{1}{2}u&#39;&#39;\)</span>.</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>课程书籍笔记</category>
+      
+      <category>Evans Intro SDE</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>stochastic process</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>蒙特卡洛采样</title>
     <link href="/blog-main/2024/03/21/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E9%87%87%E6%A0%B7/"/>
     <url>/blog-main/2024/03/21/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E9%87%87%E6%A0%B7/</url>
