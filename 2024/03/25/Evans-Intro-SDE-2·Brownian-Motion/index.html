@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_diffusion.jpg">
 <meta property="article:published_time" content="2024-03-25T12:39:48.000Z">
-<meta property="article:modified_time" content="2024-03-25T13:32:08.426Z">
+<meta property="article:modified_time" content="2024-04-03T01:54:00.318Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          411 字
+          1.2k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          4 分钟
+          10 分钟
         
       </span>
     
@@ -336,7 +336,7 @@ f(x,0)=\delta_0,\text{ the unit mass at 0.}
 f(x,t+\tau)=\int_{-\infty}^{\infty}f(x-y,t)\rho(\tau,y)\mathrm dy=\int_{-\infty}^{\infty}\left(f-f_xy+\frac{1}{2}f_{xx}y^2+\cdots\right)\rho(\tau,y)\mathrm dy
 \]</span> 由于 <span class="math inline">\(\rho\)</span> 是概率分布，故 <span class="math inline">\(\int_{-\infty}^{\infty}\rho\mathrm dy=1\)</span>；又由于 <span class="math inline">\(\rho(\tau,y)=\rho(\tau,-y)\)</span>，所以 <span class="math inline">\(\int_{-\infty}^{\infty}y\rho\mathrm dy=0\)</span>. 进一步地，假设 <span class="math inline">\(\int_{-\infty}^{\infty}y^2\rho\mathrm dy\)</span>，即 <span class="math inline">\(y\)</span> 的方差，与 <span class="math inline">\(\tau\)</span> 成线性关系，即： <span class="math display">\[
 \int_{-\infty}^{\infty}y^2\rho\mathrm dy=D\tau,\quad D&gt;0
-\]</span> 其中 <span class="math inline">\(D\)</span> 为常数。那么有： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(D\)</span> 为常数，那么有： <span class="math display">\[
 f(x,t+\tau)=f(x,t)+\frac{1}{2}f_{xx}(x,t)D\tau+\cdots\implies\frac{f(x,t+\tau)-f(x,t)}{\tau}=\frac{1}{2}f_{xx}(x,t)D
 \]</span> 令 <span class="math inline">\(\tau\to0\)</span>，得： <span class="math display">\[
 f_t=\frac{D}{2}f_{xx}\quad\text{or}\quad\frac{\partial f}{\partial t}=\frac{D}{2}\frac{\partial^2f}{\partial x^2}
@@ -362,15 +362,105 @@ f_t=\frac{D}{2}f_{xx}\quad\text{or}\quad\frac{\partial f}{\partial t}=\frac{D}{2
 <p><strong>定义</strong>：若一个实值随机过程 <span class="math inline">\(W(\cdot)\)</span> 满足：</p>
 <ol type="1">
 <li><span class="math inline">\(W(0)=0\)</span>, almost surely.</li>
-<li>随机变量 <span class="math inline">\(W(t)-W(s)\)</span> 服从 <span class="math inline">\(\mathcal N(0,t-s)\)</span>，<span class="math inline">\(\forall\ t\geq s\geq0\)</span>.</li>
-<li>对任意 <span class="math inline">\(0&lt;t_1&lt;t_2&lt;\cdots&lt;t_n\)</span>，随机变量 <span class="math inline">\(W(t_1),W(t_2)-W(t_1),\cdots,W(t_n)-W(t_{n-1})\)</span> 独立（增量独立）。</li>
+<li>增量高斯：随机变量 <span class="math inline">\(W(t)-W(s)\)</span> 服从 <span class="math inline">\(\mathcal N(0,t-s)\)</span>，<span class="math inline">\(\forall\ t\geq s\geq0\)</span>.</li>
+<li>增量独立：对任意 <span class="math inline">\(0&lt;t_1&lt;t_2&lt;\cdots&lt;t_n\)</span>，随机变量 <span class="math inline">\(W(t_1),W(t_2)-W(t_1),\cdots,W(t_n)-W(t_{n-1})\)</span> 独立。</li>
 </ol>
 <p>则称该随机过程为布朗运动或维纳过程。</p>
-<p>容易知道，布朗运动的均值函数和方差函数分别为： <span class="math display">\[
+<p>容易知道，布朗运动的<strong>均值函数</strong>和<strong>方差函数</strong>分别为： <span class="math display">\[
 \mathbb E[W(t)]=0,\quad \text{Var}(W(t))=\mathbb E[W^2(t)]=t,\quad \forall\ t\geq0
+\]</span> 设 <span class="math inline">\(t\geq s\geq 0\)</span>，则布朗运动的<strong>自相关函数</strong>为：</p>
+<p><span class="math display">\[
+\begin{align}
+R_W(t,s)&amp;=\mathbb E[W(t)W(s)]\\
+&amp;=\mathbb E[(W(s)+W(t)-W(s))W(s)]\\
+&amp;=\mathbb E[W^2(s)]+\mathbb E[(W(t)-W(s))W(s)]\\
+&amp;=\mathbb E[W^2(s)]+\mathbb E[W(t)-W(s)]\mathbb E[W(s)]\\
+&amp;=s
+\end{align}
+\]</span> 即对于任意 <span class="math inline">\(t,s\geq0\)</span>，有： <span class="math display">\[
+R_W(t,s)=\mathbb E[W(t)W(s)]=\min(s,t),\quad t,s\geq 0
 \]</span></p>
 <h2 id="构造布朗运动">构造布朗运动</h2>
-<h3 id="联合分布的计算">联合分布的计算</h3>
+<h3 id="有限维分布">有限维分布</h3>
+<p>一个随机过程的统计特性由其有限维分布决定，因此我们希望计算维纳过程的有限维分布。</p>
+<p>根据定义，如果 <span class="math inline">\(W(\cdot)\)</span> 是一个维纳过程，那么对于任意 <span class="math inline">\(t&gt;0\)</span> 和 <span class="math inline">\(a\leq b\)</span>，有： <span class="math display">\[
+P(a\leq W(t)\leq b)=\frac{1}{\sqrt{2\pi t}}\int_a^be^{-\frac{x^2}{2t}}\mathrm dx=\int_a^b g(x,t\vert 0)\mathrm dx
+\]</span> 其中为书写方便起见，记： <span class="math display">\[
+g(x,t\vert y)=\frac{1}{\sqrt{2\pi t}}e^{-\frac{(x-y)^2}{2t}}
+\]</span> 进一步地，对于 <span class="math inline">\(0&lt;t_1&lt;t_2\)</span> 和 <span class="math inline">\(a_1\leq b_1,a_2\leq b_2\)</span>，有： <span class="math display">\[
+\begin{align}
+P(a_1\leq W(t_1)\leq b_1,a_2\leq W(t_2)\leq b_2)&amp;=\int_{a_1}^{b_1}\int_{a_2}^{b_2}P(W(t_1)=x_1)P(W(t_2)=x_2\vert W(t_1)=x_1)\mathrm dx_2\mathrm dx_1\\
+&amp;=\int_{a_1}^{b_1}\int_{a_2}^{b_2}P(W(t_1)=x_1)P(W(t_2)-W(t_1)=x_2-x_1)\mathrm dx_2\mathrm dx_1\\
+&amp;=\int_{a_1}^{b_1}\int_{a_2}^{b_2}g(x_1,t_1\vert 0)g(x_2,t_2-t_1\vert x_1)\mathrm dx_2\mathrm dx_1
+\end{align}
+\]</span> 其中第二个等号运用了增量独立性。以此类推，任取整数 <span class="math inline">\(n&gt;0\)</span> 和时间步 <span class="math inline">\(0=t_0&lt;t_1&lt;\ldots&lt;t_n\)</span> 以及 <span class="math inline">\(a_i\leq b_i,\,i=1,\ldots,n\)</span>，有： <span class="math display">\[
+P(a_1\leq W(t_1)\leq b,\ldots,a_n\leq W(t_n)\leq b_n)=
+\int_{a_1}^{b_1}\cdots\int_{a_n}^{b_n}g(x_1,t_1\vert0)g(x_2,t_2-t_1\vert x_1)\cdots g(x_n,t_n-t_{n-1}\vert x_{n-1})\mathrm dx_n\cdots\mathrm dx_1
+\]</span> 下述定理推广了这一结论。</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(W(\cdot)\)</span> 是一个一维维纳过程，任取整数 <span class="math inline">\(n&gt;0\)</span> 和时间步 <span class="math inline">\(0=t_0&lt;t_1&lt;\ldots&lt;t_n\)</span>，设函数 <span class="math inline">\(f:\mathbb R^n\to\mathbb R\)</span>，则有： <span class="math display">\[
+\mathbb E\left[f(W(t_1),\ldots,W(t_n))\right]=\int_{-\infty}^{\infty}\cdots\int_{-\infty}^{\infty}f(x_1,\ldots,x_n)g(x_1,t_1\vert 0)g(x_2,t_2-t_1\vert x_1)\cdots g(x_n,t_n-t_{n-1}\vert x_{n-1})\mathrm dx_n\cdots\mathrm dx_1
+\]</span></p>
+<h3 id="白噪声">白噪声</h3>
+<p>在第一章中我们称维纳过程的导数过程为“白噪声”： <span class="math display">\[
+\xi(t)=\dot W(t)
+\]</span> 我们随后会看到，<span class="math inline">\(W(t)\)</span> 的均方导数其实是不存在的，但是在形式上，我们仍然可以计算 <span class="math inline">\(\xi(t)\)</span> 的<strong>均值函数</strong>和<strong>自相关函数</strong>： <span class="math display">\[
+\begin{gather}
+\mathbb E[\xi(t)]=\frac{\mathrm d}{\mathrm dt}\mathbb E[W(t)]=0\\
+R_\xi(t,s)=\mathbb E[\xi(t)\xi(s)]=\frac{\partial^2}{\partial t\partial s}\mathbb E[W(t)W(s)]=\frac{\partial^2}{\partial t\partial s}\min(t,s)=\delta(t-s)
+\end{gather}
+\]</span> 可以看见，<span class="math inline">\(\xi(t)\)</span> 的均值函数是常数，并且自相关函数只与时间差有关，即： <span class="math display">\[
+R_\xi(t,s)=R_\xi(\tau)=\delta(\tau),\quad\tau=t-s
+\]</span> 因此 <span class="math inline">\(\xi(t)\)</span> 是一个<strong>宽平稳过程</strong>。进一步地，根据维纳-辛钦定理，对自相关函数做傅立叶变换可以计算 <span class="math inline">\(\xi(t)\)</span> 的<strong>功率谱密度函数</strong>： <span class="math display">\[
+S_\xi(\omega)=\int_{-\infty}^{\infty}e^{-i\omega\tau}\delta(\tau)\mathrm d\tau=1,\quad \forall\omega
+\]</span> 也就是说，任意频率对自相关函数都有相同的贡献，因此我们称 <span class="math inline">\(\xi(t)\)</span> 为白噪声。</p>
+<h3 id="正交基">正交基</h3>
+<p>设 <span class="math inline">\(L^2(0,1)\)</span> 表示所有定义在 <span class="math inline">\((0,1)\)</span> 上的实值平方可积函数构成的函数空间。设 <span class="math inline">\(\{\psi_n(t)\}_{n=0}^\infty\)</span> 是 <span class="math inline">\(L^2(0,1)\)</span> 上的一组正交基，那么根据正交性有： <span class="math display">\[
+\int_0^1\psi_n(s)\psi_m(s)\mathrm ds=\delta_{mn}=\begin{cases}0,&amp;n\neq m\\1,&amp;n=m\end{cases},\quad n,m=0,1,\ldots
+\]</span> 将白噪声 <span class="math inline">\(\xi(t)\)</span> 分解为该基的线性组合： <span class="math display">\[
+\xi(t)=\sum_{n=0}^\infty A_n\psi_n(t),\quad 0\leq t\leq 1
+\]</span> 其中系数 <span class="math inline">\(A_n\)</span> 都是随机变量。上式两边同乘 <span class="math inline">\(\psi_m(t)\)</span> 并积分，容易知道： <span class="math display">\[
+A_n=\int_0^1\xi(t)\psi_n(t)\mathrm dt,\quad n=0,1,\ldots
+\]</span> 由于高斯分布比较简单，我们希望「<span class="math inline">\(A_n\)</span> 是独立的零均值高斯随机变量」。如果该假设成立，那么应有 <span class="math inline">\(\mathbb E[A_nA_m]=\delta_{mn}\)</span>，而事实也确实如此： <span class="math display">\[
+\begin{align}
+\mathbb E[A_nA_m]&amp;=\int_0^1\int_0^1\mathbb E[\xi(t)\xi(s)]\psi_n(t)\psi_m(s)\mathrm dt\mathrm ds\\
+&amp;=\int_0^1\int_0^1\delta(t-s)\psi_n(t)\psi_m(s)\mathrm dt\mathrm ds\\
+&amp;=\int_0^1\psi_n(s)\psi_m(s)\mathrm ds=\delta_{mn}
+\end{align}
+\]</span> 因此我们确实可以期待「<span class="math inline">\(A_n\)</span> 是独立的零均值高斯随机变量」，下面我们需要找一个特殊的基 <span class="math inline">\(\{\psi_n(t)\}_{n=0}^{\infty}\)</span>​ 使之成立。</p>
+<h3 id="lévyciesielski-构造">Lévy–Ciesielski 构造</h3>
+<p><strong>定义</strong>：<strong>Haar 小波函数</strong>是 <span class="math inline">\([0,1]\)</span> 上的一族函数 <span class="math inline">\(\{h_k(t)\}_{k=0}^\infty\)</span>，其定义如下： <span class="math display">\[
+\begin{align}
+h_0(t)&amp;=1,\quad 0\leq t\leq 1&amp;&amp;k=0\\
+h_1(t)&amp;=\begin{cases}1,&amp;0\leq t\leq \frac{1}{2}\\-1,&amp;\frac{1}{2}&lt;t\leq 1\end{cases}&amp;&amp;k=1\\
+h_k(t)&amp;=\begin{cases}2^{n/2},&amp;\frac{k-2^n}{2^n}\leq t\leq \frac{k-2^n+1/2}{2^n}\\-2^{n/2},&amp;\frac{k-2^n+1/2}{2^n}&lt;t\leq \frac{k-2^n+1}{2^n}\\0,&amp;\text{otherwise}\end{cases}&amp;&amp;2^n\leq k&lt;2^{n+1},\,n=1,2,\ldots\\
+\end{align}
+\]</span> 看着有点唬人，但画出来还是挺直观的（注释：子图标题是 <span class="math inline">\(\text{Haar}(n+1,k-2^n+1)\)</span>）：</p>
+<p><img src="haar.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p><strong>引理</strong>：Haar 小波函数族 <span class="math inline">\(\{h_k(t)\}_{k=0}^{\infty}\)</span> 构成了 <span class="math inline">\(L^2(0,1)\)</span> 空间上的一组完备的正交基。</p>
+<p><strong>定义</strong>：对 <span class="math inline">\(k=0,1,\ldots\)</span>，称下式为第 <span class="math inline">\(k\)</span> 个 <strong>Schauder 函数</strong>： <span class="math display">\[
+s_k(t)=\int_0^th_k(s)\mathrm ds
+\]</span> Schauder 函数 <span class="math inline">\(s_k(t)\)</span> 的图像是区间 <span class="math inline">\([\frac{k-2^n}{2^n},\frac{k-2^n+1}{2^n}]\)</span> 上的一个三角形，最大值为 <span class="math inline">\(2^{-n/2-1}\)</span>，其可视化如下：</p>
+<p><img src="schauder.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>对于 Schauder 函数，假设 <span class="math inline">\(s\leq t\)</span>，则有以下计算： <span class="math display">\[
+\begin{align}
+\sum_{k=0}^{\infty}s_k(t)s_k(s)&amp;=\sum_{k=0}^{\infty}\left(\int_0^th_k(u)\mathrm du\right)\left(\int_0^sh_k(v)\mathrm dv\right)\\
+&amp;=\sum_{k=0}^{\infty}\int_0^t\int_0^sh_k(u)h_k(v)\mathrm dv\mathrm du\\
+&amp;=
+\end{align}
+\]</span></p>
+<p>现在，基于 Schauder 函数，我们就可以将维纳过程 <span class="math inline">\(W(t)\)</span> 分解为 <span class="math inline">\(s_k(t)\)</span>​ 的线性组合，并且系数就是我们希望的「独立的零均值高斯随机变量」。</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(\{A_k\}_{k=0}^{\infty}\)</span> 是一列独立服从 <span class="math inline">\(\mathcal N(0,1)\)</span> 的随机变量，则级数： <span class="math display">\[
+W(t)=\sum_{k=0}^\infty A_ks_k(t),\quad 0\leq t\leq 1
+\]</span> 在各个 <span class="math inline">\(t\)</span> 处一致收敛，并且 <span class="math inline">\(W(t)\)</span> 是一个维纳过程，且采样路径 <span class="math inline">\(t\mapsto W(t)\)</span> 是连续的。</p>
+<p>这里我们跳过收敛性的证明，只说明 <span class="math inline">\(W(t)\)</span> 是一个维纳过程。首先，<span class="math inline">\(W(0)=0\)</span> 是显然的；其次，我们需要说明 <span class="math inline">\(W(t)-W(s)\)</span> 服从 <span class="math inline">\(\mathcal N(0,t-s)\)</span>，考虑特征函数： <span class="math display">\[
+\begin{align}
+\mathbb E\left[\exp(i\lambda(W(t)-W(s)))\right]&amp;=\mathbb E\left[\exp\left(i\lambda\sum_{k=0}^\infty A_k(s_k(t)-s_k(s))\right)\right]\\
+&amp;=\prod_{k=0}^{\infty}\mathbb E\left[\exp\left(i\lambda A_k(s_k(t)-s_k(s))\right)\right]\\
+&amp;=\prod_{k=0}^{\infty}\exp\left(-\frac{\lambda^2}{2}(s_k(t)-s_k(s))^2\right)\\
+&amp;=\exp\left(-\frac{\lambda^2}{2}\sum_{k=0}^{\infty}(s_k(t)-s_k(s))^2\right)\\
+&amp;=\exp\left(-\frac{\lambda^2}{2}\sum_{k=0}^{\infty}\left(s_k^2(t)-2s_k(t)s_k(s)+s_k^2(s)\right)\right)\\
+\end{align}
+\]</span></p>
 
                 
               </div>

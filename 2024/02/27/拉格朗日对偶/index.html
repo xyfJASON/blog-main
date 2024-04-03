@@ -25,10 +25,8 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/duality.png">
 <meta property="article:published_time" content="2024-02-27T11:22:00.000Z">
-<meta property="article:modified_time" content="2024-02-27T14:19:57.735Z">
+<meta property="article:modified_time" content="2024-03-26T12:34:31.780Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="algorithms">
-<meta property="article:tag" content="math">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/duality.png">
   
@@ -275,7 +273,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.5k 字
+          1.9k 字
         
       </span>
     
@@ -286,7 +284,7 @@
         
         
         
-          13 分钟
+          16 分钟
         
       </span>
     
@@ -438,14 +436,16 @@ g(\mathbf x^\ast)&amp;\leq 0\\
 \]</span></p>
 <h3 id="kkt-条件">KKT 条件</h3>
 <p>将上述结果推广到多个等式和不等式约束的情况下，考虑一般性的优化问题及其对偶问题： <span class="math display">\[
-\begin{align}
-\min&amp;\quad f(\mathbf x)\\
-\text{s.t.}&amp;\quad g_i(\mathbf x)\leq 0,\quad i=1,\ldots,m\\
-&amp;\quad h_i(\mathbf x)=0,\quad i=1,\ldots,k\\
-\\
-\max_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\quad g(\boldsymbol\lambda,\boldsymbol\nu)\\
-\text{s.t.}&amp;\quad\boldsymbol\lambda\leq\mathbf0
-\end{align}
+\begin{array}{rrcl}
+\min&amp;\quad f(\mathbf x)&amp;&amp;\\
+\text{s.t.}&amp;g_i(\mathbf x)&amp;\leq&amp;0,\quad i=1,\ldots,m\\
+&amp;h_i(\mathbf x)&amp;=&amp;0,\quad i=1,\ldots,k
+\end{array}
+\quad\iff\quad
+\begin{array}{rrcl}
+\max\limits_{\boldsymbol\lambda,\boldsymbol\nu}&amp;g(\boldsymbol\lambda,\boldsymbol\nu)&amp;&amp;\\
+\text{s.t.}&amp;\boldsymbol\lambda&amp;\leq&amp;\mathbf0
+\end{array}
 \]</span> 构造拉格朗日函数： <span class="math display">\[
 L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)=f(\mathbf x)-\sum_{i=1}^m\lambda_ig_i(\mathbf x)-\sum_{i=1}^k\nu_ih_i(\mathbf x)\quad (\lambda_i\leq0,\,i=1,2,\ldots,m)
 \]</span> <strong>假设强对偶性成立</strong>，则 <span class="math inline">\(\mathbf x^\ast,\boldsymbol\lambda^\ast,\boldsymbol\nu^\ast\)</span> 是原问题和对偶问题的最优解的<strong>必要条件</strong>为： <span class="math display">\[
@@ -459,6 +459,119 @@ g_i(\mathbf x^\ast)\leq0,\,h_i(\mathbf x^\ast)&amp;=0&amp;&amp;\text{(Primal fea
 <div class="note note-secondary">
             <p>上文从几何视角直观地展现了 KKT 条件的意义，但不是严谨证明。下面给出互补松弛性条件的证明： <span class="math display">\[\begin{align}f(\mathbf x^\ast)&amp;=g(\boldsymbol\lambda^\ast,\boldsymbol\nu^\ast)\\&amp;=\inf_\mathbf x\left\{f(\mathbf x)-\sum_{i=1}^m\lambda_i^\ast g_i(\mathbf x)-\sum_{i=1}^k\nu_i^\ast h_i(\mathbf x)\right\}\\&amp;\leq f(\mathbf x^\ast)-\sum_{i=1}^m\lambda_i^\ast g_i(\mathbf x^\ast)-\sum_{i=1}^k\nu_i^\ast h_i(\mathbf x^\ast)\\&amp;\leq f(\mathbf x^\ast)\end{align}\]</span> 注意第一个等号需要强对偶性的支持。上式中的小于等于都只能取等，易知： <span class="math display">\[\sum_{i=1}^m\lambda_i^\ast g_i(\mathbf x^\ast)=0\]</span> 又由于 <span class="math inline">\(\lambda_i^\ast\leq0,\,g_i(\mathbf x^\ast)\leq0\implies \lambda_i^\ast g_i(\mathbf x^\ast)\geq0\)</span>，所以只能是 <span class="math inline">\(\lambda_i^\ast g_i(\mathbf x^\ast)=0\)</span>，即互补松弛性条件成立。</p>
           </div>
+<h2 id="例子线性规划">例子：线性规划</h2>
+<blockquote>
+<p>本节中，两个向量比大小指各分量同时比大小。例如，设 <span class="math inline">\(\mathbf x,\mathbf y\in\mathbb R^d\)</span>，则 <span class="math inline">\(\mathbf x\leq \mathbf y\)</span> 指的是 <span class="math inline">\(x_i\leq y_i\)</span> 对 <span class="math inline">\(i=1,\ldots,d\)</span> 均成立。</p>
+</blockquote>
+<h3 id="case-1">Case 1</h3>
+<p>考虑如下线性规划问题（松弛型）： <span class="math display">\[
+\begin{matrix}
+\min&amp;\mathbf c^T\mathbf x&amp;&amp;\\
+\text{s.t.}&amp;A\mathbf x&amp;=&amp;\mathbf b\\
+&amp;\mathbf x&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\]</span> 引入拉格朗日乘子 <span class="math inline">\(\boldsymbol\lambda,\boldsymbol\nu\)</span>，构造拉格朗日函数： <span class="math display">\[
+L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)=\mathbf c^T\mathbf x+\boldsymbol\lambda^T\mathbf x-\boldsymbol\nu^T(A\mathbf x-\mathbf b),\quad(\boldsymbol\lambda\leq\mathbf 0)
+\]</span> 则拉格朗日对偶函数为： <span class="math display">\[
+\begin{align}
+g(\boldsymbol\lambda,\boldsymbol\nu)&amp;=\inf_\mathbf x\quad L(\mathbf x,\boldsymbol\lambda,\boldsymbol\nu)\\
+&amp;=\inf_\mathbf x\quad \mathbf c^T\mathbf x+\boldsymbol\lambda^T\mathbf x-\boldsymbol\nu^T(A\mathbf x-\mathbf b)\\
+&amp;=\inf_\mathbf x\quad (\mathbf c^T+\boldsymbol\lambda^T-\boldsymbol\nu^TA)\mathbf x+\boldsymbol\nu^T\mathbf b\\
+&amp;=\begin{cases}
+\boldsymbol\nu^T\mathbf b,&amp;\text{if}\quad\mathbf c=A^T\boldsymbol\nu-\boldsymbol\lambda\\
+-\infty,&amp;\text{otherwise}
+\end{cases}
+\end{align}
+\]</span> 因此对偶问题为： <span class="math display">\[
+\begin{align}
+\max_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\quad g(\boldsymbol\lambda,\boldsymbol\nu)=\begin{cases}
+\boldsymbol\nu^T\mathbf b,&amp;\text{if}\quad\mathbf c=A^T\boldsymbol\nu-\boldsymbol\lambda\\
+-\infty,&amp;\text{otherwise}
+\end{cases}\\
+\text{s.t.}&amp;\quad\boldsymbol\lambda\leq \mathbf 0
+\end{align}
+\]</span> 注意到，由于 <span class="math inline">\(\boldsymbol\lambda\leq\mathbf0\)</span>，所以如果存在某个 <span class="math inline">\(\boldsymbol\nu\)</span> 使得 <span class="math inline">\(A^T\boldsymbol\nu-\mathbf c\leq\mathbf 0\)</span> 成立，那么上述优化问题一定不会走 <span class="math inline">\(-\infty\)</span> 那个分支，此时问题等价于： <span class="math display">\[
+\begin{matrix}
+\max\limits_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\boldsymbol\nu^T\mathbf b&amp;&amp;\\
+\text{s.t.}&amp;A^T\boldsymbol\nu&amp;\leq&amp;\mathbf c\\
+&amp;\boldsymbol\lambda&amp;\leq&amp;\mathbf 0\\
+\end{matrix}
+\]</span> 由于优化目标并不包含 <span class="math inline">\(\boldsymbol\lambda\)</span>，因此可以去掉。另外为了对称起见，用 <span class="math inline">\(\mathbf y\)</span> 代替 <span class="math inline">\(\boldsymbol\nu\)</span>，则得到原问题与对偶问题： <span class="math display">\[
+\begin{matrix}
+\min&amp;\mathbf c^T\mathbf x&amp;&amp;\\
+\text{s.t.}&amp;A\mathbf x&amp;=&amp;\mathbf b\\
+&amp;\mathbf x&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\quad\iff\quad
+\begin{matrix}
+\max&amp;\mathbf b^T\mathbf y&amp;&amp;\\
+\text{s.t.}&amp;A^T\mathbf y&amp;\leq&amp;\mathbf c
+\end{matrix}
+\]</span></p>
+<h3 id="case-2">Case 2</h3>
+<p>考虑如下线性规划问题（标准型）： <span class="math display">\[
+\begin{matrix}
+\min&amp;\mathbf c^T\mathbf x&amp;&amp;\\
+\text{s.t.}&amp;A\mathbf x&amp;\leq&amp;\mathbf b\\
+&amp;\mathbf x&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\]</span></p>
+<p>与 Case 1 相比改动了一个符号，对应新增条件 <span class="math inline">\(\boldsymbol\nu\leq0\)</span>，其余不变，因此略过中间步骤，直接写出对偶问题： <span class="math display">\[
+\begin{align}
+\max_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\quad g(\boldsymbol\lambda,\boldsymbol\nu)=\begin{cases}
+\boldsymbol\nu^T\mathbf b,&amp;\text{if}\quad\mathbf c=A^T\boldsymbol\nu-\boldsymbol\lambda\\
+-\infty,&amp;\text{otherwise}
+\end{cases}\\
+\text{s.t.}&amp;\quad\boldsymbol\lambda\leq \mathbf 0\\
+&amp;\quad\boldsymbol\nu\leq \mathbf 0\\
+\end{align}
+\]</span> 仍然暂不考虑 <span class="math inline">\(-\infty\)</span> 情形，那么问题等价于： <span class="math display">\[
+\begin{matrix}
+\max\limits_{\boldsymbol\lambda,\boldsymbol\nu}&amp;\boldsymbol\nu^T\mathbf b&amp;&amp;\\
+\text{s.t.}&amp;A^T\boldsymbol\nu&amp;\leq&amp;\mathbf c\\
+&amp;\boldsymbol\lambda&amp;\leq&amp;\mathbf 0\\
+&amp;\boldsymbol\nu&amp;\leq&amp;\mathbf 0\\
+\end{matrix}
+\]</span> 去掉 <span class="math inline">\(\boldsymbol\lambda\)</span> 并用 <span class="math inline">\(\mathbf y\)</span> 代替 <span class="math inline">\(\boldsymbol\nu\)</span>，得到： <span class="math display">\[
+\begin{matrix}
+\min&amp;\mathbf c^T\mathbf x&amp;&amp;\\
+\text{s.t.}&amp;A\mathbf x&amp;\leq&amp;\mathbf b\\
+&amp;\mathbf x&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\quad\iff\quad
+\begin{matrix}
+\max&amp;\mathbf b^T\mathbf y&amp;&amp;\\
+\text{s.t.}&amp;A^T\mathbf y&amp;\leq&amp;\mathbf c\\
+&amp;\mathbf y&amp;\leq&amp;\mathbf 0
+\end{matrix}
+\]</span></p>
+<h3 id="case-3">Case 3</h3>
+<p>考虑如下线性规划问题（标准型）： <span class="math display">\[
+\begin{matrix}
+\min&amp;\mathbf c^T\mathbf x&amp;&amp;\\
+\text{s.t.}&amp;A\mathbf x&amp;\geq&amp;\mathbf b\\
+&amp;\mathbf x&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\]</span> 符号的改变对应对偶变量（拉格朗日乘子）符号的改变，其余部分完全相同，因此直接写出结论： <span class="math display">\[
+\begin{matrix}
+\min&amp;\mathbf c^T\mathbf x&amp;&amp;\\
+\text{s.t.}&amp;A\mathbf x&amp;\geq&amp;\mathbf b\\
+&amp;\mathbf x&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\quad\iff\quad
+\begin{matrix}
+\max&amp;\mathbf b^T\mathbf y&amp;&amp;\\
+\text{s.t.}&amp;A^T\mathbf y&amp;\leq&amp;\mathbf c\\
+&amp;\mathbf y&amp;\geq&amp;\mathbf 0
+\end{matrix}
+\]</span></p>
+<h3 id="线性规划对偶的性质">线性规划对偶的性质</h3>
+<ol type="1">
+<li>对偶的对偶就是原问题：根据上述三种 cases 容易验证。</li>
+<li>弱对偶性成立：对偶问题的<strong>可行解</strong>是原问题的<strong>可行解</strong>的下界。</li>
+<li>强对偶性成立：对偶问题的<strong>最优解</strong>等于原问题的<strong>最优解</strong>。</li>
+<li>互补松弛性成为充要条件：设 <span class="math inline">\(\mathbf x,\mathbf y\)</span> 分别是原问题和对偶问题的可行解，则 <span class="math inline">\(\mathbf x,\mathbf y\)</span> 是最优解<strong>当且仅当</strong> <span class="math inline">\(\mathbf c^T\mathbf x=\mathbf b^T\mathbf y\)</span>.</li>
+</ol>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -508,15 +621,6 @@ g_i(\mathbf x^\ast)\leq0,\,h_i(\mathbf x^\ast)&amp;=0&amp;&amp;\text{(Primal fea
 
     </div>
   
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/blog-main/tags/algorithms/" class="print-no-link">#algorithms</a>
-      
-        <a href="/blog-main/tags/math/" class="print-no-link">#math</a>
-      
-    </div>
   
 </div>
 
@@ -581,8 +685,8 @@ g_i(\mathbf x^\ast)\leq0,\,h_i(\mathbf x^\ast)&amp;=0&amp;&amp;\text{(Primal fea
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2024/02/20/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7%E9%98%90%E6%98%8E%E8%AE%BE%E8%AE%A1%E7%A9%BA%E9%97%B4/" title="扩散模型理论·阐明设计空间">
-                        <span class="hidden-mobile">扩散模型理论·阐明设计空间</span>
+                      <a href="/blog-main/2024/02/20/%E9%98%90%E6%98%8E%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%A9%BA%E9%97%B4/" title="阐明设计空间">
+                        <span class="hidden-mobile">阐明设计空间</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

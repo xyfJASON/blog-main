@@ -18,14 +18,14 @@
   
     <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\I}{\mathbf I} \newcommand{\calN}{\mathcal N} \newcommand{\E}{\mathbb E} \] DDPM Recap 前向过程 设有一列 noise schedule：\(\{\beta_t\}_{t&#x3D;1}^T\)，记 \(\alpha_t&#x3D;1-\beta_t">
 <meta property="og:type" content="article">
-<meta property="og:title" content="扩散模型理论·DDIM与加速采样">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/14/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7DDIM%E4%B8%8E%E5%8A%A0%E9%80%9F%E9%87%87%E6%A0%B7/index.html">
+<meta property="og:title" content="DDIM与加速采样">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/14/DDIM%E4%B8%8E%E5%8A%A0%E9%80%9F%E9%87%87%E6%A0%B7/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\I}{\mathbf I} \newcommand{\calN}{\mathcal N} \newcommand{\E}{\mathbb E} \] DDPM Recap 前向过程 设有一列 noise schedule：\(\{\beta_t\}_{t&#x3D;1}^T\)，记 \(\alpha_t&#x3D;1-\beta_t">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddim.png">
 <meta property="article:published_time" content="2022-12-14T07:53:54.000Z">
-<meta property="article:modified_time" content="2024-03-24T04:40:16.052Z">
+<meta property="article:modified_time" content="2024-04-02T12:09:34.678Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>扩散模型理论·DDIM与加速采样 - xyfJASON</title>
+  <title>DDIM与加速采样 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="扩散模型理论·DDIM与加速采样"></span>
+            <span id="subtitle" data-typed-text="DDIM与加速采样"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">扩散模型理论·DDIM与加速采样</h1>
+            <h1 id="seo-header">DDIM与加速采样</h1>
             
             
               <div class="markdown-body">
@@ -432,7 +432,7 @@ q_\sigma(\x_t\vert\x_{t-1},\x_0)=\frac{q_\sigma(\x_{t-1}\vert\x_t,\x_0)q(\x_t\ve
 p_{\theta,\sigma}(\x_{\tau_{i-1}}\vert \x_{\tau_i},\x_0)=\calN\left(\x_{\tau_{i-1}};\sqrt{\bar\alpha_{\tau_{i-1}}}\ \x_\theta(\x_{\tau_i},\tau_i)+\sqrt{1-\bar\alpha_{\tau_{i-1}}-\sigma_{\tau_i}^2}\cdot\epsilon_\theta(\x_{\tau_i},\tau_i),\sigma_{\tau_i}^2\mathbf I\right)
 \]</span> 那为什么人们每每提到 DDIM，总会想到加速采样呢？因为实验发现，当采样步数小于 100 步时（假设训练是 1000 步），DDIM 的采样质量比 DDPM 显著更好；特别是在 50 到 100 步左右时，人眼其实不怎么看得出和 1000 步的区别。</p>
 <h3 id="neural-ode">Neural ODE</h3>
-<p>在「<a href="/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%90%86%E8%AE%BA%C2%B7SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/" title="扩散模型理论·SDE与ODE描述">扩散模型理论·SDE与ODE描述</a>」一文中，我们介绍了如何将离散时间的 DDPM 连续化为 SDE 形式，同时还说明了每个 SDE 都对应着一个确定性的 ODE. 而 DDIM 恰是一种确定性情形，所以我们自然会想到——能不能用 ODE 来描述一个 DDIM 呢？答案是肯定的。</p>
+<p>在「<a href="/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/" title="SDE与ODE描述">扩散模型的SDE与ODE描述</a>」一文中，我们介绍了如何将离散时间的 DDPM 连续化为 SDE 形式，同时还说明了每个 SDE 都对应着一个确定性的 ODE. 而 DDIM 恰是一种确定性情形，所以我们自然会想到——能不能用 ODE 来描述一个 DDIM 呢？答案是肯定的。</p>
 <p>首先，我们把 <span class="math inline">\(\eqref{ddim}\)</span> 式中的 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 也换做 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 表示： <span class="math display">\[
 \begin{align}
 \x_{t-1}&amp;=\sqrt{\bar\alpha_{t-1}}\x_\theta(\x_t,t)+\sqrt{1-\bar\alpha_{t-1}}\epsilon_\theta(\x_t,t)\\
@@ -544,8 +544,8 @@ p_{\theta,\sigma}(\x_{\tau_{i-1}}\vert \x_{\tau_i},\x_0)=\calN\left(\x_{\tau_{i-
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>扩散模型理论·DDIM与加速采样</div>
-      <div>https://xyfjason.github.io/blog-main/2022/12/14/扩散模型理论·DDIM与加速采样/</div>
+      <div>DDIM与加速采样</div>
+      <div>https://xyfjason.github.io/blog-main/2022/12/14/DDIM与加速采样/</div>
     </div>
     <div class="license-meta">
       
