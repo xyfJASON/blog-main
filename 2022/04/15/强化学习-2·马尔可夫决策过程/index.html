@@ -1,0 +1,966 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 马尔科夫过程 马尔可夫性质：给定当前状态，未来状态与过去状态（即智能体的历史轨迹）是条件独立的，即： \[ P(S_{t+1}\vert S_t)&#x3D;P(S_{t+1}\vert S_1,\ldots,S_t) \] 强化学习主要研究的是具有马尔可夫性的问题。 状态转移矩阵：对于马尔可夫状态 \(s\) 和它的后继状态 \(s&#39;\)，记： \[ \mathcal P_{ss&#39;}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[强化学习]2·马尔可夫决策过程">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/04/15/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-2%C2%B7%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="1 马尔科夫过程 马尔可夫性质：给定当前状态，未来状态与过去状态（即智能体的历史轨迹）是条件独立的，即： \[ P(S_{t+1}\vert S_t)&#x3D;P(S_{t+1}\vert S_1,\ldots,S_t) \] 强化学习主要研究的是具有马尔可夫性的问题。 状态转移矩阵：对于马尔可夫状态 \(s\) 和它的后继状态 \(s&#39;\)，记： \[ \mathcal P_{ss&#39;}">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+<meta property="article:published_time" content="2022-04-15T11:40:46.000Z">
+<meta property="article:modified_time" content="2024-04-07T14:04:13.877Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="reinforcement learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+  
+  
+  
+  <title>[强化学习]2·马尔可夫决策过程 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_chess.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[强化学习]2·马尔可夫决策过程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-04-15 19:40" pubdate>
+          2022年4月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          18 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[强化学习]2·马尔可夫决策过程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="overview.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<h2 id="马尔科夫过程">1 马尔科夫过程</h2>
+<p><strong>马尔可夫性质</strong>：给定当前状态，未来状态与过去状态（即智能体的历史轨迹）是条件独立的，即： <span class="math display">\[
+P(S_{t+1}\vert S_t)=P(S_{t+1}\vert S_1,\ldots,S_t)
+\]</span></p>
+<p>强化学习主要研究的是具有马尔可夫性的问题。</p>
+<p><strong>状态转移矩阵</strong>：对于马尔可夫状态 <span class="math inline">\(s\)</span> 和它的后继状态 <span class="math inline">\(s&#39;\)</span>，记： <span class="math display">\[
+\mathcal P_{ss&#39;}=P(S_{t+1}=s&#39;\vert S_t=s)
+\]</span> 称矩阵 <span class="math inline">\(\mathcal P\)</span> 为状态转移矩阵。</p>
+<p><strong>定义</strong>：马尔可夫过程 (Markov Process) 或马尔可夫链 (Markov Chain) 是一个元组 <span class="math inline">\(\langle \mathcal S,\mathcal P\rangle\)</span>，其中：</p>
+<ul>
+<li><span class="math inline">\(\mathcal S\)</span> 是一个有限状态集</li>
+<li><span class="math inline">\(\mathcal P\)</span> 是状态转移矩阵</li>
+</ul>
+<div class="note note-secondary">
+            <p><strong>例子</strong>：“学生马尔可夫链”的状态转移图和状态转移矩阵：</p><p><img src="mp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p><p>我们可以从这个马尔可夫过程中采样，得到一些<strong>轨迹 (episodes)</strong>，例如：</p><ul><li>C1, C2, C3, Pass, Sleep</li><li>C1, FB, FB, C1, C2, Sleep</li><li>C1, C2, C3, Pub, C2, C3, Pass, Sleep</li><li>C1, FB, FB, C1, C2, C3, Pub, C1, FB, FB, FB, C1, C2, C3, Pub, C2, Sleep</li><li>……</li></ul>
+          </div>
+<h2 id="马尔可夫奖励过程">2 马尔可夫奖励过程</h2>
+<p>在马尔可夫过程中加入奖励，就得到了<strong>马尔可夫奖励过程 (Markov Reward Process, MRP)</strong>.</p>
+<h3 id="定义">2.1 定义</h3>
+<p>回顾：奖励 <span class="math inline">\(R_t\)</span> 是一个随机变量，表示 <span class="math inline">\(t\)</span> 时刻的奖励。为什么说它是一个随机变量呢，因为对于从同一个马尔可夫过程中采样出的不同轨迹，<span class="math inline">\(t\)</span> 时刻的奖励是不同的；换句话说，对于某特定采样出的轨迹，其 <span class="math inline">\(t\)</span> 时刻的奖励是随机变量 <span class="math inline">\(R_t\)</span> 的某个特定取值。</p>
+<p><strong>定义</strong>：马尔可夫奖励过程是一个元组 <span class="math inline">\(\langle\mathcal S, \mathcal P, \mathcal R, \gamma\rangle\)</span>，其中：</p>
+<ul>
+<li><span class="math inline">\(\mathcal S\)</span> 是一个有限状态集</li>
+<li><span class="math inline">\(\mathcal P\)</span> 是状态转移矩阵</li>
+<li><span class="math inline">\(\mathcal R\)</span> 是奖励函数 (reward function)，<span class="math inline">\(\mathcal R(s)=\mathbb E[R_{t+1}\vert S_t=s]\)</span></li>
+<li><span class="math inline">\(\gamma\in[0,1]\)</span> 是衰减系数 (discount factor)</li>
+</ul>
+<div class="note note-secondary">
+            <p>例子：“学生 MRP”的状态转移图：</p><p><img src="mrp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+          </div>
+<h3 id="回报">2.2 回报</h3>
+<p>定义<strong>回报 (return)</strong> <span class="math inline">\(G_t\)</span> 是从时间戳 <span class="math inline">\(t\)</span> 开始的总加权奖励： <span class="math display">\[
+G_t=R_{t+1}+\gamma R_{t+2}+\cdots=\sum_{k=0}^\infty\gamma^kR_{t+1+k}
+\]</span> 由于 <span class="math inline">\(R_t\)</span> 是随机变量，<span class="math inline">\(G_t\)</span> 自然也是随机变量，其具体取值随采样出的轨迹的不同而不同。</p>
+<p><strong>为什么需要衰减系数？</strong></p>
+<ul>
+<li>数学上处理较为方便</li>
+<li>避免在循环马尔可夫过程上出现无穷大的回报</li>
+<li>我们的建模往往不太精准，对未来的把握不是很确定</li>
+<li>对动物/人类的行为研究表明，我们更喜欢短期（立即的）奖励</li>
+<li>如果你真的觉得衰减系数不好，那设置 <span class="math inline">\(\gamma=1\)</span> 即可</li>
+</ul>
+<h3 id="价值">2.3 价值</h3>
+<p>回报 <span class="math inline">\(G_t\)</span> 是一个随机变量，对于不同的采样结果具有不同的值，为了衡量平均的未来总回报，定义<strong>价值 (value)</strong> 为 <span class="math inline">\(G_t\)</span> 的期望： <span class="math display">\[
+v(s)=\mathbb E[G_t\vert S_t=s]
+\]</span> <div class="note note-secondary">
+            <p>仍以“学生 MRP”为例：</p><p><img src="mrp_g.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p><p>【个人认为这一页 slide 上的 <span class="math inline">\(v_1\)</span> 应该写作 <span class="math inline">\(g_1\)</span>（随机变量 <span class="math inline">\(G_1\)</span> 的各种可能取值），<span class="math inline">\(v_1\)</span> 应该是这些 <span class="math inline">\(g_1\)</span> 的平均，即 <span class="math inline">\(G_1\)</span> 的期望】</p>
+          </div></p>
+<p><br/></p>
+<p><strong>对上述定义的小结</strong>：</p>
+<ul>
+<li>奖励 <span class="math inline">\(R_t\)</span> 是时间 <span class="math inline">\(t\)</span> 的函数，是一个<strong>随机变量</strong>，表示 <span class="math inline">\(t\)</span> 时刻获得的奖励</li>
+<li>奖励函数 <span class="math inline">\(\mathcal R(s)\)</span> 是状态 <span class="math inline">\(s\)</span> 的函数，表示在状态 <span class="math inline">\(s\)</span> 处获得奖励的<strong>条件期望</strong>：<span class="math inline">\(\mathcal R(s)=\mathbb E[R_{t+1}\vert S_t=s]\)</span></li>
+<li>回报 <span class="math inline">\(G_t\)</span> 是时间 <span class="math inline">\(t\)</span> 的函数，是一个<strong>随机变量</strong>，表示从 <span class="math inline">\(t\)</span> 时刻开始未来的（加权）总奖励</li>
+<li>价值 <span class="math inline">\(v(s)\)</span> 是状态 <span class="math inline">\(s\)</span> 的函数，表示在状态 <span class="math inline">\(s\)</span> 处未来的（加权）总奖励的<strong>条件期望</strong>：<span class="math inline">\(v(s)=\mathbb E[G_t\vert S_t=s]\)</span></li>
+</ul>
+<p><img src="sum.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h3 id="贝尔曼方程">2.4 贝尔曼方程</h3>
+<p>根据 <span class="math inline">\(v(s)\)</span> 的定义式，有： <span class="math display">\[
+\begin{align}
+v(s)&amp;=\mathbb E[G_t\vert S_t=s]\\
+&amp;=\mathbb E[R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots\vert S_t=s]\\
+&amp;=\mathbb E[R_{t+1}+\gamma G_{t+1}\vert S_t=s]\\
+\end{align}
+\]</span> 这意味着 <span class="math inline">\(v(s)\)</span> 由立即奖励 <span class="math inline">\(R_{t+1}\)</span> 和衰减后的未来奖励 <span class="math inline">\(G_{t+1}\)</span> 构成，我们继续推导： <span class="math display">\[
+\begin{align}
+v(s)&amp;=\mathbb E[R_{t+1}+\gamma G_{t+1}\vert S_t=s]\\
+&amp;=\mathbb E[R_{t+1}\vert S_t=s]+\gamma\mathbb E[G_{t+1}\vert S_{t}=s]\\
+&amp;=\mathbb E[R_{t+1}\vert S_t=s]+\gamma\sum_{s&#39;\in \mathcal S}P(S_{t+1}=s&#39;\vert S_t=s)\mathbb E[G_{t+1}\vert S_{t+1}=s&#39;]\\
+&amp;=\mathcal R_s+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P_{ss&#39;}v(s&#39;)
+\end{align}
+\]</span> 倒数第二行利用了<strong>全期望公式</strong>，通过全概率公式容易推得。上式就是<strong>贝尔曼方程 (Bellman equation)</strong>，我们可以将其写作矩阵形式： <span class="math display">\[
+\mathbf v=\mathcal R+\gamma\mathcal P\mathbf v
+\]</span> 也即： <span class="math display">\[
+\begin{bmatrix}v(s_1)\\\vdots\\v(s_n)\end{bmatrix}=\begin{bmatrix}\mathcal R(s_1)\\\vdots\\\mathcal R(s_n)\end{bmatrix}+\gamma\begin{bmatrix}\mathcal P_{s_1s_1}&amp;\cdots&amp;\mathcal P_{s_1s_n}\\\vdots&amp;\ddots&amp;\vdots\\\mathcal P_{s_ns_1}&amp;\cdots&amp;\mathcal P_{s_ns_n}\end{bmatrix}\begin{bmatrix}v(s_1)\\\vdots\\v(s_n)\end{bmatrix}
+\]</span> 可以看出，<strong>贝尔曼方程</strong>是一个线性方程，因而可以直接求解： <span class="math display">\[
+v=(I-\gamma\mathcal P)^{-1}\mathcal R
+\]</span> 然而，矩阵求逆的复杂度是 <span class="math inline">\(O(n^3)\)</span>，其中 <span class="math inline">\(n\)</span> 是状态数量，因此这种方法只适用于小规模 MRP。在后续课程中我们会学到一些求解大规模 MRP 的迭代算法，包括：</p>
+<ul>
+<li>动态规划 (Dynamic Programming)</li>
+<li>蒙特卡洛估计 (Monte-Carlo evaluation)</li>
+<li>时序差分学习 (Temporal-Difference learning)</li>
+</ul>
+<h2 id="马尔科夫决策过程">3 马尔科夫决策过程</h2>
+<p>在 MRP 中加入动作 (action)，就得到了<strong>马尔科夫决策过程 (Markov Decision Process, MDP)</strong>.</p>
+<h3 id="定义-1">3.1 定义</h3>
+<p><strong>定义</strong>：马尔科夫决策过程是一个元组 <span class="math inline">\(\langle\mathcal S, \mathcal A, \mathcal P, \mathcal R, \gamma\rangle\)</span>，其中：</p>
+<ul>
+<li><span class="math inline">\(\mathcal S\)</span> 是一个有限状态集</li>
+<li><span class="math inline">\(\mathcal A\)</span> 是一个有限动作集</li>
+<li><span class="math inline">\(\mathcal P\)</span> 是状态转移矩阵，<span class="math inline">\(\mathcal P^a_{ss&#39;}=P(S_{t+1}=s&#39;\vert S_t=s,A_t=a)\)</span></li>
+<li><span class="math inline">\(\mathcal R\)</span> 是奖励函数，<span class="math inline">\(\mathcal R_s^a=\mathbb E[R_{t+1}\vert S_t=s,A_t=a]\)</span></li>
+<li><span class="math inline">\(\gamma\in[0,1]\)</span> 是衰减系数 (discount factor)</li>
+</ul>
+<p>注意 <span class="math inline">\(\mathcal P,\mathcal R\)</span> 的定义都加上了动作 <span class="math inline">\(a\)</span> 作为条件。</p>
+<div class="note note-secondary">
+            <p>依旧用我们熟悉的例子，“学生 MDP”的状态转移图如下所示：</p><p><img src="mdp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+          </div>
+<h3 id="策略">3.2 策略</h3>
+<p><strong>定义</strong>：策略 (policy) <span class="math inline">\(\pi\)</span> 表示智能体在状态 <span class="math inline">\(s\)</span> 的条件下做出各动作的概率分布： <span class="math display">\[
+\pi(a\vert s)=P(A_t=a\vert S_t=s)
+\]</span> 一个策略定义了智能体的行为，它仅依赖于当前状态而与历史无关。虽然上述定义式中写了下标 <span class="math inline">\(t\)</span>，但是仅是为了书写方便，策略是静态的，和时间无关。</p>
+<p><strong>MDP 与 MP 和 MRP 的联系</strong>：给出一个 MDP <span class="math inline">\(\mathcal M=\langle\mathcal S,\mathcal A,\mathcal P,\mathcal R,\gamma\rangle\)</span> 和一个策略 <span class="math inline">\(\pi\)</span>，则：</p>
+<ul>
+<li><span class="math inline">\(\langle\mathcal S,\mathcal P^\pi\rangle\)</span> 是一个 MP</li>
+<li><span class="math inline">\(\langle \mathcal S,\mathcal P^\pi,\mathcal R^\pi,\gamma\rangle\)</span> 是一个 MRP</li>
+</ul>
+<p>其中： <span class="math display">\[
+\begin{align}
+&amp;\mathcal P^\pi_{ss&#39;}=\sum_{a\in\mathcal A}\pi(a\vert s)\mathcal P^a_{ss&#39;}\\
+&amp;\mathcal R^\pi_s=\sum_{a\in\mathcal A}\pi(a\vert s)\mathcal R^a_s
+\end{align}
+\]</span></p>
+<p>这两个式子是条件概率（以 <span class="math inline">\(S_t=s\)</span> 为条件）下的全概率公式——在状态 <span class="math inline">\(s\)</span> 下，依照策略 <span class="math inline">\(\pi\)</span>，有 <span class="math inline">\(\pi(a\vert s)\)</span> 的概率做出动作 <span class="math inline">\(a\)</span>，做出动作 <span class="math inline">\(a\)</span> 后有 <span class="math inline">\(\mathcal P^a_{ss&#39;}\)</span> 的概率转移到状态 <span class="math inline">\(s&#39;\)</span>，能获得期望奖励为 <span class="math inline">\(\mathcal R_s^a\)</span>.</p>
+<h3 id="状态动作-价值">3.3 状态/动作-价值</h3>
+<p>仿照 MRP 中价值函数的定义，加入策略 <span class="math inline">\(\pi\)</span> 的因素，定义<strong>状态-价值 (state-value)</strong> 为： <span class="math display">\[
+v_\pi(s)=\mathbb E_\pi[G_{t}\vert S_t=s]
+\]</span> 换句话说，当我们在对 <span class="math inline">\(G_t\)</span> 采样时，需要依照策略 <span class="math inline">\(\pi\)</span> 来采样。</p>
+<p>假若在策略 <span class="math inline">\(\pi\)</span> 下，已知第一步做出了动作 <span class="math inline">\(a\)</span>，那么在此条件下，定义<strong>动作-价值 (action-value)</strong> 为： <span class="math display">\[
+q_\pi(s,a)=\mathbb E_\pi[G_t\vert S_t=s,A_t=a]
+\]</span> 二者的不同之处在于当前时刻做出的动作 <span class="math inline">\(A_t\)</span> 是按照策略 <span class="math inline">\(\pi\)</span> 采样的还是给定的。</p>
+<p>根据条件概率定义和全概率公式，容易知道二者有关系： <span class="math display">\[
+\begin{align}
+&amp;\color{purple}{v_\pi(s)=\sum_{a\in\mathcal A}\pi(a\vert s)q_\pi(s,a)}\\
+&amp;q_\pi(s,a)=\pi(a\vert s)v_\pi(s)
+\end{align}
+\]</span></p>
+<h3 id="贝尔曼期望方程">3.4 贝尔曼期望方程</h3>
+<p>仿照 MRP 中关于贝尔曼方程的推导，在 MDP 中进行类似推导： <span class="math display">\[
+\begin{align}
+v_\pi(s)&amp;=\mathbb E_\pi[G_t\vert S_t=s]\\
+&amp;=\mathbb E_\pi[R_{t+1}+\gamma G_{t+1}\vert S_t=s]\\
+&amp;=\mathbb E_\pi[R_{t+1}\vert S_t=s]+\gamma\mathbb E_\pi[G_{t+1}\vert S_t=s]\\
+&amp;=\mathcal R_s^\pi+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^\pi_{ss&#39;}v_\pi(s&#39;)\\
+&amp;=\color{purple}{\sum_{a\in\mathcal A}\pi(a\vert s)\left[\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}v_\pi(s&#39;)\right]}
+\end{align}
+\]</span> 对 <span class="math inline">\(q_\pi(s,a)\)</span> 也可以进行类似的推导： <span class="math display">\[
+\begin{align}
+q_\pi(s,a)&amp;=\mathbb E_\pi[G_t\vert S_t=s,A_t=a]\\
+&amp;=\mathbb E_\pi[R_{t+1}+\gamma G_{t+1}\vert S_t=s,A_t=a]\\
+&amp;=\mathbb E_\pi[R_{t+1}\vert S_t=s,A_t=a]+\gamma\mathbb E_\pi[G_{t+1}\vert S_t=s,A_t=a]\\
+&amp;=\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathbb E_\pi[G_{t+1}\vert S_{t+1}=s&#39;]P(S_t=s+1\vert S_t=s,A_t=a))\\
+&amp;=\color{purple}{\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}}v_\pi(s&#39;)\\
+&amp;=\color{purple}{\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}}\sum_{a&#39;\in\mathcal A}\pi(a&#39;\vert s&#39;)q_\pi(s&#39;,a&#39;)\\
+\end{align}
+\]</span> 紫色的四个式子分别建立起了 <span class="math inline">\(v_\pi(s)\)</span> 与 <span class="math inline">\(v_\pi(s&#39;)\)</span>、<span class="math inline">\(v_\pi(s)\)</span> 与 <span class="math inline">\(q_\pi(s,a)\)</span>、<span class="math inline">\(q_\pi(s,a)\)</span> 与 <span class="math inline">\(q_\pi(s&#39;,a&#39;)\)</span>、<span class="math inline">\(q_\pi(s,a)\)</span> 与 <span class="math inline">\(v_\pi(s&#39;)\)</span> 的关系，对应下面的四张图： <img src="bellman_e.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100%/></p>
+<p>这些方程称作<strong>贝尔曼期望方程 (Bellman Expectation Equation)</strong>.</p>
+<h3 id="最优价值函数">3.5 最优价值函数</h3>
+<p>我们做强化学习的最终目的是找到最佳的策略，因此定义<strong>最优状态-价值函数</strong>和<strong>最优动作-价值函数</strong>为：</p>
+<p><span class="math display">\[
+\begin{align}
+&amp;v_\ast(s)=\max_\pi v_\pi(s)\\
+&amp;q_\ast(s,a)=\max_\pi q_\pi(s,a)
+\end{align}
+\]</span> <strong>定理</strong>：对于任何 MDP，存在<strong>最优策略</strong> <span class="math inline">\(\pi_\ast\)</span>（不一定唯一），并且 <span class="math inline">\(v_{\pi_\ast}(s)=v_\ast(s)\)</span>，<span class="math inline">\(q_{\pi_\ast}(s,a)=q_\ast(s,a)\)</span>.</p>
+<p>反之，沿着最大化 <span class="math inline">\(q(s,a)\)</span> 的方向做决策，我们就能得到最优策略，即： <span class="math display">\[
+\pi_\ast(a\vert s)=\begin{cases}1&amp;\text{if }a=\arg\max\limits_{a\in\mathcal A} q_\ast(s,a)\\0&amp;\text{otherwise}\end{cases}
+\]</span> 这意味着：对任何 MDP，我们的最优策略都是确定性的（而不是随机的）；只要我们求得 <span class="math inline">\(q_\ast(s,a)\)</span>，那么就能立刻知道最优策略是什么。</p>
+<h3 id="贝尔曼最优方程">3.6 贝尔曼最优方程</h3>
+<p>由于最优策略也是策略的一种，所以四个贝尔曼方程自然在最优情况下也成立，略作化简可得： <span class="math display">\[
+\begin{align}
+&amp;v_\ast(s)=\max_aq_\ast(s,a)\\
+&amp;q_\ast(s,a)=\mathcal R^a_s+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}v_\ast(s&#39;)\\
+&amp;v_\ast(s)=\max_a\left(\mathcal R^a_s+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}v_\ast(s&#39;)\right)\\
+&amp;q_\ast(s,a)=\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}\max_{a&#39;}q_\ast(s&#39;,a&#39;)
+\end{align}
+\]</span> 称它们为<strong>贝尔曼最优方程 (Bellman Optimality Equation)</strong>.</p>
+<p>与贝尔曼方程和贝尔曼期望方程不同，由于 <span class="math inline">\(\max\)</span> 操作的存在，贝尔曼最优方程是<strong>非线性</strong>的，一般没有闭式解，但存在许多迭代解法，例如：</p>
+<ul>
+<li>价值迭代 (Value Iteration)</li>
+<li>策略迭代 (Policy Iteration)</li>
+<li>Q-learning</li>
+<li>Sarsa</li>
+</ul>
+<p>这些算法我们将在后续课程中学到。</p>
+<h2 id="mdps-扩展了解">4 MDPs 扩展（了解）</h2>
+<p>我们之前考虑的 MDPs 都是有限的、离散的、完全可观测的，如果没有这些限制，我们可以对 MDPs 进行扩展。</p>
+<h3 id="无限-mdps">4.1 无限 MDPs</h3>
+<p>无限也分好几种：</p>
+<ul>
+<li>可数无限的状态/动作空间：这种扩展是比较直接的</li>
+<li>连续的状态/动作空间：Closed form for linear quadratic model</li>
+<li>时间上连续：需要偏微分方程，Hamilton-Jacobi-Bellman equation 是贝尔曼方程在 <span class="math inline">\(t\to0\)</span> 的极限情形</li>
+</ul>
+<h3 id="部分可观测-mdps">4.2 部分可观测 MDPs</h3>
+<p>POMDP 是一个具有隐状态的 MDP，是具有动作的隐马尔可夫模型。</p>
+<p><strong>定义</strong>：POMDP 是一个元组 <span class="math inline">\(\langle\mathcal S,\mathcal A,\mathcal O,\mathcal P,\mathcal R,\mathcal Z,\gamma\rangle\)</span>，其中 <span class="math inline">\(\mathcal S,\mathcal A,\mathcal P,\mathcal R,\gamma\)</span> 的定义不变，新增加了：</p>
+<ul>
+<li><span class="math inline">\(\mathcal O\)</span>：观测 (observations) 的有限集合</li>
+<li><span class="math inline">\(\mathcal Z\)</span>：观测函数 (observation function)，<span class="math inline">\(\mathcal Z_{s&#39;o}^a=P(O_{t+1}=o\vert S_{t+1}=s&#39;,A_t=a)\)</span></li>
+</ul>
+<p>回顾：历史 (history) 是动作、观察和奖励的序列： <span class="math display">\[
+H_t=A_0,O_1,R_1,\ldots,A_{t-1},O_t,R_t
+\]</span> 定义<strong>置信状态 (belief state)</strong> <span class="math inline">\(b(n)\)</span> 是在给定历史的条件下，状态的概率分布： <span class="math display">\[
+b(h)=(P(S_t=s^1\vert H_t=h),\ldots,P(S_t=s^n\vert H_t=h))
+\]</span> 类似于 MDP 中我们画的两种树，POMDP 也可以规约成两种树：</p>
+<p><img src="pomdp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<h3 id="各态历经马尔可夫过程">4.3 各态历经马尔可夫过程</h3>
+<p>各态历经马尔可夫过程 (Ergodic Markov Process) 具有以下特点：</p>
+<ul>
+<li>常返 (recurrent)：每一个状态会被无限次访问</li>
+<li>非周期 (aperiodic)：每一个状态被访问的时间不具有周期性</li>
+</ul>
+<p><strong>定理</strong>：一个各态历经 MDP 具有极限的平稳分布 <span class="math inline">\(d^\pi(s)\)</span>，满足： <span class="math display">\[
+d^\pi(s)=\sum_{s&#39;\in\mathcal S}d^\pi(s&#39;)\mathcal P_{ss&#39;}
+\]</span> 对于任意策略 <span class="math inline">\(\pi\)</span>，一个各态历经 MDP 有一个与起始状态无关的<strong>每时刻平均奖励</strong> <span class="math inline">\(\rho^\pi\)</span>： <span class="math display">\[
+\rho^\pi=\lim_{T\to\infty}\frac{1}{T}\mathbb E\left[\sum_{t=1}^TR_t\right]
+\]</span> 利用 <span class="math inline">\(\rho^\pi\)</span> 的定义，我们可以给出 undiscounted, ergodic MDP 的描述。设 <span class="math inline">\(\tilde v_\pi(s)\)</span> 表示由于从状态 <span class="math inline">\(s\)</span> 起始而带来的额外奖励，则 <span class="math display">\[
+\tilde v_\pi(s)=\mathbb E_\pi\left[\sum_{k=1}^\infty(R_{t+k}-\rho^\pi)\vert S_t=s\right]
+\]</span> 我们可以相应地推导<strong>平均奖励贝尔曼方程 (average reward Bellman equation)</strong>.</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/UCAS-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">UCAS 强化学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/reinforcement-learning/" class="print-no-link">#reinforcement learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[强化学习]2·马尔可夫决策过程</div>
+      <div>https://xyfjason.github.io/blog-main/2022/04/15/强化学习-2·马尔可夫决策过程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年4月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/" title="重参数化技巧 The Reparameterization Trick">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">重参数化技巧 The Reparameterization Trick</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2022/03/14/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E5%9B%9B%E7%AB%A0%C2%B7%E4%BA%8C%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" title="[统计推断]第四章·二维随机变量">
+                        <span class="hidden-mobile">[统计推断]第四章·二维随机变量</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

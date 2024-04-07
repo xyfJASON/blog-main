@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="封面来自 CivitAI.  个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某物体的照片，模型生成该物体其他图像。 Textual Inversion Tel Aviv University NVIDIA 2022.08.02 顾名思义，Textual Inversion">
+    <meta name="description" content="封面来自 CivitAI.  个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某主体（人或物）的照片，模型生成该主体其他图像。 Textual Inversion Tel Aviv University NVIDIA 2022.08.02 顾名思义，Textual Inve">
 <meta property="og:type" content="article">
 <meta property="og:title" content="扩散模型应用·个性化生成">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E4%B8%AA%E6%80%A7%E5%8C%96%E7%94%9F%E6%88%90/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="封面来自 CivitAI.  个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某物体的照片，模型生成该物体其他图像。 Textual Inversion Tel Aviv University NVIDIA 2022.08.02 顾名思义，Textual Inversion">
+<meta property="og:description" content="封面来自 CivitAI.  个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某主体（人或物）的照片，模型生成该主体其他图像。 Textual Inversion Tel Aviv University NVIDIA 2022.08.02 顾名思义，Textual Inve">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-personalized.png">
 <meta property="article:published_time" content="2023-02-11T05:36:49.000Z">
-<meta property="article:modified_time" content="2024-04-02T12:30:16.993Z">
+<meta property="article:modified_time" content="2024-04-07T11:41:34.628Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.3k 字
+          3.6k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          20 分钟
+          30 分钟
         
       </span>
     
@@ -331,7 +331,7 @@
                 <blockquote>
 <p>封面来自 <a target="_blank" rel="noopener" href="https://civitai.com/images/1058118?modelVersionId=90854&amp;prioritizedUserIds=262917&amp;period=AllTime&amp;sort=Most+Reactions&amp;limit=20">CivitAI</a>.</p>
 </blockquote>
-<p>个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某物体的照片，模型生成该物体其他图像。</p>
+<p>个性化生成（personalized generation），也称作主体驱动生成（subject-driven generation），指的是用户提供若干张（甚至只有一张）某主体（人或物）的照片，模型生成该主体其他图像。</p>
 <h2 id="textual-inversion">Textual Inversion</h2>
 <p><span class="label label-primary">Tel Aviv University</span> <span class="label label-primary">NVIDIA</span> <span class="label label-default">2022.08.02</span></p>
 <p>顾名思义，Textual Inversion<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Gal, Rinon, Yuval Alaluf, Yuval Atzmon, Or Patashnik, Amit H. Bermano, Gal Chechik, and Daniel Cohen-Or. An image is worth one word: Personalizing text-to-image generation using textual inversion. *arXiv preprint arXiv:2208.01618* (2022).">[1]</span></a></sup> 采用类似于 GAN Inversion 的方式——在 text embedding 空间中寻找一个向量来重建原图。具体而言，给定 3-5 张描述某概念的图像，通过如下优化目标找到 word embedding <span class="math inline">\(v_\ast\)</span>，使得提示词 <span class="math inline">\(\text{A photo of }S_\ast\)</span> 能够重建输入图像： <span class="math display">\[
@@ -403,7 +403,7 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 <p>自 DreamBooth + LoRA 提出后，该方法得到了人们的广泛使用。但是随之而来了一个问题：能否同时使用多个 LoRA？早期人们的解决方案是直接将两个 LoRA 的权重按比例加起来： <span class="math display">\[
 \Delta W_\text{merge}=w_1\cdot\Delta W_1+w_2\cdot\Delta W_2
 \]</span> 其中 <span class="math inline">\(w_1,w_2\)</span> 是超参数，控制各个 LoRA 的“强度”。不过，为了达到理想的效果，这两个超参数往往需要仔细调整，非常不方便。</p>
-<p>为此，研究人员提出 ZipLoRA<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote">&lt;span class="hint--top hint--rounded" aria-label="Shah, Viraj, Nataniel Ruiz, Forrester Cole, Erika Lu, Svetlana Lazebnik, Yuanzhen Li, and Varun Jampani. "Ziplora: Any subject in any style by effectively merging loras." <em>arXiv preprint arXiv:2311.13600</em> (2023)."&gt;[8]</span></a></sup>，试图不依赖任何超参数地合并两个 LoRA 权重。具体而言，作者关注的是合并一个内容 LoRA <span class="math inline">\(\Delta W_c\)</span> 和一个风格 LoRA <span class="math inline">\(\Delta W_s\)</span>，使可以生成指定风格的指定主体。作者首先分析了已有的 LoRA 的权重，有两个重要发现：</p>
+<p>为此，研究人员提出 ZipLoRA<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="Shah, Viraj, Nataniel Ruiz, Forrester Cole, Erika Lu, Svetlana Lazebnik, Yuanzhen Li, and Varun Jampani. Ziplora: Any subject in any style by effectively merging loras. *arXiv preprint arXiv:2311.13600* (2023).">[8]</span></a></sup>，试图不依赖任何超参数地合并两个 LoRA 权重。具体而言，作者关注的是合并一个内容 LoRA <span class="math inline">\(\Delta W_c\)</span> 和一个风格 LoRA <span class="math inline">\(\Delta W_s\)</span>，使可以生成指定风格的指定主体。作者首先分析了已有的 LoRA 的权重，有两个重要发现：</p>
 <ol type="1">
 <li>LoRA 权重的绝大部分都接近于零，甚至将 90% 的权重置为零都不怎么影响生成效果。</li>
 <li>如果两个 LoRA 权重的对应列的余弦相似度很高，那么按直接相加的方式合并的效果很差；相反，如果列与列之间是正交的，那么效果就不错。</li>
@@ -421,6 +421,53 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 \]</span> 其中 <span class="math inline">\(D\)</span> 表示预训练权重，<span class="math inline">\(L_m,L_c,L_s\)</span> 表示 LoRA 层的集合，<span class="math inline">\(D\oplus L\)</span> 表示配备了 LoRA 的模型。<span class="math inline">\(x_c,x_s\)</span> 为训练用的内容图像和风格图像，<span class="math inline">\(p_c,p_s\)</span> 为文本 prompt. 损失函数的前两项是正常的重构损失，最后一项是为了鼓励各自 LoRA 权重列之间的正交性。【说实话我并没有看出来怎么鼓励正交性了？】基础模型和要合并的 LoRA 权重都是固定的，只训练合并系数 <span class="math inline">\(m_c,m_s\)</span>，因此非常高效。实验在 SDXL 上进行，只需要 100 次梯度更新即可。</p>
 <div class="note note-secondary">
             <details><summary><b>点击查看 ZipLoRA 的生成样例（摘自<a target="_blank" rel="noopener" href="https://ziplora.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://ziplora.github.io/ZipLoRA_files/recontext3.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="photomaker">PhotoMaker</h2>
+<p><span class="label label-primary">Nankai University</span> <span class="label label-primary">Tencent</span> <span class="label label-primary">University of Tokyo</span> <span class="label label-default">2023.12.07</span></p>
+<p>给定若干张人物照片作为参考，PhotoMaker<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="Li, Zhen, Mingdeng Cao, Xintao Wang, Zhongang Qi, Ming-Ming Cheng, and Ying Shan. Photomaker: Customizing realistic human photos via stacked id embedding. *arXiv preprint arXiv:2312.04461* (2023).">[9]</span></a></sup>可以保留人物 ID，生成该人物的任意风格其他图像。尽管 Textual Inversion 和 DreamBooth 等个性化生成方法也可以做到这一点，但它们需要测试时的优化过程，而 PhotoMaker 在训练后，测试时只需要一次前向传播即可。</p>
+<p><img src="photomaker.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>如图所示，PhotoMaker 主要是针对 text embeddings 进行改动。为此，对于每个参考照片，首先使用 CLIP 的图像编码器提取 image embeddings，这样能与 Stable Diffusion 的文本空间对齐。由于 CLIP 是在自然图像上训练的，为了让模型能够迁移到人物 ID 上，作者开放了 CLIP 的部分层以供微调。随后，找到文本中对应 "man" 或 "woman" 的 text embedding，使用两层 MLP 将其与提取出的 ID embeddings 融合，各个融合后 embeddings 沿长度维度 stack 起来得到 stacked ID embedding. 为了让模型更好地适应新的融合 embedding，作者为 attention 模块添加了 LoRA 进行微调。</p>
+<p>由于 PhotoMaker 需要多张人物照片作为参考，训练时需要构建一个大规模带有人物 ID 的数据集。这个构建 pipeline 在上图右侧有所展示，最终筛选出的训练集包含 100+k 张图像。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 PhotoMaker 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="photomaker-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="instantid">InstantID</h2>
+<p><span class="label label-primary">Xiaohongshu</span> <span class="label label-default">2024.01.15</span></p>
+<p>InstantID<sup id="fnref:10" class="footnote-ref"><a href="#fn:10" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wang, Qixun, Xu Bai, Haofan Wang, Zekui Qin, and Anthony Chen. InstantID: Zero-shot Identity-Preserving Generation in Seconds. *arXiv preprint arXiv:2401.07519* (2024).">[10]</span></a></sup>与 PhotoMaker 的动机相同，但是相比于 PhotoMaker 着重处理 embedding，InstantID 则与 Stable Diffusion 有更多的交互。</p>
+<p><img src="instantid.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>由图可见，InstantID 深受 IP-Adapter 和 ControlNet 的影响，遵循的思路是——一条分支提取人脸特征，映射后按 IP-Adapter 方式融入 UNet；另一条分支提取人脸关键点位置，作为空间控制通过 ControlNet 融入 UNet，只不过 text embedding 换成了 face embedding. 整体思路可以说非常简单直接。</p>
+<p>InstantID 是在包含 50 million 张图像的 LAION-Face 数据集以及从网络收集的 10 million 高质量人物图像上（不会就是小红书里的吧，逃）用 48 张 H800训练出来的，数据量和计算资源相当可观……</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 InstantID 的生成样例（摘自<a target="_blank" rel="noopener" href="https://github.com/InstantID/InstantID">官方 repo</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://github.com/InstantID/InstantID/raw/main/assets/0.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="multi-lora-composition">Multi-LoRA-Composition</h2>
+<p><span class="label label-primary">UIUC</span> <span class="label label-primary">Microsoft</span> <span class="label label-default">2024.02.26</span></p>
+<p>上文中的 ZipLoRA 虽然能够合并两个 LoRA，但仅限于一个内容 LoRA 和一个风格 LoRA. 如果想合并任意多个任意 LoRA 怎么办呢？Multi-LoRA<sup id="fnref:13" class="footnote-ref"><a href="#fn:13" rel="footnote"><span class="hint--top hint--rounded" aria-label="Zhong, Ming, Yelong Shen, Shuohang Wang, Yadong Lu, Yizhu Jiao, Siru Ouyang, Donghan Yu, Jiawei Han, and Weizhu Chen. Multi-LoRA Composition for Image Generation. *arXiv preprint arXiv:2402.16843* (2024).">[13]</span></a></sup>探索了这个问题。</p>
+<p><img src="multi-lora.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>可以看见，</p>
+<h2 id="infinite-id">Infinite-ID</h2>
+<p><span class="label label-primary">USTC</span> <span class="label label-primary">The University of Sydney</span> <span class="label label-default">2024.03.18</span></p>
+<p>Infinite-ID<sup id="fnref:11" class="footnote-ref"><a href="#fn:11" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wu, Yi, Ziqiang Li, Heliang Zheng, Chaoyue Wang, and Bin Li. Infinite-ID: Identity-preserved Personalization via ID-semantics Decoupling Paradigm. *arXiv preprint arXiv:2403.11781* (2024).">[11]</span></a></sup> 同样着眼于人物 ID 参考下的人像生成。作者首先分析了人物 ID 生成的难点——平衡 ID 保真度和与输入文本的语义一致性。以 PhotoMaker 为代表的方法由于主要是对 text embedding 操作，因此满足语义一致性，但 ID 信息被压缩到 text embedding 空间中，因此欠缺 ID 保真度。以 IP-Adapter 为代表的方法主要是引入视觉条件，因此有较好的 ID 保真度，但会过分参考图像，忽视文本的语义。为此， Infinite-ID 提出 <strong>ID-semantics 解耦范式</strong>和一个特征交互机制来解决该问题。</p>
+<p><img src="infiniteid.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>如上图所示，在训练阶段，Infinite-ID <strong>丢弃了文本输入</strong>，将去噪图像与 face embedding 视作一对数据，其中 face embedding 是 CLIP 图像编码器和人脸识别网络提取的特征经映射后拼接而得。训练时用这个 face embedding 代替原本的 text embedding，对每个 cross-attention 层训练新的 K,V 投影矩阵。于是新训练的 K,V 投影矩阵完全不受文本影响，从而完成 ID 和文本语义之间的解耦。</p>
+<p>推断时，首先不考虑 face embedding 做一次生成，计算生成过程中的 K,V 投影矩阵。然后引入 face embedding，对每个 cross-attention 层将二者的计算结果相加。另外作者还引入了 mixed attention 与 AdaIN-mean 操作，如下图所示：</p>
+<p><img src="infiniteid-mixed.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>其中 AdaIN-mean 操作定义为： <span class="math display">\[
+\text{AdaIN-m}(x,y)=x-\mu(x)+\mu(y)
+\]</span> 意在更好地将文本中的“风格”带入到生成的图像之中。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Infinite-ID 的生成样例（摘自<a target="_blank" rel="noopener" href="https://infinite-id.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://infinite-id.github.io/assets/firstphoto.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="idadapter">IDAdapter</h2>
+<p><span class="label label-primary">PKU</span> <span class="label label-primary">InsightFace</span> <span class="label label-primary">DeepGlint</span> <span class="label label-default">2024.03.20</span></p>
+<p>IDAdapter<sup id="fnref:12" class="footnote-ref"><a href="#fn:12" rel="footnote"><span class="hint--top hint--rounded" aria-label="Cui, Siying, Jiankang Deng, Jia Guo, Xiang An, Yongle Zhao, Xinyu Wei, and Ziyong Feng. IDAdapter: Learning Mixed Features for Tuning-Free Personalization of Text-to-Image Models. *arXiv preprint arXiv:2403.13535* (2024).">[12]</span></a></sup>依旧是人物 ID 参考的生成方法。如果说 PhotoMaker 主要是通过 text embedding 注入，InstantID 主要是视觉条件注入，那么 IDAdapter 则是结合了二者的思路，并且新增了 face ID loss.</p>
+<p><img src="idadapter.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>如上图所示，整体框架上，IDAdapter 会提取若干张参考人物照片的 CLIP 图像特征和人脸特征，经过 MFF 模块融合后给到 adapter 注入 Stable Diffusion；同时 CLIP 图像特征也会经过 MLP 映射后用于代替文本中的标识词 (sks) 的 embedding. 其中，MFF 模块提出的动机是作者发现 CLIP 特征和人脸识别器提取的特征都会包含非 ID 的信息，如脸部朝向和表情，从而影响生成图像的多样性。为了解决这个问题，作者采用不止一张参考图片，同时施加数据增强，从而希望模型能够提取更好的人脸 ID 特征。提取出的 N 个特征经过两层 attention 后给到 adapter. 具体细节请参考论文。</p>
+<p>另外，作者采用了一个 face ID loss. 设 <span class="math inline">\(\mathcal R\)</span>​ 为一个预训练人脸识别模型，则 loss 为： <span class="math display">\[
+\mathcal L_\text{id}=\mathbb E_{\hat{\mathbf x}_0}[1-\cos(\mathcal R(\hat{\mathbf x}_0),\mathbf f_a)]
+\]</span> 其中 <span class="math inline">\(\mathbf f_a\)</span> 是多张参考照片的平均人脸特征。然而，当时间步较大时，模型预测的 <span class="math inline">\(\hat{\mathbf x}_0\)</span> 是模糊的，不利于 <span class="math inline">\(\mathcal R\)</span> 提取人脸特征，因而作者还引入了一个人脸检测模型 <span class="math inline">\(\mathcal F\)</span>，只有当检测模型检测到人脸时才加入 <span class="math inline">\(\mathcal L_\text{id}\)</span>​ 这一项。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 IDAdapter 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="idadapter-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
 <h2 id="references">References</h2>
 <section class="footnotes">
@@ -448,7 +495,22 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 <span id="fn:7" class="footnote-text"><span>Robb, Esther, Wen-Sheng Chu, Abhishek Kumar, and Jia-Bin Huang. Few-shot adaptation of generative adversarial networks. <em>arXiv preprint arXiv:2010.11943</em> (2020). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:8" class="footnote-text"><span>Shah, Viraj, Nataniel Ruiz, Forrester Cole, Erika Lu, Svetlana Lazebnik, Yuanzhen Li, and Varun Jampani. "Ziplora: Any subject in any style by effectively merging loras." <em>arXiv preprint arXiv:2311.13600</em> (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:8" class="footnote-text"><span>Shah, Viraj, Nataniel Ruiz, Forrester Cole, Erika Lu, Svetlana Lazebnik, Yuanzhen Li, and Varun Jampani. Ziplora: Any subject in any style by effectively merging loras. <em>arXiv preprint arXiv:2311.13600</em> (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>Li, Zhen, Mingdeng Cao, Xintao Wang, Zhongang Qi, Ming-Ming Cheng, and Ying Shan. Photomaker: Customizing realistic human photos via stacked id embedding. <em>arXiv preprint arXiv:2312.04461</em> (2023). <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:10" class="footnote-text"><span>Wang, Qixun, Xu Bai, Haofan Wang, Zekui Qin, and Anthony Chen. InstantID: Zero-shot Identity-Preserving Generation in Seconds. <em>arXiv preprint arXiv:2401.07519</em> (2024). <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:11" class="footnote-text"><span>Wu, Yi, Ziqiang Li, Heliang Zheng, Chaoyue Wang, and Bin Li. Infinite-ID: Identity-preserved Personalization via ID-semantics Decoupling Paradigm. <em>arXiv preprint arXiv:2403.11781</em> (2024). <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:12" class="footnote-text"><span>Cui, Siying, Jiankang Deng, Jia Guo, Xiang An, Yongle Zhao, Xinyu Wei, and Ziyong Feng. IDAdapter: Learning Mixed Features for Tuning-Free Personalization of Text-to-Image Models. <em>arXiv preprint arXiv:2403.13535</em> (2024). <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:13" class="footnote-text"><span>Zhong, Ming, Yelong Shen, Shuohang Wang, Yadong Lu, Yizhu Jiao, Siru Ouyang, Donghan Yu, Jiawei Han, and Weizhu Chen. Multi-LoRA Composition for Image Generation. <em>arXiv preprint arXiv:2402.16843</em> (2024). <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
