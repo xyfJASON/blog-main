@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-personalized.png">
 <meta property="article:published_time" content="2023-02-11T05:36:49.000Z">
-<meta property="article:modified_time" content="2024-04-07T11:41:34.628Z">
+<meta property="article:modified_time" content="2024-04-08T05:23:37.295Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          4k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          30 分钟
+          34 分钟
         
       </span>
     
@@ -410,7 +410,7 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 </ol>
 <p>于是，作者认为我们应该尽可能在合并两个 LoRA 权重时使它们对应列正交，为此设计了如下合并方案： <span class="math display">\[
 \Delta W_\text{merge}=m_c\otimes \Delta W_c+m_s\otimes\Delta W_s
-\]</span> 其中 <span class="math inline">\(m_c,m_s\)</span> 是可学习向量，维度等于 <span class="math inline">\(\Delta W_c,\Delta W_s\)</span> 的列数。上式的含义是对 <span class="math inline">\(\Delta W_c\)</span> 和 <span class="math inline">\(\Delta W_s\)</span> 的各列加权求和。</p>
+\]</span> 其中 <span class="math inline">\(m_c,m_s\)</span> 是<strong>可学习</strong>向量，维度等于 <span class="math inline">\(\Delta W_c,\Delta W_s\)</span> 的列数。上式的含义是对 <span class="math inline">\(\Delta W_c\)</span> 和 <span class="math inline">\(\Delta W_s\)</span> 的各列加权求和。</p>
 <p><img src="ziplora.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
 <p>如图所示，损失函数为： <span class="math display">\[
 \begin{align}
@@ -418,7 +418,7 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 &amp;+\Vert(D\oplus L_m)(x_s,p_s)-(D\oplus L_s)(x_s,p_s)\Vert_2\\
 &amp;+\lambda\sum_i|m_c^{(i)}\cdot m_s^{(i)}|
 \end{align}
-\]</span> 其中 <span class="math inline">\(D\)</span> 表示预训练权重，<span class="math inline">\(L_m,L_c,L_s\)</span> 表示 LoRA 层的集合，<span class="math inline">\(D\oplus L\)</span> 表示配备了 LoRA 的模型。<span class="math inline">\(x_c,x_s\)</span> 为训练用的内容图像和风格图像，<span class="math inline">\(p_c,p_s\)</span> 为文本 prompt. 损失函数的前两项是正常的重构损失，最后一项是为了鼓励各自 LoRA 权重列之间的正交性。【说实话我并没有看出来怎么鼓励正交性了？】基础模型和要合并的 LoRA 权重都是固定的，只训练合并系数 <span class="math inline">\(m_c,m_s\)</span>，因此非常高效。实验在 SDXL 上进行，只需要 100 次梯度更新即可。</p>
+\]</span> 其中 <span class="math inline">\(D\)</span> 表示预训练权重，<span class="math inline">\(L_m,L_c,L_s\)</span> 表示 LoRA 层的集合，<span class="math inline">\(D\oplus L\)</span> 表示配备了 LoRA 的模型。<span class="math inline">\(x_c,x_s\)</span> 为训练用的内容图像和风格图像，<span class="math inline">\(p_c,p_s\)</span> 为文本 prompt. 损失函数的前两项是正常的重构损失，最后一项是为了鼓励各自 LoRA 权重列之间的正交性（说实话我对这里讲的“正交性”有异议，系数 <span class="math inline">\(m_c,m_s\)</span> 并不能改变 LoRA 权重列的方向，加入正则项只会鼓励其中一个系数趋近于零，当两个 LoRA 的这一列都很重要的时候，这样做势必导致效果不好）。基础模型和要合并的 LoRA 权重都是固定的，只训练合并系数 <span class="math inline">\(m_c,m_s\)</span>，因此非常高效。实验在 SDXL 上进行，只需要 100 次梯度更新即可。</p>
 <div class="note note-secondary">
             <details><summary><b>点击查看 ZipLoRA 的生成样例（摘自<a target="_blank" rel="noopener" href="https://ziplora.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://ziplora.github.io/ZipLoRA_files/recontext3.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
@@ -440,11 +440,20 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 <div class="note note-secondary">
             <details><summary><b>点击查看 InstantID 的生成样例（摘自<a target="_blank" rel="noopener" href="https://github.com/InstantID/InstantID">官方 repo</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://github.com/InstantID/InstantID/raw/main/assets/0.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
-<h2 id="multi-lora-composition">Multi-LoRA-Composition</h2>
+<h2 id="multi-lora-composition">Multi-LoRA Composition</h2>
 <p><span class="label label-primary">UIUC</span> <span class="label label-primary">Microsoft</span> <span class="label label-default">2024.02.26</span></p>
-<p>上文中的 ZipLoRA 虽然能够合并两个 LoRA，但仅限于一个内容 LoRA 和一个风格 LoRA. 如果想合并任意多个任意 LoRA 怎么办呢？Multi-LoRA<sup id="fnref:13" class="footnote-ref"><a href="#fn:13" rel="footnote"><span class="hint--top hint--rounded" aria-label="Zhong, Ming, Yelong Shen, Shuohang Wang, Yadong Lu, Yizhu Jiao, Siru Ouyang, Donghan Yu, Jiawei Han, and Weizhu Chen. Multi-LoRA Composition for Image Generation. *arXiv preprint arXiv:2402.16843* (2024).">[13]</span></a></sup>探索了这个问题。</p>
+<p>现有的 LoRA 合并方法包括直接加权组合或者上文介绍的 ZipLoRA. 然而，它们都主要关注于操纵 LoRA 权重，忽视了 LoRA 与 Stable Diffusion 之间的交互。因此，这种做法在 LoRA 数量增加时效果会下降。Multi-LoRA<sup id="fnref:13" class="footnote-ref"><a href="#fn:13" rel="footnote"><span class="hint--top hint--rounded" aria-label="Zhong, Ming, Yelong Shen, Shuohang Wang, Yadong Lu, Yizhu Jiao, Siru Ouyang, Donghan Yu, Jiawei Han, and Weizhu Chen. Multi-LoRA Composition for Image Generation. *arXiv preprint arXiv:2402.16843* (2024).">[13]</span></a></sup>则保持所有 LoRA 权重的完整性，提出了两种 <strong>learning-free</strong> 的合并方法，LoRA Switch 和 LoRA Composite，如下图所示：</p>
 <p><img src="multi-lora.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p>可以看见，</p>
+<p>可以看见，LoRA Switch 的做法非常简单，即每隔一段步长就更换一个 LoRA，这样每个 LoRA 都能轮流发挥作用。LoRA Composite 则启发自 classifier-free guidance. 设 <span class="math inline">\(e_\theta\)</span> 表示原模型，<span class="math inline">\(e_{\theta_i&#39;}\)</span> 表示融合了第 <span class="math inline">\(i\)</span> 个 LoRA 后的模型，则： <span class="math display">\[
+\tilde e(\mathbf z_t,c)=\frac{1}{k}\sum_{i=1}^kw_i\times\left[e_{\theta_i&#39;}(\mathbf z_t)+s\cdot(e_{\theta_i&#39;}(\mathbf z_t,c)-e_{\theta_i&#39;}(\mathbf z_t))\right]
+\]</span> 其中 <span class="math inline">\(w_i\)</span> 是调整 LoRA 重要度的超参数，<span class="math inline">\(c\)</span> 是文本条件。相比先合并 LoRA 再去噪的做法，LoRA Composite 则是先让每个 LoRA 分别发挥作用，再合并结果，能够提升多 LoRA 效果的稳定性。不过，由于每个 LoRA 都要作用一次，所以该方法的缺点在于采样时长变成了原来的 <span class="math inline">\(k\)</span> 倍。</p>
+<p>为了测试多 LoRA 作用的效果，作者提出了 <strong>ComposLoRA 测试基准</strong>。作者首先从 CivitAI 上收集了 22 个 LoRA 模型，包括真实和动漫两个子集。每个子集包含 3 个角色 LoRA、2 个衣服 LoRA、2 个风格 LoRA、2 个背景 LoRA 和 2 个物体 LoRA. 将它们组合并排除冲突，最终得到了 480 个 LoRA 集合，其中 48 个集合包含 2 个 LoRA、144 个集合包含 3 个 LoRA、192 个集合包含 4 个 LoRA、96 个集合包含 5 个 LoRA.</p>
+<p>测试时，考虑到常用的文本图像对齐指标（如 CLIP score）并不能识别图像的细节和复杂的组成，作者决定使用 GPT-4V. 作者通过 prompt 引导 GPT-4V 为输入的图像打分，如下图所示：</p>
+<p><img src="multi-lora-gpt4v.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>具体 prompt 细节参看论文附录。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 Multi-LoRA Composition 的生成样例（摘自论文）</b></summary><img src="multi-lora-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></details>
+          </div>
 <h2 id="infinite-id">Infinite-ID</h2>
 <p><span class="label label-primary">USTC</span> <span class="label label-primary">The University of Sydney</span> <span class="label label-default">2024.03.18</span></p>
 <p>Infinite-ID<sup id="fnref:11" class="footnote-ref"><a href="#fn:11" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wu, Yi, Ziqiang Li, Heliang Zheng, Chaoyue Wang, and Bin Li. Infinite-ID: Identity-preserved Personalization via ID-semantics Decoupling Paradigm. *arXiv preprint arXiv:2403.11781* (2024).">[11]</span></a></sup> 同样着眼于人物 ID 参考下的人像生成。作者首先分析了人物 ID 生成的难点——平衡 ID 保真度和与输入文本的语义一致性。以 PhotoMaker 为代表的方法由于主要是对 text embedding 操作，因此满足语义一致性，但 ID 信息被压缩到 text embedding 空间中，因此欠缺 ID 保真度。以 IP-Adapter 为代表的方法主要是引入视觉条件，因此有较好的 ID 保真度，但会过分参考图像，忽视文本的语义。为此， Infinite-ID 提出 <strong>ID-semantics 解耦范式</strong>和一个特征交互机制来解决该问题。</p>
