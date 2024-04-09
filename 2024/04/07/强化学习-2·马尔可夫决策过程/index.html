@@ -19,13 +19,13 @@
     <meta name="description" content="1 马尔科夫过程 马尔可夫性质：给定当前状态，未来状态与过去状态（即智能体的历史轨迹）是条件独立的，即： \[ P(S_{t+1}\vert S_t)&#x3D;P(S_{t+1}\vert S_1,\ldots,S_t) \] 强化学习主要研究的是具有马尔可夫性的问题。 状态转移矩阵：对于马尔可夫状态 \(s\) 和它的后继状态 \(s&#39;\)，记： \[ \mathcal P_{ss&#39;}">
 <meta property="og:type" content="article">
 <meta property="og:title" content="[强化学习]2·马尔可夫决策过程">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/04/15/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-2%C2%B7%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/07/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-2%C2%B7%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="1 马尔科夫过程 马尔可夫性质：给定当前状态，未来状态与过去状态（即智能体的历史轨迹）是条件独立的，即： \[ P(S_{t+1}\vert S_t)&#x3D;P(S_{t+1}\vert S_1,\ldots,S_t) \] 强化学习主要研究的是具有马尔可夫性的问题。 状态转移矩阵：对于马尔可夫状态 \(s\) 和它的后继状态 \(s&#39;\)，记： \[ \mathcal P_{ss&#39;}">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
-<meta property="article:published_time" content="2022-04-15T11:40:46.000Z">
-<meta property="article:modified_time" content="2024-04-07T14:04:13.877Z">
+<meta property="article:published_time" content="2024-04-07T11:40:46.000Z">
+<meta property="article:modified_time" content="2024-04-09T09:14:50.019Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="reinforcement learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-04-15 19:40" pubdate>
-          2022年4月15日 晚上
+        <time datetime="2024-04-07 19:40" pubdate>
+          2024年4月7日 晚上
         </time>
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          18 分钟
+          17 分钟
         
       </span>
     
@@ -336,7 +336,7 @@ P(S_{t+1}\vert S_t)=P(S_{t+1}\vert S_1,\ldots,S_t)
 <p><strong>状态转移矩阵</strong>：对于马尔可夫状态 <span class="math inline">\(s\)</span> 和它的后继状态 <span class="math inline">\(s&#39;\)</span>，记： <span class="math display">\[
 \mathcal P_{ss&#39;}=P(S_{t+1}=s&#39;\vert S_t=s)
 \]</span> 称矩阵 <span class="math inline">\(\mathcal P\)</span> 为状态转移矩阵。</p>
-<p><strong>定义</strong>：马尔可夫过程 (Markov Process) 或马尔可夫链 (Markov Chain) 是一个元组 <span class="math inline">\(\langle \mathcal S,\mathcal P\rangle\)</span>，其中：</p>
+<p><strong>定义</strong>：<strong>马尔可夫过程 (Markov Process)</strong> 是一个元组 <span class="math inline">\(\langle \mathcal S,\mathcal P\rangle\)</span>，其中：</p>
 <ul>
 <li><span class="math inline">\(\mathcal S\)</span> 是一个有限状态集</li>
 <li><span class="math inline">\(\mathcal P\)</span> 是状态转移矩阵</li>
@@ -345,10 +345,10 @@ P(S_{t+1}\vert S_t)=P(S_{t+1}\vert S_1,\ldots,S_t)
             <p><strong>例子</strong>：“学生马尔可夫链”的状态转移图和状态转移矩阵：</p><p><img src="mp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p><p>我们可以从这个马尔可夫过程中采样，得到一些<strong>轨迹 (episodes)</strong>，例如：</p><ul><li>C1, C2, C3, Pass, Sleep</li><li>C1, FB, FB, C1, C2, Sleep</li><li>C1, C2, C3, Pub, C2, C3, Pass, Sleep</li><li>C1, FB, FB, C1, C2, C3, Pub, C1, FB, FB, FB, C1, C2, C3, Pub, C2, Sleep</li><li>……</li></ul>
           </div>
 <h2 id="马尔可夫奖励过程">2 马尔可夫奖励过程</h2>
-<p>在马尔可夫过程中加入奖励，就得到了<strong>马尔可夫奖励过程 (Markov Reward Process, MRP)</strong>.</p>
+<p>在马尔可夫过程中加入奖励，就得到了马尔可夫奖励过程。</p>
 <h3 id="定义">2.1 定义</h3>
-<p>回顾：奖励 <span class="math inline">\(R_t\)</span> 是一个随机变量，表示 <span class="math inline">\(t\)</span> 时刻的奖励。为什么说它是一个随机变量呢，因为对于从同一个马尔可夫过程中采样出的不同轨迹，<span class="math inline">\(t\)</span> 时刻的奖励是不同的；换句话说，对于某特定采样出的轨迹，其 <span class="math inline">\(t\)</span> 时刻的奖励是随机变量 <span class="math inline">\(R_t\)</span> 的某个特定取值。</p>
-<p><strong>定义</strong>：马尔可夫奖励过程是一个元组 <span class="math inline">\(\langle\mathcal S, \mathcal P, \mathcal R, \gamma\rangle\)</span>，其中：</p>
+<p><strong>定义</strong>：<strong>奖励 (reward)</strong> <span class="math inline">\(R_t\)</span> 是一个随机变量，表示 <span class="math inline">\(t\)</span> 时刻的奖励。为什么说它是一个随机变量呢，因为对于从同一个马尔可夫过程中采样出的不同轨迹，<span class="math inline">\(t\)</span> 时刻的奖励是不同的；换句话说，对于某特定采样出的轨迹，其 <span class="math inline">\(t\)</span> 时刻的奖励是随机变量 <span class="math inline">\(R_t\)</span> 的某个特定取值。</p>
+<p><strong>定义</strong>：<strong>马尔可夫奖励过程 (Markov Reward Process, MRP)</strong> 是一个元组 <span class="math inline">\(\langle\mathcal S, \mathcal P, \mathcal R, \gamma\rangle\)</span>，其中：</p>
 <ul>
 <li><span class="math inline">\(\mathcal S\)</span> 是一个有限状态集</li>
 <li><span class="math inline">\(\mathcal P\)</span> 是状态转移矩阵</li>
@@ -356,10 +356,10 @@ P(S_{t+1}\vert S_t)=P(S_{t+1}\vert S_1,\ldots,S_t)
 <li><span class="math inline">\(\gamma\in[0,1]\)</span> 是衰减系数 (discount factor)</li>
 </ul>
 <div class="note note-secondary">
-            <p>例子：“学生 MRP”的状态转移图：</p><p><img src="mrp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+            <p><strong>例子</strong>：“学生 MRP”的状态转移图：</p><p><img src="mrp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
           </div>
 <h3 id="回报">2.2 回报</h3>
-<p>定义<strong>回报 (return)</strong> <span class="math inline">\(G_t\)</span> 是从时间戳 <span class="math inline">\(t\)</span> 开始的总加权奖励： <span class="math display">\[
+<p><strong>定义</strong>：<strong>回报 (return)</strong> <span class="math inline">\(G_t\)</span> 是从时间戳 <span class="math inline">\(t\)</span> 开始的总加权奖励： <span class="math display">\[
 G_t=R_{t+1}+\gamma R_{t+2}+\cdots=\sum_{k=0}^\infty\gamma^kR_{t+1+k}
 \]</span> 由于 <span class="math inline">\(R_t\)</span> 是随机变量，<span class="math inline">\(G_t\)</span> 自然也是随机变量，其具体取值随采样出的轨迹的不同而不同。</p>
 <p><strong>为什么需要衰减系数？</strong></p>
@@ -370,21 +370,15 @@ G_t=R_{t+1}+\gamma R_{t+2}+\cdots=\sum_{k=0}^\infty\gamma^kR_{t+1+k}
 <li>对动物/人类的行为研究表明，我们更喜欢短期（立即的）奖励</li>
 <li>如果你真的觉得衰减系数不好，那设置 <span class="math inline">\(\gamma=1\)</span> 即可</li>
 </ul>
-<h3 id="价值">2.3 价值</h3>
-<p>回报 <span class="math inline">\(G_t\)</span> 是一个随机变量，对于不同的采样结果具有不同的值，为了衡量平均的未来总回报，定义<strong>价值 (value)</strong> 为 <span class="math inline">\(G_t\)</span> 的期望： <span class="math display">\[
+<h3 id="价值函数">2.3 价值函数</h3>
+<p>回报 <span class="math inline">\(G_t\)</span> 是一个随机变量，对于不同的采样结果具有不同的值，为了衡量平均的未来总回报，定义<strong>价值函数 (value function)</strong> 为 <span class="math inline">\(G_t\)</span> 的期望： <span class="math display">\[
 v(s)=\mathbb E[G_t\vert S_t=s]
 \]</span> <div class="note note-secondary">
-            <p>仍以“学生 MRP”为例：</p><p><img src="mrp_g.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p><p>【个人认为这一页 slide 上的 <span class="math inline">\(v_1\)</span> 应该写作 <span class="math inline">\(g_1\)</span>（随机变量 <span class="math inline">\(G_1\)</span> 的各种可能取值），<span class="math inline">\(v_1\)</span> 应该是这些 <span class="math inline">\(g_1\)</span> 的平均，即 <span class="math inline">\(G_1\)</span> 的期望】</p>
+            <p><strong>例子</strong>：仍以“学生 MRP”为例：</p><p><img src="mrp_g.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p><p>【个人认为这一页 slide 上的 <span class="math inline">\(v_1\)</span> 应该写作 <span class="math inline">\(g_1\)</span>（随机变量 <span class="math inline">\(G_1\)</span> 的各种可能取值），<span class="math inline">\(v_1\)</span> 应该是这些 <span class="math inline">\(g_1\)</span> 的平均，即 <span class="math inline">\(G_1\)</span> 的期望】</p>
           </div></p>
-<p><br/></p>
-<p><strong>对上述定义的小结</strong>：</p>
-<ul>
-<li>奖励 <span class="math inline">\(R_t\)</span> 是时间 <span class="math inline">\(t\)</span> 的函数，是一个<strong>随机变量</strong>，表示 <span class="math inline">\(t\)</span> 时刻获得的奖励</li>
-<li>奖励函数 <span class="math inline">\(\mathcal R(s)\)</span> 是状态 <span class="math inline">\(s\)</span> 的函数，表示在状态 <span class="math inline">\(s\)</span> 处获得奖励的<strong>条件期望</strong>：<span class="math inline">\(\mathcal R(s)=\mathbb E[R_{t+1}\vert S_t=s]\)</span></li>
-<li>回报 <span class="math inline">\(G_t\)</span> 是时间 <span class="math inline">\(t\)</span> 的函数，是一个<strong>随机变量</strong>，表示从 <span class="math inline">\(t\)</span> 时刻开始未来的（加权）总奖励</li>
-<li>价值 <span class="math inline">\(v(s)\)</span> 是状态 <span class="math inline">\(s\)</span> 的函数，表示在状态 <span class="math inline">\(s\)</span> 处未来的（加权）总奖励的<strong>条件期望</strong>：<span class="math inline">\(v(s)=\mathbb E[G_t\vert S_t=s]\)</span></li>
-</ul>
-<p><img src="sum.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<div class="note note-success">
+            <p><strong>对上述定义的小结</strong>：</p><ul><li>奖励 <span class="math inline">\(R_t\)</span> 是时间 <span class="math inline">\(t\)</span> 的函数，是一个<strong>随机变量</strong>，表示 <span class="math inline">\(t\)</span> 时刻获得的奖励</li><li>奖励函数 <span class="math inline">\(\mathcal R(s)\)</span> 是状态 <span class="math inline">\(s\)</span> 的函数，表示在状态 <span class="math inline">\(s\)</span> 处获得奖励的<strong>条件期望</strong>：<span class="math inline">\(\mathcal R(s)=\mathbb E[R_{t+1}\vert S_t=s]\)</span></li><li>回报 <span class="math inline">\(G_t\)</span> 是时间 <span class="math inline">\(t\)</span> 的函数，是一个<strong>随机变量</strong>，表示从 <span class="math inline">\(t\)</span> 时刻开始未来的（加权）总奖励</li><li>价值函数 <span class="math inline">\(v(s)\)</span> 是状态 <span class="math inline">\(s\)</span> 的函数，表示在状态 <span class="math inline">\(s\)</span> 处未来的（加权）总奖励的<strong>条件期望</strong>：<span class="math inline">\(v(s)=\mathbb E[G_t\vert S_t=s]\)</span></li></ul><p><img src="sum.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+          </div>
 <h3 id="贝尔曼方程">2.4 贝尔曼方程</h3>
 <p>根据 <span class="math inline">\(v(s)\)</span> 的定义式，有： <span class="math display">\[
 \begin{align}
@@ -399,11 +393,11 @@ v(s)&amp;=\mathbb E[R_{t+1}+\gamma G_{t+1}\vert S_t=s]\\
 &amp;=\mathbb E[R_{t+1}\vert S_t=s]+\gamma\sum_{s&#39;\in \mathcal S}P(S_{t+1}=s&#39;\vert S_t=s)\mathbb E[G_{t+1}\vert S_{t+1}=s&#39;]\\
 &amp;=\mathcal R_s+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P_{ss&#39;}v(s&#39;)
 \end{align}
-\]</span> 倒数第二行利用了<strong>全期望公式</strong>，通过全概率公式容易推得。上式就是<strong>贝尔曼方程 (Bellman equation)</strong>，我们可以将其写作矩阵形式： <span class="math display">\[
+\]</span> 倒数第二行利用了<strong>全期望公式</strong>。上式就是<strong>贝尔曼方程 (Bellman equation)</strong>，我们可以将其写作矩阵形式： <span class="math display">\[
 \mathbf v=\mathcal R+\gamma\mathcal P\mathbf v
 \]</span> 也即： <span class="math display">\[
 \begin{bmatrix}v(s_1)\\\vdots\\v(s_n)\end{bmatrix}=\begin{bmatrix}\mathcal R(s_1)\\\vdots\\\mathcal R(s_n)\end{bmatrix}+\gamma\begin{bmatrix}\mathcal P_{s_1s_1}&amp;\cdots&amp;\mathcal P_{s_1s_n}\\\vdots&amp;\ddots&amp;\vdots\\\mathcal P_{s_ns_1}&amp;\cdots&amp;\mathcal P_{s_ns_n}\end{bmatrix}\begin{bmatrix}v(s_1)\\\vdots\\v(s_n)\end{bmatrix}
-\]</span> 可以看出，<strong>贝尔曼方程</strong>是一个线性方程，因而可以直接求解： <span class="math display">\[
+\]</span> 可以看出，贝尔曼方程是一个线性方程，因而可以直接求解： <span class="math display">\[
 v=(I-\gamma\mathcal P)^{-1}\mathcal R
 \]</span> 然而，矩阵求逆的复杂度是 <span class="math inline">\(O(n^3)\)</span>，其中 <span class="math inline">\(n\)</span> 是状态数量，因此这种方法只适用于小规模 MRP。在后续课程中我们会学到一些求解大规模 MRP 的迭代算法，包括：</p>
 <ul>
@@ -412,9 +406,9 @@ v=(I-\gamma\mathcal P)^{-1}\mathcal R
 <li>时序差分学习 (Temporal-Difference learning)</li>
 </ul>
 <h2 id="马尔科夫决策过程">3 马尔科夫决策过程</h2>
-<p>在 MRP 中加入动作 (action)，就得到了<strong>马尔科夫决策过程 (Markov Decision Process, MDP)</strong>.</p>
+<p>在 MRP 中加入动作 (action)，就得到了马尔科夫决策过程。</p>
 <h3 id="定义-1">3.1 定义</h3>
-<p><strong>定义</strong>：马尔科夫决策过程是一个元组 <span class="math inline">\(\langle\mathcal S, \mathcal A, \mathcal P, \mathcal R, \gamma\rangle\)</span>，其中：</p>
+<p><strong>定义</strong>：<strong>马尔科夫决策过程 (Markov Decision Process, MDP)</strong> 是一个元组 <span class="math inline">\(\langle\mathcal S, \mathcal A, \mathcal P, \mathcal R, \gamma\rangle\)</span>，其中：</p>
 <ul>
 <li><span class="math inline">\(\mathcal S\)</span> 是一个有限状态集</li>
 <li><span class="math inline">\(\mathcal A\)</span> 是一个有限动作集</li>
@@ -424,10 +418,10 @@ v=(I-\gamma\mathcal P)^{-1}\mathcal R
 </ul>
 <p>注意 <span class="math inline">\(\mathcal P,\mathcal R\)</span> 的定义都加上了动作 <span class="math inline">\(a\)</span> 作为条件。</p>
 <div class="note note-secondary">
-            <p>依旧用我们熟悉的例子，“学生 MDP”的状态转移图如下所示：</p><p><img src="mdp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+            <p><strong>例子</strong>：“学生 MDP”的状态转移图如下所示：</p><p><img src="mdp.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
           </div>
 <h3 id="策略">3.2 策略</h3>
-<p><strong>定义</strong>：策略 (policy) <span class="math inline">\(\pi\)</span> 表示智能体在状态 <span class="math inline">\(s\)</span> 的条件下做出各动作的概率分布： <span class="math display">\[
+<p><strong>定义</strong>：<strong>策略 (policy)</strong> <span class="math inline">\(\pi\)</span> 表示智能体在状态 <span class="math inline">\(s\)</span> 的条件下做出各动作的概率分布： <span class="math display">\[
 \pi(a\vert s)=P(A_t=a\vert S_t=s)
 \]</span> 一个策略定义了智能体的行为，它仅依赖于当前状态而与历史无关。虽然上述定义式中写了下标 <span class="math inline">\(t\)</span>，但是仅是为了书写方便，策略是静态的，和时间无关。</p>
 <p><strong>MDP 与 MP 和 MRP 的联系</strong>：给出一个 MDP <span class="math inline">\(\mathcal M=\langle\mathcal S,\mathcal A,\mathcal P,\mathcal R,\gamma\rangle\)</span> 和一个策略 <span class="math inline">\(\pi\)</span>，则：</p>
@@ -442,11 +436,11 @@ v=(I-\gamma\mathcal P)^{-1}\mathcal R
 \end{align}
 \]</span></p>
 <p>这两个式子是条件概率（以 <span class="math inline">\(S_t=s\)</span> 为条件）下的全概率公式——在状态 <span class="math inline">\(s\)</span> 下，依照策略 <span class="math inline">\(\pi\)</span>，有 <span class="math inline">\(\pi(a\vert s)\)</span> 的概率做出动作 <span class="math inline">\(a\)</span>，做出动作 <span class="math inline">\(a\)</span> 后有 <span class="math inline">\(\mathcal P^a_{ss&#39;}\)</span> 的概率转移到状态 <span class="math inline">\(s&#39;\)</span>，能获得期望奖励为 <span class="math inline">\(\mathcal R_s^a\)</span>.</p>
-<h3 id="状态动作-价值">3.3 状态/动作-价值</h3>
-<p>仿照 MRP 中价值函数的定义，加入策略 <span class="math inline">\(\pi\)</span> 的因素，定义<strong>状态-价值 (state-value)</strong> 为： <span class="math display">\[
+<h3 id="状态动作-价值函数">3.3 状态/动作-价值函数</h3>
+<p>仿照 MRP 中价值函数的定义，加入策略 <span class="math inline">\(\pi\)</span> 的因素，定义<strong>状态-价值函数 (state-value function)</strong> 为： <span class="math display">\[
 v_\pi(s)=\mathbb E_\pi[G_{t}\vert S_t=s]
 \]</span> 换句话说，当我们在对 <span class="math inline">\(G_t\)</span> 采样时，需要依照策略 <span class="math inline">\(\pi\)</span> 来采样。</p>
-<p>假若在策略 <span class="math inline">\(\pi\)</span> 下，已知第一步做出了动作 <span class="math inline">\(a\)</span>，那么在此条件下，定义<strong>动作-价值 (action-value)</strong> 为： <span class="math display">\[
+<p>假若在策略 <span class="math inline">\(\pi\)</span> 下，已知第一步做出了动作 <span class="math inline">\(a\)</span>，那么在此条件下，定义<strong>动作-价值函数 (action-value function)</strong> 为： <span class="math display">\[
 q_\pi(s,a)=\mathbb E_\pi[G_t\vert S_t=s,A_t=a]
 \]</span> 二者的不同之处在于当前时刻做出的动作 <span class="math inline">\(A_t\)</span> 是按照策略 <span class="math inline">\(\pi\)</span> 采样的还是给定的。</p>
 <p>根据条件概率定义和全概率公式，容易知道二者有关系： <span class="math display">\[
@@ -473,7 +467,7 @@ q_\pi(s,a)&amp;=\mathbb E_\pi[G_t\vert S_t=s,A_t=a]\\
 &amp;=\color{purple}{\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}}v_\pi(s&#39;)\\
 &amp;=\color{purple}{\mathcal R_s^a+\gamma\sum_{s&#39;\in\mathcal S}\mathcal P^a_{ss&#39;}}\sum_{a&#39;\in\mathcal A}\pi(a&#39;\vert s&#39;)q_\pi(s&#39;,a&#39;)\\
 \end{align}
-\]</span> 紫色的四个式子分别建立起了 <span class="math inline">\(v_\pi(s)\)</span> 与 <span class="math inline">\(v_\pi(s&#39;)\)</span>、<span class="math inline">\(v_\pi(s)\)</span> 与 <span class="math inline">\(q_\pi(s,a)\)</span>、<span class="math inline">\(q_\pi(s,a)\)</span> 与 <span class="math inline">\(q_\pi(s&#39;,a&#39;)\)</span>、<span class="math inline">\(q_\pi(s,a)\)</span> 与 <span class="math inline">\(v_\pi(s&#39;)\)</span> 的关系，对应下面的四张图： <img src="bellman_e.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100%/></p>
+\]</span> 紫色的四个式子分别建立起了 <span class="math inline">\(v_\pi(s)\)</span> 与 <span class="math inline">\(v_\pi(s&#39;)\)</span>、<span class="math inline">\(v_\pi(s)\)</span> 与 <span class="math inline">\(q_\pi(s,a)\)</span>、<span class="math inline">\(q_\pi(s,a)\)</span> 与 <span class="math inline">\(q_\pi(s&#39;,a&#39;)\)</span>、<span class="math inline">\(q_\pi(s,a)\)</span> 与 <span class="math inline">\(v_\pi(s&#39;)\)</span> 的关系，对应下面的四张图： <img src="bellman_e.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80%/></p>
 <p>这些方程称作<strong>贝尔曼期望方程 (Bellman Expectation Equation)</strong>.</p>
 <h3 id="最优价值函数">3.5 最优价值函数</h3>
 <p>我们做强化学习的最终目的是找到最佳的策略，因此定义<strong>最优状态-价值函数</strong>和<strong>最优动作-价值函数</strong>为：</p>
@@ -497,8 +491,8 @@ q_\pi(s,a)&amp;=\mathbb E_\pi[G_t\vert S_t=s,A_t=a]\\
 \]</span> 称它们为<strong>贝尔曼最优方程 (Bellman Optimality Equation)</strong>.</p>
 <p>与贝尔曼方程和贝尔曼期望方程不同，由于 <span class="math inline">\(\max\)</span> 操作的存在，贝尔曼最优方程是<strong>非线性</strong>的，一般没有闭式解，但存在许多迭代解法，例如：</p>
 <ul>
-<li>价值迭代 (Value Iteration)</li>
-<li>策略迭代 (Policy Iteration)</li>
+<li>价值迭代 (value iteration)</li>
+<li>策略迭代 (policy iteration)</li>
 <li>Q-learning</li>
 <li>Sarsa</li>
 </ul>
@@ -591,7 +585,7 @@ d^\pi(s)=\sum_{s&#39;\in\mathcal S}d^\pi(s&#39;)\mathcal P_{ss&#39;}
   <div class="license-box my-3">
     <div class="license-title">
       <div>[强化学习]2·马尔可夫决策过程</div>
-      <div>https://xyfjason.github.io/blog-main/2022/04/15/强化学习-2·马尔可夫决策过程/</div>
+      <div>https://xyfjason.github.io/blog-main/2024/04/07/强化学习-2·马尔可夫决策过程/</div>
     </div>
     <div class="license-meta">
       
@@ -603,7 +597,7 @@ d^\pi(s)=\sum_{s&#39;\in\mathcal S}d^\pi(s&#39;)\mathcal P_{ss&#39;}
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2022年4月15日</div>
+          <div>2024年4月7日</div>
         </div>
       
       
@@ -635,9 +629,9 @@ d^\pi(s)=\sum_{s&#39;\in\mathcal S}d^\pi(s&#39;)\mathcal P_{ss&#39;}
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/" title="重参数化技巧 The Reparameterization Trick">
+                      <a href="/blog-main/2024/04/09/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-3%C2%B7%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" title="[强化学习]3·动态规划">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">重参数化技巧 The Reparameterization Trick</span>
+                        <span class="hidden-mobile">[强化学习]3·动态规划</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -645,8 +639,8 @@ d^\pi(s)=\sum_{s&#39;\in\mathcal S}d^\pi(s&#39;)\mathcal P_{ss&#39;}
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2022/03/14/%E7%BB%9F%E8%AE%A1%E6%8E%A8%E6%96%AD-%E7%AC%AC%E5%9B%9B%E7%AB%A0%C2%B7%E4%BA%8C%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" title="[统计推断]第四章·二维随机变量">
-                        <span class="hidden-mobile">[统计推断]第四章·二维随机变量</span>
+                      <a href="/blog-main/2024/04/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-1%C2%B7%E6%A6%82%E8%BF%B0/" title="[强化学习]1·概述">
+                        <span class="hidden-mobile">[强化学习]1·概述</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

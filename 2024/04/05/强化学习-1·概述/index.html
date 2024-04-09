@@ -1,0 +1,827 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 关于强化学习 强化学习是一种优化智能体在环境中行为的方法，根据环境反馈的奖励，调整智能体的行为策略，提升智能体实现目标的能力。 强化学习与多学科交叉：强化学习与计算机科学、工程学、数学、神经学、心理学、生态学等众多领域都有联系，涉及最优控制、机器学习、运筹学、线性代数、概率统计、随机过程、计算机编程等学科。  强化学习与其他机器学习方法：一般而言，我们把机器学习分成有监督学习、无监督学习和强化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[强化学习]1·概述">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/05/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-1%C2%B7%E6%A6%82%E8%BF%B0/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="1 关于强化学习 强化学习是一种优化智能体在环境中行为的方法，根据环境反馈的奖励，调整智能体的行为策略，提升智能体实现目标的能力。 强化学习与多学科交叉：强化学习与计算机科学、工程学、数学、神经学、心理学、生态学等众多领域都有联系，涉及最优控制、机器学习、运筹学、线性代数、概率统计、随机过程、计算机编程等学科。  强化学习与其他机器学习方法：一般而言，我们把机器学习分成有监督学习、无监督学习和强化">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+<meta property="article:published_time" content="2024-04-05T12:34:55.000Z">
+<meta property="article:modified_time" content="2024-04-09T09:11:21.419Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="reinforcement learning">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
+  
+  
+  
+  <title>[强化学习]1·概述 - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/pexels_chess.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="[强化学习]1·概述"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-04-05 20:34" pubdate>
+          2024年4月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">[强化学习]1·概述</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="关于强化学习">1 关于强化学习</h2>
+<p>强化学习是一种<strong>优化</strong>智能体在环境中行为的方法，根据环境<strong>反馈的奖励</strong>，调整智能体的<strong>行为策略</strong>，提升智能体实现<strong>目标</strong>的能力。</p>
+<p><strong>强化学习与多学科交叉</strong>：强化学习与计算机科学、工程学、数学、神经学、心理学、生态学等众多领域都有联系，涉及最优控制、机器学习、运筹学、线性代数、概率统计、随机过程、计算机编程等学科。</p>
+<div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="subjects.png" srcset="/blog-main/logo/imageloading.png" lazyload width=95%/></div><div class="group-image-wrap"><img src="ml.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100%/></div></div></div>
+<p><strong>强化学习与其他机器学习方法</strong>：一般而言，我们把机器学习分成有监督学习、无监督学习和强化学习三大类，强化学习与另外二者有很大的区别。</p>
+<p>强化学习：</p>
+<ol type="1">
+<li>产生的结果（动作）能够<strong>改变</strong>数据的分布（状态）</li>
+<li>最终的目标可能要<strong>很长时间</strong>才能观察到 / 奖励稀疏（例如下棋）</li>
+<li><strong>没有</strong>明确的标签数据</li>
+<li>根据当前的奖励，最终实现<strong>长远的目标</strong></li>
+</ol>
+<p>监督学习 / 无监督学习：</p>
+<ol type="1">
+<li>产生的结果（输出）<strong>不会改变</strong>数据的分布</li>
+<li>结果是<strong>瞬时</strong>的 / 输出误差</li>
+<li>要么<strong>有</strong>明确的标签数据（监督学习）</li>
+<li>要么<strong>完全没有</strong>任何标签数据（无监督学习）</li>
+</ol>
+<p>强化学习有很多应用，例如：控制直升机的特技飞行、下棋、管理投资、控制类人机器人行走、玩游戏……</p>
+<h2 id="课程概要">2 课程概要</h2>
+<p>Lecture 2. 马尔可夫决策过程</p>
+<p>Lecture 3. 动态规划，策略迭代，价值迭代</p>
+<p>Lecture 4. 蒙特卡洛，时间差分</p>
+<p>Lecture 5. Sarsa，Q-learning</p>
+<p>Lecture 6. 函数逼近</p>
+<p>Lecture 7. 策略梯度</p>
+<p>Lecture 8. 博弈强化学习</p>
+<p>Lecture 9. 逆强化学习</p>
+<p>Lecture 10. 离线强化学习</p>
+<p>Lecture 11. DQN，AlphaGO</p>
+<p>Lecture 12. 深度强化学习，自动驾驶</p>
+<h2 id="强化学习基本元素">3 强化学习基本元素</h2>
+<p><strong>状态 (state)</strong>：描述当前智能体位置、姿态等信息的变量</p>
+<p><strong>状态空间 (state space)</strong>：智能体所有可能状态的集合 <span class="math inline">\(\cal S\)</span>，可以是离散状态集或连续状态空间</p>
+<p><strong>动作 (action)</strong>：智能体能够执行，改变当前状态的变量</p>
+<p><strong>动作空间 (action space)</strong>：智能体所有可行的动作集合 <span class="math inline">\(\cal A\)</span>，可以是离散动作集或连续动作空间</p>
+<p><strong>策略 (policy)</strong>：状态空间到动作空间的映射 <span class="math inline">\(\pi:\cal S\to\cal A\)</span>，代表了智能体是如何行为的</p>
+<ul>
+<li>确定性 (deterministic) 策略：<span class="math inline">\(a_t=\pi(s_t)\)</span></li>
+<li>随机 (stochastic) 策略：<span class="math inline">\(a_t\sim\pi(a_t\vert s_t)=P(A_t=a_t\vert S_t=s_t)\)</span></li>
+</ul>
+<p><strong>状态转移 (state transition)</strong> / <strong>环境 (environment)</strong> / <strong>模型 (model)</strong>：描述智能体在给定动作下状态的变化</p>
+<ul>
+<li>离散时间 <span class="math inline">\((s_t,a_t)\to s_{t+1}\)</span>，包括确定性转移 <span class="math inline">\(s_{t+1}=f(s_t,a_t)\)</span> 和随机转移 <span class="math inline">\(s_{t+1}\sim P(s_t,a_t)\)</span></li>
+<li>连续时间 <span class="math inline">\(\dot s_t=f(s_t,a_t)\)</span></li>
+</ul>
+<p><strong>奖励 (reward)</strong>：环境对智能体当前的状态 / 动作好坏程度的反馈，是一个标量随机变量 <span class="math inline">\(R_{t+1}\)</span></p>
+<p><strong>回报 (return)</strong>：智能体从某一初始状态出发，在策略下产生的轨迹上的累加奖励 <span class="math display">\[
+G_t=R_{t+1}+\gamma R_{t+2}+\cdots=\sum_{k=0}^\infty\gamma^kR_{t+k+1}
+\]</span> 其中 <span class="math inline">\(\gamma\in[0,1]\)</span> 为<strong>折扣因子 (discount factor)</strong>.</p>
+<p><strong>价值函数 (value function)</strong>：评价一个状态或动作的好坏，定义为智能体在当前状态下回报的期望 <span class="math display">\[
+v(s)=\mathbb E[G_t\vert S_t=s]=\mathbb E[R_{t+1}+\gamma R_{t+2}+\cdots\vert S_t=s]
+\]</span> <strong>奖励假设 (reward hypothesis)</strong>：智能体的任务就是要最大化期望累加奖励（价值函数）</p>
+<p><strong>最优价值 (optimal value)</strong>：智能体在每个状态下能获得的最高价值</p>
+<p><strong>最优策略 (optimal policy)</strong>：能够使智能体获得最高价值的策略 <span class="math inline">\(\pi^\ast\)</span></p>
+<h2 id="强化学习基本问题">4 强化学习基本问题</h2>
+<p><strong>Learning and Planning</strong></p>
+<p>在 learning 问题中，智能体不知道环境的运行机制、不知道游戏的规则，仅能通过与环境交互来改善策略；在 planning 问题中，智能体有一个环境的模型，无需与环境交互就可以依靠模型进行运算来改善策略。</p>
+<p>二者是紧密相连的，面对一个 learning 问题，智能体可以首先通过交互构建模型，学习环境的运行机制，然后用模型进行规划。</p>
+<p><strong>Exploration and Exploitation</strong></p>
+<p>Exploration 和 exploitation 是一种 trade-off 的关系。前者意味着试错，可能导致更差的奖励，但也可能发现更好的策略；后者意味着用已知的信息找寻最好的策略，而不是尝试新事物。</p>
+<p><strong>Prediction and control</strong></p>
+<p>Prediction 指给定一个策略后，计算未来的奖励，可以理解为求解给定策略下的价值函数；Control 指找到最佳策略以最大化未来的奖励。</p>
+<h2 id="课程参考资料">5 课程参考资料</h2>
+<ul>
+<li>赵冬斌, 朱圆恒, 中国科学院大学《强化学习》课程</li>
+<li>David Silver, University College London Course on Reinforcement Learning, <a target="_blank" rel="noopener" href="https://www.davidsilver.uk/teaching/">link</a></li>
+<li>Emma Brunskill, Stanford CS234 Reinforcement Learning</li>
+<li>Sergey Levine, UC Berkeley CS 294 Deep Reinforcement Learning</li>
+<li>CMU 10703: Deep RL and Control</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/" class="category-chain-item">课程书籍笔记</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E8%AF%BE%E7%A8%8B%E4%B9%A6%E7%B1%8D%E7%AC%94%E8%AE%B0/UCAS-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" class="category-chain-item">UCAS 强化学习</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/reinforcement-learning/" class="print-no-link">#reinforcement learning</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>[强化学习]1·概述</div>
+      <div>https://xyfjason.github.io/blog-main/2024/04/05/强化学习-1·概述/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年4月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/blog-main/2024/04/07/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-2%C2%B7%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B/" title="[强化学习]2·马尔可夫决策过程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[强化学习]2·马尔可夫决策过程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2024/03/25/Evans-Intro-SDE-2%C2%B7Brownian-Motion/" title="[Evans Intro SDE]2·Brownian Motion">
+                        <span class="hidden-mobile">[Evans Intro SDE]2·Brownian Motion</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
