@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-txt2img.png">
 <meta property="article:published_time" content="2023-01-05T13:08:43.000Z">
-<meta property="article:modified_time" content="2024-04-02T12:30:46.265Z">
+<meta property="article:modified_time" content="2024-04-14T06:46:45.048Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.5k 字
+          4.1k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          30 分钟
+          35 分钟
         
       </span>
     
@@ -463,6 +463,28 @@ F_\phi(\x_t,y,t)=\text{E}_\text{I}(\x_t)\cdot\text{E}_\text{L}(y)
 <div class="note note-secondary">
             <details><summary><b>点击查看 DALL·E 3 的生成样例（摘自<a target="_blank" rel="noopener" href="https://openai.com/dall-e-3">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/heart.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/coffee.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/monster.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/crab.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.openai.com/blob/0303dc78-1b1c-4bbe-a24f-cb5f0ac95565/avocado-square.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/b196df3a-6fea-4d86-87b2-f9bb50be64c7/leaf.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/0303dc78-1b1c-4bbe-a24f-cb5f0ac95565/blackbackdrop-square.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/b196df3a-6fea-4d86-87b2-f9bb50be64c7/lychee.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/captain.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/fc03c354-2b1f-4d35-b2a3-9516f8f42a9f/IMG_9605.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/hedgehog.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://images.openai.com/blob/bc8a8a6b-36f2-4774-bc95-c563cb32dcdd/piano.png?trim=0,0,0,0&width=3200" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
+<h2 id="pixart-α">PixArt-α</h2>
+<p><span class="label label-primary">Huawei Noah's Ark Lab</span> <span class="label label-default">2023.09.30</span></p>
+<p>在当下这个力大砖飞的时代，PixArt-α 主打一个高效训练。为此，作者提出了三个核心设计：三阶段的训练流程，高效的基于 DiT 的网络架构，以及利用视觉-语言模型进行文本标注。相比 Stable Diffusion，PixArt-α 的训练时间只有 SD 的 12%，节省了 30 万美刀和 90% 的二氧化碳排放量。</p>
+<p>作者将文生图模型的训练分为三个子任务：首先学习自然图像中的像素分布；然后学习文本与图像的对齐；最后增加图像的美学质量。对于第一个任务，作者直接采用预训练的类别条件图像生成模型 (DiT) 作为文生图模型的初始化，有效降低了学习成本；对于后面两个任务，作者将训练过程划分为预训练和微调，在高信息密度的大规模数据上预训练，然后在高质量数据集上微调。</p>
+<p><img src="pixart-alpha-arch.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>上图是 PixArt-α 模型的模型架构，直接改动自 DiT：</p>
+<ol type="1">
+<li><strong>Cross-Attention</strong>：为了引入文本条件，作者在 Self-Attention 和 FFN 之间添加了 Cross-Attention 层。为了避免该模块的加入影响预训练权重，其最后一个投影层是零初始化的。</li>
+<li><strong>AdaLN-single</strong>：作者发现 DiT 的 AdaLN 层中的线性映射占据了大量 (27%) 的权重，但由于 PixArt-α 并不使用类别条件，所以这些权重并没有作用。设 DiT 的第 <span class="math inline">\(i\)</span> 个模块的 AdaLN 参数为 <span class="math inline">\(S^{(i)}=f^{(i)}(c+t)=[\beta_1^{(i)},\beta_2^{(i)},\gamma_1^{(i)},\gamma_2^{(i)},\alpha_1^{(i)},\alpha_2^{(i)}]\)</span>，其中 <span class="math inline">\(c\)</span> 表示类别 embedding，<span class="math inline">\(t\)</span> 表示时间步 embedding. PixArt-α 则只在第一个模块计算一个全局的参数 <span class="math inline">\(\bar S=f(t)\)</span>，而第 <span class="math inline">\(i\)</span> 个模块的参数由 <span class="math inline">\(S^{(i)}=g(\bar S,E^{(i)})\)</span> 得到，其中 <span class="math inline">\(E^{(i)}\)</span> 是可学习的 embedding. 为了能够加载预训练权重，作者调整 <span class="math inline">\(E^{(i)}\)</span> 使 <span class="math inline">\(S^{(i)}\)</span> 能够与预训练模型匹配。</li>
+</ol>
+<p>构造数据集时，作者采用了与 DALL·3 类似的思路，即借助大语言模型丰富文本描述。不过与 DALL·E 3 训练了一个 captioner 不同，这里作者直接使用视觉-语言大模型 LLaVA，通过提示词「Describe this image and its style in a very detailed manner」来获取文本描述，如下图所示。另外，鉴于 LAION 数据集中含有一些低质量图片，作者选用 SAM 数据集。在第三个阶段（高质量微调），作者使用了 JourneyDB 和 10M 个内部数据构建高质量训练集。</p>
+<p><img src="pixart-alpha-relabel.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 PixArt-α 的生成样例（摘自<a target="_blank" rel="noopener" href="https://pixart-alpha.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel1.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel6.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel7.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel8.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="pixart-δ">PixArt-δ</h2>
+<p><span class="label label-primary">Huawei Noah's Ark Lab</span> <span class="label label-default">2024.01.10</span></p>
+<p>在 PixArt-α 的基础上，PixArt-δ 为其引入了 LCM 加速采样和 ControlNet 可控生成。</p>
+<p><img src="pixart-delta-lcm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+<p>上图是 PixArt-δ 的训练示意图，即参考 LCM 对预训练的 PixArt-α 进行 consistency distillation.</p>
+<h2 id="pixart-σ">PixArt-Σ</h2>
+<p><span class="label label-primary">Huawei Noah's Ark Lab</span> <span class="label label-default">2024.03.07</span></p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">

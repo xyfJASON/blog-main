@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/pexels_chess.jpg">
 <meta property="article:published_time" content="2024-04-09T13:55:06.000Z">
-<meta property="article:modified_time" content="2024-04-09T09:31:36.664Z">
+<meta property="article:modified_time" content="2024-04-09T16:02:11.042Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="reinforcement learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -405,7 +405,7 @@ v_\pi(s)=\sum_{a\in\mathcal A}\pi(a\vert s)\left[\mathcal R_s^a+\gamma\sum_{s&#3
 <p>给定初始策略 <span class="math inline">\(\pi\)</span>，策略迭代算法反复执行以下两步：</p>
 <ul>
 <li><strong>策略评估</strong>：评估当前策略下的价值函数 <span class="math inline">\(v_\pi(s)=\mathbb E[G_t\vert S_t=s]\)</span></li>
-<li><strong>策略提升</strong>：根据<strong>贪心思想</strong>更新策略 <span class="math inline">\(\pi&#39;=\text{greedy}(v_\pi)\)</span></li>
+<li><strong>策略提升</strong>：根据<strong>贪心思想</strong>更新策略 <span class="math inline">\(\pi&#39;=\text{greedy}(v_\pi)=\mathop{\text{argmax }}\limits_{a\in\mathcal A}\left(\mathcal R_s^a+\gamma\sum\limits_{s&#39;\in\mathcal S}\mathcal P_{ss&#39;}^av_\pi(s&#39;)\right)\)</span></li>
 </ul>
 <p>上述过程最终会收敛到最优策略 <span class="math inline">\(\pi_\ast\)</span>.</p>
 <p><img src="policy iter.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
@@ -569,6 +569,12 @@ v_{k+1}(s)=\max_{a\in\mathcal A}\left(\mathcal R^a_s+\gamma\sum_{s&#39;\in\mathc
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/blog-main/2024/04/09/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-4%C2%B7%E6%97%A0%E6%A8%A1%E5%9E%8B%E9%A2%84%E6%B5%8B/" title="[强化学习]4·无模型预测">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[强化学习]4·无模型预测</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

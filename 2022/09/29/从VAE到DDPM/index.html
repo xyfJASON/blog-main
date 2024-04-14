@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddpm.png">
 <meta property="article:published_time" content="2022-09-29T15:56:27.000Z">
-<meta property="article:modified_time" content="2024-04-08T11:19:27.336Z">
+<meta property="article:modified_time" content="2024-04-14T12:32:57.350Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.6k 字
+          3.3k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          30 分钟
+          28 分钟
         
       </span>
     
@@ -479,7 +479,7 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 </tr>
 <tr class="even">
 <td style="text-align: center;">正态分布表达式</td>
-<td style="text-align: center;"><span class="math inline">\(\calN(\x_{t-1};\mu_t(\x_t,\x_0),\tilde\beta_t)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\calN(\x_{t-1};\mu_t(\x_t,\x_0),\tilde\beta_t\mathbf I)\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(\calN\left(\x_{t-1};\ \mu_t(\x_t,\x_\theta(\x_t,t)),{\sigma_t^2}\mathbf{I}\right)\)</span></td>
 </tr>
 <tr class="odd">
@@ -494,15 +494,8 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 </tr>
 </tbody>
 </table>
-<p>可以看到，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的均值沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，只不过由于生成过程中我们并不知道真实的 <span class="math inline">\(\x_0\)</span>，所以需要用一个模型替代之。最小化 KL 散度可以理解为用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 去近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，因此，<span class="math inline">\(\x_\theta(\x_t,t)\)</span> 的作用就是去近似真实的 <span class="math inline">\(\x_0\)</span>，在下一节中我们将优化目标显式写出后可以看得更清楚。</p>
-<p>至于方差的选取就非常耐人寻味了：取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span> 不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差，但是取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span> 是出自什么考虑呢？</p>
-<p>注意到，尽管训练后 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 能够近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，但是由于缺少 <span class="math inline">\(\x_0\)</span> 的信息，所以就算模型学得再好，这样的近似也必然是不准确的。事实上，确定下 <span class="math inline">\(q\)</span> 之后，真实的逆向过程应该服从 <span class="math inline">\(q(\x_{t-1}\vert\x_t)=q(\x_t\vert\x_{t-1})q(\x_{t-1})/q(\x_t)\)</span>，只不过由于边缘分布 <span class="math inline">\(q(\x_t)\)</span> 是未知的，所以无法计算而已。那么，是否存在一些设定使得 <span class="math inline">\(q(\x_t)\)</span> 是可知呢？</p>
-<ul>
-<li><p>设定一：<span class="math inline">\(\x_0\sim\calN(\mathbf 0,\mathbf{I})\)</span>，那么根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式可知 <span class="math inline">\(q(\x_t)=\calN(\x_t;\mathbf 0,\mathbf{I})\)</span>，于是 <span class="math inline">\(q(\x_{t-1}\vert \x_t)=q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},\beta_t\mathbf{I})\)</span>. 这告诉我们，此时的方差应该取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span>.</p></li>
-<li><p>设定二：<span class="math inline">\(\x_0\sim \delta(\mathbf 0)\)</span>，即数据集只有一个样本 <span class="math inline">\(\x_0=\mathbf 0\)</span>，那么根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式可知 <span class="math inline">\(q(\x_t)=\calN(\x_t;\mathbf 0,(1-\bar\alpha_t)\mathbf{I})\)</span>，后续的推导和上文其实没有什么区别，只要把所有的 <span class="math inline">\(\x_0\)</span> 换成 <span class="math inline">\(\mathbf 0\)</span> 即可。所以最后的结论是：<span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span>.</p></li>
-</ul>
-<p>通过这两个极端的设定，我们得到了论文里说的两种选择。实验发现，二者效果无显著差异。</p>
-<p>当然，<strong>这些设定本身也不合理</strong>——没有人的数据是一堆高斯噪声，只是为了寻找方差可能的选择而做的一些试验性假设罢了。但回过头说，我们根本就没有必要人为选定方差，毕竟我们的目标是让 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 逼近 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，可不可以把方差也作为可学习参数训练呢？当然可以，这就是 improved DDPM 的改进。更有甚者，Analytic-DPM 发现这个方差有解析形式的最优解，所以根本不需要把它变成可学习参数去训练！相关内容留到以后的文章。</p>
+<p>可以看到，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的均值沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，只不过由于生成过程中我们并不知道真实的 <span class="math inline">\(\x_0\)</span>，所以需要用一个模型替代之。对于当前的 <span class="math inline">\(\x_0\)</span>，最小化 KL 散度可以理解为用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 去近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，于是 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 的作用就是去近似真实的 <span class="math inline">\(\x_0\)</span>，在下一节中我们将优化目标显式写出后可以看得更清楚。</p>
+<p>至于方差的选取就非常耐人寻味了：取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span> 不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差，但是取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span> 是出自什么考虑呢？这个问题我们暂时放一放，在之后的文章中详细说明。</p>
 <h3 id="损失函数">损失函数</h3>
 <p>至此，我们已经确定下 <span class="math inline">\(\eqref{obj}\)</span> 式中出现的所有概率分布的形式，因而可以代入计算了。为避免读者上下翻阅，把所有公式总结于此： <span class="math display">\[
 \begin{align}
@@ -525,7 +518,7 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 &amp;=\sum_{t=1}^T\frac{1}{2\sigma_t^2}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\left\Vert\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_0-\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_\theta(\x_t,t)\right\Vert^2\right]\\
 &amp;=\sum_{t=1}^T\frac{\bar\alpha_{t-1}\beta_t^2}{2\sigma_t^2(1-\bar\alpha_t)^2}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\Vert\x_0-\x_\theta(\x_t,t)\Vert^2\right]\tag{11}\label{loss-x}
 \end{align}
-\]</span> 也就是 L2 损失。这验证了前文我们提到的 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 的作用是去近似 <span class="math inline">\(\x_0\)</span> 的说法。</p>
+\]</span> 也就是 L2 损失。这验证了前文我们提到的，对于当前的 <span class="math inline">\(\x_0\)</span>，模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 的作用是去近似 <span class="math inline">\(\x_0\)</span> 的说法。</p>
 <p>进一步地，DDPM 对 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 做了<strong>重参数化</strong>。根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式有： <span class="math display">\[
 \x_0=\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t-\sqrt{1-\bar\alpha_t}\epsilon\right),\quad\epsilon\sim\calN(\mathbf0,\mathbf I)
 \]</span> 因此可以把 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 写作相同的形式： <span class="math display">\[
@@ -541,7 +534,7 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 <h3 id="直观理解">直观理解</h3>
 <p>抛开技术细节，直观上 DDPM 干的事情可以总结为——前向过程对输入图像一步步加噪，使之变成高斯噪声；逆向过程使用模型来预测添加的噪声（或预测原图），从而把带噪图像一步步转换回真实图像。</p>
 <p><img src="epsilon.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<p>这里产生了一个问题，既然每一个 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 都是去近似 <span class="math inline">\(\x_0\)</span>，那么是不是直接一步生成 <span class="math inline">\(\x_\theta(\x_T,T)\approx \x_0\)</span> 就可以了呢？并不是这样的。如果直接用 <span class="math inline">\(\x_\theta(\x_T,T)\)</span>，那么中间的 <span class="math inline">\(\x_2,\x_3,\ldots,\x_{T-1}\)</span> 都没用了，整个 DDPM 就退化成了 VAE 的结构。但是 VAE 的生成模型和后验分布都是自己学习出来的，二者双向奔赴共同优化去寻找最优解；而 DDPM 的后验是人为指定的，仅是生成模型一侧去拟合后验分布，自然效果不好。更何况当 <span class="math inline">\(T\)</span> 充分大时 <span class="math inline">\(q(\x_T\vert\x_0)\)</span> 基本上就是一个标准正态分布，磨灭掉了几乎所有的输入信息，模型自然无法准确预测出 <span class="math inline">\(\x_0\)</span>.</p>
+<p>这里产生了一个问题，既然每一步 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 都是去近似 <span class="math inline">\(\x_0\)</span>，那么是不是直接一步生成 <span class="math inline">\(\x_\theta(\x_T,T)\approx \x_0\)</span> 就可以了呢？并不是这样的。首先，<span class="math inline">\(\x_0\)</span> 是从数据集中不断采样的，最终 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 近似的其实是所有 <span class="math inline">\(\x_0\)</span> 在给定 <span class="math inline">\(\x_t\)</span> 条件下的均值，是一个模糊的图像。其次，如果直接用 <span class="math inline">\(\x_\theta(\x_T,T)\)</span>，那么中间的 <span class="math inline">\(\x_2,\x_3,\ldots,\x_{T-1}\)</span> 都没用了，整个 DDPM 就退化成了 VAE 的结构。但是 VAE 的生成模型和后验分布都是自己学习出来的，二者双向奔赴共同优化去寻找最优解；而 DDPM 的后验是人为指定的，仅是生成模型一侧去拟合后验分布，自然效果不好。更何况当 <span class="math inline">\(T\)</span> 充分大时 <span class="math inline">\(q(\x_T\vert\x_0)\)</span> 基本上就是一个标准正态分布，磨灭掉了几乎所有的输入信息，模型自然无法准确预测出 <span class="math inline">\(\x_0\)</span>.</p>
 <p>不过纵观整个过程，虽说 <span class="math inline">\(t\)</span> 较大时 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 不能直接用作最终的结果，但是在每一小步中又用到了它。其实可以把 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 理解为大方向，我们沿着大方向走一小步，然后重新看看大方向在哪里，再走下一小步。打个比方，我想从成都走到深圳，我知道大致要朝东南 45° 方向走，但是“差之毫厘，谬以千里”，直接走可能一不小心就登陆台湾了，所以我先走一小步到重庆；然后再看地图，大方向变成了东南 50°，于是又走一小步，但是拐弯过猛到了贵阳；没关系，再看地图，大方向变成了东南 30°……这样每走一小步都对大方向做一点修正，最后就能平稳地到达目的地了。</p>
 <h2 id="代码实现">代码实现</h2>
 <p>Github repo: <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/Diffusion-Models-Implementations" class="uri">https://github.com/xyfJASON/Diffusion-Models-Implementations</a></p>
