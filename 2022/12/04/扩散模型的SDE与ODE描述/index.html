@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/sde.png">
 <meta property="article:published_time" content="2022-12-04T04:45:07.000Z">
-<meta property="article:modified_time" content="2024-04-09T03:58:07.908Z">
+<meta property="article:modified_time" content="2024-04-15T02:05:12.222Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -285,7 +285,7 @@
         
         
         
-          16 分钟
+          17 分钟
         
       </span>
     
@@ -369,7 +369,7 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_i;\x_{i-1},\left(\sigma_i^2-\sigma_{i-1}^2\ri
 \mathcal L=\sum_{i=1}^N \sigma_i^2\E_{\pdata(\x)}\left[\E_{p_{\sigma_i}(\tilde\x\vert\x)}\left[\left\|s_\theta(\tilde\x,\sigma_i)-\nabla_{\tilde\x}\log p_{\sigma_i}(\tilde\x\vert\x) \right\|^2\right]\right]
 \]</span></p>
 <h2 id="forward-sde">Forward SDE</h2>
-<p>DDPM 和 SMLD 都是在离散时间点扩散的，倘若将时间连续化，那么我们就能够得到对应的 SDE 描述。为了连续化，我们只需要将 <span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{smld}\)</span> 式写作差分形式，取 <span class="math inline">\(\Delta t\to0\)</span>，即得到微分形式。</p>
+<p>DDPM 和 SMLD 都是在离散时间点扩散的，倘若将时间连续化，那么我们就能够得到对应的 SDE 描述。为了连续化，我们只需要将 <span class="math inline">\(\eqref{ddpm}\)</span> 式和 <span class="math inline">\(\eqref{smld}\)</span> 式写作差分形式，取 <span class="math inline">\(\Delta t\to0\)</span>，即可得到微分形式。</p>
 <h3 id="ddpm-vp-sde">DDPM: VP SDE</h3>
 <p>为了方便叙述，定义 <span class="math inline">\(\bar\beta_i=N\beta_i\)</span>，那么 <span class="math inline">\(\eqref{ddpm}\)</span> 式改写作： <span class="math display">\[
 \x_i=\sqrt{1-\frac{\bar\beta_i}{N}}\ \x_{i-1}+\sqrt{\frac{\bar\beta_i}{N}}\ \mathbf z_{i-1},\quad i=1,\ldots,N
@@ -383,15 +383,11 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_i;\x_{i-1},\left(\sigma_i^2-\sigma_{i-1}^2\ri
 <div class="note note-info">
             <p><strong>维纳过程（布朗运动）直观解释</strong></p><p>考虑一个马尔可夫随机过程 <span class="math inline">\(\w\)</span>，其以一年为时间单位，下一年相比这一年的变化量服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>，即： <span class="math display">\[\w(t+1)=\w(t)+\z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 那么两年后，总变化量就是两个正态随机变量之和，服从 <span class="math inline">\(\calN(\mathbf 0,2\mathbf I)\)</span>： <span class="math display">\[\w(t+2)=\w(t)+\sqrt{2}\ \z(t),\quad \z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 反过来想，一年的变化量是两个半年变化量之和，所以半年的变化量应该服从 <span class="math inline">\(\calN(\mathbf 0,0.5\ \mathbf I)\)</span>： <span class="math display">\[\w(t+0.5)=\w(t)+\sqrt{0.5}\ \z(t),\quad\z(t)\sim\calN(\mathbf 0,\mathbf I)\]</span> 以此类推，如果考虑 <span class="math inline">\(\Delta t\)</span> 的时间，变化量就应该服从 <span class="math inline">\(\calN(\mathbf 0,\Delta t\ \mathbf I)\)</span>： <span class="math display">\[\w(t+\Delta t)=\w(t)+\sqrt{\Delta t}\ \z(t),\quad\z(t)\sim \calN(\mathbf 0,\mathbf I)\]</span> 令 <span class="math inline">\(\Delta t\to 0\)</span>，则： <span class="math display">\[\mathrm d\w=\lim_{\Delta t\to0}\sqrt{\Delta t}\ \z(t)\]</span></p><p>这就是 <span class="math inline">\(\eqref{vp-sde}\)</span> 式的后一项。</p>
           </div>
-<p>论文作者称 <span class="math inline">\(\eqref{vp-sde}\)</span> 式为 Variance Preserving (VP) SDE，因为当初始分布有单位方差时，该 SDE 描述的随机过程也始终有固定的方差。为了说明这点，作者直接给出了如下关于方差演进过程的 ODE： <span class="math display">\[
+<p>论文作者称 <span class="math inline">\(\eqref{vp-sde}\)</span> 式为 <strong>Variance Preserving (VP) SDE</strong>，因为当初始分布有单位方差时，该 SDE 描述的随机过程也始终有固定的方差。为了说明这点，作者直接给出了如下关于方差演进过程的 ODE： <span class="math display">\[
 \frac{\mathrm d\Sigma_\text{VP}(t)}{\mathrm dt}=\beta(t)(\mathbf I-\Sigma_\text{VP}(t))
-\]</span> 解得： <span class="math display">\[
+\]</span> 解该 ODE 得： <span class="math display">\[
 \Sigma_\text{VP}(t)=\mathbf I+e^{\int_0^t -\beta(s)\mathrm ds}(\Sigma_\text{VP}(0)-\mathbf I)
-\]</span> 因此，当 <span class="math inline">\(\Sigma_\text{VP}(0)=\mathbf I\)</span> 时，始终有 <span class="math inline">\(\Sigma_\text{VP}(t)=\mathbf I\)</span>. 另外，即便 <span class="math inline">\(\Sigma_\text{VP}(0)\neq\mathbf I\)</span>，当 <span class="math inline">\(t\to\infty\)</span> 时，<span class="math inline">\(e^{\int_{0}^t-\beta(s)\mathrm ds}\to0\)</span>，也有 <span class="math inline">\(\Sigma_\text{VP}(t)\to\mathbf I\)</span>.</p>
-<p>在上一篇文章的最后一节我们也对此做了解释——从 DDPM 的角度看，这无非就是说扩散过程最后会服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>.</p>
-<blockquote>
-<p>什么？你问这个 ODE 怎么来的？我也不会啊……</p>
-</blockquote>
+\]</span> 因此，当 <span class="math inline">\(\Sigma_\text{VP}(0)=\mathbf I\)</span> 时，始终有 <span class="math inline">\(\Sigma_\text{VP}(t)=\mathbf I\)</span>. 另外，即便 <span class="math inline">\(\Sigma_\text{VP}(0)\neq\mathbf I\)</span>，当 <span class="math inline">\(t\to\infty\)</span> 时，<span class="math inline">\(e^{\int_{0}^t-\beta(s)\mathrm ds}\to0\)</span>，也有 <span class="math inline">\(\Sigma_\text{VP}(t)\to\mathbf I\)</span>. 其实从 DDPM 的角度看，这无非就是说扩散过程最后会服从 <span class="math inline">\(\calN(\mathbf 0,\mathbf I)\)</span>.</p>
 <h3 id="smld-ve-sde">SMLD: VE SDE</h3>
 <p>类似地，设 <span class="math inline">\(\sigma(\frac{i}{N})=\sigma_i,\,\x(\frac{i}{N})=\x_i,\,\z(\frac{i}{N})=\z_i\)</span>，那么对于 <span class="math inline">\(t=\left\{0,\frac{1}{N},\ldots,\frac{N-1}{N}\right\},\,\Delta t=\frac{1}{N}\)</span>，<span class="math inline">\(\eqref{smld}\)</span> 式可写作： <span class="math display">\[
 \x(t+\Delta t)=\x(t)+\sqrt{\sigma^2(t+\Delta t)-\sigma^2(t)}\ \mathbf z(t)
@@ -399,18 +395,22 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_i;\x_{i-1},\left(\sigma_i^2-\sigma_{i-1}^2\ri
 \x(t+\Delta t)\approx\x(t)+\sqrt{\frac{\mathrm  d[\sigma^2(t)]}{\mathrm dt}\Delta t}\ \z(t)
 \]</span> 令 <span class="math inline">\(\Delta t\to 0\)</span>，得到： <span class="math display">\[
 \mathrm d\x=\sqrt{\frac{\mathrm d[\sigma^2(t)]}{\mathrm dt}}\mathrm d\w \tag{7}\label{ve-sde}
-\]</span> 该 SDE 被作者称为 Variance Exploding (VE) SDE，因为随着 <span class="math inline">\(t\to\infty\)</span>，其描述的随机过程方差将无限制增大。</p>
+\]</span> 该 SDE 被作者称为 <strong>Variance Exploding (VE) SDE</strong>，因为随着 <span class="math inline">\(t\to\infty\)</span>，其描述的随机过程方差将无限制增大。</p>
 <h3 id="general-form">General Form</h3>
-<p>上文我们分别推导了 DDPM 和 SMLD 对应的 SDE 形式。更一般地，对于一个连续时间的扩散过程 <span class="math inline">\(\{\x(t)\}_{t=0}^T\)</span>，其中 <span class="math inline">\(\x(0)\sim p_0\)</span> 并且 <span class="math inline">\(\x(T)\sim p_T\)</span>，即 <span class="math inline">\(p_0\)</span> 表示数据分布，<span class="math inline">\(p_T\)</span> 表示先验分布，我们可以用 Itô diffusion SDE 来描述这个扩散过程： <span class="math display">\[
+<p>上文我们分别推导了 DDPM 和 SMLD 对应的 SDE 形式。更一般地，对于一个连续时间的扩散过程 <span class="math inline">\(\{\x(t)\}_{t=0}^T\)</span>，其中 <span class="math inline">\(\x(0)\sim p_0\)</span> 并且 <span class="math inline">\(\x(T)\sim p_T\)</span>，即 <span class="math inline">\(p_0\)</span> 表示数据分布，<span class="math inline">\(p_T\)</span> 表示先验分布，我们可以用 <strong>Itô diffusion SDE</strong> 来描述这个扩散过程： <span class="math display">\[
 \mathrm d\x= \f(\x,t)\mathrm dt+g(t)\mathrm d\w \tag{8}\label{sde}
-\]</span> 其中 <span class="math inline">\(\f(\x,t):\mathbb R^d\to\mathbb R^d\)</span> 是一个向量值函数，称作 drift coefficient；<span class="math inline">\(g(t):\mathbb R\to\mathbb R\)</span> 是一个标量函数，称作 diffusion coefficient. 特别地，对于 DDPM 而言，<span class="math inline">\(\f(\x,t)=-\frac{1}{2}\beta(t)\x,\ g(t)=\sqrt{\beta(t)}\)</span>；对于 SMLD 而言，<span class="math inline">\(\f(\x,t)=\mathbf 0,\ g(t)=\sqrt{\frac{\mathrm d[\sigma^2(t)]}{\mathrm dt}}\)</span>. 因此我们在引言里说，DDPM 和 SMLD 分别是两个特殊形式 SDE 的离散化。</p>
+\]</span> 其中 <span class="math inline">\(\f(\x,t):\mathbb R^d\to\mathbb R^d\)</span> 是一个向量值函数，称作 drift coefficient；<span class="math inline">\(g(t):\mathbb R\to\mathbb R\)</span> 是一个标量函数，称作 diffusion coefficient. 特别地，VP SDE 和 VE SDE 分别对应：</p>
+<ul>
+<li>VP SDE：<span class="math inline">\(\f(\x,t)=-\frac{1}{2}\beta(t)\x,\ g(t)=\sqrt{\beta(t)}\)</span></li>
+<li>VE SDE：<span class="math inline">\(\f(\x,t)=\mathbf 0,\ g(t)=\sqrt{\frac{\mathrm d[\sigma^2(t)]}{\mathrm dt}}\)</span></li>
+</ul>
+<p>因此我们在引言里说，DDPM 和 SMLD 分别是两个特殊形式 SDE 的离散化。</p>
 <h2 id="reverse-sde">Reverse SDE</h2>
 <p>同 DDPM 类似，forward SDE 将数据 <span class="math inline">\(\x(0)\sim p_0\)</span> 变换为了先验分布 <span class="math inline">\(\x(T)\sim p_T\)</span>，而 reverse SDE 将该过程逆向，即可得到生成模型。</p>
 <p>记 <span class="math inline">\(p_t(\x)\)</span> 为 <span class="math inline">\(\x(t)\)</span> 的概率分布，<span class="math inline">\(p_{st}(\x(t)\vert\x(s))\)</span> 为从 <span class="math inline">\(\x(s)\)</span> 到 <span class="math inline">\(\x(t)\)</span> 的转移概率分布。对于 <span class="math inline">\(\eqref{sde}\)</span> 式，根据论文<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="Anderson, Brian DO. Reverse-time diffusion equation models. *Stochastic Processes and their Applications* 12, no. 3 (1982): 313-326.">[9]</span></a></sup>的结论，其 reverse-time SDE 为： <span class="math display">\[
 \mathrm d\x=\left[\f(\x,t)-g^2(t)\nabla_\x\log p_t(\x)\right]\mathrm  dt+g(t)\mathrm d\bar\w \tag{9}\label{reverse-sde}
-\]</span> 其中 <span class="math inline">\(\bar\w\)</span> 是一个标准维纳过程（布朗运动）。</p>
-<p><br/></p>
-<p>我们又看到了老朋友 score function <span class="math inline">\(\nabla_\x\log p_t(\x)\)</span>，因此依旧可以使用 denoising score matching 来训练模型： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\bar\w\)</span> 是一个标准维纳过程（布朗运动），<span class="math inline">\(p_t(\x)\)</span> 表示 <span class="math inline">\(\x(t)\)</span> 的边缘分布。</p>
+<p>我们又看到了老朋友 score function <span class="math inline">\(\nabla_\x\log p_t(\x)\)</span>，因此依旧可以使用 denoising score matching 训练模型近似之： <span class="math display">\[
 \E_t\left[\lambda(t)\E_{\x(0)}\E_{\x(t)\vert\x(0)}\left[\left\|s_\theta(\x(t),t)-\nabla_{\x(t)}\log p_{0t}(\x(t)\vert\x(0)) \right\|_2^2\right]\right] \tag{10}\label{loss}
 \]</span> 其中 <span class="math inline">\(\lambda:[0,T]\to \mathbb R_{&gt;0}\)</span> 是加权系数。与 DDPM / SMLD 类似，可以选取 <span class="math inline">\(\lambda(t)\propto1/\E[\Vert\nabla_{\x(t)}\log p_{0t}(\x(t)\vert\x(0)) \Vert^2]\)</span>.</p>
 <p>在训练好模型之后，用模型替换 <span class="math inline">\(\eqref{reverse-sde}\)</span> 式中的 score function 即可： <span class="math display">\[
@@ -444,9 +444,10 @@ p(\x_i\vert\x_{i-1})=\calN\left(\x_i;\x_{i-1},\left(\sigma_i^2-\sigma_{i-1}^2\ri
 <h3 id="predictor-corrector-samplers">Predictor-Corrector Samplers</h3>
 <p>与一般的 SDE 不同的是，我们现在有一个 score model <span class="math inline">\(s_\theta(\x,t)\approx\nabla_\x\log p_t(\x)\)</span>，可以利用 score-based MCMC 方法来改进通用 SDE solvers 的解。具体而言，每一步首先由通用 SDE solvers 给出一个解 (predictor)，然后由 MCMC 方法来修正解的分布 (corrector)，因此作者称该方法为 Predictor-Corrector (PC) samplers. 特别地，DDPM 相当于用 ancestral sampling 作为 predictor、identity function 作为 corrector；而 SMLD 相当于用 identity function 作为 predictor、Langevin dynamics 作为 corrector.</p>
 <h2 id="probability-flow-ode">Probability Flow ODE</h2>
-<p>上文中，我们已经构建了连续时间扩散模型的 SDE 描述。宋飏等人提出，对于任一 SDE 描述的扩散过程，都存在一个 ODE 描述的确定性过程与之有相同的边缘分布 <span class="math inline">\(\{p_t(\x)\}_{t=0}^T\)</span>. 具体地，<span class="math inline">\(\eqref{reverse-sde}\)</span> 式对应的 ODE 为： <span class="math display">\[
+<p>上文中，我们已经构建了连续时间扩散模型的 SDE 描述。宋飏等人提出，对于任一 SDE 描述的扩散过程，都存在一个 ODE 描述的确定性过程与之有相同的边缘分布 <span class="math inline">\(\{p_t(\x)\}_{t=0}^T\)</span>. 具体地，<span class="math inline">\(\eqref{sde}\)</span> 式和 <span class="math inline">\(\eqref{reverse-sde}\)</span> 式对应的 ODE 为： <span class="math display">\[
 \mathrm d\x=\left[\f(\x,t)-\frac{1}{2}g^2(t)\nabla_\x\log p_t(\x)\right]\mathrm dt
-\]</span> 代入 score model 得： <span class="math display">\[
+\]</span> 证明是通过说明 <span class="math inline">\(\eqref{sde}\)</span> 式或 <span class="math inline">\(\eqref{reverse-sde}\)</span> 式与上式具有相同的 Fokker-Planck 方程完成的。注意 SDE 需要分前向与逆向（因为维纳过程有一个方向），但是 ODE 本身就是可逆的，所以只需要一个。</p>
+<p>将 score model 代入上式得： <span class="math display">\[
 \mathrm d\x=\left[\f(\x,t)-\frac{1}{2}g^2(t)s_\theta(\x,t)\right]\mathrm dt \tag{13}\label{pf-ode}
 \]</span> 同上一节类似，我们可以用通用的 ODE 求解器 (如 RK45) 来解上式，也可以将其离散化为 <span class="math inline">\(\x_{i}=\x_{i+1}-\f_{i+1}(\x_{i+1})+\frac{1}{2}g_{i+1}^2s_\theta(\x_{i+1},i+1)\)</span>​ 求解，并且 predictor-corrector samplers 的思想也依然适用。但是作者指出，尽管解 ODE 比解 SDE 更快，其生成图片的质量往往不如 SDE.</p>
 <h2 id="references">References</h2>

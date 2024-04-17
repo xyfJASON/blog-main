@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Introduction 扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究者坐不住了，在论文[1]中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：  Formulation：扩散和去噪过程可以从概率分布角度描述，也可以从">
+    <meta name="description" content="Introduction 扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究人员在论文[1]中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：  Formulation：扩散和去噪过程可以用 SDE&#x2F;ODE 描述，方程的系数">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阐明设计空间">
+<meta property="og:title" content="阐明扩散模型的设计空间">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/02/20/%E9%98%90%E6%98%8E%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%A9%BA%E9%97%B4/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="Introduction 扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究者坐不住了，在论文[1]中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：  Formulation：扩散和去噪过程可以从概率分布角度描述，也可以从">
+<meta property="og:description" content="Introduction 扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究人员在论文[1]中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：  Formulation：扩散和去噪过程可以用 SDE&#x2F;ODE 描述，方程的系数">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/edm.png">
 <meta property="article:published_time" content="2024-02-20T14:34:58.000Z">
-<meta property="article:modified_time" content="2024-04-14T06:45:44.600Z">
+<meta property="article:modified_time" content="2024-04-17T12:46:41.821Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -34,7 +34,7 @@
   
   
   
-  <title>阐明设计空间 - xyfJASON</title>
+  <title>阐明扩散模型的设计空间 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -252,7 +252,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="阐明设计空间"></span>
+            <span id="subtitle" data-typed-text="阐明扩散模型的设计空间"></span>
           
         </div>
 
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          2.3k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          17 分钟
+          20 分钟
         
       </span>
     
@@ -323,41 +323,45 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">阐明设计空间</h1>
+            <h1 id="seo-header">阐明扩散模型的设计空间</h1>
             
             
               <div class="markdown-body">
                 
                 <h2 id="introduction">Introduction</h2>
-<p>扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究者坐不住了，在论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Karras, Tero, Miika Aittala, Timo Aila, and Samuli Laine. Elucidating the design space of diffusion-based generative models. *Advances in Neural Information Processing Systems* 35 (2022): 26565-26577.">[1]</span></a></sup>中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：</p>
+<p>扩散模型的火热吸引了众多研究者，相关工作百花齐放，但这样繁荣的景象也就带来了一个问题——每篇论文都有一套自己的体系，缺乏一个统一的框架；并且扩散模型的各个组件相互耦合，不便于单独研究。终于，NVIDIA 的研究人员在论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Karras, Tero, Miika Aittala, Timo Aila, and Samuli Laine. Elucidating the design space of diffusion-based generative models. *Advances in Neural Information Processing Systems* 35 (2022): 26565-26577.">[1]</span></a></sup>中详细阐述了扩散模型的设计空间。其实扩散模型无非由以下几部分构成：</p>
 <ul>
-<li><strong>Formulation</strong>：扩散和去噪过程可以从概率分布角度描述，也可以从 SDE/ODE 的角度描述；</li>
-<li><strong>Sampling</strong>：可以自定义采样器、离散化方式和采样轨迹；</li>
-<li><strong>Training</strong>：可以将网络参数化为不同形式，可以调整各时间步权重，可以运用各种训练技巧。</li>
+<li><strong>Formulation</strong>：扩散和去噪过程可以用 SDE/ODE 描述，方程的系数有多种选取方案；</li>
+<li><strong>Sampling</strong>：可以自定义采样器种类、时间步离散化方式和采样轨迹；</li>
+<li><strong>Training</strong>：可以将网络参数化为不同形式，网络的输入输出可以进行各种预处理，可以调整各时间步权重，可以运用各种训练技巧。</li>
 </ul>
 <p>将这些部分解耦并分别研究后，研究者将各部分的最优实践组合起来，提出了 EDM，达到了扩散模型的 SOTA.</p>
 <h2 id="formulation">Formulation</h2>
 <p>在<a href="/blog-main/2022/12/04/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84SDE%E4%B8%8EODE%E6%8F%8F%E8%BF%B0/" title="扩散模型的SDE与ODE描述">扩散模型的SDE与ODE描述</a>一文中我们看到，Song 等人<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>通过将 DDPM 和 SMLD 连续化，指出扩散过程可以描述为如下的 SDE 形式： <span class="math display">\[
 \mathrm d\mathbf x=f(\mathbf x,t)\mathrm dt+g(t)\mathrm d\mathbf w
-\]</span> 由于无论是 VP SDE（对应 DDPM）还是 VE SDE（对应 SMLD），<span class="math inline">\(f(\mathbf x,t)\)</span> 都是 <span class="math inline">\(f(t)\mathbf x\)</span> 的形式，所以该 SDE 也可以改写作： <span class="math display">\[
+\]</span> 由于无论是 VP SDE (对应 DDPM) 还是 VE SDE (对应 SMLD)，<span class="math inline">\(f(\mathbf x,t)\)</span> 其实都是 <span class="math inline">\(f(t)\mathbf x\)</span> 的形式，所以不妨将该 SDE 改写作： <span class="math display">\[
 \mathrm d\mathbf x=f(t)\mathbf x\mathrm dt+g(t)\mathrm d\mathbf w\tag{1}\label{sde}
-\]</span> 另一方面，在<a href="/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" title="变分扩散模型">变分扩散模型</a>一文中，Kingma 等人<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. *Advances in neural information processing systems* 34 (2021): 21696-21707.">[3]</span></a></sup>用如下马尔可夫过程表示扩散过程： <span class="math display">\[
+\]</span> 另一方面，在以<a href="/blog-main/2023/08/08/%E5%8F%98%E5%88%86%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" title="变分扩散模型">变分扩散模型</a><sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Diederik, Tim Salimans, Ben Poole, and Jonathan Ho. Variational diffusion models. *Advances in neural information processing systems* 34 (2021): 21696-21707.">[3]</span></a></sup>为代表的一系列基于贝叶斯框架推导扩散模型的论文中，人们常用如下马尔可夫过程表示扩散过程： <span class="math display">\[
 q(\mathbf x_{0:T})=q(\mathbf x_0)\prod_{t=1}^Tq(\mathbf x_t\vert\mathbf x_{t-1}),\quad q(\mathbf x_t\vert\mathbf x_0)=\mathcal N\left(\mathbf x_t;\alpha_t\mathbf x_0,\sigma_t^2\mathbf I\right),\quad t\in[0,1]
-\]</span> 为方便后续推导，我们将其改写作： <span class="math display">\[
+\]</span> 为方便后续推导，将其改写作： <span class="math display">\[
 q(\mathbf x_t\vert\mathbf x_0)=\mathcal N\left(\mathbf x_t;s(t)\mathbf x_0,s^2(t)\sigma^2(t)\mathbf I\right),\quad t\in [0,1]\tag{2}\label{p}
-\]</span> 上述两种形式其实是同一个扩散过程的两种描述方式，本质是一样的，但是各有利弊：<span class="math inline">\(\eqref{sde}\)</span> 式可以推导出逆向过程的 probability flow ODE，有利于分析采样轨迹和离散化，但是参数 <span class="math inline">\(f(t),g(t)\)</span> 本身没有什么实际意义；<span class="math inline">\(\eqref{p}\)</span> 式的参数 <span class="math inline">\(s(t),\sigma(t)\)</span> 有直观的含义（加噪强度），但是概率分布的形式不如 SDE 灵活。因此，我们希望结合二者的优点，<strong>将扩散过程写作以 <span class="math inline">\(s(t),\sigma(t)\)</span> 为参数的 SDE 形式</strong>。为此，可以推出 <span class="math inline">\(f(t),g(t)\)</span> 与 <span class="math inline">\(s(t),\sigma(t)\)</span> 之间存在如下的关系： <span class="math display">\[
-f(t)=\frac{\dot s(t)}{s(t)},\quad g(t)=s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\tag{3}\label{rel}
+\]</span> 事实上，<span class="math inline">\(\eqref{p}\)</span> 式可以视作 <span class="math inline">\(\eqref{sde}\)</span> 式的扰动核 (perturbation kernel)，因此二者本质其实是一样的。鉴于 SDE 形式的灵活性，现阶段的研究倾向于用 SDE 描述扩散模型，但是 <span class="math inline">\(\eqref{sde}\)</span> 式中的参数 <span class="math inline">\(f(t),g(t)\)</span> 本身没有什么实际意义，反而 <span class="math inline">\(\eqref{p}\)</span> 式的参数 <span class="math inline">\(s(t),\sigma(t)\)</span> 有直观的含义，即加噪强度。因此，我们希望结合二者的优点，<strong>将扩散过程写作以 <span class="math inline">\(s(t),\sigma(t)\)</span> 为参数的 SDE 形式</strong>。经过推导，可以证明 <span class="math inline">\(f(t),g(t)\)</span> 与 <span class="math inline">\(s(t),\sigma(t)\)</span> 之间存在如下的关系： <span class="math display">\[
+\begin{gather}
+f(t)=\frac{\dot s(t)}{s(t)},\quad g(t)=s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\\
+s(t)=\exp\left(\int_0^t f(\xi)\mathrm d\xi\right),\quad \sigma(t)=\sqrt{\int_0^t\frac{g^2(\xi)}{s^2(\xi)}\mathrm d\xi}
+\end{gather}\tag{3}\label{rel}
 \]</span> 于是将 <span class="math inline">\(\eqref{rel}\)</span> 式代入 <span class="math inline">\(\eqref{sde}\)</span> 式就得到了我们想要的扩散过程的 SDE 描述： <span class="math display">\[
 \mathrm d\mathbf x=\frac{\dot s(t)}{s(t)}\mathbf x\mathrm dt+s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\mathrm d\mathbf w
 \]</span> <div class="note note-info">
-            <p><strong>推导过程</strong>：根据之前的文章，由 <span class="math inline">\(\eqref{p}\)</span> 式可推得： <span class="math display">\[q(\mathbf x_t\vert\mathbf x_r)=\mathcal N\left(\mathbf x_t;\;\frac{s(t)}{s(r)}\mathbf x_r,s^2(t)\left(\sigma^2(t)-\sigma^2(r)\right)\mathbf I\right),\quad 0\leq r&lt;t\leq 1\]</span> 即： <span class="math display">\[\mathbf x_t=\frac{s(t)}{s(r)}\mathbf x_r+s(t)\sqrt{\sigma^2(t)-\sigma^2(r)}\;\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf 0,\mathbf I),\quad 0\leq r\leq t\leq 1\]</span> 整理一下： <span class="math display">\[\frac{\mathbf x_t}{s(t)}=\frac{\mathbf x_r}{s(r)}+\sqrt{\sigma^2(t)-\sigma^2(r)}\;\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf 0,\mathbf I),\quad 0\leq r\leq t\leq 1\]</span> 取 <span class="math inline">\(r=t-\Delta t\)</span>： <span class="math display">\[\frac{\mathbf x_t}{s(t)}-\frac{\mathbf x_{t-\Delta t}}{s(t-\Delta t)}=\sqrt{\sigma^2(t)-\sigma^2(t-\Delta t)}\;\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf 0,\mathbf I)\]</span> 令 <span class="math inline">\(\Delta t\to0\)</span>，得： <span class="math display">\[\mathrm d\left(\frac{\mathbf x_t}{s(t)}\right)=\frac{\mathbf x_t\mathrm ds(t)-s(t)\mathrm d\mathbf x_t}{s(t)^2}=\sqrt{(\sigma^2(t))&#39;}\mathrm d\mathbf w=\sqrt{2\dot\sigma(t)\sigma(t)}\mathrm d\mathbf w\]</span> 整理得： <span class="math display">\[\mathrm d\mathbf x_t=\frac{\dot s(t)}{s(t)}\mathbf x_t\mathrm dt-s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\mathrm d\mathbf w\]</span> 对比 <span class="math inline">\(\eqref{sde}\)</span> 式可知： <span class="math display">\[f(t)=\frac{\dot s(t)}{s(t)},\quad g(t)=s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\]</span></p>
+            <p><strong>推导过程</strong>：由 <span class="math inline">\(\eqref{p}\)</span> 式可知： <span class="math display">\[q(\mathbf x_t\vert\mathbf x_r)=\mathcal N\left(\mathbf x_t;\;\frac{s(t)}{s(r)}\mathbf x_r,s^2(t)\left(\sigma^2(t)-\sigma^2(r)\right)\mathbf I\right),\quad 0\leq r&lt;t\leq 1\]</span> 即： <span class="math display">\[\mathbf x_t=\frac{s(t)}{s(r)}\mathbf x_r+s(t)\sqrt{\sigma^2(t)-\sigma^2(r)}\;\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf 0,\mathbf I),\quad 0\leq r\leq t\leq 1\]</span> 整理一下： <span class="math display">\[\frac{\mathbf x_t}{s(t)}=\frac{\mathbf x_r}{s(r)}+\sqrt{\sigma^2(t)-\sigma^2(r)}\;\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf 0,\mathbf I),\quad 0\leq r\leq t\leq 1\]</span> 取 <span class="math inline">\(r=t-\Delta t\)</span>： <span class="math display">\[\frac{\mathbf x_t}{s(t)}-\frac{\mathbf x_{t-\Delta t}}{s(t-\Delta t)}=\sqrt{\sigma^2(t)-\sigma^2(t-\Delta t)}\;\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf 0,\mathbf I)\]</span> 令 <span class="math inline">\(\Delta t\to0\)</span>，得： <span class="math display">\[\mathrm d\left(\frac{\mathbf x_t}{s(t)}\right)=\frac{\mathbf x_t\mathrm ds(t)-s(t)\mathrm d\mathbf x_t}{s(t)^2}=\sqrt{(\sigma^2(t))&#39;}\mathrm d\mathbf w=\sqrt{2\dot\sigma(t)\sigma(t)}\mathrm d\mathbf w\]</span> 整理得： <span class="math display">\[\mathrm d\mathbf x_t=\frac{\dot s(t)}{s(t)}\mathbf x_t\mathrm dt-s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\mathrm d\mathbf w\]</span> 对比 <span class="math inline">\(\eqref{sde}\)</span> 式可知： <span class="math display">\[f(t)=\frac{\dot s(t)}{s(t)},\quad g(t)=s(t)\sqrt{2\dot\sigma(t)\sigma(t)}\]</span> 反过来用 <span class="math inline">\(f(t),g(t)\)</span> 表示 <span class="math inline">\(s(t),\sigma(t)\)</span> 即为： <span class="math display">\[s(t)=\exp\left(\int_0^t f(\xi)\mathrm d\xi\right),\quad \sigma(t)=\sqrt{\int_0^t\frac{g^2(\xi)}{s^2(\xi)}\mathrm d\xi}\]</span></p>
           </div></p>
-<p>根据论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>，扩散 SDE 对应如下的 reverse SDE： <span class="math display">\[
-\mathrm d\mathbf x=\left[f(t)\mathbf x-g^2(t)\nabla_\mathbf x\log p_t(\mathbf x)\right]\mathrm dt+g(t)\mathrm d\bar{\mathbf w}\tag{4}\label{reverse-sde-old}
+<p>根据论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>，<span class="math inline">\(\eqref{sde}\)</span> 式对应如下的与之具有相同边缘分布的 reverse SDE 和 probability flow ODE： <span class="math display">\[
+\begin{align}
+&amp;\mathrm d\mathbf x=\left[f(t)\mathbf x-g^2(t)\nabla_\mathbf x\log p_t(\mathbf x)\right]\mathrm dt+g(t)\mathrm d\bar{\mathbf w}\tag{4}\label{reverse-sde-old}\\
+&amp;\mathrm d\mathbf x=\left[f(t)\mathbf x-\frac{1}{2}g(t)^2\nabla_\mathbf x\log p_t(\mathbf x)\right]\mathrm dt\tag{5}\label{ode-old}
+\end{align}
 \]</span></p>
-<p>其中 <span class="math inline">\(p_t(\mathbf x)\)</span> 表示数据在 <span class="math inline">\(t\)</span> 时刻加噪后的分布。同时，该论文也指出存在一个与上述 reverse SDE 具有相同边缘分布的 probability flow ODE： <span class="math display">\[
-\mathrm d\mathbf x=\left[f(t)\mathbf x-\frac{1}{2}g(t)^2\nabla_\mathbf x\log p_t(\mathbf x)\right]\mathrm dt\tag{5}\label{ode-old}
-\]</span> 考虑到 ODE 比 SDE 更容易分析，因此我们从 ODE 下手，将 <span class="math inline">\(\eqref{rel}\)</span> 式代入 <span class="math inline">\(\eqref{ode-old}\)</span> ​式得： <span class="math display">\[
+<p>其中 <span class="math inline">\(p_t(\mathbf x)\)</span> 表示数据在 <span class="math inline">\(t\)</span> 时刻加噪后的分布。考虑到 ODE 比 SDE 更容易分析，我们从 ODE 下手，将 <span class="math inline">\(\eqref{rel}\)</span> 式代入 <span class="math inline">\(\eqref{ode-old}\)</span> ​式得： <span class="math display">\[
 \mathrm d\mathbf x=\left[\frac{\dot s(t)}{s(t)}\mathbf x-s^2(t)\dot\sigma(t)\sigma(t)\nabla_\mathbf x\log p_t(\mathbf x)\right]\mathrm dt\tag{6}\label{ode-notready}
 \]</span></p>
 <p>进一步地，注意到 <span class="math inline">\(p_t(\mathbf x)\)</span> 这种表示方式并不能直观地告诉我们 <span class="math inline">\(t\)</span> 时刻加了多少噪声。换句话说，上式与 noise schedule 耦合起来了。为了解耦，定义 <span class="math inline">\(p(\mathbf x;\sigma)\)</span> 表示数据加上方差为 <span class="math inline">\(\sigma^2\)</span> 的高斯噪声后的分布，那么可以推导： <span class="math display">\[
@@ -374,8 +378,8 @@ p_t(\mathbf x)&amp;=\int_{\mathbb R^d}p_{0t}(\mathbf x\vert\mathbf x_0)p_\text{d
 \mathrm d\mathbf x=\left[\frac{\dot s(t)}{s(t)}\mathbf x-s^2(t)\dot\sigma(t)\sigma(t)\nabla_\mathbf x\log p\left(\frac{\mathbf x}{s(t)};\sigma(t)\right)\right]\mathrm dt\tag{7}\label{ode}
 \]</span> 特别地，若 <span class="math inline">\(s(t)\equiv 1\)</span>，则有： <span class="math display">\[
 \mathrm d\mathbf x=-\dot\sigma(t)\sigma(t)\nabla_\mathbf x\log p(\mathbf x;\sigma(t))\mathrm dt\tag{8}\label{ode-simple}
-\]</span> <span class="math inline">\(\eqref{ode},\eqref{ode-simple}\)</span> 式即是去噪生成过程的 ODE 统一描述。</p>
-<p>在不同的工作中，扩散模型所用的模型有不同的参数化形式，如拟合 <span class="math inline">\(\mathbf x_0\)</span>、<span class="math inline">\(\epsilon\)</span>、<span class="math inline">\(\mathbf v\)</span> 或 score function 等。这里用 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 表示“去噪模型”（拟合 <span class="math inline">\(\mathbf x_0\)</span>）而暂时不讨论其具体参数化形式，那么 score function 用 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 表达出来就是： <span class="math display">\[
+\]</span> 上述 <span class="math inline">\(\eqref{ode},\eqref{ode-simple}\)</span> 式即是 EDM 论文采用的 ODE 形式化。</p>
+<p>为了获得 score function <span class="math inline">\(\nabla_\mathbf x\log p(\mathbf x;\sigma(t))\)</span>，我们利用 denoising score matching 训练模型拟合之。在不同的工作中，模型有不同的参数化形式，如拟合 <span class="math inline">\(\mathbf x_0\)</span>、<span class="math inline">\(\epsilon\)</span>、<span class="math inline">\(\mathbf v\)</span> 或 score function 等，它们可以容易地互相转换。这里统一用 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 表示“去噪模型”（即拟合 <span class="math inline">\(\mathbf x_0\)</span> 的模型）而暂时不讨论其具体形式，那么有： <span class="math display">\[
 \nabla_\mathbf x\log p(\mathbf x;\sigma)=\frac{D_\theta(\mathbf x;\sigma)-\mathbf x}{\sigma^2}
 \]</span></p>
 <p>于是： <span class="math display">\[
@@ -386,39 +390,45 @@ p_t(\mathbf x)&amp;=\int_{\mathbb R^d}p_{0t}(\mathbf x\vert\mathbf x_0)p_\text{d
 &amp;=\left[\left(\frac{\dot s(t)}{s(t)}+\frac{\dot\sigma(t)}{\sigma(t)}\right)\mathbf x-\frac{s(t)\dot\sigma(t)}{\sigma(t)}D_\theta\left(\frac{\mathbf x}{s(t)};\sigma(t)\right)\right]\mathrm dt \tag{9}\label{ode-real}
 \end{align}
 \]</span></p>
-<p>使用数值方法迭代求解该 ODE 的过程就是去噪生成过程（采样过程）。</p>
-<h2 id="sampling">Sampling</h2>
+<p>生成过程（采样过程）就是使用数值方法迭代求解该 ODE 的过程。</p>
+<h2 id="deterministic-sampling">Deterministic Sampling</h2>
 <h3 id="ode-solver">ODE Solver</h3>
-<p>采样器，即 reverse SDE 或 probability flow ODE 的求解器，是扩散模型的一个重点研究方向。越精确的采样器允许人们用越少的迭代步数达到相同的效果，从而大大提升扩散模型的采样效率。</p>
-<p>最简单常用的 ODE 求解器无疑是 Euler 法，即在每一个时间步上用左矩形近似积分，这是一个一阶求解器。另一个常用的求解器是高阶 Runge-Kutta 方法，虽然它的精度更高，但每一步需要多次前向传播，而扩散模型的时耗基本都是前向传播造成的，所以在扩散模型的语境下并不高效。事实上正因如此，人们倾向于用 NFE (Neural Function Evaluation)，即网络前向传播次数而非求解器的采样步数作为采样时间来判断采样器的效率。</p>
-<p>EDM 的作者通过大量实验发现，二阶的 Heun 方法（即改进 Euler 法，用梯形近似积分）的效率最高，其算法如下所示：</p>
+<p>采样器，即 reverse SDE 或 probability flow ODE 的数值求解器，是扩散模型的一个重点研究方向。采样器用迭代前进的方式近似 SDE/ODE 真实的轨迹，因此每一步都会带来截断误差。越高阶的采样器允许人们用越少的迭代步数达到相同的效果。然而，高阶采样器的每一步迭代往往也需要更多次的模型推断（即神经网络的前向传播），而扩散模型的时耗基本都是前向传播造成的，所以在扩散模型的语境下，并不一定是越高阶的采样器就越高效。事实上正因如此，人们倾向于用 <strong>NFE (Neural Function Evaluation)</strong>，即网络前向传播次数而非求解器的采样步数作为采样时间来比较不同采样器的效率。</p>
+<p>最简单常用的 ODE 求解器无疑是 Euler 法，即在每一个时间步上用矩形近似积分，这是一个一阶求解器，即若设步长为 <span class="math inline">\(h\)</span>，则其局部截断误差是 <span class="math inline">\(O(h^2)\)</span> 的。另一些常用的求解器包括高阶 Runge-Kutta 方法和线性多步法。EDM 的作者通过大量实验发现，二阶的 Heun 方法（即改进 Euler 法，用梯形近似积分）的效率最高，其算法如下所示：</p>
 <p><img src="heun.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <p>如果去掉 6-8 行则 Heun 方法退化为 Euler 法，即 <span class="math inline">\(\eqref{ode-real}\)</span> 式的简单离散化。</p>
 <h3 id="discretization">Discretization</h3>
 <p>除了 ODE 求解器的算法以外，还有一个因素会影响采样质量——时间步离散化的方式，即如何选取序列 <span class="math inline">\(\{t_0,t_1,\ldots,t_N\}\)</span>. 由于 <span class="math inline">\(\sigma(t)\)</span> 单调增加存在反函数，这等价于选取序列 <span class="math inline">\(\{\sigma_0,\sigma_1,\ldots,\sigma_N\}\)</span>，然后令 <span class="math inline">\(t_i=\sigma^{-1}(\sigma_i)\)</span>. 作者决定采用 <span class="math inline">\(\sigma_{i&lt;N}=(Ai+B)^\rho\)</span> 的幂函数形式并选择 <span class="math inline">\(A,B\)</span> 以使得 <span class="math inline">\(\sigma_0=\sigma_\max,\,\sigma_{N-1}=\sigma_\min\)</span>，可解得： <span class="math display">\[
 \sigma_{i&lt;N}=\left(\sigma_\max^{\frac{1}{\rho}}+\frac{i}{N-1}\left(\sigma_\min^{\frac{1}{\rho}}-\sigma_\max^{\frac{1}{\rho}}\right)\right)^{\rho},\quad \sigma_N=0
-\]</span> 超参数 <span class="math inline">\(\rho\)</span> 越大，则接近 <span class="math inline">\(\sigma_\min\)</span> 处的步长越小（采得越密），接近 <span class="math inline">\(\sigma_\max\)</span> 处的步长越大（采得越密）；而步长越小，求解器的截断误差就越小。实验发现当 <span class="math inline">\(\rho=3\)</span> 时各 <span class="math inline">\(\sigma\)</span> 处的截断误差比较均衡，但对图像而言 <span class="math inline">\(\rho\in[5,10]\)</span> 时生成质量更好，这说明接近 <span class="math inline">\(\sigma_\min\)</span> 处的误差对图像质量影响更大，因此作者最终采用 <span class="math inline">\(\rho=7\)</span>.</p>
+\]</span> 超参数 <span class="math inline">\(\rho\)</span> 越大，则接近 <span class="math inline">\(\sigma_\min\)</span> 处的步长越小（采得越密），接近 <span class="math inline">\(\sigma_\max\)</span> 处的步长越大（采得越密）；而步长越小，求解器的局部截断误差就越小。实验发现当 <span class="math inline">\(\rho=3\)</span> 时各 <span class="math inline">\(\sigma\)</span> 处的局部截断误差比较均衡，但对图像而言 <span class="math inline">\(\rho\in[5,10]\)</span> 时生成质量更好，这说明接近 <span class="math inline">\(\sigma_\min\)</span> 处的误差对图像质量影响更大，因此作者最终采用 <span class="math inline">\(\rho=7\)</span>.</p>
 <h3 id="trajectory">Trajectory</h3>
 <p>ODE 解的轨迹形状由 <span class="math inline">\(\sigma(t)\)</span> 和 <span class="math inline">\(s(t)\)</span>，即 noise schedule 决定，下图展示了 VP ODE、VE ODE 和 DDIM 的轨迹：</p>
 <p><img src="trajectory.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
-<p>可以看见 DDIM 的轨迹曲率最小，任意噪声下轨迹的切线都基本指向去噪结果。实验也发现在 VP ODE 和 VE ODE 的预训练模型的基础上使用 DDIM 的设置，图像质量相比原设置有着明显的提升。DDIM 的轨迹对应 <span class="math inline">\(\sigma(t)=t,\,s(t)=1\)</span>，此时对应 ODE 方程 <span class="math inline">\(\eqref{ode-real}\)</span> 式简化为： <span class="math display">\[
+<p>它们对应的 noise schedule 分别为：</p>
+<ul>
+<li>VP ODE: <span class="math inline">\(\sigma(t)=\sqrt{\exp(\frac{1}{2}\beta_\text{d}t^2+\beta_\min t)-1},\,s(t)=1/\sqrt{\exp(\frac{1}{2}\beta_\text{d}t^2+\beta_\min t)}\)</span></li>
+<li>VE ODE: <span class="math inline">\(\sigma(t)=\sqrt{t},\,s(t)=1\)</span></li>
+<li>DDIM: <span class="math inline">\(\sigma(t)=t,\,s(t)=1\)</span></li>
+</ul>
+<p>作者认为，DDIM 的设置最好，因为对任意的 <span class="math inline">\(\mathbf x,t\)</span>，执行一个 Euler 步就可以得到去噪结果 <span class="math inline">\(D_\theta(\mathbf x;t)\)</span>. 从图中也可以看见 DDIM 的轨迹曲率最小，任意噪声下轨迹的切线都基本指向去噪结果。并且，实验也发现在 VP ODE 和 VE ODE 的预训练模型的基础上使用 DDIM 的设置，图像质量相比原设置有着明显的提升。在 DDIM 的 noise scheduler 设置下，对应的 ODE 方程 <span class="math inline">\(\eqref{ode-real}\)</span> 式简化为： <span class="math display">\[
 \mathrm d\mathbf x=\frac{\mathbf x-D_\theta(\mathbf x;t)}{t}\mathrm dt
 \]</span></p>
-<h3 id="stochastic-sampling">Stochastic sampling</h3>
-<p>可以证明，ODE <span class="math inline">\(\eqref{ode-simple}\)</span> 式 (即取 <span class="math inline">\(s(t)\equiv 1\)</span>) 对应一族与之具有相同边缘分布的 SDE： <span class="math display">\[
+<h2 id="stochastic-sampling">Stochastic Sampling</h2>
+<p>确定性采样有非常多的好处，例如可以反向采样 ODE 从而将图像转换回它的隐变量表示，但是其采样质量往往不如随机性采样。</p>
+<p>可以证明，ODE <span class="math inline">\(\eqref{ode-simple}\)</span> 式（取 <span class="math inline">\(s(t)\equiv 1\)</span> 的特殊情况）对应一族与之具有相同边缘分布的 SDE： <span class="math display">\[
 \mathrm d\mathbf x_{\pm}=
 \underbrace{-\dot\sigma(t)\sigma(t)\nabla_\mathbf x\log p(\mathbf x;\sigma(t))\mathrm dt}_{\text{probability flow ODE }\eqref{ode-simple}}\pm
 \underbrace{\underbrace{\beta(t)\sigma^2(t)\nabla_\mathbf x\log p(\mathbf x;\sigma(t))\mathrm dt}_\text{deterministic noise decay}+
 \underbrace{\sqrt{2\beta(t)}\sigma(t)\mathrm d\mathbf w}_\text{noise injection}}_\text{Langevin diffusion SDE}
-\]</span> 其中，<span class="math inline">\(\mathrm d\mathbf x_+\)</span> 和 <span class="math inline">\(\mathrm d\mathbf x_-\)</span> 分别是正向和逆向的 SDE. 事实上，论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>提出的 reverse SDE <span class="math inline">\(\eqref{reverse-sde-old}\)</span> 式其实只是上述 SDE 取 <span class="math inline">\(\beta(t)=\dot\sigma(t)/\sigma(t)\)</span> 的一个特殊情形。上式表明，SDE 是在 ODE 的基础上添加了基于 Langevin diffusion 过程作为修正，从而相比 ODE 有更好的采样效果。</p>
+\]</span> 其中，<span class="math inline">\(\mathrm d\mathbf x_+\)</span> 和 <span class="math inline">\(\mathrm d\mathbf x_-\)</span> 分别是正向和逆向的 SDE. 事实上，论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>提出的 reverse SDE <span class="math inline">\(\eqref{reverse-sde-old}\)</span> 式其实只是上述 SDE 取 <span class="math inline">\(\beta(t)=\dot\sigma(t)/\sigma(t)\)</span> 的一个特殊情形。上式表明，SDE 是在 ODE 的基础上添加了 Langevin diffusion 过程作为修正，从而相比 ODE 有更好的采样效果。</p>
 <p>基于上述理论，当取 <span class="math inline">\(\sigma(t)=t,s(t)=1\)</span> 时，作者在针对 ODE 的 Heun 采样器的基础上设计了如下针对 SDE 的采样方法：</p>
 <p><img src="heun-sde.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p>其中 4、5、6 行在执行 Euler 步前添加一定量的噪声来模拟 Langevin 动力学过程。这不是一个通用的 SDE 求解器，其正确性保证来源于 Langevin 步在理论上是保持边缘分布不变的，因此可以在 ODE 求解过程中引入一些 Langevin 步。不过，由于模型具有预测误差，Langevin 步本身也不是精确的，因此作者对引入的噪声做了限制，即上图中 <span class="math inline">\(\gamma_i\)</span> 的作用。这与论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>的 Predictor-Corrector 采样器有着类似的思想。</p>
+<p>其中 4、5、6 行在执行 Euler 步前添加一定量的噪声来模拟 Langevin dynamics 过程。这不是一个通用的 SDE 求解器，其正确性保证来源于 Langevin 步在理论上是保持边缘分布不变的，因此可以在 ODE 求解过程中引入一些 Langevin 步。不过，由于模型具有预测误差，Langevin 步本身也不是精确的，因此作者对引入的噪声做了限制，即上图中 <span class="math inline">\(\gamma_i\)</span> 的作用。这与论文<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Jascha Sohl-Dickstein, Diederik P. Kingma, Abhishek Kumar, Stefano Ermon, and Ben Poole. Score-Based Generative Modeling through Stochastic Differential Equations. In *International Conference on Learning Representations*. 2020.">[2]</span></a></sup>的 Predictor-Corrector 采样器有着类似的思想。</p>
 <h2 id="training">Training</h2>
 <h3 id="network">Network</h3>
 <p>在实际训练时，我们不一定用神经网络直接对 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 建模，例如 DDPM 原文预测的就是噪声，而 Progressive Distillation<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[4]</span></a></sup>提出预测 <span class="math inline">\(\mathbf v\)</span>. 为将不同的设计统一起来，作者将 <span class="math inline">\(D_\theta(\mathbf x;\sigma)\)</span> 建模为： <span class="math display">\[
 D_\theta(\mathbf x;\sigma)=c_\text{skip}(\sigma)\mathbf x+c_\text{out}(\sigma)F_\theta\left(c_\text{in}(\sigma)\mathbf x;c_\text{noise}(\sigma)\right)
-\]</span> 其中 <span class="math inline">\(F_\theta\)</span> 才是真正的神经网络。于是根据 denoising score matching，损失函数为： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(F_\theta\)</span> 才是真正要训练的神经网络。于是根据 denoising score matching，损失函数为： <span class="math display">\[
 \mathbb E_{\sigma,\mathbf y,\mathbf n}\bigg[
 \underbrace{\lambda(\sigma)c_\text{out}^2(\sigma)}_\text{weight}
 \Big\Vert
@@ -439,6 +449,55 @@ c_\text{skip}(\sigma)=\frac{\sigma_\text{data}^2}{\sigma^2+\sigma_\text{data}^2}
 <h2 id="unified-framework">Unified Framework</h2>
 <p>在作者的统一框架下，原来的各个经典扩散模型对应的设置如下表所示：</p>
 <p><img src="unified.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>下面我们推导一下表中 Sampling 一块的设置。</p>
+<h3 id="vp-sampling">VP Sampling</h3>
+<p>VP SDE 是 DDPM 的连续化版本，对应 <span class="math inline">\(\eqref{sde}\)</span> 式中取： <span class="math display">\[
+f(t)=-\frac{1}{2}\beta(t),\quad g(t)=\sqrt{\beta(t)}
+\]</span> 在 DDPM 中，<span class="math inline">\(\beta(t)\)</span> 是从 <span class="math inline">\(\beta_\max=0.02\)</span> 到 <span class="math inline">\(\beta_\min=0.0001\)</span> 的线性插值： <span class="math display">\[
+\beta(t)=\beta_\min+t(\beta_\max-\beta_\min),\quad t\in[0,1]
+\]</span> 所以： <span class="math display">\[
+\mathrm d\mathbf x=-\frac{1}{2}\left(\beta_\min+t(\beta_\max-\beta_\min)\right)\mathbf x\mathrm dt+\sqrt{\beta_\min+t(\beta_\max-\beta_\min)}\mathrm d\mathbf w
+\]</span> 设 <span class="math inline">\(\alpha(t)\)</span> 是 <span class="math inline">\(\beta(t)\)</span> 的积分： <span class="math display">\[
+\alpha(t)=\int_0^t\beta(\xi)\mathrm d\xi=\frac{1}{2}\beta_\text{d}t^2+\beta_\min t
+\]</span> 其中 <span class="math inline">\(\beta_d=\beta_\max-\beta_\min\)</span>. 则有： <span class="math display">\[
+\begin{align}
+s(t)&amp;=\exp\left(\int_0^tf(\xi)\mathrm d\xi\right)
+=\frac{1}{\sqrt{\exp\left(\int_0^t\beta(\xi)\mathrm d\xi\right)}}\\
+&amp;=\frac{1}{\sqrt{\exp(\alpha(t))}}
+=\frac{1}{\sqrt{\exp\left(\frac{1}{2}\beta_\text{d}t^2+\beta_\min t\right)}}
+\end{align}
+\]</span> 类似地，有： <span class="math display">\[
+\begin{align}
+\sigma(t)&amp;=\sqrt{\int_0^t\frac{g^2(\xi)}{s^2(\xi)}\mathrm d\xi}
+=\sqrt{\int_0^t\exp(\alpha(\xi))\beta(\xi)\mathrm d\xi}\\
+&amp;=\sqrt{\int_0^t\exp(\alpha(\xi))\dot\alpha(\xi)\mathrm d\xi}=\sqrt{\exp(\alpha(t))-\exp(\alpha(0))}\\
+&amp;=\sqrt{\exp\left(\frac{1}{2}\beta_\text{d}t^2+\beta_\min t\right)-1}
+\end{align}
+\]</span> 又 DDPM++（DDPM 的连续时间版本）的时间步是 <span class="math inline">\([\epsilon_\text{s},1]\)</span> 之间的均匀采样，所以： <span class="math display">\[
+t_{i&lt;N}=1+\frac{i}{N-1}(\epsilon_\text{s}-1)
+\]</span> 这就得到了表中 VP Sampling 的部分。</p>
+<h3 id="ve-formulation">VE formulation</h3>
+<p>VE SDE 是 SMLD 的连续化版本，对应 <span class="math inline">\(\eqref{sde}\)</span> 式中取： <span class="math display">\[
+f(t)=0,\quad g(t)=\sqrt{\frac{\mathrm d[\sigma^2(t)]}{\mathrm dt}}=\sqrt{2\dot\sigma(t)\sigma(t)}
+\]</span> 于是： <span class="math display">\[
+s(t)=\exp\left(\int_0^tf(\xi)\mathrm d\xi\right)=1
+\]</span> 在 SMLD 中，<span class="math inline">\(\sigma(t)\)</span> 被设置为几何级数： <span class="math display">\[
+\sigma(t)=\sigma_\min\left(\frac{\sigma_\max}{\sigma_\min}\right)^t,\quad t\in(0,1]
+\]</span> 但这里 EDM 作者设置 <span class="math inline">\(\sigma(t)=\sqrt{t}\)</span>，然后将时间步写作： <span class="math display">\[
+t_{i&lt;N}=\sigma_\max^2\left(\frac{\sigma_\min^2}{\sigma_\max^2}\right)^{\frac{i}{N-1}}
+\]</span> 从而达到一样的效果。</p>
+<h3 id="iddpm-ddim">iDDPM + DDIM</h3>
+<p>在 <a href="/blog-main/2022/12/14/DDIM%E4%B8%8E%E5%8A%A0%E9%80%9F%E9%87%87%E6%A0%B7/" title="DDIM与加速采样">DDIM与加速采样</a>一文中我们看到，DDIM 可以写作如下的 ODE 形式： <span class="math display">\[
+\mathrm d\mathbf x=\epsilon_\theta\left(\frac{\mathbf x(t)}{\sqrt{1+\sigma^2(t)}},t\right)\mathrm d\sigma(t)
+\]</span> 用本文中的 <span class="math inline">\(D_\theta\)</span> 替换 <span class="math inline">\(\epsilon_\theta\)</span>，再替换为 score function 表示： <span class="math display">\[
+\epsilon_\theta\left(\frac{\mathbf x(t)}{\sqrt{1+\sigma^2(t)}},t\right)=\frac{\mathbf x(t)-D_\theta(\mathbf x(t);\sigma(t))}{\sigma(t)}=-\sigma(t)\nabla_{\mathbf x(t)}\log p(\mathbf x(t);\sigma(t))
+\]</span> 因此得到 ODE： <span class="math display">\[
+\mathrm d\mathbf x=-\sigma(t)\nabla_{\mathbf x(t)}\log p(\mathbf x(t);\sigma(t))\mathrm d\sigma(t)
+\]</span> 取 <span class="math inline">\(\sigma(t)=t\)</span>，则： <span class="math display">\[
+\mathrm d\mathbf x=-t\nabla_{\mathbf x(t)}\log p(\mathbf x(t);\sigma(t))\mathrm dt
+\]</span> <div class="note note-warning">
+            <p>说实话这里没看懂作者的脑回路，感觉反而弄得更复杂了。</p>
+          </div></p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -522,7 +581,7 @@ c_\text{skip}(\sigma)=\frac{\sigma_\text{data}^2}{\sigma^2+\sigma_\text{data}^2}
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>阐明设计空间</div>
+      <div>阐明扩散模型的设计空间</div>
       <div>https://xyfjason.github.io/blog-main/2024/02/20/阐明扩散模型的设计空间/</div>
     </div>
     <div class="license-meta">

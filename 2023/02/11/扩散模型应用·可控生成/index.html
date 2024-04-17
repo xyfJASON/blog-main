@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-control.png">
 <meta property="article:published_time" content="2023-02-11T05:36:50.000Z">
-<meta property="article:modified_time" content="2024-04-07T11:33:01.318Z">
+<meta property="article:modified_time" content="2024-04-16T07:07:01.034Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4k 字
+          4.5k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          33 分钟
+          38 分钟
         
       </span>
     
@@ -455,14 +455,33 @@
 <p><img src="powers-of-10-method.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <p>在多分辨率融合后，各尺度图像融入了更大尺度图像的低分辨率信息，可以理解为信息<strong>由上至下</strong>流动；但此时各尺度图像重叠部分并不相同。因此，作者接下来将小尺度图像<strong>由下至上</strong>覆盖到大尺度图像对应位置处，即概览图中 Render 部分，如上右图所示。</p>
 <h2 id="freecontrol">FreeControl</h2>
-<p><span class="label label-primary">UCLA</span> <span class="label label-default">2023.12.12</span></p>
-<p>尽管 ControlNet 等工作为文生图模型引入了精细化的控制而大受成功，但是要训练 ControlNet 还是需要不少数据和算力的，有没有办法 TODO</p>
+<p><span class="label label-primary">UCLA</span> <span class="label label-success">CVPR 2024</span> <span class="label label-default">2023.12.12</span></p>
+<p>尽管 ControlNet 等工作为文生图模型引入了空间控制而大受成功，但是存在几个问题：</p>
+<ol type="1">
+<li>训练 ControlNet 还是需要不少数据和算力</li>
+<li>控制条件需要用已有的检测器获得，不适用于 mesh, point cloud 等难以从图像推断的条件</li>
+<li>ControlNet 倾向于优先满足控制条件而非文本</li>
+</ol>
+<p>为此，作者提出 FreeControl<sup id="fnref:12" class="footnote-ref"><a href="#fn:12" rel="footnote"><span class="hint--top hint--rounded" aria-label="Mo, Sicheng, Fangzhou Mu, Kuan Heng Lin, Yanli Liu, Bochen Guan, Yin Li, and Bolei Zhou. FreeControl: Training-Free Spatial Control of Any Text-to-Image Diffusion Model with Any Condition. *arXiv preprint arXiv:2312.07536* (2023).">[12]</span></a></sup>，能够无需训练地引入任何空间控制。FreeControl 基于这样的发现：在生成图像的过程中，模型的特征图已经能够捕获图像中的结构信息，因此我们只需要找到这些特征的空间，并施以引导即可控制生成的图像符合条件。</p>
+<p><img src="freecontrol-vis.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>如上图所示，输入不同风格和模态的图像，先使用 DDIM inversion 取出 UNet decoder 部分的第一个 self-attention 层的 keys，然后使用 PCA 找到最大的三个分量作为 RGB 三通道显示为一张伪彩色图像。可以看见，即使是对于边缘深度骨骼等控制图像，模型感知到的特征和自然图像也是一致的。基于这个发现，作者提出了 structure guidance 来引导生成。另外，作者同时用无引导的生成过程做 appearance guidance，保证内容和风格不变。</p>
 <p><img src="freecontrol.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
-<p>首先看橙色框，可以立刻知道，FreeControl 采用的技术路线是 guidance 引导，这种方式的特点就是无需训练，在 2021 年末到 2022 年相当常见。但是什么样的 guidance 信号能适应各种各样的条件呢？</p>
-<p>TODO</p>
-<div class="note note-secondary">
+<p>上图是方法概览。FreeControl 分为两个阶段——分析阶段和生成阶段。在分析阶段中，FreeControl 先生成若干张种子图像，拿出 decoder 的第一个 self-attention 层的对应特征，做 PCA 得到目标概念（如 man）的特征子空间。在生成阶段，FreeControl 用输入条件的特征做 structure guidance，用种子图像的特征和本身的特征做 appearance guidance.</p>
+<p>具体而言，设引导图像为 <span class="math inline">\(\mathbf I^g\)</span>，其特征为 <span class="math inline">\(\mathbf F^g_t\in\mathbb R^{C\times H\times W}\)</span>，PCA 的基为 <span class="math inline">\(\mathbf B_t\)</span>，特征在该基下的投影坐标为 <span class="math inline">\(\mathbf S_t^g\in\mathbb R^{N_b\times H\times W}\)</span>. 对于前景结构，作者进一步从 cross-attention 图中提取出了一个二值 mask <span class="math inline">\(\mathbf M\in\{0,1\}^{H\times W}\)</span>. 再设当前特征图为 <span class="math inline">\(\mathbf F_t\)</span>，投影坐标为 <span class="math inline">\(\mathbf S_t\)</span>，那么，structure guidance 通过下式计算： <span class="math display">\[
+g_s(\mathbf S_t;\mathbf S_t^g,\mathbf M)=
+\underbrace{\frac{\sum_{i,j}m_{ij}\left\Vert[\mathbf s_t]_{ij}-[\mathbf s_t^g]_{ij}\right\Vert_2^2}{\sum_{i,j}m_{ij}}}_\text{forward guidance}
++
+w\cdot\underbrace{\frac{\sum_{i,j}(1-m_{ij})\left\Vert\max([\mathbf s_t]_{ij}-\boldsymbol\tau_t,0)\right\Vert^2_2}{\sum_{i,j}(1-m_{ij})}}_\text{backward guidance}
+\]</span> 其中 <span class="math inline">\(\boldsymbol\tau_t=\max_{\{i,j\mid m_{ij}=0\}}[\mathbf s_t^g]_{ij}\)</span>. 直观来讲，forward guidance 让当前坐标靠近引导图像的坐标，backward guidance 则抑制背景的结构来突出前景。</p>
+<p>作者发现，只使用 structure guidance 会增强低频纹理，导致不理想的效果，为此作者提出 appearance guidance. Appearance 可以用特征的空间平均来表示： <span class="math display">\[
+\mathbf v_t^{(k)}=\frac{\sum_{i,j}\sigma([s_t^{(k)}]_{ij})[\mathbf f_t]_{ij}}{\sum_{i,j}\sigma([s_t^{(k)}]_{ij})}
+\]</span> 其中下标 <span class="math inline">\(i,j\)</span> 是空间坐标，上标 <span class="math inline">\((k)\)</span> 是通道坐标，<span class="math inline">\(\sigma(\cdot)\)</span> 是 sigmoid 函数。生成图像 <span class="math inline">\(\mathbf I\)</span> 的过程中，我们用同噪声、同随机种子但是无引导的图像 <span class="math inline">\(\bar{\mathbf I}\)</span> 来做 appearance guidance： <span class="math display">\[
+g_a(\{\mathbf v_t^{(k)}\};\{\bar{\mathbf v}_t^{(k)}\})=\frac{\sum_{k=1}^{N_a}\Vert\mathbf v_t^{(k)}-\bar{\mathbf v}_t^{(k)}\Vert_2^2}{N_a}
+\]</span> 最后，将 structure guidance 与 appearance guidance 放入生成过程中作为引导： <span class="math display">\[
+\hat\epsilon_t=(1+s)\epsilon_\theta(\mathbf x_t,t,c)-s\epsilon_\theta(\mathbf x_t,t,\varnothing)+\lambda_sg_s+\lambda_ag_a
+\]</span> <div class="note note-secondary">
             <details><summary><b>点击查看 FreeControl 的生成样例（摘自<a target="_blank" rel="noopener" href="https://genforce.github.io/freecontrol/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://genforce.github.io/freecontrol/assets/results/any_cond_gen.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
-          </div>
+          </div></p>
 <h2 id="anytext">AnyText</h2>
 <p><span class="label label-primary">Alibaba</span> <span class="label label-success">ICLR 2024 spotlight</span> <span class="label label-default">2023.12.15</span></p>
 <p>尽管当下的文生图大模型能力非常强大，但生成文字一直是一个没有解决的问题。为此，阿里提出 AnyText<sup id="fnref:13" class="footnote-ref"><a href="#fn:13" rel="footnote"><span class="hint--top hint--rounded" aria-label="Tuo, Yuxiang, Wangmeng Xiang, Jun-Yan He, Yifeng Geng, and Xuansong Xie. AnyText: Multilingual Visual Text Generation And Editing. *arXiv preprint arXiv:2311.03054* (2023).">[13]</span></a></sup> 和 AnyWord-3M 数据集，使得在图像中生成准确可控的多语言文字成为了可能。</p>
