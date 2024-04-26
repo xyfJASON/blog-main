@@ -16,24 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\E}{\mathbb E} \] 回顾 在DDIM与加速采样中，我们介绍了如何将 DDPM 的前向过程扩展为非马尔可夫过程： \[ \begin{align} &amp;q(\x_{1:T}\vert\x_0)&#x3D;q(\x_T\vert\x_0)\pro">
+    <meta name="description" content="Introduction 尽管扩散模型在生成质量、似然估计和训练稳定性上表现出卓越的性能，但其最大的缺点就是采样耗时。为此，许多采样器被提出以加速采样过程，例如 DDIM, Analytic-DPM, PNDM, DPM-Solver 等等，它们着眼于更精确地求解扩散 ODE，例如采用高阶的求解器并充分利用扩散 ODE 的特殊结构。然而，受制于模型本身的误差，此类 training-free 的方">
 <meta property="og:type" content="article">
-<meta property="og:title" content="扩散模型逆向过程的方差选取">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/01/14/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E9%80%86%E5%90%91%E8%BF%87%E7%A8%8B%E7%9A%84%E6%96%B9%E5%B7%AE%E9%80%89%E5%8F%96/index.html">
+<meta property="og:title" content="扩散模型蒸馏方法">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/24/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E8%92%B8%E9%A6%8F%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\E}{\mathbb E} \] 回顾 在DDIM与加速采样中，我们介绍了如何将 DDPM 的前向过程扩展为非马尔可夫过程： \[ \begin{align} &amp;q(\x_{1:T}\vert\x_0)&#x3D;q(\x_T\vert\x_0)\pro">
+<meta property="og:description" content="Introduction 尽管扩散模型在生成质量、似然估计和训练稳定性上表现出卓越的性能，但其最大的缺点就是采样耗时。为此，许多采样器被提出以加速采样过程，例如 DDIM, Analytic-DPM, PNDM, DPM-Solver 等等，它们着眼于更精确地求解扩散 ODE，例如采用高阶的求解器并充分利用扩散 ODE 的特殊结构。然而，受制于模型本身的误差，此类 training-free 的方">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/analytic-dpm.png">
-<meta property="article:published_time" content="2023-01-14T08:02:42.000Z">
-<meta property="article:modified_time" content="2024-04-23T09:13:24.040Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-distillation.png">
+<meta property="article:published_time" content="2024-04-24T07:25:48.000Z">
+<meta property="article:modified_time" content="2024-04-26T03:56:31.792Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/analytic-dpm.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-distillation.png">
   
   
   
-  <title>扩散模型逆向过程的方差选取 - xyfJASON</title>
+  <title>扩散模型蒸馏方法 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/analytic-dpm.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/diffusion-distillation.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="扩散模型逆向过程的方差选取"></span>
+            <span id="subtitle" data-typed-text="扩散模型蒸馏方法"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-01-14 16:02" pubdate>
-          2023年1月14日 下午
+        <time datetime="2024-04-24 15:25" pubdate>
+          2024年4月24日 下午
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1k 字
+          967 字
         
       </span>
     
@@ -322,90 +322,75 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">扩散模型逆向过程的方差选取</h1>
+            <h1 id="seo-header">扩散模型蒸馏方法</h1>
             
             
               <div class="markdown-body">
                 
-                <p><span class="math display">\[
-\newcommand{\x}{\mathbf x}
-\newcommand{\calN}{\mathcal N}
-\newcommand{\E}{\mathbb E}
-\]</span></p>
-<h2 id="回顾">回顾</h2>
-<p>在<a href="/blog-main/2022/12/14/DDIM%E4%B8%8E%E5%8A%A0%E9%80%9F%E9%87%87%E6%A0%B7/" title="DDIM与加速采样">DDIM与加速采样</a>中，我们介绍了如何将 DDPM 的前向过程扩展为非马尔可夫过程： <span class="math display">\[
-\begin{align}
-&amp;q(\x_{1:T}\vert\x_0)=q(\x_T\vert\x_0)\prod_{t=2}^T q(\x_{t-1}\vert\x_t,\x_0)\\
-&amp;q(\x_t\vert\x_0)=\calN\left(\x_t;\sqrt{\bar\alpha_t}\x_0,(1-\bar\alpha_t)\mathbf I\right)\\
-&amp;q(\x_{t-1}\vert\x_t,\x_0)=\calN\left(\x_{t-1};\mu_t(\x_t,\x_0),\lambda_t^2\mathbf I \right)\\
-&amp;\mu_t(\x_t,\x_0)=\sqrt{\bar\alpha_{t-1}}\x_0+\sqrt{1-\bar\alpha_{t-1}-\lambda_t^2}\cdot\frac{\x_t-\sqrt{\bar\alpha_t}\x_0}{\sqrt{1-\bar\alpha_t}}
-\end{align}\tag{1}\label{inference}
-\]</span></p>
-<p>特别地，取 <span class="math inline">\(\lambda_t^2=\tilde\beta_t\)</span> 就得到了原始 DDPM. 考虑到 <span class="math inline">\(\eqref{inference}\)</span> 式定义的扩散和生成过程比原始 DDPM 更一般，本文基本基于它叙述。</p>
-<p>在 DDPM 中，仿照 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，我们将 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 定义为： <span class="math display">\[
-p_\theta(\x_{t-1}\vert\x_t)=\calN\left(\x_{t-1};\mu_t(\x_t,\x_\theta(\x_t,t)),\sigma_t^2\mathbf I\right)\label{generative}\tag{2}
-\]</span> 模型通过最大化 ELBO 训练： <span class="math display">\[
-\text{ELBO}=\E_{\x_1\sim q(\x_1\vert\x_0)}[\log p_\theta(\x_0\vert\x_1)]-
-\text{KL}(q(\x_T\vert \x_0)\|p(\x_T))-
-\sum_{t=2}^T\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\text{KL}(q(\x_{t-1}\vert\x_t,\x_0)\|p_\theta(\x_{t-1}\vert\x_t))\right]\tag{3}\label{elbo}
-\]</span> 注意 <span class="math inline">\(\text{KL}(q(\x_{t-1}\vert\x_t,\x_0)\Vert p_\theta(\x_{t-1}\vert\x_t))\)</span> 里面的两个分布都是正态分布，前者方差为 <span class="math inline">\(\lambda_t^2\)</span>，后者方差为 <span class="math inline">\(\sigma_t^2\)</span>；考虑到<strong>两个方差相同的正态分布的 KL 散度正比于二者均值的 L2 距离</strong>，因此 DDPM 直接取 <span class="math inline">\(\sigma_t^2=\lambda_t^2\)</span>，这样最终的损失函数就是一个非常简单的 L2 Loss.</p>
-<h2 id="ddpm-的方差选取问题">DDPM 的方差选取问题</h2>
-<p>虽然 DDPM 取 <span class="math inline">\(\sigma_t^2=\lambda_t^2\)</span> 使得推导变得简单，但其实并不合理。注意，为了方便，<span class="math inline">\(\eqref{elbo}\)</span> 式仅仅是针对一个样本 <span class="math inline">\(\x_0\)</span> 的推导，实际上真正的优化目标还要套一层对 <span class="math inline">\(\x_0\)</span> 的期望： <span class="math display">\[
-\begin{align}
-\mathbb E_{\x_0\sim q(\x_0)}[\text{ELBO}]&amp;=\mathbb E_{\x_0\sim q(\x_0)}\left[\mathbb E_{q(\x_{1:T}\vert\x_0)}\left[\log\frac{p_\theta(\x_{0:T})}{q(\x_{1:T}\vert\x_0)}\right]\right]\\
-&amp;=\mathbb E_{\x_{0:T}\sim q(\x_{0:T})}\left[\log\frac{p_\theta(\x_{0:T})}{q(\x_{0:T})}+\log q(\x_0)\right]\\
-&amp;=-\text{KL}(q(\x_{0:T})\Vert p_\theta(\x_{0:T}))-H(q(\x_0))\\
-&amp;=-\text{KL}\left(q(\x_T)\prod_{t=1}^Tq(\x_{t-1}\vert\x_t)\Bigg\Vert p_\theta(\x_T)\prod_{t=1}^Tp_\theta(\x_{t-1}\vert\x_t)\right)-H(q(\x_0))\\
-&amp;=-\text{KL}(q(\x_T)\Vert p_\theta(\x_T))-\sum_{t=1}^T\text{KL}\left(q(\x_{t-1}\vert\x_t)\Vert p_\theta(\x_{t-1}\vert\x_t)\right)-H(q(\x_0))
-\end{align}\tag{4}\label{elbo-e}
-\]</span> 其中 <span class="math inline">\(q(\x_0)\)</span> 表示数据分布。注意倒数第二步能对 <span class="math inline">\(q\)</span> 展开是因为马尔可夫过程的逆向过程依旧是马尔可夫的： <span class="math display">\[
-q(\x_{t-1}\vert\x_{t:T})=\frac{q(\x_{t-1:T})}{q(\x_{t:T})}=\frac{q(\x_{t-1})\prod_{i=t}^Tq(\x_i\vert \x_{i-1})}{q(\x_t)\prod_{i=t+1}^Tq(\x_i\vert \x_{i-1})}=\frac{q(\x_{t-1})q(\x_t\vert\x_{t-1})}{q(\x_t)}=q(\x_{t-1}\vert\x_t)
-\]</span> <strong>由 <span class="math inline">\(\eqref{elbo-e}\)</span> 式可以看见，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 要近似的目标并不是 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，而是 <span class="math inline">\(q(\x_{t-1}\vert\x_t)\)</span></strong>，它们二者之间的关系为： <span class="math display">\[
-q(\x_{t-1}\vert\x_t)=\int q(\x_{t-1}\vert\x_t,\x_0)q(\x_0\vert\x_t)\mathrm d\x_0=\mathbb E_{q(\x_0\vert\x_t)}[q(\x_{t-1}\vert\x_t,\x_0)]\tag{5}\label{rel}
-\]</span> 也就是说，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 要近似的是 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 在 <span class="math inline">\(q(\x_0\vert\x_t)\)</span> 下的均值。直观上，考虑到平均后方差会变化，故 <span class="math inline">\(\sigma_t^2=\lambda_t^2\)</span>​ 应该并不是最优的取值。</p>
-<p>特别地，在 DDPM 中作者考虑了两种特殊情形：</p>
-<ul>
-<li><p>情形一：<span class="math inline">\(\x_0\sim\mathcal N(\mathbf 0,\mathbf I)\)</span>，此时根据 <span class="math inline">\(\eqref{inference}\)</span> 式可知 <span class="math inline">\(q(\x_t)=\calN(\x_t;\mathbf 0,\mathbf{I})\)</span>，于是： <span class="math display">\[
-q(\x_{t-1}\vert \x_t)=q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},\beta_t\mathbf{I})
-\]</span> 这告诉我们，此时的方差应该取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span>.</p></li>
-<li><p>情形二：<span class="math inline">\(\x_0\sim \delta(\mathbf x_0)\)</span>，即数据集只有一个样本 <span class="math inline">\(\x_0=\mathbf 0\)</span>，此时 <span class="math inline">\(q(\x_{t-1}\vert\x_t)\)</span> 和 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 是一回事儿，所以方差应该取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span>.</p></li>
-</ul>
-<p>通过考虑这两个极端的情形，我们得到了 DDPM 论文的两种选择。当然，<strong>这些情形的设定本身也不合理</strong>——没有人的数据是一堆高斯噪声，只是为了寻找方差可能的选择而做的一些试验性假设罢了。</p>
-<h2 id="可学习方差">可学习方差</h2>
-<p>为了解决上述问题，Improved DDPM<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Nichol, Alexander Quinn, and Prafulla Dhariwal. Improved denoising diffusion probabilistic models. In *International Conference on Machine Learning*, pp. 8162-8171. PMLR, 2021.">[1]</span></a></sup> 将方差作为可学习参数进行优化。具体而言，考虑到 <span class="math inline">\(\tilde\beta_t\)</span> 和 <span class="math inline">\(\beta_t\)</span> 是两个极端情况，作者把方差参数化为二者在 log domain 的插值： <span class="math display">\[
-\sigma^2_\theta(\x_t,t)=\exp(v\log\beta_t+(1-v)\log\tilde\beta_t)
-\]</span> 损失函数为： <span class="math display">\[
-\mathcal L_\text{vlb}=-\E_{\x_0\sim q(\x_0)}[\text{ELBO}]=\sum_{t=1}^T\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\text{KL}(q(\x_{t-1}\vert\x_t,\x_0)\|p_\theta(\x_{t-1}\vert\x_t))\right]
-\]</span> 回忆在 DDPM 中，作者将上式简化为： <span class="math display">\[
-\mathcal L_\text{simple}\propto \E_{t,\x_0,\x_t}[\Vert\mu_t(\x_t,\x_0)-\mu_t(\x_t,\x_\theta(\x_t,t))\Vert^2]
-\]</span> 虽然 Improved DDPM 引入可学习方差后，损失函数已经不是 <span class="math inline">\(\mathcal L_\text{simple}\)</span> 了，但它依旧沿用了 <span class="math inline">\(\mathcal L_\text{simple}\)</span> 来训练均值，同时用 <span class="math inline">\(\mathcal L_\text{vlb}\)</span> 来训练方差（且 <span class="math inline">\(\mathcal L_\text{vlb}\)</span> 对均值做梯度截断，只用来训练方差），即采用下面这个混合损失函数： <span class="math display">\[
-\mathcal L_\text{hybrid}=\mathcal L_\text{simple}+\lambda\mathcal L_\text{vlb}
-\]</span> 实验也证明，如果只用 <span class="math inline">\(\mathcal L_\text{vlb}\)</span> 训练，图像生成效果欠佳。这告诉我们理论与实践还是有差距的，最好的设置还是要靠实验探索。</p>
-<div class="note note-info">
-            <p><strong>附：两个正态分布的 KL 散度</strong></p><p>设 <span class="math inline">\(x,y\)</span> 是两个 <span class="math inline">\(d\)</span> 维随机向量，<span class="math inline">\(\mu_x,\mu_y\in\mathbb R^d\)</span>，<span class="math inline">\(\Sigma_x,\Sigma_y\in\mathbb R^{d\times d}\)</span>，则： <span class="math display">\[\mathrm{KL}\big(\calN(\mu_x,\Sigma_x)\ \Vert\ \calN(\mu_y,\Sigma_y)\big)=\frac{1}{2}\left[\log\frac{|\Sigma_y|}{|\Sigma_x|}-d+\mathrm{tr}\left(\Sigma_y^{-1}\Sigma_x\right)+(\mu_y-\mu_x)^\mathsf T\Sigma_y^{-1}(\mu_y-\mu_x) \right]\]</span></p>
-          </div>
-<h2 id="最优方差解析形式">最优方差解析形式</h2>
-<p>Improved DDPM 引入可学习方差，缓解了 DDPM 方差设置不合理的问题，但也使得训练更加困难。然而同期工作 Analytic-DPM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Bao, Fan, Chongxuan Li, Jun Zhu, and Bo Zhang. Analytic-DPM: an Analytic Estimate of the Optimal Reverse Variance in Diffusion Probabilistic Models. In *International Conference on Learning Representations*. 2021.">[2]</span></a></sup>却发现，<span class="math inline">\(\sigma_t^2\)</span> 其实有解析形式的最优解，所以我们压根不需要训练它！具体而言，前文提到问题的优化目标是： <span class="math display">\[
-\min_{\{\mu_t,\sigma_t^2\}_{t=1}^T}\mathcal L_\text{vlb}\iff\min_{\{\mu_t,\sigma_t^2\}_{t=1}^T}\text{KL}(q(\x_{0:T})\Vert p_\theta(\x_{0:T}))
-\]</span> 作者基于 moment matching 理论——在 KL 散度下让任何分布拟合高斯分布，等价于让二者的一阶矩和二阶矩相等——并使用全方差公式，最终推导出 <span class="math inline">\(\mu_t,\sigma_t^2\)</span> 的最优解为： <span class="math display">\[
-\begin{align}
-&amp;\mu_t^\ast(\x_t,t)=\mu_t\left(\x_t,\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t+\bar\beta_t\nabla_{\x_t}\log q_t(\x_t)\right)\right)\\
-&amp;{\sigma_t^\ast}^2=\lambda_t^2+\left(\sqrt{\frac{\bar\beta_t}{\alpha_t}}-\sqrt{\bar\beta_{t-1}-\lambda_t^2}\right)^2\left(1-\bar\beta_t\ \mathbb E_{q_t(\x_t)}\frac{\Vert\nabla_{\x_t}\log q_t(\x_t)\Vert^2}{d}\right)
-\end{align}
-\]</span> 其中 <span class="math inline">\(\bar\beta_t=1-\bar\alpha_t\)</span>. 对比 DDPM 可知，<strong>均值的形式没有变化，而方差是在 <span class="math inline">\(\lambda_t^2\)</span> 的基础上，增加了一个“修正项”</strong>。这个修正项与 score function <span class="math inline">\(\nabla_{\x_t}\log q_t(\x_t)\)</span> 有关，其实也就是与噪声预测模型或原图预测模型有关。因此，我们只需要按 denoising score matching 或者 DDPM 训练好模型，代入上式即可。不过，由于 <span class="math inline">\({\sigma^\ast_t}^2\)</span>​ 中包含一个期望，所以需要做蒙特卡洛采样近似，好在这可以提前完成，并且采样数量在 10 或 100 就足够了。</p>
-<p>原论文的推导比较复杂，详见 Appendix A. 苏神在他的博客中给出了一个不严谨的直观推导<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="苏剑林. (Aug. 12, 2022). 《生成扩散模型漫谈（七）：最优扩散方差估计（上） 》[Blog post]. Retrieved from ">[3]</span></a></sup>，可供参考。</p>
-<h2 id="references">References</h2>
+                <h2 id="introduction">Introduction</h2>
+<p>尽管扩散模型在生成质量、似然估计和训练稳定性上表现出卓越的性能，但其最大的缺点就是采样耗时。为此，许多采样器被提出以加速采样过程，例如 DDIM, Analytic-DPM, PNDM, DPM-Solver 等等，它们着眼于更精确地求解扩散 ODE，例如采用高阶的求解器并充分利用扩散 ODE 的特殊结构。然而，受制于模型本身的误差，此类 training-free 的方法再精确也难以做到 10 步以内的高质量生成。</p>
+<p>随着领域的发展，如今扩散模型使用的网络架构已经基本收敛（特别是文生图应用上基本都用 SD 系列），这使得在原有网络的基础上蒸馏一个新的网络成为了不错的方案。所谓蒸馏，即训练一个 student 模型，其一步去噪的效果相当于原 teacher 模型多步去噪的效果。相比优化采样器的方法，基于蒸馏的方法往往能够实现 4 步、2 步甚至 1 步采样，彻底解决扩散模型采样耗时的问题。</p>
+<p>一个自然的问题是，<strong>为什么蒸馏可以 work？</strong>换句话说，为什么我们不直接在较少步数上训练模型，偏偏要在较多步数上训练之后再蒸馏，这难道不是多此一举吗？要回答这个问题，我们需要对扩散模型的优化目标有着深刻的理解。设 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 表示“原图预测模型”，则扩散模型的训练过程为：从数据集中采样 <span class="math inline">\(\mathbf x_0\)</span> 并最小化 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 与<span class="math inline">\(\mathbf x_0\)</span> 的欧式距离。许多教程将其简单地解释为用 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 去拟合 <span class="math inline">\(\mathbf x_0\)</span>，这种说法不是特别的准确（当然也不算错，只是容易为初学者带来误解）。事实上，由于不同的 <span class="math inline">\(\mathbf x_0\)</span> 都有可能得到相同的 <span class="math inline">\(\mathbf x_t\)</span>，所以随着训练的进行，<span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 拟合的是这些 <span class="math inline">\(\mathbf x_0\)</span> 的平均值。其实通过简单的推导可以得到： <span class="math display">\[
+\min_\theta\mathbb E_{q(\mathbf x_0)}\left[\Vert\mathbf x_\theta(\mathbf x_t)-\mathbf x_0\Vert_2^2\right]\implies \mathbf x_{\theta^\ast}(\mathbf x_t)=\mathbb E_{q(\mathbf x_0\vert\mathbf x_t)}[\mathbf x_0]=\mathbb E[\mathbf x_0\vert\mathbf x_t]
+\]</span> 因此模型 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 要拟合的真值是 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，即 <span class="math inline">\(\mathbf x_0\)</span> 关于 <span class="math inline">\(q(\mathbf x_0\vert\mathbf x_t)\)</span> 的加权平均。</p>
+<p>理解了这一点之后，就可以解释为什么蒸馏可以 work 了。扩散模型的标准训练流程依靠不断采样、每次拟合一个 <span class="math inline">\(\mathbf x_0\)</span> 的方式来拟合 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，这意味着损失函数的方差很大，直观上训练曲线会非常振荡。而蒸馏时 teacher 模型给出的监督信号本就是对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的近似，所以蒸馏损失的方差显著降低，训练过程更平稳，模型更容易收敛。不过，蒸馏虽然减少了训练损失的方差，但 teacher 模型对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的估计是有偏差的，所以这里存在 bias-variance trade-off.</p>
+<h2 id="progressive-distillation">Progressive Distillation</h2>
+<p>Progressive distillation<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[1]</span></a></sup> 的基本思想是<strong>每次蒸馏将采样步数缩短到原来的一半</strong>，如此进行 <span class="math inline">\(\log_2 N\)</span> 次迭代，就可以把 <span class="math inline">\(N\)</span> 步采样模型蒸馏为 1 步采样模型。</p>
+<p><img src="progressive.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>具体而言，假设有一个 teacher 扩散模型 <span class="math inline">\(\mathbf x_\eta(\cdot)\)</span>，我们希望从中蒸馏一个 student 模型 <span class="math inline">\(\mathbf x_\theta(\cdot)\)</span>，使其一步去噪相当于 teacher 模型两步去噪的效果。因此蒸馏时，首先从数据集中采样样本 <span class="math inline">\(\mathbf x_0\)</span>，添加噪声得到 <span class="math inline">\(\mathbf x_t\)</span>；然后用 teacher 模型实施两步 DDIM 去噪，得： <span class="math display">\[
+\begin{gather}
+\mathbf x_{t&#39;}=\alpha_{t&#39;}\mathbf x_\eta(\mathbf x_t)+\frac{\sigma_{t&#39;}}{\sigma_t}(\mathbf x_t-\alpha_t\mathbf x_\eta(\mathbf x_t))\\
+\mathbf x_{t&#39;&#39;}=\alpha_{t&#39;&#39;}\mathbf x_\eta(\mathbf x_{t&#39;})+\frac{\sigma_{t&#39;&#39;}}{\sigma_{t&#39;}}(\mathbf x_{t&#39;}-\alpha_{t&#39;}\mathbf x_\eta(\mathbf x_{t&#39;}))
+\end{gather}
+\]</span> 那么对于 student 模型，我们希望它一步去噪就能得到 <span class="math inline">\(\mathbf x_{t&#39;&#39;}\)</span>，即： <span class="math display">\[
+\mathbf x_{t&#39;&#39;}=\alpha_{t&#39;&#39;}\mathbf x_\theta(\mathbf x_t)+\frac{\sigma_{t&#39;&#39;}}{\sigma_t}(\mathbf x_t-\alpha_t\mathbf x_\theta(\mathbf x_t))
+\]</span> 整理得： <span class="math display">\[
+\mathbf x_\theta(\mathbf x_t)=\frac{\mathbf x_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\mathbf x_t}{\alpha_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\alpha_t}
+\]</span> 因此右边就是 student 模型的拟合目标，故损失函数为： <span class="math display">\[
+\mathcal L_\theta=w_t\left\Vert\mathbf x_\theta(\mathbf x_t)-\frac{\mathbf x_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\mathbf x_t}{\alpha_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\alpha_t}\right\Vert_2^2
+\]</span> 待 student 模型收敛后就完成了一轮蒸馏，采样步数减少了一半。迭代执行多轮蒸馏即可指数式地减少采样步数。</p>
+<p>算法流程的对比图如下所示（符号略有不同，绿色高亮是与标准训练流程相比不同的地方）：</p>
+<p><img src="progressive-alg.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<p>Progressive distillation 的蒸馏效果如下图所示，可以看见，蒸馏后 4 到 8 步采样的结果就可以与 DDIM 100 步的结果持平，从而大幅加速了采样过程。</p>
+<p><img src="progressive-res.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<h2 id="guided-diffusion-distillation">Guided Diffusion Distillation</h2>
+<h2 id="reflow">Reflow</h2>
+<h2 id="consistency-distillation">Consistency Distillation</h2>
+<h2 id="latent-consistency-distillation">Latent Consistency Distillation</h2>
+<h2 id="adversarial-diffusion-distillation">Adversarial Diffusion Distillation</h2>
+<h2 id="instaflow">InstaFlow</h2>
+<h2 id="distribution-matching-distillation">Distribution Matching Distillation</h2>
+<h2 id="trajectory-consistency-distillation">Trajectory Consistency Distillation</h2>
+<h2 id="reference">Reference</h2>
 <section class="footnotes">
 <div class="footnote-list">
 <ol>
 <li>
-<span id="fn:1" class="footnote-text"><span>Nichol, Alexander Quinn, and Prafulla Dhariwal. Improved denoising diffusion probabilistic models. In <em>International Conference on Machine Learning</em>, pp. 8162-8171. PMLR, 2021. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:1" class="footnote-text"><span>Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. <em>arXiv preprint arXiv:2202.00512</em> (2022). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Bao, Fan, Chongxuan Li, Jun Zhu, and Bo Zhang. Analytic-DPM: an Analytic Estimate of the Optimal Reverse Variance in Diffusion Probabilistic Models. In <em>International Conference on Learning Representations</em>. 2021. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>Meng, Chenlin, Robin Rombach, Ruiqi Gao, Diederik Kingma, Stefano Ermon, Jonathan Ho, and Tim Salimans. On distillation of guided diffusion models. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 14297-14306. 2023. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:3" class="footnote-text"><span>苏剑林. (Aug. 12, 2022). 《生成扩散模型漫谈（七）：最优扩散方差估计（上） 》[Blog post]. Retrieved from <a target="_blank" rel="noopener" href="https://kexue.fm/archives/9245" class="uri">https://kexue.fm/archives/9245</a> <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:3" class="footnote-text"><span>Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. <em>arXiv preprint arXiv:2209.03003</em> (2022). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:4" class="footnote-text"><span>Song, Yang, Prafulla Dhariwal, Mark Chen, and Ilya Sutskever. Consistency models. <em>arXiv preprint arXiv:2303.01469</em> (2023). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Luo, Simian, Yiqin Tan, Longbo Huang, Jian Li, and Hang Zhao. Latent consistency models: Synthesizing high-resolution images with few-step inference. <em>arXiv preprint arXiv:2310.04378</em> (2023). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Sauer, Axel, Dominik Lorenz, Andreas Blattmann, and Robin Rombach. Adversarial diffusion distillation. <em>arXiv preprint arXiv:2311.17042</em> (2023). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Liu, Xingchao, Xiwen Zhang, Jianzhu Ma, and Jian Peng. Instaflow: One step is enough for high-quality diffusion-based text-to-image generation. In <em>The Twelfth International Conference on Learning Representations</em>. 2023. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Yin, Tianwei, Michaël Gharbi, Richard Zhang, Eli Shechtman, Fredo Durand, William T. Freeman, and Taesung Park. One-step diffusion with distribution matching distillation. <em>arXiv preprint arXiv:2311.18828</em> (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:9" class="footnote-text"><span>Zheng, Jianbin, Minghui Hu, Zhongyi Fan, Chaoyue Wang, Changxing Ding, Dacheng Tao, and Tat-Jen Cham. Trajectory Consistency Distillation. <em>arXiv preprint arXiv:2402.19159</em> (2024). <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
@@ -469,8 +454,8 @@ q(\x_{t-1}\vert \x_t)=q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>扩散模型逆向过程的方差选取</div>
-      <div>https://xyfjason.github.io/blog-main/2023/01/14/扩散模型逆向过程的方差选取/</div>
+      <div>扩散模型蒸馏方法</div>
+      <div>https://xyfjason.github.io/blog-main/2024/04/24/扩散模型蒸馏方法/</div>
     </div>
     <div class="license-meta">
       
@@ -482,7 +467,7 @@ q(\x_{t-1}\vert \x_t)=q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2023年1月14日</div>
+          <div>2024年4月24日</div>
         </div>
       
       
@@ -514,18 +499,12 @@ q(\x_{t-1}\vert \x_t)=q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2023/02/11/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%AF%BB%E6%89%BE%E8%AF%AD%E4%B9%89%E7%A9%BA%E9%97%B4/" title="扩散模型应用·寻找语义空间">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">扩散模型应用·寻找语义空间</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2023/01/05/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8%C2%B7%E5%9F%BA%E4%BA%8E%E6%96%87%E6%9C%AC%E7%9A%84%E5%9B%BE%E5%83%8F%E7%BC%96%E8%BE%91/" title="扩散模型应用·基于文本的图像编辑">
-                        <span class="hidden-mobile">扩散模型应用·基于文本的图像编辑</span>
+                      <a href="/blog-main/2024/04/10/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-5%C2%B7%E6%97%A0%E6%A8%A1%E5%9E%8B%E6%8E%A7%E5%88%B6/" title="[强化学习]5·无模型控制">
+                        <span class="hidden-mobile">[强化学习]5·无模型控制</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
