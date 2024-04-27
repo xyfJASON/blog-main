@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vae.png">
 <meta property="article:published_time" content="2022-09-16T16:22:21.000Z">
-<meta property="article:modified_time" content="2024-03-08T04:25:23.237Z">
+<meta property="article:modified_time" content="2024-04-27T08:03:57.630Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -423,7 +423,7 @@ p_\theta(x\vert z)=\frac{1}{(2\pi)^{D/2}(\det\Sigma_\theta(z))^{1/2}}\exp\left(-
 \mathcal L=\underbrace{\frac{1}{2\sigma^2}\|x-\mu_\theta(z)\|^2}_\text{Reconstruction}+\underbrace{\frac{1}{2}\sum_{i=1}^d\left(\mu_\phi^2(x)_i+\sigma_\phi^2(x)_i-\log \sigma_\phi^2(x)_i-1\right)}_\text{KL Regularization},\quad z\sim\mathcal N(\mu_\phi(x),\text{diag}(\sigma_\phi^2(x)))
 \]</span> 可以看到，重构项和 KL 正则项由超参数 <span class="math inline">\(\sigma^2\)</span> 加权。<span class="math inline">\(\sigma^2\)</span> 越小，重构项权重越大，意味着结果更真实，但泛化性下降。一般直接取 <span class="math inline">\(\sigma^2=1\)</span> 即可。</p>
 <h3 id="重参数化技巧">重参数化技巧</h3>
-<p>重参数化技巧在<a href="/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/" title="重参数化技巧 The Reparameterization Trick">之前的文章</a>中已经介绍过了，并且正是用 VAE 举的例子，所以这里不再赘述。简单说来，就是现在 <span class="math inline">\(z\)</span> 是从 <span class="math inline">\(q_\phi(z\vert x)\sim\N(\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x)))\)</span> 中采样的，但梯度无法经过采样传播到参数 <span class="math inline">\(\phi\)</span>。解决方法很简单，先从 <span class="math inline">\(\N(0,I)\)</span> 中采样 <span class="math inline">\(z&#39;\)</span>，再计算 <span class="math inline">\(z=\mu_\phi(x)+z&#39;\cdot\sigma_\phi(x)\)</span> 就好了。</p>
+<p>重参数化技巧在<a href="/blog-main/2022/06/22/SF%E4%BC%B0%E8%AE%A1%E4%B8%8E%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7/" title="SF估计与重参数化技巧">之前的文章</a>中已经介绍过了，并且正是用 VAE 举的例子，所以这里不再赘述。简单说来，就是现在 <span class="math inline">\(z\)</span> 是从 <span class="math inline">\(q_\phi(z\vert x)\sim\N(\mu_\phi(x),\mathrm{diag}(\sigma_\phi^2(x)))\)</span> 中采样的，但梯度无法经过采样传播到参数 <span class="math inline">\(\phi\)</span>。解决方法很简单，先从 <span class="math inline">\(\N(0,I)\)</span> 中采样 <span class="math inline">\(z&#39;\)</span>，再计算 <span class="math inline">\(z=\mu_\phi(x)+z&#39;\cdot\sigma_\phi(x)\)</span> 就好了。</p>
 <h2 id="代码实现">代码实现</h2>
 <p>Github repo: <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/VAEs-Implementations" class="uri">https://github.com/xyfJASON/VAEs-Implementations</a></p>
 <p>放个结果：</p>

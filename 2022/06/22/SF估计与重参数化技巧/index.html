@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="重参数化技巧 很早就听说过「重参数化技巧」，但一直没有去了解，近来这个词又反复出现在我眼中，遂搜索资料学了一下，记录于此。 一般而言，我们在机器学习&#x2F;深度学习的过程中遇到的优化目标长这样： \[ \mathbb E_{z\sim \mathcal P}[f_\theta(z)] \] 使用梯度下降优化之： \[ \begin{align} \nabla_\theta\mathbb E_{z\sim">
+    <meta name="description" content="问题引入 一般而言，许多机器学习&#x2F;深度学习的优化目标长这样： \[ \mathbb E_{z\sim \mathcal P}[f_\theta(z)]\tag{1}\label{1} \] 训练时用采样近似上述期望： \[ \mathbb E_{z\sim\mathcal P}[f_\theta(z)]\approx\frac{1}{N}\sum_{n&#x3D;1}^N f_\theta(z^{(n)})">
 <meta property="og:type" content="article">
-<meta property="og:title" content="重参数化技巧 The Reparameterization Trick">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/06/22/%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7-The-Reparameterization-Trick/index.html">
+<meta property="og:title" content="SF估计与重参数化技巧">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/06/22/SF%E4%BC%B0%E8%AE%A1%E4%B8%8E%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="重参数化技巧 很早就听说过「重参数化技巧」，但一直没有去了解，近来这个词又反复出现在我眼中，遂搜索资料学了一下，记录于此。 一般而言，我们在机器学习&#x2F;深度学习的过程中遇到的优化目标长这样： \[ \mathbb E_{z\sim \mathcal P}[f_\theta(z)] \] 使用梯度下降优化之： \[ \begin{align} \nabla_\theta\mathbb E_{z\sim">
+<meta property="og:description" content="问题引入 一般而言，许多机器学习&#x2F;深度学习的优化目标长这样： \[ \mathbb E_{z\sim \mathcal P}[f_\theta(z)]\tag{1}\label{1} \] 训练时用采样近似上述期望： \[ \mathbb E_{z\sim\mathcal P}[f_\theta(z)]\approx\frac{1}{N}\sum_{n&#x3D;1}^N f_\theta(z^{(n)})">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reparameterization.png">
 <meta property="article:published_time" content="2022-06-22T03:06:57.000Z">
-<meta property="article:modified_time" content="2024-02-08T05:15:16.027Z">
+<meta property="article:modified_time" content="2024-04-27T08:10:17.737Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>重参数化技巧 The Reparameterization Trick - xyfJASON</title>
+  <title>SF估计与重参数化技巧 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="重参数化技巧 The Reparameterization Trick"></span>
+            <span id="subtitle" data-typed-text="SF估计与重参数化技巧"></span>
           
         </div>
 
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          797 字
+          1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          7 分钟
+          9 分钟
         
       </span>
     
@@ -322,87 +322,67 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">重参数化技巧 The Reparameterization Trick</h1>
+            <h1 id="seo-header">SF估计与重参数化技巧</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="重参数化技巧">重参数化技巧</h2>
-<p>很早就听说过「重参数化技巧」，但一直没有去了解，近来这个词又反复出现在我眼中，遂搜索资料学了一下，记录于此。</p>
-<p>一般而言，我们在机器学习/深度学习的过程中遇到的优化目标长这样： <span class="math display">\[
-\mathbb E_{z\sim \mathcal P}[f_\theta(z)]
-\]</span> 使用梯度下降优化之： <span class="math display">\[
-\begin{align}
-\nabla_\theta\mathbb E_{z\sim \mathcal P}[f_\theta(z)]&amp;=\nabla_\theta\left[\int p(z)f_\theta(z)\mathrm dz\right]\\
-&amp;=\int p(z)\nabla_\theta f_\theta(z) \mathrm dz\\
-&amp;=\mathbb E_{z\sim \mathcal P}[\nabla_\theta f_\theta(z)]
-\end{align}
-\]</span> 即期望和求梯度是可交换的，这使得我们可以通过「采样 <span class="math inline">\(z\sim \mathcal P\)</span> <span class="math inline">\(\to\)</span> 对每一个样本计算梯度 <span class="math inline">\(\nabla_\theta f_\theta(z)\)</span> <span class="math inline">\(\to\)</span> 求平均」的训练过程来近似上式。然而，在有些情形下（VAE、强化学习等），优化目标中的概率分布也由参数 <span class="math inline">\(\theta\)</span> 决定： <span class="math display">\[
-\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]
-\]</span> 如果我们尝试求它的梯度： <span class="math display">\[
+                <h2 id="问题引入">问题引入</h2>
+<p>一般而言，许多机器学习/深度学习的优化目标长这样： <span class="math display">\[
+\mathbb E_{z\sim \mathcal P}[f_\theta(z)]\tag{1}\label{1}
+\]</span> 训练时用采样近似上述期望： <span class="math display">\[
+\mathbb E_{z\sim\mathcal P}[f_\theta(z)]\approx\frac{1}{N}\sum_{n=1}^N f_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{2}\label{2}
+\]</span> 能够这么做的原因在于 <span class="math inline">\(\eqref{2}\)</span> 式是 <span class="math inline">\(\eqref{1}\)</span> 式的无偏估计，这一点相信大家都很清楚。但容易被忽略的一点是，由于常用的优化算法一般都是基于梯度的，我们还应保证从样本中计算的梯度也是真实梯度的无偏估计！幸运的是，对于上述形式的一般问题而言，这一点是容易成立的。可以计算真实梯度为： <span class="math display">\[
+\nabla_\theta\mathbb E_{z\sim \mathcal P}[f_\theta(z)]=\nabla_\theta\left[\int p(z)f_\theta(z)\mathrm dz\right]=\int p(z)\nabla_\theta f_\theta(z) \mathrm dz=\mathbb E_{z\sim \mathcal P}[\nabla_\theta f_\theta(z)]\tag{3}\label{3}
+\]</span> 而基于样本计算的梯度为： <span class="math display">\[
+\nabla_\theta\left[\frac{1}{N}\sum_{n=1}^N f_\theta(z^{(n)})\right]=\frac{1}{N}\sum_{n=1}^N\nabla_\theta f_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{4}\label{4}
+\]</span> 显然 <span class="math inline">\(\eqref{4}\)</span> 式的确是 <span class="math inline">\(\eqref{3}\)</span> 式的无偏估计。</p>
+<p>然而，在有些问题中（变分推断、强化学习等），优化目标中的概率分布也由参数 <span class="math inline">\(\theta\)</span> 决定： <span class="math display">\[
+\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\tag{5}\label{5}
+\]</span> 此时一般问题的做法还能够无缝迁移过来吗？我们计算一下真实梯度： <span class="math display">\[
 \begin{align}
 \nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]&amp;=\nabla_\theta\left[\int p_\theta(z)f_\theta(z)\mathrm dz\right]\\
 &amp;=\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz+\int p_\theta(z)\nabla_\theta f_\theta(z)\mathrm dz\\
-&amp;={\color{purple}{\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz}}+\mathbb E_{z\sim \mathcal P_\theta}[\nabla f_\theta(z)]
-\end{align}
-\]</span> 会发现紫色那一坨没法通过采样近似——假若我们依旧从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样，采出来的样本并不能告诉我们怎么去更新 <span class="math inline">\(\theta\)</span>，换句话说，<strong>采样是一个不可导的操作</strong>。这时就需要用到重参数化技巧了！</p>
-<p>既然不能直接从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样，那就曲线救国——先从无参数分布 <span class="math inline">\(\mathcal Q\)</span> 中采样一个 <span class="math inline">\(\epsilon\)</span>，再通过变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span> 得到 <span class="math inline">\(z\)</span>. 这样，梯度就能够不经过采样操作传递给 <span class="math inline">\(\theta\)</span>：</p>
-<p><span class="math display">\[
-\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]=\nabla_\theta \mathbb E_{\epsilon\sim \mathcal Q}[f_\theta(g_\theta(\epsilon))]=\mathbb E_{\epsilon\sim \mathcal Q}[\nabla_\theta f_\theta(g_\theta(\epsilon))]
-\]</span> 因此训练过程就是「采样 <span class="math inline">\(\epsilon\sim \mathcal Q\)</span> <span class="math inline">\(\to\)</span> 对每一个样本计算梯度 <span class="math inline">\(\nabla_\theta f_\theta(g_\theta(\epsilon))\)</span> <span class="math inline">\(\to\)</span> 求平均」，和一般情形并无不同。</p>
-<p><img src="img.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="采样操作在计算图之外"/></p>
+&amp;={\color{purple}{\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz}}+\mathbb E_{z\sim \mathcal P_\theta}[\nabla_\theta f_\theta(z)]
+\end{align}\tag{6}\label{6}
+\]</span> 可以看见，与 <span class="math inline">\(\eqref{3}\)</span> 式相比，<span class="math inline">\(\eqref{6}\)</span> 式多了紫色的这一项。但是，基于样本计算梯度的结果却依旧是 <span class="math inline">\(\eqref{4}\)</span> 式，二者对不上了！换句话说，<strong>采样是一个不可导的操作</strong>，从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样本来应该对 <span class="math inline">\(\theta\)</span> 的更新产生紫色部分的贡献，但是采样阻断了梯度的传播，导致这部分贡献丢失了。下面我们介绍两种解决这个问题的方法——SF 估计和重参数化技巧。</p>
+<h2 id="score-function-估计">Score Function 估计</h2>
+<p>事实上，紫色部分是可以处理为期望形式的： <span class="math display">\[
+\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz=\int f_\theta(z)p_\theta(z)\nabla_\theta\log p_\theta(z)\mathrm dz=\mathbb E_{z\sim\mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]\tag{7}\label{7}
+\]</span> 其中 <span class="math inline">\(\nabla_\theta\log p_\theta(z)\)</span> 称作 <strong>score function</strong>. 于是可以通过采样近似 <span class="math inline">\(\eqref{7}\)</span> 式： <span class="math display">\[
+\mathbb E_{z\sim\mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]\approx\frac{1}{N}\sum_{n=1}^Nf_\theta(z^{(n)})\nabla_\theta\log p_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{8}\label{8}
+\]</span> 这样就把丢失的紫色部分找了回来。但是实践中，人们发现使用 <span class="math inline">\(\eqref{8}\)</span> 式做估计的<strong>方差往往很大</strong>，影响训练的收敛。为了减小方差，一种方法是给 <span class="math inline">\(f_\theta(z)\)</span> 减去一个 baseline： <span class="math display">\[
+\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]=\mathbb E_{z\sim \mathcal P_\theta}[(f_\theta(z)-b)\nabla_\theta\log p_\theta(z)]\tag{9}
+\]</span> 上式成立的原因在于 score function 的期望为 0: <span class="math display">\[
+\mathbb E_{z\sim\mathcal P_\theta}[\nabla_\theta\log p_\theta(z)]=\int p_\theta(z)\nabla_\theta\log p_\theta(z)\mathrm dz=\int \nabla_\theta p_\theta(z)\mathrm dz=\nabla_\theta\int p_\theta(z)\mathrm dz=\nabla_\theta 1=0\tag{10}
+\]</span> 那么，只需要找到一个合适的 baseline <span class="math inline">\(b\)</span> 最小化方差即可： <span class="math display">\[
+\min_b\ \mathbb E_{z\sim\mathcal P_\theta}\left[((f_\theta(z)-b)\nabla_\theta\log p_\theta(z))^2\right]-\left(\mathbb E_{z\sim\mathcal P_\theta}[(f_\theta(z)-b)\nabla_\theta\log p_\theta(z)]\right)^2\tag{11}
+\]</span> 这种减小方差的方式在强化学习的策略梯度算法中有所应用。</p>
+<h2 id="重参数化技巧">重参数化技巧</h2>
+<p>相比 SF 估计利用 score function 把紫色部分估计了出来，重参数化技巧则直接绕过了从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样这一不可导操作——先从无参数分布 <span class="math inline">\(\mathcal Q\)</span> 中采样一个 <span class="math inline">\(\epsilon\)</span>，再通过变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span> 得到 <span class="math inline">\(z\)</span>，保证 <span class="math inline">\(z\sim\mathcal P_\theta\)</span> 即可。这样，梯度就能够不经过采样操作传递给 <span class="math inline">\(\theta\)</span>： <span class="math display">\[
+\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]=\nabla_\theta \mathbb E_{\epsilon\sim \mathcal Q}[f_\theta(g_\theta(\epsilon))]=\mathbb E_{\epsilon\sim \mathcal Q}[\nabla_\theta f_\theta(g_\theta(\epsilon))]\tag{12}
+\]</span> <img src="img.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="采样操作在计算图之外"/></p>
 <p>现在的问题就是，怎样确定分布 <span class="math inline">\(\mathcal Q\)</span> 和变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span>，使得变换后的结果满足 <span class="math inline">\(z\sim \mathcal P_\theta\)</span> 呢？这就得具体问题具体分析了。</p>
 <h3 id="高斯分布情形">高斯分布情形</h3>
-<p>在 VAE 中，<span class="math inline">\(\mathcal P_\theta\)</span> 要求是一个高斯分布，即：<span class="math inline">\(z\sim \mathcal P_\theta=\mathcal N(\mu_\theta, \sigma^2_\theta)\)</span>，其中 <span class="math inline">\(\mu_\theta, \sigma^2_\theta\)</span> 由一个 encoder 网络输出而来，<span class="math inline">\(\theta\)</span> 是这个 encoder 网络的参数。</p>
+<p>在 VAE 中，<span class="math inline">\(\mathcal P_\theta\)</span> 是一个高斯分布，即：<span class="math inline">\(z\sim \mathcal P_\theta=\mathcal N(\mu_\theta, \sigma^2_\theta)\)</span>，其中 <span class="math inline">\(\mu_\theta, \sigma^2_\theta\)</span> 由一个 encoder 网络输出而来，<span class="math inline">\(\theta\)</span> 是这个 encoder 网络的参数。</p>
 <p>这是一种较为简单的情形，我们很容易想到取 <span class="math inline">\(\epsilon\sim \mathcal Q=\mathcal N(0, 1)\)</span>，并作变换 <span class="math inline">\(z=g_\theta(\epsilon)=\sigma_\theta \epsilon+\mu_\theta\)</span> 即可。</p>
 <h3 id="离散分布情形">离散分布情形</h3>
-<p>假若 <span class="math inline">\(z\)</span> 是离散随机变量，不妨设 <span class="math inline">\(z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>，其中 <span class="math inline">\(\sum_{i=1}^k p_i=1\)</span>，那么 <strong>Gumbel Max</strong> 提供了一种将采样过程重参数化的方式： <span class="math display">\[
-\mathop{\text{argmax}}_{i=1}^k\left[\log p_i-\log(-\log \epsilon_i)\right]\quad\quad \epsilon_i\sim U[0,1]
-\]</span> 可以证明，依据上式采样即相当于依据概率分布 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样。</p>
-<blockquote>
-<p>证明：不妨设 <span class="math inline">\(\text{argmax}\)</span> 输出为 <span class="math inline">\(1\)</span>，这意味着： <span class="math display">\[
-\log p_1-\log(-\log \epsilon_1)&gt;\log p_j-\log(-\log \epsilon_j)\quad\forall j\neq 1
-\]</span> 略作化简： <span class="math display">\[
-\epsilon_j&lt;\epsilon_1^{p_j/p_1}\quad\forall j\neq 1
-\]</span> 因为 <span class="math inline">\(\epsilon_i\)</span> 都是 <span class="math inline">\([0,1]\)</span> 上的均匀分布，所以在给定 <span class="math inline">\(\epsilon_1\)</span> 的条件下，上式成立的条件概率就是： <span class="math display">\[
-\prod_{j\neq 1}\epsilon_1^{p_j/p_1}=\epsilon_1^{1/p_1-1}
-\]</span> 因此采样结果为 <span class="math inline">\(1\)</span> 的概率是： <span class="math display">\[
-\int_0^1 \epsilon_1^{1/p_1-1}\mathrm d \epsilon_1=p_1\cdot\left.\epsilon_1^{1/p_1}\right|_0^1=p_1
-\]</span> 所以说，依据 Gumbel Max 采样和依据 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样效果相同。</p>
-</blockquote>
+<p>假若 <span class="math inline">\(z\)</span> 是离散随机变量，不妨设 <span class="math inline">\(z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>，其中 <span class="math inline">\(\sum_{i=1}^k p_i=1\)</span>，那么 <strong>Gumbel Max</strong> 提供了一种重参数化方式： <span class="math display">\[
+\hat z=\mathop{\text{argmax}}_{i=1}^k\left[\log p_i-\log(-\log \epsilon_i)\right]\quad\quad \epsilon_i\sim U[0,1]\tag{13}
+\]</span> 可以证明 <span class="math inline">\(\hat z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>​​​.</p>
+<div class="note note-secondary">
+            <p>证明：不妨设 <span class="math inline">\(\text{argmax}\)</span> 输出为 <span class="math inline">\(1\)</span>，这意味着： <span class="math display">\[\log p_1-\log(-\log \epsilon_1)&gt;\log p_j-\log(-\log \epsilon_j)\quad\forall j\neq 1\]</span> 略作化简： <span class="math display">\[\epsilon_j&lt;\epsilon_1^{p_j/p_1}\quad\forall j\neq 1\]</span> 因为 <span class="math inline">\(\epsilon_i\)</span> 都是 <span class="math inline">\([0,1]\)</span> 上的均匀分布，所以在给定 <span class="math inline">\(\epsilon_1\)</span> 的条件下，上式成立的条件概率就是： <span class="math display">\[\prod_{j\neq 1}\epsilon_1^{p_j/p_1}=\epsilon_1^{1/p_1-1}\]</span> 因此采样结果为 <span class="math inline">\(1\)</span> 的概率是： <span class="math display">\[\int_0^1 \epsilon_1^{1/p_1-1}\mathrm d \epsilon_1=p_1\cdot\left.\epsilon_1^{1/p_1}\right|_0^1=p_1\]</span> 所以说，依据 Gumbel Max 采样和依据 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样效果相同。</p>
+          </div>
 <p>但是这里有个问题，虽然 Gumbel Max 使得采样操作避开了求导，却又引入了 <span class="math inline">\(\text{argmax}\)</span> 这个不可导操作！因此，我们需要进一步地用可导的 <span class="math inline">\(\text{softmax}\)</span> 对 <span class="math inline">\(\text{argmax}\)</span> 做近似（或者更准确地说，是对 <span class="math inline">\(\text{argmax}\)</span> 对应的那个 <span class="math inline">\(\text{onehot}\)</span> 向量做近似），我们将下式称为 <strong>Gumbel Softmax</strong>： <span class="math display">\[
-\text{softmax}\left(\frac{\log p_i-\log (-\log \epsilon_i)}{\tau}\right)\quad\quad \epsilon_i\sim U[0,1]
+\text{softmax}\left(\frac{\log p_i-\log (-\log \epsilon_i)}{\tau}\right)\quad\quad \epsilon_i\sim U[0,1]\tag{14}\label{14}
 \]</span> 其中 <span class="math inline">\(\tau&gt;0\)</span> 是温度参数，<span class="math inline">\(\tau\to 0\)</span> 时 <span class="math inline">\(\text{softmax}\to\text{onehot}\)</span>.</p>
 <p><img src="paper.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source:[5]" /></p>
-<p>说了这么多，我们现在总结一下，欲计算 <span class="math inline">\(\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\)</span>，首先采样 <span class="math inline">\(k\)</span> 个服从 <span class="math inline">\(U[0,1]\)</span> 的样本 <span class="math inline">\(\epsilon_i\)</span>，然后计算 Gumbel Softmax，得到一个 <span class="math inline">\(k\)</span> 维向量 <span class="math inline">\(\tilde z\)</span>，那么 <span class="math inline">\(f_\theta(\tilde z)\approx \mathbb E_{z\sim P_\theta}[f_\theta(z)]\)</span>.</p>
-<h3 id="小结">小结</h3>
-<table>
-
-<thead>
-<tr class="header">
-<th style="text-align: center;"></th>
-<th style="text-align: center;">高斯分布情形</th>
-<th style="text-align: center;">离散分布情形</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(\mathcal P_\theta\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(\mathcal N(\mu_\theta, \sigma^2_\theta)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"><span class="math inline">\(\mathcal Q\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(\mathcal N(0,1)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(U[0,1]\)</span> (<span class="math inline">\(k\)</span> 个)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(g_\theta(\epsilon)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(z=\sigma_\theta \epsilon+\mu_\theta\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(z\)</span> 通过 Gumbel Softmax 计算</td>
-</tr>
-</tbody>
-</table>
+<p>总结一下，利用 Gumbel Softmax 估计 <span class="math inline">\(\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\)</span> 的流程为：</p>
+<ol type="1">
+<li>采样 <span class="math inline">\(k\)</span> 个服从 <span class="math inline">\(U[0,1]\)</span> 的样本 <span class="math inline">\(\epsilon_i\)</span></li>
+<li>计算 Gumbel Softmax <span class="math inline">\(\eqref{14}\)</span> 式，得到一个 <span class="math inline">\(k\)</span> 维向量 <span class="math inline">\(\tilde z\)</span></li>
+<li>得到估计 <span class="math inline">\(\mathbb E_{z\sim P_\theta}[f_\theta(z)]\approx f_\theta(\tilde z)\)</span></li>
+</ol>
 <h2 id="参考资料">参考资料</h2>
 <p>[1] 苏剑林. (Jun. 10, 2019). 《漫谈重参数：从正态分布到Gumbel Softmax 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/6705</p>
 <p>[2] The Reparameterization Trick. https://gregorygundersen.com/blog/2018/04/29/reparameterization/</p>
@@ -463,8 +443,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>重参数化技巧 The Reparameterization Trick</div>
-      <div>https://xyfjason.github.io/blog-main/2022/06/22/重参数化技巧-The-Reparameterization-Trick/</div>
+      <div>SF估计与重参数化技巧</div>
+      <div>https://xyfjason.github.io/blog-main/2022/06/22/SF估计与重参数化技巧/</div>
     </div>
     <div class="license-meta">
       
