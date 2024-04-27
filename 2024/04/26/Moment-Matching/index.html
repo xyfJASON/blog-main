@@ -16,24 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="除了变分推断之外，另一种确定性的近似推断方法是期望传播 (expectation propagation, EP) 算法。在介绍期望传播算法之前，首先需要介绍 moment matching. Moment Matching 设 \(p(\mathbf z)\) 是一个给定的分布，我们希望用一个指数族分布 \(q(\mathbf z)\) 去近似 \(p(\mathbf z)\)： \[ q(\m">
+    <meta name="description" content="Moment Matching 设 \(p(\mathbf z)\) 是一个给定的分布，我们希望用一个指数族分布 \(q(\mathbf z)\) 去近似 \(p(\mathbf z)\)： \[ q(\mathbf z)&#x3D;h(\mathbf z)g(\boldsymbol\eta)\exp\left\{\boldsymbol\eta^T\mathbf u(\mathbf z)\right\} \">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Expectation Propagation">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/26/Expectation-Propagation/index.html">
+<meta property="og:title" content="Moment Matching">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/26/Moment-Matching/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="除了变分推断之外，另一种确定性的近似推断方法是期望传播 (expectation propagation, EP) 算法。在介绍期望传播算法之前，首先需要介绍 moment matching. Moment Matching 设 \(p(\mathbf z)\) 是一个给定的分布，我们希望用一个指数族分布 \(q(\mathbf z)\) 去近似 \(p(\mathbf z)\)： \[ q(\m">
+<meta property="og:description" content="Moment Matching 设 \(p(\mathbf z)\) 是一个给定的分布，我们希望用一个指数族分布 \(q(\mathbf z)\) 去近似 \(p(\mathbf z)\)： \[ q(\mathbf z)&#x3D;h(\mathbf z)g(\boldsymbol\eta)\exp\left\{\boldsymbol\eta^T\mathbf u(\mathbf z)\right\} \">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ep.png">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/moment-matching.png">
 <meta property="article:published_time" content="2024-04-26T10:30:18.000Z">
-<meta property="article:modified_time" content="2024-04-27T06:06:45.996Z">
+<meta property="article:modified_time" content="2024-04-27T09:16:36.787Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ep.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/moment-matching.png">
   
   
   
-  <title>Expectation Propagation - xyfJASON</title>
+  <title>Moment Matching - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/ep.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/moment-matching.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Expectation Propagation"></span>
+            <span id="subtitle" data-typed-text="Moment Matching"></span>
           
         </div>
 
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          377 字
+          144 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          4 分钟
+          2 分钟
         
       </span>
     
@@ -322,13 +322,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Expectation Propagation</h1>
+            <h1 id="seo-header">Moment Matching</h1>
             
             
               <div class="markdown-body">
                 
-                <p>除了<a href="/blog-main/2024/03/05/%E5%8F%98%E5%88%86%E6%8E%A8%E6%96%AD/" title="变分推断">变分推断</a>之外，另一种确定性的近似推断方法是<strong>期望传播 (expectation propagation, EP)</strong> 算法。在介绍期望传播算法之前，首先需要介绍 <strong>moment matching</strong>.</p>
-<h2 id="moment-matching">Moment Matching</h2>
+                <h2 id="moment-matching">Moment Matching</h2>
 <p>设 <span class="math inline">\(p(\mathbf z)\)</span> 是一个给定的分布，我们希望用一个指数族分布 <span class="math inline">\(q(\mathbf z)\)</span> 去近似 <span class="math inline">\(p(\mathbf z)\)</span>： <span class="math display">\[
 q(\mathbf z)=h(\mathbf z)g(\boldsymbol\eta)\exp\left\{\boldsymbol\eta^T\mathbf u(\mathbf z)\right\}
 \]</span> 考虑最小化二者的 KL 散度： <span class="math display">\[
@@ -349,14 +348,6 @@ q(\mathbf z)=h(\mathbf z)g(\boldsymbol\eta)\exp\left\{\boldsymbol\eta^T\mathbf u
 \]</span> 联立 <span class="math inline">\(\eqref{1},\eqref{2}\)</span> 式得： <span class="math display">\[
 \mathbb E_{p(\mathbf z)}[\mathbf u(\mathbf z)]=\mathbb E_{q(\mathbf z)}[\mathbf u(\mathbf z)]
 \]</span> 这意味着，问题的最优解对应<strong>匹配充分统计量的期望</strong>。例如，假设 <span class="math inline">\(q(\mathbf z)\)</span> 是一个高斯分布 <span class="math inline">\(\mathcal N(\mathbf z\vert\boldsymbol\mu,\boldsymbol\Sigma)\)</span>，那么最优解就是将均值 <span class="math inline">\(\boldsymbol\mu\)</span> 设定为 <span class="math inline">\(p(\mathbf z)\)</span> 的均值，协方差矩阵 <span class="math inline">\(\boldsymbol\Sigma\)</span> 设定为 <span class="math inline">\(p(\mathbf z)\)</span> 的协方差矩阵，这称作 moment matching.</p>
-<h2 id="expectation-propagation">Expectation Propagation</h2>
-<p>将 moment matching 用在近似推断问题中，我们就可以得到期望传播算法。设数据为 <span class="math inline">\(\mathcal D\)</span>，隐变量（包括参数）为 <span class="math inline">\(\theta\)</span>，假设二者的联合分布可以分解为若干因子的乘积： <span class="math display">\[
-p(\mathcal D,\theta)=\prod_i f_i(\theta)
-\]</span> 这样的假设在许多场景下都成立。例如，若数据是独立同分布的，则 <span class="math inline">\(p(\mathcal D,\theta)=p(\theta)\prod_n p(\mathbf x_n\vert\theta)\)</span>，故对每个数据点 <span class="math inline">\(\mathbf x_n\)</span> 可以定义 <span class="math inline">\(f_n(\theta)=p(\mathbf x_n\vert\theta)\)</span>，以及定义先验分布 <span class="math inline">\(f_0(\theta)=p(\theta)\)</span>. 现在我们希望估计后验分布 <span class="math inline">\(p(\theta\vert\mathcal D)\)</span> 以及数据的似然 <span class="math inline">\(p(\mathcal D)\)</span>： <span class="math display">\[
-p(\theta\vert\mathcal D)=\frac{1}{p(\mathcal D)}\prod_if_i(\theta),\quad p(\mathcal D)=\int\prod_if_i(\theta)\mathrm d\theta
-\]</span> 期望传播算法假设用于近似后验分布的分布 <span class="math inline">\(q(\theta)\)</span> 也能分解为若干因子的乘积： <span class="math display">\[
-q(\theta)=\frac{1}{Z}\prod_i\tilde f_i(\theta)
-\]</span> 其中每一个因子 <span class="math inline">\(\tilde f_i(\theta)\)</span> 对应真实后验分布的因子 <span class="math inline">\(f_i(\theta)\)</span>. 另外，为了能够计算，我们约束 <span class="math inline">\(\tilde f_i(\theta)\)</span> 为指数族分布。</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -419,8 +410,8 @@ q(\theta)=\frac{1}{Z}\prod_i\tilde f_i(\theta)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Expectation Propagation</div>
-      <div>https://xyfjason.github.io/blog-main/2024/04/26/Expectation-Propagation/</div>
+      <div>Moment Matching</div>
+      <div>https://xyfjason.github.io/blog-main/2024/04/26/Moment-Matching/</div>
     </div>
     <div class="license-meta">
       
