@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-distillation.png">
 <meta property="article:published_time" content="2024-04-24T07:25:48.000Z">
-<meta property="article:modified_time" content="2024-04-26T03:56:31.792Z">
+<meta property="article:modified_time" content="2024-04-28T11:39:19.044Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          967 字
+          783 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          9 分钟
+          7 分钟
         
       </span>
     
@@ -330,10 +330,7 @@
                 <h2 id="introduction">Introduction</h2>
 <p>尽管扩散模型在生成质量、似然估计和训练稳定性上表现出卓越的性能，但其最大的缺点就是采样耗时。为此，许多采样器被提出以加速采样过程，例如 DDIM, Analytic-DPM, PNDM, DPM-Solver 等等，它们着眼于更精确地求解扩散 ODE，例如采用高阶的求解器并充分利用扩散 ODE 的特殊结构。然而，受制于模型本身的误差，此类 training-free 的方法再精确也难以做到 10 步以内的高质量生成。</p>
 <p>随着领域的发展，如今扩散模型使用的网络架构已经基本收敛（特别是文生图应用上基本都用 SD 系列），这使得在原有网络的基础上蒸馏一个新的网络成为了不错的方案。所谓蒸馏，即训练一个 student 模型，其一步去噪的效果相当于原 teacher 模型多步去噪的效果。相比优化采样器的方法，基于蒸馏的方法往往能够实现 4 步、2 步甚至 1 步采样，彻底解决扩散模型采样耗时的问题。</p>
-<p>一个自然的问题是，<strong>为什么蒸馏可以 work？</strong>换句话说，为什么我们不直接在较少步数上训练模型，偏偏要在较多步数上训练之后再蒸馏，这难道不是多此一举吗？要回答这个问题，我们需要对扩散模型的优化目标有着深刻的理解。设 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 表示“原图预测模型”，则扩散模型的训练过程为：从数据集中采样 <span class="math inline">\(\mathbf x_0\)</span> 并最小化 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 与<span class="math inline">\(\mathbf x_0\)</span> 的欧式距离。许多教程将其简单地解释为用 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 去拟合 <span class="math inline">\(\mathbf x_0\)</span>，这种说法不是特别的准确（当然也不算错，只是容易为初学者带来误解）。事实上，由于不同的 <span class="math inline">\(\mathbf x_0\)</span> 都有可能得到相同的 <span class="math inline">\(\mathbf x_t\)</span>，所以随着训练的进行，<span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 拟合的是这些 <span class="math inline">\(\mathbf x_0\)</span> 的平均值。其实通过简单的推导可以得到： <span class="math display">\[
-\min_\theta\mathbb E_{q(\mathbf x_0)}\left[\Vert\mathbf x_\theta(\mathbf x_t)-\mathbf x_0\Vert_2^2\right]\implies \mathbf x_{\theta^\ast}(\mathbf x_t)=\mathbb E_{q(\mathbf x_0\vert\mathbf x_t)}[\mathbf x_0]=\mathbb E[\mathbf x_0\vert\mathbf x_t]
-\]</span> 因此模型 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 要拟合的真值是 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，即 <span class="math inline">\(\mathbf x_0\)</span> 关于 <span class="math inline">\(q(\mathbf x_0\vert\mathbf x_t)\)</span> 的加权平均。</p>
-<p>理解了这一点之后，就可以解释为什么蒸馏可以 work 了。扩散模型的标准训练流程依靠不断采样、每次拟合一个 <span class="math inline">\(\mathbf x_0\)</span> 的方式来拟合 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，这意味着损失函数的方差很大，直观上训练曲线会非常振荡。而蒸馏时 teacher 模型给出的监督信号本就是对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的近似，所以蒸馏损失的方差显著降低，训练过程更平稳，模型更容易收敛。不过，蒸馏虽然减少了训练损失的方差，但 teacher 模型对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的估计是有偏差的，所以这里存在 bias-variance trade-off.</p>
+<p>一个自然的问题是，<strong>为什么蒸馏可以 work？</strong>换句话说，为什么我们不直接在较少步数上训练模型，偏偏要在较多步数上训练之后再蒸馏，这难道不是多此一举吗？这是因为，扩散模型的标准训练流程是依靠不断采样、每次拟合一个 <span class="math inline">\(\mathbf x_0\)</span> 的方式来拟合 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，这种训练方式的损失函数的方差很大，直观上训练曲线会非常振荡，不利于模型收敛。而蒸馏时 teacher 模型给出的监督信号本就是对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的近似，所以蒸馏损失的方差显著降低，训练过程更平稳，模型更容易收敛。不过，蒸馏虽然减少了训练损失的方差，但 teacher 模型对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的估计是有偏差的，所以这里存在 bias-variance trade-off.</p>
 <h2 id="progressive-distillation">Progressive Distillation</h2>
 <p>Progressive distillation<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. *arXiv preprint arXiv:2202.00512* (2022).">[1]</span></a></sup> 的基本思想是<strong>每次蒸馏将采样步数缩短到原来的一半</strong>，如此进行 <span class="math inline">\(\log_2 N\)</span> 次迭代，就可以把 <span class="math inline">\(N\)</span> 步采样模型蒸馏为 1 步采样模型。</p>
 <p><img src="progressive.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>

@@ -18,14 +18,14 @@
   
     <meta name="description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] Preface 我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量">
 <meta property="og:type" content="article">
-<meta property="og:title" content="条件引导生成">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/29/%E6%9D%A1%E4%BB%B6%E5%BC%95%E5%AF%BC%E7%94%9F%E6%88%90/index.html">
+<meta property="og:title" content="扩散模型的条件引导生成">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/12/29/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%BC%95%E5%AF%BC%E7%94%9F%E6%88%90/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="\[ \newcommand{\x}{\mathbf x} \newcommand{\calN}{\mathcal N} \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] Preface 我们在之前的文章中关注的都是无条件生成，生成结果不受我们控制，特别是以 DDPM 为代表的采样过程本身就带有随机性的模型，即使用同样的初始变量">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-guidance.png">
 <meta property="article:published_time" content="2022-12-29T10:08:30.000Z">
-<meta property="article:modified_time" content="2024-04-02T12:11:46.186Z">
+<meta property="article:modified_time" content="2024-04-28T11:50:09.825Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>条件引导生成 - xyfJASON</title>
+  <title>扩散模型的条件引导生成 - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="条件引导生成"></span>
+            <span id="subtitle" data-typed-text="扩散模型的条件引导生成"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">条件引导生成</h1>
+            <h1 id="seo-header">扩散模型的条件引导生成</h1>
             
             
               <div class="markdown-body">
@@ -412,11 +412,9 @@ p(\x_t\vert \x_{t+1},y)\sim\calN(\x_t;\mu+\Sigma g,\Sigma)
 &amp;=(1-s)\underbrace{\nabla_{\x_t}\log{p}(\x_t)}_\text{unconditional score}+s\underbrace{\nabla_{\x_t}\log{p}(\x_t\vert y)}_\text{conditional score}
 \end{align}
 \]</span> 这是无条件和有条件的 score function 的线性组合，<span class="math inline">\(s\)</span> 同样是控制条件引导力度的系数。当 <span class="math inline">\(s=0\)</span> 时，就是无条件模型；当 <span class="math inline">\(s=1\)</span> 时，就是标准的有条件模型；而当 <span class="math inline">\(s&gt;1\)</span> 时，不仅 conditional score 被进一步加强，而且 unconditional score 甚至变成了负向！同 classifier guidance 一样，我们可以通过调节 <span class="math inline">\(s\)</span> 实现 diversity-fidelity trade-off，<span class="math inline">\(s\)</span> 越大，条件指向性越强，生成结果越真实，但是多样性下降。</p>
-<blockquote>
-<p>注：上述权重记号与原论文有所不同，原论文写作： <span class="math display">\[
-\nabla_{\x_t}\log{p}_w(\x_t\vert y)=(1+w)\nabla_{\x_t}\log{p}(\x_t\vert y)-w\nabla_{\x_t}\log{p}(\x_t)
-\]</span> 即本文和原论文的记号有如下关系：<span class="math inline">\(w=s-1\)</span>.</p>
-</blockquote>
+<div class="note note-secondary">
+            <p>注：上述权重记号与原论文有所不同，原论文写作： <span class="math display">\[\nabla_{\x_t}\log{p}_w(\x_t\vert y)=(1+w)\nabla_{\x_t}\log{p}(\x_t\vert y)-w\nabla_{\x_t}\log{p}(\x_t)\]</span> 即本文和原论文的记号有如下关系：<span class="math inline">\(w=s-1\)</span>​.</p>
+          </div>
 <p><img src="free-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="source: Classifier-Free Diffusion Guidance" /></p>
 <p>在实现上，我们用 <span class="math inline">\(p(\x_t\vert y)\)</span> 表示有条件模型，同时用 null token <span class="math inline">\(\varnothing\)</span> 表示无条件限制，即 <span class="math inline">\(p(\x_t\vert\varnothing)\)</span> 表示无条件模型。这样就可以只训练一个模型，同时处理有条件和无条件两种情况了。训练时随机以 <span class="math inline">\(p_\text{uncond}\)</span> 的概率去掉输入条件（换成 <span class="math inline">\(\varnothing\)</span>），即相当于同时训练了有条件和无条件情形，实验发现取 <span class="math inline">\(p_\text{uncond}\in\{0.1,0.2\}\)</span> 效果最好。</p>
 <p>由于 classifier-free guidance 的效果非常优秀且训练方便，后续许多著名的模型，包括 GLIDE、DALL-E 2 (unCLIP)、Imagen 等都应用了 classifier-free guidance. 而至于这些让扩散模型火出圈的应用，我们留到以后的文章吧。</p>
@@ -512,8 +510,8 @@ p(\x_t\vert \x_{t+1},y)\sim\calN(\x_t;\mu+\Sigma g,\Sigma)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>条件引导生成</div>
-      <div>https://xyfjason.github.io/blog-main/2022/12/29/条件引导生成/</div>
+      <div>扩散模型的条件引导生成</div>
+      <div>https://xyfjason.github.io/blog-main/2022/12/29/扩散模型的条件引导生成/</div>
     </div>
     <div class="license-meta">
       
