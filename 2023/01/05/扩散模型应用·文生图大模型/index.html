@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-txt2img.png">
 <meta property="article:published_time" content="2023-01-05T13:08:43.000Z">
-<meta property="article:modified_time" content="2024-04-14T06:46:45.048Z">
+<meta property="article:modified_time" content="2024-04-29T15:58:53.527Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.1k 字
+          4.8k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          35 分钟
+          40 分钟
         
       </span>
     
@@ -473,7 +473,7 @@ F_\phi(\x_t,y,t)=\text{E}_\text{I}(\x_t)\cdot\text{E}_\text{L}(y)
 <li><strong>Cross-Attention</strong>：为了引入文本条件，作者在 Self-Attention 和 FFN 之间添加了 Cross-Attention 层。为了避免该模块的加入影响预训练权重，其最后一个投影层是零初始化的。</li>
 <li><strong>AdaLN-single</strong>：作者发现 DiT 的 AdaLN 层中的线性映射占据了大量 (27%) 的权重，但由于 PixArt-α 并不使用类别条件，所以这些权重并没有作用。设 DiT 的第 <span class="math inline">\(i\)</span> 个模块的 AdaLN 参数为 <span class="math inline">\(S^{(i)}=f^{(i)}(c+t)=[\beta_1^{(i)},\beta_2^{(i)},\gamma_1^{(i)},\gamma_2^{(i)},\alpha_1^{(i)},\alpha_2^{(i)}]\)</span>，其中 <span class="math inline">\(c\)</span> 表示类别 embedding，<span class="math inline">\(t\)</span> 表示时间步 embedding. PixArt-α 则只在第一个模块计算一个全局的参数 <span class="math inline">\(\bar S=f(t)\)</span>，而第 <span class="math inline">\(i\)</span> 个模块的参数由 <span class="math inline">\(S^{(i)}=g(\bar S,E^{(i)})\)</span> 得到，其中 <span class="math inline">\(E^{(i)}\)</span> 是可学习的 embedding. 为了能够加载预训练权重，作者调整 <span class="math inline">\(E^{(i)}\)</span> 使 <span class="math inline">\(S^{(i)}\)</span> 能够与预训练模型匹配。</li>
 </ol>
-<p>构造数据集时，作者采用了与 DALL·3 类似的思路，即借助大语言模型丰富文本描述。不过与 DALL·E 3 训练了一个 captioner 不同，这里作者直接使用视觉-语言大模型 LLaVA，通过提示词「Describe this image and its style in a very detailed manner」来获取文本描述，如下图所示。另外，鉴于 LAION 数据集中含有一些低质量图片，作者选用 SAM 数据集。在第三个阶段（高质量微调），作者使用了 JourneyDB 和 10M 个内部数据构建高质量训练集。</p>
+<p>构造数据集时，作者采用了与 DALL·3 类似的思路，即借助大语言模型丰富文本描述。不过与 DALL·E 3 训练了一个 captioner 不同，这里作者直接使用视觉-语言大模型 LLaVA，通过提示词「Describe this image and its style in a very detailed manner」来获取文本描述，如下图所示。另外，鉴于 LAION 数据集中含有一些低质量图片，作者选用的是 SAM 数据集。在第三个阶段（高质量微调），作者使用了 JourneyDB 和 10M 个内部数据构建高质量训练集。</p>
 <p><img src="pixart-alpha-relabel.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
 <div class="note note-secondary">
             <details><summary><b>点击查看 PixArt-α 的生成样例（摘自<a target="_blank" rel="noopener" href="https://pixart-alpha.github.io/">官网</a>）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel1.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel6.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel7.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="https://pixart-alpha.github.io/static/images/carousel/carousel8.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>

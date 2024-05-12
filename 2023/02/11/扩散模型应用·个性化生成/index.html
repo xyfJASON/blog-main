@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-application-personalized.png">
 <meta property="article:published_time" content="2023-02-11T05:36:49.000Z">
-<meta property="article:modified_time" content="2024-04-08T05:23:37.295Z">
+<meta property="article:modified_time" content="2024-05-01T12:18:16.016Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="generative models">
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4k 字
+          5.2k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          34 分钟
+          44 分钟
         
       </span>
     
@@ -458,7 +458,7 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 <p><span class="label label-primary">USTC</span> <span class="label label-primary">The University of Sydney</span> <span class="label label-default">2024.03.18</span></p>
 <p>Infinite-ID<sup id="fnref:11" class="footnote-ref"><a href="#fn:11" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wu, Yi, Ziqiang Li, Heliang Zheng, Chaoyue Wang, and Bin Li. Infinite-ID: Identity-preserved Personalization via ID-semantics Decoupling Paradigm. *arXiv preprint arXiv:2403.11781* (2024).">[11]</span></a></sup> 同样着眼于人物 ID 参考下的人像生成。作者首先分析了人物 ID 生成的难点——平衡 ID 保真度和与输入文本的语义一致性。以 PhotoMaker 为代表的方法由于主要是对 text embedding 操作，因此满足语义一致性，但 ID 信息被压缩到 text embedding 空间中，因此欠缺 ID 保真度。以 IP-Adapter 为代表的方法主要是引入视觉条件，因此有较好的 ID 保真度，但会过分参考图像，忽视文本的语义。为此， Infinite-ID 提出 <strong>ID-semantics 解耦范式</strong>和一个特征交互机制来解决该问题。</p>
 <p><img src="infiniteid.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
-<p>如上图所示，在训练阶段，Infinite-ID <strong>丢弃了文本输入</strong>，将去噪图像与 face embedding 视作一对数据，其中 face embedding 是 CLIP 图像编码器和人脸识别网络提取的特征经映射后拼接而得。训练时用这个 face embedding 代替原本的 text embedding，对每个 cross-attention 层训练新的 K,V 投影矩阵。于是新训练的 K,V 投影矩阵完全不受文本影响，从而完成 ID 和文本语义之间的解耦。</p>
+<p>如上图所示，在训练阶段，Infinite-ID <strong>丢弃了文本输入</strong>，将去噪图像与 face embedding 视作一对数据，其中 face embedding 由 CLIP 图像编码器和人脸识别网络提取的特征经映射后拼接而得。训练时用这个 face embedding 代替原本的 text embedding，对每个 cross-attention 层训练新的 K,V 投影矩阵。于是新训练的 K,V 投影矩阵完全不受文本影响，从而完成 ID 和文本语义之间的解耦。</p>
 <p>推断时，首先不考虑 face embedding 做一次生成，计算生成过程中的 K,V 投影矩阵。然后引入 face embedding，对每个 cross-attention 层将二者的计算结果相加。另外作者还引入了 mixed attention 与 AdaIN-mean 操作，如下图所示：</p>
 <p><img src="infiniteid-mixed.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
 <p>其中 AdaIN-mean 操作定义为： <span class="math display">\[
@@ -477,6 +477,22 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 \]</span> 其中 <span class="math inline">\(\mathbf f_a\)</span> 是多张参考照片的平均人脸特征。然而，当时间步较大时，模型预测的 <span class="math inline">\(\hat{\mathbf x}_0\)</span> 是模糊的，不利于 <span class="math inline">\(\mathcal R\)</span> 提取人脸特征，因而作者还引入了一个人脸检测模型 <span class="math inline">\(\mathcal F\)</span>，只有当检测模型检测到人脸时才加入 <span class="math inline">\(\mathcal L_\text{id}\)</span>​ 这一项。</p>
 <div class="note note-secondary">
             <details><summary><b>点击查看 IDAdapter 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="idadapter-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
+          </div>
+<h2 id="instantfamily">InstantFamily</h2>
+<p><span class="label label-primary">SK Telecom</span> <span class="label label-default">2024.04.30</span></p>
+<p>尽管 PhotoMaker、InstantID、Infinite-ID 和 IDAdapter 将人物 ID 生成做得越来越好，但都局限于生成一个人物，InstantFamily<sup id="fnref:14" class="footnote-ref"><a href="#fn:14" rel="footnote"><span class="hint--top hint--rounded" aria-label="InstantFamily">[14]</span></a></sup>则可以做到多人物 ID 生成。</p>
+<p><img src="instantfamily.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>上面这 3 张图将 InstantFamily 的方法非常直观地展现了出来。可以看到，InstantFamily 依旧是从两方面入手——一个分支提取人脸的局部和全局特征，通过交叉注意力融入 UNet 来控制 ID；另一个分支提取人体骨骼 (openpose)，通过 ControlNet 融入 UNet 来控制姿态。在第一个分支中，局部特征和全局特征经过维度投影后拼成 K 向量集，与原图的 Q 向量集做交叉注意力。作者在交叉注意力中引入了 mask 机制，使得每个 Q 中某人脸特征的部分只会 attend 到 K 中对应的人脸部分，如上面左下图所示。实现上还有一些小的细节，可以参看论文 4.2 节。</p>
+<p>数据集由四个部分组成：</p>
+<ul>
+<li>2M 张来自 LAION-Face 数据集的图像</li>
+<li>0.3M 张从网络上收集的多人图像，用 BLIP2 打标</li>
+<li>人脸识别数据集，用 BLIP2 打标</li>
+<li>模型生成的 50K 张高质量图像</li>
+</ul>
+<p>训练在 SD1.5 的基础上进行，8 卡 A100 训练 400k 步。</p>
+<div class="note note-secondary">
+            <details><summary><b>点击查看 InstantFamily 的生成样例（摘自论文）</b></summary><div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="instantfamily-ex.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="instantfamily-ex2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div></details>
           </div>
 <h2 id="references">References</h2>
 <section class="footnotes">
@@ -520,6 +536,9 @@ W_\delta=U\Sigma_\delta V^{\mathsf T}\quad\text{where}\;\Sigma_\delta=\text{diag
 </li>
 <li>
 <span id="fn:13" class="footnote-text"><span>Zhong, Ming, Yelong Shen, Shuohang Wang, Yadong Lu, Yizhu Jiao, Siru Ouyang, Donghan Yu, Jiawei Han, and Weizhu Chen. Multi-LoRA Composition for Image Generation. <em>arXiv preprint arXiv:2402.16843</em> (2024). <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:14" class="footnote-text"><span>InstantFamily <a href="#fnref:14" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
