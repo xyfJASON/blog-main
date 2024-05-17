@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddpm.png">
 <meta property="article:published_time" content="2022-09-29T15:56:27.000Z">
-<meta property="article:modified_time" content="2024-04-28T11:36:59.247Z">
+<meta property="article:modified_time" content="2024-05-17T04:07:04.580Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -285,7 +285,7 @@
         
         
         
-          51 分钟
+          52 分钟
         
       </span>
     
@@ -370,7 +370,7 @@ L(\theta)&amp;=\log p_\theta(x)\\
 <p>虽然有两个隐变量，但如果把它们视为一个整体，那证据下界 ELBO 的推导过程与 <span class="math inline">\(\eqref{vae}\)</span> 式没有什么本质不同，因此我们只需将 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式中的 <span class="math inline">\(z\)</span> 换做 <span class="math inline">\(z_1,z_2\)</span> 就得到了双层 VAE 的 ELBO： <span class="math display">\[
 \text{ELBO}_\text{2-layers}=\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(x,z_1,z_2)}{q_\phi(z_1,z_2\vert x)}\right]=\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(x\vert z_1)p_\theta(z_1\vert z_2)p(z_2)}{q_\phi(z_2\vert z_1)q_\phi(z_1\vert x)}\right]\label{elbo-2}\tag{3}
 \]</span></p>
-<p>我们依旧希望从 ELBO 中拆解出重构项和正则项，为此需要做一些推导。重构项比较简单，只需要把 <span class="math inline">\(p_\theta(x\vert z_1)\)</span> 拆出来就是了，问题在于剩下的一坨应该如何处理。破局的关键在于利用马尔可夫性质把分母上的 <span class="math inline">\(q_\phi(z_2\vert z_1)\)</span> 改写作 <span class="math inline">\(q_\phi(z_2\vert z_1,x)\)</span>，然后用贝叶斯公式： <span class="math display">\[
+<p>我们依旧希望从 ELBO 中拆解出重构项和正则项。重构项比较简单，只需要把 <span class="math inline">\(p_\theta(x\vert z_1)\)</span> 拆出来就是了，问题在于剩下的一坨应该如何处理。破局的关键在于利用马尔可夫性质把分母上的 <span class="math inline">\(q_\phi(z_2\vert z_1)\)</span> 改写作 <span class="math inline">\(q_\phi(z_2\vert z_1,x)\)</span>，然后用贝叶斯公式： <span class="math display">\[
 q_\phi(z_2\vert z_1)=q_\phi(z_2\vert z_1,x)=\frac{q_\phi(z_1\vert z_2,x)q_\phi(z_2\vert x)}{q_\phi(z_1\vert x)}
 \]</span> 代回 <span class="math inline">\(\eqref{elbo-2}\)</span> 式得： <span class="math display">\[
 \begin{align}
@@ -380,12 +380,17 @@ q_\phi(z_2\vert z_1)=q_\phi(z_2\vert z_1,x)=\frac{q_\phi(z_1\vert z_2,x)q_\phi(z
 &amp;=\E_{z_1\sim q_\phi(z_1\vert x)}[p_\theta(x\vert z_1)]+\E_{z_2\sim q_\phi(z_2\vert x)}\left[\log\frac{p(z_2)}{q_\phi(z_2\vert x)}\right]+\E_{z_1,z_2\sim q_\phi(z_1,z_2\vert x)}\left[\log\frac{p_\theta(z_1\vert z_2)}{q_\phi(z_1\vert z_2,x)}\right]\\
 &amp;=\underbrace{\E_{z_1\sim q_\phi(z_1\vert x)}[p_\theta(x\vert z_1)]}_{\text{reconstruction}}-\underbrace{\KL(q_\phi(z_2\vert x)\| p(z_2))}_{\text{regularization}}-\underbrace{\E_{z_2\sim q_\phi(z_2\vert x)}[\KL(q_\phi(z_1\vert z_2,x)\|p_\theta(z_1\vert z_2))]}_{\text{matching}}\\
 \end{align}
-\]</span> 可以看见，双层 VAE 的 ELBO 由三部分组成：重构项、正则项以及匹配项。对比 VAE 的 ELBO，我们可以认为 <span class="math inline">\(z_1,z_2\)</span> 分担了原本一个隐变量的工作。具体而言，在 VAE 中，隐变量既要重构，又要逼近先验分布，且这两个任务是有点矛盾的；而现在，重构依靠 <span class="math inline">\(z_1\)</span> 完成，逼近先验依靠 <span class="math inline">\(z_2\)</span> 完成，从而增加了灵活性。</p>
+\]</span> 可以看见，双层 VAE 的 ELBO 由三部分组成：重构项、正则项以及匹配项。对比 VAE 的 ELBO，我们可以认为 <span class="math inline">\(z_1,z_2\)</span> 分担了原本一个隐变量的工作。具体而言，在 VAE 中，隐变量既要重构，又要逼近先验分布，且这两个任务是有点矛盾的；而现在，重构依靠 <span class="math inline">\(z_1\)</span> 完成，逼近先验依靠 <span class="math inline">\(z_2\)</span> 完成，二者由匹配项联系起来，从而增加了模型的灵活性。</p>
 <h2 id="ddpm">DDPM</h2>
 <p>在双层 VAE 的基础上，我们能再多加几层吗？</p>
 <p><img src="diffusion.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Angus Turner. Diffusion Models as a kind of VAE" width=40% /></p>
-<p>如图所示，<span class="math inline">\(\x_1,\ldots,\x_T\)</span> 整体可以看作 VAE 中的隐变量 <span class="math inline">\(z\)</span>，<span class="math inline">\(\x_0\)</span> 可以看作 VAE 中的 <span class="math inline">\(x\)</span>. 我们称从 <span class="math inline">\(\x_0\)</span> 到 <span class="math inline">\(\x_T\)</span> 的马尔可夫链为<strong>前向过程 (forward process)</strong> 或<strong>扩散过程 (diffusion process)</strong>，从 <span class="math inline">\(\x_T\)</span> 到 <span class="math inline">\(\x_0\)</span> 的马尔可夫链为<strong>逆向过程 (reverse process)</strong> 或<strong>去噪过程 (denoising process)</strong>. 用概率图模型的术语来说，前向过程对应 inference model，逆向过程对应 generative model. 为书写上的方便，下文将 <span class="math inline">\(\x_l,\cdots,\x_r\)</span> 简写为 <span class="math inline">\(\x_{l:r}\)</span>.</p>
-<p>同双层 VAE 一样的道理，直接改写 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式（<span class="math inline">\(\z\)</span> 换成 <span class="math inline">\(\x_{1:T}\)</span>，<span class="math inline">\(\x\)</span> 换成 <span class="math inline">\(\x_0\)</span>）就可以得到 DDPM 的 ELBO： <span class="math display">\[
+<p>如上图所示，为方便叙述，我们引入两个称呼：</p>
+<ul>
+<li>称从 <span class="math inline">\(\x_0\)</span> 到 <span class="math inline">\(\x_T\)</span> 的马尔可夫链为<strong>前向过程 (forward process)</strong> 或<strong>扩散过程 (diffusion process)</strong>；</li>
+<li>称从 <span class="math inline">\(\x_T\)</span> 到 <span class="math inline">\(\x_0\)</span> 的马尔可夫链为<strong>逆向过程 (reverse process)</strong> 或<strong>去噪过程 (denoising process)</strong>.</li>
+</ul>
+<p>用概率图模型的术语来说，前向过程对应 inference model，逆向过程对应 generative model. 另外，为书写上的方便，下文将 <span class="math inline">\(\x_l,\cdots,\x_r\)</span> 简写为 <span class="math inline">\(\x_{l:r}\)</span>.</p>
+<p>同双层 VAE 一样的道理，把 <span class="math inline">\(\x_{1:T}\)</span> 整体看作 VAE 中的隐变量，代入 <span class="math inline">\(\eqref{elbo-vae}\)</span> 式就可以得到 DDPM 的 ELBO： <span class="math display">\[
 \text{ELBO}=\E_{\x_{1:T}\sim q(\x_{1:T}\vert \x_0)}\left[\log\frac{p_\theta(\x_{0:T})}{q(\x_{1:T}\vert \x_0)}\right]=\E_{\x_{1:T}\sim q(\x_{1:T}\vert \x_0)}\left[\log\frac{p(\x_T)\prod_{t=1}^Tp_\theta(\x_{t-1}\vert\x_t)}{\prod_{t=1}^T q(\x_t\vert \x_{t-1})}\right]\tag{4}\label{elbo-ddpm}
 \]</span> 接下来的推导技巧和双层 VAE 如出一辙，即将分母中的 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 写作 <span class="math inline">\(q(\x_t\vert\x_{t-1},\x_0)\)</span>，然后使用贝叶斯公式，即可进行<strong>大量的消元</strong>： <span class="math display">\[
 \begin{align}
@@ -402,16 +407,18 @@ q_\phi(z_2\vert z_1)=q_\phi(z_2\vert z_1,x)=\frac{q_\phi(z_1\vert z_2,x)q_\phi(z
 \underbrace{\KL(q(\x_T\vert \x_0)\|p(\x_T))}_{\text{regularization}}-
 \sum_{t=2}^T\underbrace{\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\KL(q(\x_{t-1}\vert\x_t,\x_0)\|p_\theta(\x_{t-1}\vert\x_t))\right]}_{\text{matching}}
 \end{align}\tag{5}\label{obj}
-\]</span> 同样出现了重构项、正则项和匹配项。重构项要求 <span class="math inline">\(\x_1\)</span> 能够重构 <span class="math inline">\(\x_0\)</span>，正则项要求 <span class="math inline">\(\x_T\)</span> 的后验分布逼近一个先验分布，而匹配项则拉近 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 与 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 之间的“距离”。</p>
-<p>现在，我们只需要为 <span class="math inline">\(\eqref{obj}\)</span> 式中出现的所有概率分布设计具体的形式，就可以代入计算了。当然，为了让 KL 散度可解，自然想到把它们都设计为正态分布的形式。</p>
+\]</span> 同样出现了重构项、正则项和匹配项。重构项要求 <span class="math inline">\(\x_1\)</span> 能够重构 <span class="math inline">\(\x_0\)</span>，正则项要求 <span class="math inline">\(\x_T\)</span> 的后验分布逼近先验分布，而匹配项则建立起相邻两项 <span class="math inline">\(\mathbf x_{t-1},\mathbf x_t\)</span> 之间的联系。</p>
+<p>现在，我们只需要为 <span class="math inline">\(\eqref{obj}\)</span> 式中出现的所有概率分布设计具体的形式，就可以代入计算了。为了让 KL 散度可解，一个自然的想法就是把它们都设计为正态分布的形式。</p>
 <h3 id="前向过程">前向过程</h3>
 <p><img src="forward.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://cvpr2022-tutorial-diffusion-models.github.io/" width=70% /></p>
-<p>首先我们关注 <span class="math inline">\(\eqref{obj}\)</span> 式中与前向过程有关的概率分布，也就是用 <span class="math inline">\(q\)</span> 表示的分布，即 <span class="math inline">\(q(\x_t\vert\x_0)\)</span> 和 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>. DDPM 没有直接设计它们，而是先给出了 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 的设计： <span class="math display">\[
+<p>首先我们关注前向过程，即从 <span class="math inline">\(\mathbf x_0\)</span> 到 <span class="math inline">\(\mathbf x_T\)</span> 的马尔可夫链： <span class="math display">\[
+q(\mathbf x_{0:T})=q(\mathbf x_0)\prod_{t=1}^Tq(\mathbf x_t\vert\mathbf x_{t-1})
+\]</span> DDPM 将 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 设计为： <span class="math display">\[
 q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{1-\beta_t}\x_{t-1},\beta_t\mathbf{I})\tag{6}\label{q}
-\]</span> 其中 <span class="math inline">\(\beta_t\in(0,1)\)</span> 是事先指定的常量，代表从 <span class="math inline">\(\x_{t-1}\)</span> 到 <span class="math inline">\(\x_t\)</span> 这一步的方差。直观上理解，如果 <span class="math inline">\(\beta_t\)</span> 比较小，那么 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 均值依旧在 <span class="math inline">\(\x_{t-1}\)</span> 附近，方差也不大，故 <span class="math inline">\(\x_t\)</span> 看起来就是在 <span class="math inline">\(\x_{t-1}\)</span> 的基础上加了一些噪声，所以前向过程也称作“加噪过程”。值得注意的是，<span class="math inline">\(q\)</span> <strong>不带可学习参数</strong>，这是 DDPM 与 VAE 不一样的地方。</p>
-<p>基于 <span class="math inline">\(\eqref{q}\)</span> 式可以推导出 <span class="math inline">\(q(\x_t\vert\x_0)\)</span> 和 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，下面首先推导 <span class="math inline">\(q(\x_t\vert\x_0)\)</span>. 为了书写上的方便，记： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\beta_t\in(0,1)\)</span> 是事先指定的超参数，代表从 <span class="math inline">\(\x_{t-1}\)</span> 到 <span class="math inline">\(\x_t\)</span> 这一步的方差。直观上理解，如果 <span class="math inline">\(\beta_t\)</span> 比较小，那么 <span class="math inline">\(q(\x_t\vert\x_{t-1})\)</span> 均值依旧在 <span class="math inline">\(\x_{t-1}\)</span> 附近，方差也不大，故 <span class="math inline">\(\x_t\)</span> 看起来就是在 <span class="math inline">\(\x_{t-1}\)</span> 的基础上加了一些噪声。值得注意的是，<span class="math inline">\(q\)</span> <strong>不带任何可学习参数</strong>，这是 DDPM 与 VAE 不一样的地方。</p>
+<p>基于 <span class="math inline">\(\eqref{q}\)</span> 式，我们可以推导出 <span class="math inline">\(\eqref{obj}\)</span> 式中需要的 <span class="math inline">\(q(\x_t\vert\x_0)\)</span> 和 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>. 首先推导 <span class="math inline">\(q(\x_t\vert\x_0)\)</span>. 为了书写上的方便，做一个变量代换： <span class="math display">\[
 \alpha_t=1-\beta_t,\quad\bar\alpha_t=\prod_{i=1}^t\alpha_i
-\]</span> 那么 <span class="math inline">\(\eqref{q}\)</span> 式等价写作： <span class="math display">\[
+\]</span> 那么 <span class="math inline">\(\eqref{q}\)</span> 式改写作： <span class="math display">\[
 q(\x_t\vert \x_{t-1})=\calN(\x_t;\sqrt{\alpha_t}\x_{t-1},(1-\alpha_t)\mathbf{I})
 \]</span> 这意味着我们可以用如下方式从 <span class="math inline">\(\x_{t-1}\)</span> 采样 <span class="math inline">\(\x_t\)</span>： <span class="math display">\[
 \x_t=\sqrt{\alpha_t}\x_{t-1}+\sqrt{1-\alpha_t}\epsilon_{t-1},\quad \epsilon_{t-1}\sim\calN(\mathbf 0,\mathbf{I})
@@ -452,50 +459,48 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 <div class="note note-success">
             <p><strong>Tip</strong>：推导时不要每一项都打开老老实实地算，直接提取 <span class="math inline">\(\x_{t-1}\)</span> 的二次项系数和一次项系数即可。</p>
           </div>
-<p>看到这里，不知读者心中是否有疑惑——为什么人为设置后验分布（即前向过程）是合理的？VAE 中 <span class="math inline">\(q\)</span> 不是要去拟合真实后验分布吗，现在人为设置好了怎么去拟合啊？私以为，这个问题揭示了 VAE 和 DDPM 出发点的不同。VAE 先定义生成模型 <span class="math inline">\(p_\theta(x\vert z)\)</span>，在这个定义下，存在所谓的“真实”后验分布 <span class="math inline">\(p_\theta(z\vert x)\)</span>，但是它不可解，所以拿一个 <span class="math inline">\(q_\phi(z\vert x)\)</span> 去近似。DDPM 则是反过来，先定义后验分布（即前向过程），然后根据后验去学习生成模型（即逆向过程）。</p>
+<p>看到这里，不知读者心中是否有疑惑——为什么人为设置后验分布（即前向过程）是合理的？VAE 中 <span class="math inline">\(q\)</span> 不是要去拟合真实后验分布吗，现在人为设置好了怎么去拟合啊？私以为，这个问题揭示了 VAE 和 DDPM 出发点的不同。VAE 先定义生成模型 <span class="math inline">\(p_\theta(x\vert z)\)</span>，在这个定义下，存在所谓的“真实”后验分布 <span class="math inline">\(p_\theta(z\vert x)\)</span>，但是它不可解，所以用 <span class="math inline">\(q_\phi(z\vert x)\)</span> 去近似。DDPM 则是反过来，先定义后验分布（即前向过程），然后根据后验去学习生成模型（即逆向过程）。</p>
 <h3 id="逆向过程">逆向过程</h3>
 <p><img src="reverse.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://cvpr2022-tutorial-diffusion-models.github.io/" width=70% /></p>
-<p>现在我们来关注 <span class="math inline">\(\eqref{obj}\)</span> 式中与逆向过程有关的概率分布，也就是用 <span class="math inline">\(p\)</span> 表示的分布，即 <span class="math inline">\(p(\x_T)\)</span> 和 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span>. 前者很简单，直接取标准正态分布即可，这也与我们之前设计的 <span class="math inline">\(q(\x_T\vert\x_0)\)</span> 是匹配的。对于后者，考虑到要最小化它与 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 之间的 KL 散度，所以为了计算方便，设计为与之相同的形式，即： <span class="math display">\[
+<p>现在我们来关注逆向过程，即从 <span class="math inline">\(\mathbf x_T\)</span> 到 <span class="math inline">\(\mathbf x_0\)</span> 的马尔可夫链： <span class="math display">\[
+p_\theta(\x_{0:T})=p(\x_T)\prod_{t=1}^Tp_\theta(\x_{t-1}\vert \x_t)
+\]</span> 其中 <span class="math inline">\(p(\x_T)\)</span> 很容易设计，直接取标准正态分布即可，这也与我们之前设计的 <span class="math inline">\(q(\x_T\vert\x_0)\)</span> 是匹配的。</p>
+<p>对于 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span>，考虑到 <span class="math inline">\(\eqref{obj}\)</span> 式中要最小化它与 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 之间的 KL 散度，所以为了计算方便，设计为与之相同的形式，即： <span class="math display">\[
 \begin{align}
 &amp;p_\theta(\x_{t-1}\vert\x_t)=\calN\left(\x_{t-1};\mu_t(\x_t,\x_\theta(\x_t,t)),\sigma_t^2\mathbf{I}\right)\\
 \text{where}\quad&amp;\mu_t(\x_t,\x_\theta(\x_t,t))=\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}\x_t+\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_\theta(\x_t,t)\\
 &amp;\sigma_t^2=\tilde\beta_t\text{ or }\beta_t
 \end{align}\tag{10}\label{p-reverse}
-\]</span> 其中 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 表示以 <span class="math inline">\(\theta\)</span> 为参数的模型。总结一下，即：</p>
+\]</span> 其中 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 表示以 <span class="math inline">\(\theta\)</span> 为参数的模型。为了看得更清楚，列表如下：</p>
 <table>
 
 <thead>
 <tr class="header">
 <th style="text-align: center;"></th>
-<th style="text-align: center;">真实式</th>
-<th style="text-align: center;">近似式</th>
+<th style="text-align: center;"><span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\mathrel{\mathrel{\vcenter{:}}=}q(\x_{t-1}\vert\x_t,\x_\theta(\x_t,t))\)</span></th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">概率记号</td>
-<td style="text-align: center;"><span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)=q(\x_{t-1}\vert\x_t,\x_\theta(\x_t,t))\)</span></td>
-</tr>
-<tr class="even">
 <td style="text-align: center;">表达式</td>
 <td style="text-align: center;"><span class="math inline">\(\calN(\x_{t-1};\mu_t(\x_t,\x_0),\tilde\beta_t\mathbf I)\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(\calN\left(\x_{t-1};\ \mu_t(\x_t,\x_\theta(\x_t,t)),{\sigma_t^2}\mathbf{I}\right)\)</span></td>
 </tr>
-<tr class="odd">
-<td style="text-align: center;">正态分布均值</td>
+<tr class="even">
+<td style="text-align: center;">均值</td>
 <td style="text-align: center;"><span class="math inline">\(\mu_t(\x_t,\x_0)\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(\mu_t(\x_t,\x_\theta(\x_t,t))\)</span></td>
 </tr>
-<tr class="even">
-<td style="text-align: center;">正态分布方差</td>
+<tr class="odd">
+<td style="text-align: center;">方差</td>
 <td style="text-align: center;"><span class="math inline">\(\tilde\beta_t\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(\sigma_t^2=\tilde\beta_t\text{ or }\beta_t\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>可以看到，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的均值沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，只不过由于生成过程中我们并不知道真实的 <span class="math inline">\(\x_0\)</span>，所以需要用一个模型替代之。对于当前的 <span class="math inline">\(\x_0\)</span>，最小化 KL 散度可以理解为用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 去近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，等价于用 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 去近似 <span class="math inline">\(\x_0\)</span>，在下一节中我们将优化目标显式写出后可以看得更清楚。</p>
-<p>至于方差的选取就非常耐人寻味了：取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span> 不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差，但是取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span> 是出自什么考虑呢？这个问题我们暂时放一放，在<a href="/blog-main/2023/01/14/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E9%80%86%E5%90%91%E8%BF%87%E7%A8%8B%E7%9A%84%E6%96%B9%E5%B7%AE%E9%80%89%E5%8F%96/" title="扩散模型逆向过程的方差选取">之后的文章</a>中详细说明。</p>
+<p>可以看到，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的均值沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，只不过用模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 代替了生成过程中我们并不知道的 <span class="math inline">\(\x_0\)</span>. 对于一个给定的 <span class="math inline">\(\x_0\)</span>，我们用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 去近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，本质上就是在用 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 去近似 <span class="math inline">\(\x_0\)</span>，在下一节中我们将优化目标显式写出后可以看得更清楚。</p>
+<p>至于方差的选取就非常耐人寻味了：取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span> 不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差，但是取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span> 是出自什么考虑呢？这个问题我们暂时放一放，在<a href="/blog-main/2023/01/14/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E9%80%86%E5%90%91%E6%96%B9%E5%B7%AE%E7%9A%84%E9%80%89%E5%8F%96/" title="扩散模型逆向方差的选取">之后的文章</a>中详细说明。</p>
 <h3 id="损失函数">损失函数</h3>
 <p>至此，我们已经确定下 <span class="math inline">\(\eqref{obj}\)</span> 式中出现的所有概率分布的形式，因而可以代入计算了。为避免读者上下翻阅，把所有公式总结于此： <span class="math display">\[
 \begin{align}
@@ -518,26 +523,26 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 &amp;=\sum_{t=1}^T\frac{1}{2\sigma_t^2}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\left\Vert\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_0-\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}\x_\theta(\x_t,t)\right\Vert^2\right]\\
 &amp;=\sum_{t=1}^T\frac{\bar\alpha_{t-1}\beta_t^2}{2\sigma_t^2(1-\bar\alpha_t)^2}\E_{\x_t\sim q(\x_t\vert\x_0)}\left[\Vert\x_0-\x_\theta(\x_t,t)\Vert^2\right]\tag{11}\label{loss-x}
 \end{align}
-\]</span> 也就是 L2 损失或 MSE 损失。这验证了前文我们提到的，对于当前的 <span class="math inline">\(\x_0\)</span>，模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 的作用是去近似 <span class="math inline">\(\x_0\)</span> 的说法。</p>
+\]</span> 也就是 L2 损失或 MSE 损失。这验证了前文我们提到的，对于一个给定的 <span class="math inline">\(\x_0\)</span>，模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 的作用是去近似 <span class="math inline">\(\x_0\)</span> 的说法。</p>
 <p>进一步地，DDPM 对 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 做了<strong>重参数化</strong>。根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式有： <span class="math display">\[
 \x_0=\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t-\sqrt{1-\bar\alpha_t}\epsilon\right),\quad\epsilon\sim\calN(\mathbf0,\mathbf I)
 \]</span> 因此可以把 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 写作相同的形式： <span class="math display">\[
 \x_\theta(\x_t,t)=\frac{1}{\sqrt{\bar\alpha_t}}\left(\x_t-\sqrt{1-\bar\alpha_t}\epsilon_\theta(\x_t,t)\right)
 \]</span> 代入 <span class="math inline">\(\eqref{loss-x}\)</span> 式得： <span class="math display">\[
-\mathcal L_{\x_0}(\theta)=\sum_{t=1}^T\frac{\beta_t^2}{2\sigma_t^2{\alpha_t}(1-\bar\alpha_t)}\E_{\epsilon\sim\calN(\mathbf0,\mathbf I)}\left[\Vert{\epsilon}-\epsilon_\theta(\x_t,t)\Vert^2\right]\tag{12}\label{loss-eps}
-\]</span> 其中 <span class="math inline">\(\x_t\)</span> 由 <span class="math inline">\(\x_0\)</span> 与采样出的 <span class="math inline">\(\epsilon\)</span> 根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式计算，为简便起见没有显式地代入上式。这里的 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 就是所谓的“噪声预测模型”。通过实验探索，DDPM 作者发现将模型参数化为 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 的效果比 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 更好，并且把前面的系数丢掉效果更好。</p>
-<p>最后，<strong>注意本文至此的所有推导都建立在给定一个 <span class="math inline">\(\x_0\)</span> 的基础上</strong>，实际训练时 <span class="math inline">\(\x_0\)</span> 从训练集中采样的，因此最终的损失函数为： <span class="math display">\[
+\mathcal L_{\x_0}(\theta)=\sum_{t=1}^T\frac{\beta_t^2}{2\sigma_t^2{\alpha_t}(1-\bar\alpha_t)}\E_{\epsilon\sim\calN(\mathbf0,\mathbf I)}\left[\Vert{\epsilon}-\epsilon_\theta(\x_t,t)\Vert^2\right]
+\]</span> 其中 <span class="math inline">\(\x_t\)</span> 由 <span class="math inline">\(\x_0\)</span> 与采样出的 <span class="math inline">\(\epsilon\)</span> 根据 <span class="math inline">\(\eqref{xtx0}\)</span> 式计算，为简便起见没有显式地代入上式。这里的 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 就是所谓的“噪声预测模型”，用于近似当前采样出的噪声 <span class="math inline">\(\epsilon\)</span>. 通过实验探索，DDPM 作者发现将模型参数化为 <span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 的效果比 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 更好，并且把前面的系数丢掉效果更好。另外，对 <span class="math inline">\(t\)</span> 求和可以改作对 <span class="math inline">\(t\)</span> 均匀采样，因此损失函数简化为： <span class="math display">\[
+\mathcal L_{\x_0,\text{simple}}(\theta)=\E_{t,\epsilon}\left[\Vert{\epsilon}-\epsilon_\theta(\x_t,t)\Vert^2\right]
+\]</span> 最后，<strong>注意本文至此的所有推导都建立在给定一个 <span class="math inline">\(\x_0\)</span> 的基础上</strong>，实际训练时 <span class="math inline">\(\x_0\)</span> 是从训练集中采样的，因此最终的损失函数为： <span class="math display">\[
 \mathcal L_\text{simple}(\theta)=\E_{t,\x_0,\epsilon}\left[\Vert\epsilon-\epsilon_\theta(\x_t,t)\Vert^2\right]
 \]</span> 相应算法流程如下：</p>
 <p><img src="DDPM-algo.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
-<p>可见 DDPM 虽然推导有些复杂，但最后得到的算法流程却异常简单，效果也很好，难怪很快成为了研究的热点。</p>
+<p>可见 DDPM 虽然推导有些复杂，但最后得到的算法流程却异常简单，效果也很好，难怪迅速成为了研究的热点。</p>
 <h3 id="一些注解">一些注解</h3>
-<p>直观上 DDPM 干的事情可以总结为——前向过程对输入图像一步步加噪，使之变成高斯噪声；逆向过程使用模型来预测添加的噪声（或预测原图），进而把带噪图像一步步转换回真实图像。</p>
-<p><img src="epsilon.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<p>这里容易产生一个误解：既然每一步 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 都是去近似 <span class="math inline">\(\x_0\)</span>，那么岂不是直接一步生成 <span class="math inline">\(\x_\theta(\x_T,T)\approx \x_0\)</span> 就可以了？并不是这样的。注意 <span class="math inline">\(\mathbf x_0\)</span> 是不断从数据集中采样出来的，由于不同的 <span class="math inline">\(\mathbf x_0\)</span> 都有可能得到相同的 <span class="math inline">\(\mathbf x_t\)</span>，所以随着训练的进行，<span class="math inline">\(\mathbf x_\theta(\mathbf x_t)\)</span> 拟合的是这些 <span class="math inline">\(\mathbf x_0\)</span> 的平均值，是一个模糊的图像。其实通过简单的推导就可以知道： <span class="math display">\[
+<p>直观上 DDPM 干的事情可以总结为——前向过程对输入图像一步步加噪，使之变成高斯噪声；逆向过程使用模型来预测原图（或预测添加的噪声），进而把带噪图像一步步转换回真实图像。这里容易产生一个误解：既然每一步 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 都是去近似 <span class="math inline">\(\x_0\)</span>，那么岂不是直接一步生成 <span class="math inline">\(\x_\theta(\x_T,T)\approx \x_0\)</span> 就可以了？并不是这样的。注意 <span class="math inline">\(\mathbf x_0\)</span> 是不断从数据集中采样出来的，由于不同的 <span class="math inline">\(\mathbf x_0\)</span> 都有可能得到相同的 <span class="math inline">\(\mathbf x_t\)</span>，所以随着训练的进行，<span class="math inline">\(\mathbf x_\theta(\mathbf x_t,t)\)</span> 拟合的是这些 <span class="math inline">\(\mathbf x_0\)</span> 的平均值，是一个模糊的图像。其实通过简单的推导就可以知道：</p>
+<p><span class="math display">\[
 \min_\theta\mathbb E_{\x_0\sim q(\x_0),\x_t\sim q(\x_t\vert\x_0)}\left[\Vert\mathbf x_\theta(\mathbf x_t,t)-\mathbf x_0\Vert_2^2\right]\implies \mathbf x_{\theta^\ast}(\mathbf x_t,t)=\mathbb E_{q(\mathbf x_0\vert\mathbf x_t)}[\mathbf x_0]=\mathbb E[\mathbf x_0\vert\mathbf x_t],\quad\forall \x_t\sim q(\x_t)
-\]</span> 因此模型 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t,t)\)</span> 要拟合的真值是 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，即 <span class="math inline">\(\mathbf x_0\)</span> 关于 <span class="math inline">\(q(\mathbf x_0\vert\mathbf x_t)\)</span> 的加权平均。同理，<span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 拟合的真值是 <span class="math inline">\(\mathbb E[\epsilon\vert\x_t]\)</span>.</p>
-<p>纵观整个生成过程，可以把 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 理解为大方向，我们沿着大方向走一小步，然后重新看看大方向在哪里，再走下一小步。打个比方，我想从成都走到深圳，我知道大致要朝东南 45° 方向走，但是“差之毫厘，谬以千里”，直接走可能一不小心就登陆台湾了，所以我先走一小步到重庆；然后再看地图，大方向变成了东南 50°，于是又走一小步，但是拐弯过猛到了贵阳；没关系，再看地图，大方向变成了东南 30°……这样每走一小步都对大方向做一点修正，最后就能平稳地到达目的地了。</p>
+\]</span> 因此模型 <span class="math inline">\(\mathbf x_\theta(\mathbf x_t,t)\)</span> 拟合的真值是 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，即 <span class="math inline">\(\mathbf x_0\)</span> 关于 <span class="math inline">\(q(\mathbf x_0\vert\mathbf x_t)\)</span> 的加权平均。同理，<span class="math inline">\(\epsilon_\theta(\x_t,t)\)</span> 拟合的真值是 <span class="math inline">\(\mathbb E[\epsilon\vert\x_t]\)</span>.</p>
+<p>那么，纵观整个生成过程，我们可以把 <span class="math inline">\(\x_\theta(\x_t,t)\approx\E[\x_0\vert\x_t]\)</span> 理解为大方向。每次我们朝着大方向走一小步，然后重新看看大方向在哪里，再走下一小步。打个比方，我想从成都走到深圳，我知道大致要朝东南 45° 方向走，但是“差之毫厘，谬以千里”，直接走可能一不小心就登陆台湾了，所以我先走一小步到重庆；然后再看地图，大方向变成了东南 50°，于是又走一小步，但是拐弯过猛到了贵阳；没关系，再看地图，大方向变成了东南 30°……这样每走一小步都对大方向做一点修正，最后就能平稳地到达目的地了。</p>
 <h2 id="代码实现">代码实现</h2>
 <p>Github repo: <a target="_blank" rel="noopener" href="https://github.com/xyfJASON/Diffusion-Models-Implementations" class="uri">https://github.com/xyfJASON/Diffusion-Models-Implementations</a></p>
 <h3 id="结果展示">结果展示</h3>
@@ -549,7 +554,7 @@ q(\x_{t-1}\vert \x_t,\x_0)&amp;=\frac{q(\x_t\vert \x_{t-1},\x_0)q(\x_{t-1}\vert 
 <p>早期的实现版本在 MNIST 上 work 得很好，但是在 CelebA-HQ 上训练时出现了<strong>色调偏移</strong>（color shifting）问题。具体而言，我发现各个 epoch 之间的图片色调会发生明显偏移，比如前一个 epoch 图片都偏红，后一个 epoch 图片都偏蓝，有时候甚至亮/暗得根本看不清人脸，如下图所示：</p>
 <div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="result-red.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="result-blue.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="result-oversaturate.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="result-undersaturate.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
 <p>本以为是模型还没收敛，但是 300 多个 epochs 之后仍然是这样，这就不得不重视起来。一番排查后，发现是我偷懒没有实现 EMA 导致的，特别是原作者把 decay rate 设置为 0.9999，意味着参数更新其实是很慢的。EMA 的本质是对历史权重做了加权平均，可以看作若干历史模型的集成。从这个角度来说，那些色调发生不同偏移的模型互相“抵消”，从而缓解了色调偏移问题。（注意只是缓解，并没有消除！）</p>
-<p>后来我读到其实宋飏在论文<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[3]</span></a></sup>里面就提到了这一现象，这也是他引入 EMA 的原因。说到底，色调偏移就是模型还没有收敛到真实分布的一个表现而已，只不过视觉上给人的冲击比较强烈罢了。</p>
+<p>后来我读到其实宋飏在论文<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[3]</span></a></sup>里面就提到了这一现象，这也是他引入 EMA 的原因。说到底，色调偏移就是模型还没有收敛到真实分布的一个表现，只不过视觉上给人的冲击比较强烈罢了。</p>
 <p>[update 2022.11.27] 虽然 EMA 的 decay rate 设置为 0.9999，但 tensorflow 的官方实现其实是这样的： <span class="math display">\[
 \text{decay}=\min\left(\text{decay}_\max,\frac{1+\text{num}\_\text{updates}}{10+\text{num}\_\text{updates}}\right)
 \]</span> 随着 num_updates 增加，对应的 decay 序列是 <span class="math inline">\(0.1818,0.2500,0.3077,0.3571,0.4000,\ldots\)</span>，一直到 90000 步左右 decay 才会固定在 0.9999. 这样做能减小初始化的随机权重对整体权重的影响，模型见效更快。</p>
