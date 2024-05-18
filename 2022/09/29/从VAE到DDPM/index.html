@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ddpm.png">
 <meta property="article:published_time" content="2022-09-29T15:56:27.000Z">
-<meta property="article:modified_time" content="2024-05-17T04:07:04.580Z">
+<meta property="article:modified_time" content="2024-05-18T06:22:44.456Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -285,7 +285,7 @@
         
         
         
-          52 分钟
+          51 分钟
         
       </span>
     
@@ -499,8 +499,8 @@ p_\theta(\x_{0:T})=p(\x_T)\prod_{t=1}^Tp_\theta(\x_{t-1}\vert \x_t)
 </tr>
 </tbody>
 </table>
-<p>可以看到，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的均值沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，只不过用模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 代替了生成过程中我们并不知道的 <span class="math inline">\(\x_0\)</span>. 对于一个给定的 <span class="math inline">\(\x_0\)</span>，我们用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 去近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，本质上就是在用 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 去近似 <span class="math inline">\(\x_0\)</span>，在下一节中我们将优化目标显式写出后可以看得更清楚。</p>
-<p>至于方差的选取就非常耐人寻味了：取 <span class="math inline">\(\sigma_t^2=\tilde\beta_t\)</span> 不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差，但是取 <span class="math inline">\(\sigma_t^2=\beta_t\)</span> 是出自什么考虑呢？这个问题我们暂时放一放，在<a href="/blog-main/2023/01/14/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E9%80%86%E5%90%91%E6%96%B9%E5%B7%AE%E7%9A%84%E9%80%89%E5%8F%96/" title="扩散模型逆向方差的选取">之后的文章</a>中详细说明。</p>
+<p>可以看到，<span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的均值沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的形式，只不过用模型 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 代替了生成过程中我们并不知道的 <span class="math inline">\(\x_0\)</span>. 对于一个给定的 <span class="math inline">\(\x_0\)</span>，用 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 去近似 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span>，本质上就是在用 <span class="math inline">\(\x_\theta(\x_t,t)\)</span> 去近似 <span class="math inline">\(\x_0\)</span>，在下一节中我们将优化目标显式写出后可以看得更清楚。</p>
+<p>至于方差，DDPM 给出了两个选择 <span class="math inline">\(\tilde\beta_t\)</span> 与 <span class="math inline">\(\beta_t\)</span>. 前者不难理解，就是沿用了 <span class="math inline">\(q(\x_{t-1}\vert\x_t,\x_0)\)</span> 的方差，但是后者是出自什么考虑呢？这个问题我们暂时放一放，在<a href="/blog-main/2023/01/14/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E9%80%86%E5%90%91%E6%96%B9%E5%B7%AE%E7%9A%84%E9%80%89%E5%8F%96/" title="扩散模型逆向方差的选取">之后的文章</a>中详细说明。</p>
 <h3 id="损失函数">损失函数</h3>
 <p>至此，我们已经确定下 <span class="math inline">\(\eqref{obj}\)</span> 式中出现的所有概率分布的形式，因而可以代入计算了。为避免读者上下翻阅，把所有公式总结于此： <span class="math display">\[
 \begin{align}

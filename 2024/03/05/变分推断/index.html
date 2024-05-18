@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
 <meta property="article:published_time" content="2024-03-05T08:23:28.000Z">
-<meta property="article:modified_time" content="2024-04-27T08:03:31.692Z">
+<meta property="article:modified_time" content="2024-05-18T05:29:59.960Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -354,7 +354,10 @@ p(z\vert x)=\frac{p(x\vert z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\int_{z
 <h3 id="平均场变分推断">平均场变分推断</h3>
 <p>设隐变量 <span class="math inline">\(z=(z_1,\ldots,z_m)\in\mathbb R^m\)</span>，并且假设 <span class="math inline">\(q(z)\)</span> 可分解为各分量密度函数之乘积： <span class="math display">\[
 q(z)=\prod_{i=1}^mq_i(z_i)
-\]</span> &gt; 注：其实 <span class="math inline">\(z_i\)</span> 不一定真的是一个分量，也可以是一些分量形成的一个组，但本质一样的，不影响推导。</p>
+\]</span></p>
+<blockquote>
+<p>注：其实 <span class="math inline">\(z_i\)</span> 不一定真的是一个分量，也可以是一些分量形成的一个组，但本质一样的，不影响推导。</p>
+</blockquote>
 <p>由于这种假设来源于统计力学中的平均场理论 (mean-field theory)，因此称该假设下的变分推断为<strong>平均场变分推断</strong>。</p>
 <p>将上式代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
 \begin{align}
@@ -384,7 +387,8 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
 \mathcal L(\phi)=\int_zq_\phi(z)\log\frac{p(x,z)}{q_\phi(z)}\mathrm dz=\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
 \]</span> 对参数 <span class="math inline">\(\phi\)</span> 求梯度： <span class="math display">\[
 \begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz=\int_z\nabla_\phi\Big[q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\Big]\mathrm dz\\
+\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
+&amp;=\int_z\nabla_\phi\Big[q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\Big]\mathrm dz\\
 &amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz+\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
 \end{align}
 \]</span> 其中第二项： <span class="math display">\[
@@ -523,9 +527,9 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2024/03/07/Flow-based-Generative-Models/" title="Flow-based Generative Models">
+                      <a href="/blog-main/2024/03/07/Normalizing-Flows/" title="Normalizing Flows">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Flow-based Generative Models</span>
+                        <span class="hidden-mobile">Normalizing Flows</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
