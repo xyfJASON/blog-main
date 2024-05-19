@@ -16,24 +16,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="DPM-Solver 从扩散 ODE 入手 相比扩散 SDE，由于扩散 ODE 没有随机性，更适合采用大步长以加速采样，因此本文作者只考虑扩散 ODE： \[ \mathrm d\mathbf x_t&#x3D;\left[f(t)\mathbf x_t-\frac{1}{2}g^2(t)\nabla_{\mathbf x}\log q(\mathbf x_t)\right]\mathrm dt \] 代入">
+    <meta name="description" content="Introduction 扩散模型虽然效果很好，但最大的缺点就是迭代式的生成效率太低。为了解决这个问题，宋飏等人在 Probability Flow ODE 的基础上建立了 consistency models，通过将 ODE 轨迹上的任何点（如 \(\mathbf x_t,\mathbf x_{t&#39;},\mathbf x_T\)）都映射到 ODE 的端点 \(\mathbf x_0\)，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DPM-Solver">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/05/14/DPM-Solver/index.html">
+<meta property="og:title" content="Consistency Models">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/05/05/Consistency-Models/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="DPM-Solver 从扩散 ODE 入手 相比扩散 SDE，由于扩散 ODE 没有随机性，更适合采用大步长以加速采样，因此本文作者只考虑扩散 ODE： \[ \mathrm d\mathbf x_t&#x3D;\left[f(t)\mathbf x_t-\frac{1}{2}g^2(t)\nabla_{\mathbf x}\log q(\mathbf x_t)\right]\mathrm dt \] 代入">
+<meta property="og:description" content="Introduction 扩散模型虽然效果很好，但最大的缺点就是迭代式的生成效率太低。为了解决这个问题，宋飏等人在 Probability Flow ODE 的基础上建立了 consistency models，通过将 ODE 轨迹上的任何点（如 \(\mathbf x_t,\mathbf x_{t&#39;},\mathbf x_T\)）都映射到 ODE 的端点 \(\mathbf x_0\)，">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/dpm-solver.png">
-<meta property="article:published_time" content="2024-05-14T02:03:05.000Z">
-<meta property="article:modified_time" content="2024-05-14T06:59:34.451Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/consistency.png">
+<meta property="article:published_time" content="2024-05-05T11:02:57.000Z">
+<meta property="article:modified_time" content="2024-05-19T10:22:57.514Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/dpm-solver.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/consistency.png">
   
   
   
-  <title>DPM-Solver - xyfJASON</title>
+  <title>Consistency Models - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +245,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/dpm-solver.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/consistency.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="DPM-Solver"></span>
+            <span id="subtitle" data-typed-text="Consistency Models"></span>
           
         </div>
 
@@ -262,8 +262,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-05-14 10:03" pubdate>
-          2024年5月14日 上午
+        <time datetime="2024-05-05 19:02" pubdate>
+          2024年5月5日 晚上
         </time>
       </span>
     
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.6k 字
+          1.2k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          22 分钟
+          11 分钟
         
       </span>
     
@@ -322,92 +322,66 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">DPM-Solver</h1>
+            <h1 id="seo-header">Consistency Models</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="dpm-solver">DPM-Solver</h2>
-<h3 id="从扩散-ode-入手">从扩散 ODE 入手</h3>
-<p>相比扩散 SDE，由于扩散 ODE 没有随机性，更适合采用大步长以加速采样，因此本文作者只考虑扩散 ODE： <span class="math display">\[
-\mathrm d\mathbf x_t=\left[f(t)\mathbf x_t-\frac{1}{2}g^2(t)\nabla_{\mathbf x}\log q(\mathbf x_t)\right]\mathrm dt
-\]</span> 代入“噪声预测模型” <span class="math inline">\(\epsilon_\theta(\mathbf x_t,t)\approx-\sigma_t\nabla_{\mathbf x}\log q(\mathbf x_t)\)</span>： <span class="math display">\[
-\mathrm d\mathbf x_t=\left[f(t)\mathbf x_t+\frac{g^2(t)}{2\sigma_t}\epsilon_\theta(\mathbf x_t,t)\right]\mathrm dt\tag{1}\label{ode}
-\]</span> 那么从 <span class="math inline">\(T\)</span> 到 <span class="math inline">\(0\)</span>​ 解该 ODE 即是生成过程。具体而言，设已知 <span class="math inline">\(\mathbf x_s\)</span> 的值，那么从 <span class="math inline">\(s\)</span> 到 <span class="math inline">\(t\)</span> 积分得： <span class="math display">\[
-\mathbf x_t=\mathbf x_s+\int_s^t\left(f(t)\mathbf x_t+\frac{g^2(t)}{2\sigma_t}\epsilon_\theta(\mathbf x_t,t)\right)\mathrm dt
-\]</span> 在之前的工作中，人们使用各种黑盒 ODE 数值求解器求解上述微分方程，例如 Euler, improved Euler, RK45 方法等，相当于在用不同方式近似上面的积分（例如 Euler 法就是用矩形近似积分，improved Euler 就是用梯形近似积分），但在步数较少时它们效果并不好。因此，本文作者着重考虑了扩散 ODE 的特殊结构，提出了 DPM-Solver.</p>
-<h3 id="观察-1半线性结构">观察 1：半线性结构</h3>
-<p>作者首先注意到，<span class="math inline">\(\eqref{ode}\)</span> 式可以拆解为两部分——<span class="math inline">\(f(t)\mathbf x_t\)</span> 是关于 <span class="math inline">\(\mathbf x_t\)</span> 的线性部分，<span class="math inline">\(\frac{g^2(t)}{2\sigma_t}\epsilon(\mathbf x_t,t)\)</span> 是关于 <span class="math inline">\(\mathbf x_t\)</span> 的非线性部分，其中非线性来自于神经网络。作者将这样的特殊结构称作扩散 ODE 的半线性 (semi-linear) 结构。</p>
-<p>半线性结构带来的好处是——我们可以在最终的解中分离出一个可以解析计算的部分，这部分不必用数值法求解。具体而言，使用积分因子法，可以求出解为： <span class="math display">\[
-\mathbf x_t=\underbrace{e^{\int_s^t f(\tau)\mathrm d\tau}\mathbf x_s}_\text{exactly computed}+\int_s^t\left(e^{\int_\tau^tf(r)\mathrm dr}\frac{g^2(\tau)}{2\sigma_\tau}\epsilon_\theta(\mathbf x_\tau,\tau)\right)\mathrm d\tau\tag{2}\label{obs1}
-\]</span> 式中第一部分就是可以直接计算的部分。</p>
-<div class="note note-secondary">
-            <p><strong>推导过程</strong>：将 <span class="math inline">\(\eqref{ode}\)</span>​ 式中线性部分移项到左边： <span class="math display">\[\mathrm d\mathbf x_t-f(t)\mathbf x_t\mathrm dt=\frac{g^2(t)}{2\sigma_t}\epsilon_\theta(\mathbf x_t,t)\mathrm dt\]</span> 两边乘以积分因子 <span class="math inline">\(v(t)\)</span>： <span class="math display">\[v(t)\mathrm d\mathbf x_t-v(t)f(t)\mathbf x_t\mathrm dt=\frac{v(t)g^2(t)}{2\sigma_t}\epsilon_\theta(\mathbf x_t,t)\mathrm dt\]</span> 选择特殊的积分因子使得左边可积： <span class="math display">\[\mathrm d(v(t)\cdot \mathbf x_t)=\frac{v(t)g^2(t)}{2\sigma_t}\epsilon_\theta(\mathbf x_t,t)\mathrm dt\]</span> 两边从 <span class="math inline">\(s\)</span> 到 <span class="math inline">\(t\)</span> 积分得： <span class="math display">\[v(t)\mathbf x_t-v(s)\mathbf x_s=\int_s^t\left(\frac{v(\tau)g^2(\tau)}{2\sigma_\tau}\epsilon_\theta(\mathbf x_\tau,\tau)\right)\mathrm d\tau\]</span> 解得： <span class="math display">\[\mathbf x_t=\frac{v(s)}{v(t)}\mathbf x_s+\int_s^t\left(\frac{v(\tau)}{v(t)}\frac{g^2(\tau)}{2\sigma_\tau}\epsilon_\theta(\mathbf x_\tau,\tau)\right)\mathrm d\tau\tag{3}\label{obs1-1}\]</span> 现在我们只需要确定下积分因子即可。积分因子的构造需要满足： <span class="math display">\[\mathrm d(v(t)\cdot\mathbf x_t)=\mathbf x_t\mathrm dv(t)+v(t)\mathrm d\mathbf x_t=v(t)\mathrm d\mathbf x_t-v(t)f(t)\mathbf x_t\mathrm dt\]</span> 也即： <span class="math display">\[\mathrm dv(t)=-v(t)f(t)\mathrm dt\]</span> 这是一个一阶线性齐次常微分方程，分离变量得： <span class="math display">\[\frac{\mathrm dv(t)}{v(t)}=-f(t)\mathrm dt\]</span> 两边从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(t\)</span> 积分得： <span class="math display">\[\ln v(t)-\ln v(0)=-\int_0^t f(\tau)\mathrm d\tau\]</span> 故： <span class="math display">\[v(t)=v(0)e^{-\int_0^t f(\tau)\mathrm d\tau}\]</span> 注意 <span class="math inline">\(\eqref{obs1-1}\)</span> 式中出现 <span class="math inline">\(v(t)\)</span> 的地方都是两个相除的形式： <span class="math display">\[\frac{v(s)}{v(t)}=\frac{v(0)e^{-\int_0^sf(\tau)\mathrm d\tau}}{v(0)e^{-\int_0^tf(\tau)\mathrm d\tau}}=e^{\int_s^tf(\tau)\mathrm d\tau}\]</span> 代入 <span class="math inline">\(\eqref{obs1-1}\)</span> 式得： <span class="math display">\[\mathbf x_t=e^{\int_s^tf(\tau)\mathrm d\tau}+\int_s^t\left(e^{\int_\tau^tf(\tau)\mathrm d\tau}\frac{g^2(\tau)}{2\sigma_\tau}\epsilon_\theta(\mathbf x_\tau,\tau)\right)\mathrm d\tau\]</span> 这就推出了 <span class="math inline">\(\eqref{obs1}\)</span>​ 式。</p>
-          </div>
-<h3 id="观察-2变量代换">观察 2：变量代换</h3>
-<p>在之前的文章中我们看到过，<span class="math inline">\(f(t),g(t)\)</span> 的形式其实对扩散模型不是很友好，可以将其代换为 <span class="math inline">\(q(\mathbf x_t\vert\mathbf x_0)\)</span> 中的 <span class="math inline">\(\alpha_t,\sigma_t\)</span>，即： <span class="math display">\[
-q(\mathbf x_t\vert\mathbf x_0)=\mathcal N(\mathbf x_t;\alpha_t\mathbf x_0,\sigma^2_t\mathbf I)
-\]</span> 进一步地，记 <span class="math inline">\(\lambda_t\)</span> 表示对数信噪比的一半： <span class="math display">\[
-\lambda_t=\log(\alpha_t/\sigma_t)
-\]</span> 那么可以推出 <span class="math inline">\(f(t),g(t)\)</span> 与 <span class="math inline">\(\alpha_t,\sigma_t,\lambda_t\)</span> 之间有关系： <span class="math display">\[
-f(t)=\frac{d\log \alpha_t}{\mathrm dt},\quad g^2(t)=-2\sigma_t^2\frac{\mathrm d\lambda_t}{\mathrm dt}
-\]</span> 推导过程可以参考<a href="/blog-main/2024/02/20/%E9%98%90%E6%98%8E%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%AE%BE%E8%AE%A1%E7%A9%BA%E9%97%B4/" title="阐明扩散模型的设计空间">阐明扩散模型的设计空间</a>一文中的一个类似的推导。</p>
-<p>将上述关系代入 <span class="math inline">\(\eqref{obs1}\)</span> 式得： <span class="math display">\[
-\mathbf x_t=\frac{\alpha_t}{\alpha_s}\mathbf x_s-\alpha_t\int_s^t\left(\frac{\mathrm d\lambda_\tau}{\mathrm d\tau}\right)\frac{\sigma_\tau}{\alpha_\tau}\epsilon_\theta(\mathbf x_\tau,\tau)\mathrm d\tau\tag{4}\label{obs2}
-\]</span> 相比 <span class="math inline">\(\eqref{obs1}\)</span> 式，<span class="math inline">\(\eqref{obs2}\)</span> 式的形式果然简洁了一些。更进一步，由于信噪比是单调的，所以时间步 <span class="math inline">\(\tau\)</span> 可以与对数信噪比 <span class="math inline">\(\lambda_\tau\)</span> 之间建立起一一映射。因此把积分变量从时间步换成对数信噪比得： <span class="math display">\[
-\mathbf x_t=\underbrace{\frac{\alpha_t}{\alpha_s}\mathbf x_s}_\text{exactly computed}-\alpha_t\underbrace{\int_{\lambda_s}^{\lambda_t}e^{-\lambda}\hat\epsilon_\theta(\hat{\mathbf x}_\lambda,\lambda)\mathrm d\lambda}_\text{exponentially weighted integral}\tag{5}\label{obs2-1}
-\]</span> 这里用 <span class="math inline">\(\hat\epsilon_\theta(\hat{\mathbf x}_\lambda,\lambda)\)</span> 表示以对数信噪比为参数的、对应 <span class="math inline">\(\epsilon_\theta(\mathbf x_{t_\lambda},t_\lambda)\)</span> 的模型。</p>
-<p>现在，我们只需要通过数值方法计算 <span class="math inline">\(\int e^{-\lambda}\hat\epsilon_\theta(\hat{\mathbf x}_\lambda,\lambda)\mathrm d\lambda\)</span> 一项即可，作者将其称作 <span class="math inline">\(\hat\epsilon_\theta\)</span> 的指数加权积分。</p>
-<h3 id="观察-3解析计算系数">观察 3：解析计算系数</h3>
-<p>虽然我们可以直接用数值方法去近似指数加权积分一项，但是本着能求解析解就尽可能求解析解的原则，作者对该积分项做了进一步处理。考虑将 <span class="math inline">\(\hat\epsilon_\theta(\hat{\mathbf x}_\lambda,\lambda)\)</span> 在 <span class="math inline">\(\lambda_{t_{i-1}}\)</span>​ 处做 <span class="math inline">\(k\)</span> 阶泰勒展开： <span class="math display">\[
-\hat\epsilon_\theta(\hat{\mathbf x}_\lambda,\lambda)=\sum_{n=0}^{k-1}\frac{(\lambda-\lambda_{t_{i-1}})^n}{n!}\hat\epsilon_\theta^{(n)}(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})+\mathcal O((\lambda-\lambda_{t_{i-1}})^k)
-\]</span> 代入 <span class="math inline">\(\eqref{obs2-1}\)</span> 式得： <span class="math display">\[
-\mathbf x_{t_i}=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\alpha_{t_i}\sum_{n=0}^{k-1}\;
-\underbrace{\vphantom{\int_{\lambda_{t_{i-1}}}}\hat\epsilon_\theta^{(n)}(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})}_\text{derivatives}\;
-\underbrace{\int_{\lambda_{t_{i-1}}}^{\lambda_{t_i}}e^{-\lambda}\frac{(\lambda-\lambda_{t_{i-1}})^n}{n!}\mathrm d\lambda}_{\text{coefficients}\;C_n}+\mathcal O(h_i^{k+1})\tag{6}\label{obs3}
-\]</span> 其中 <span class="math inline">\(h_i=\lambda_{t_i}-\lambda_{t_{i-1}}\)</span>. 作者指出，<span class="math inline">\(\eqref{obs3}\)</span> 式中的系数项是可以解析计算的。记系数为 <span class="math inline">\(C_n\)</span>​，实施一次分部积分： <span class="math display">\[
+                <h2 id="introduction">Introduction</h2>
+<p>扩散模型虽然效果很好，但最大的缺点就是迭代式的生成效率太低。为了解决这个问题，宋飏等人在 Probability Flow ODE 的基础上建立了 consistency models，通过将 ODE 轨迹上的任何点（如 <span class="math inline">\(\mathbf x_t,\mathbf x_{t&#39;},\mathbf x_T\)</span>）都映射到 ODE 的端点 <span class="math inline">\(\mathbf x_0\)</span>，从而实现从 <span class="math inline">\(\mathbf x_T\)</span> 到 <span class="math inline">\(\mathbf x_0\)</span> 的一步生成，如下图所示：</p>
+<p><img src="consistency.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>值得说明的是，扩散模型的一种常见参数化方式就是“预测原图”，这与 consistency models 有什么区别呢？扩散模型中的“原图预测模型”预测的真值是 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，即在 <span class="math inline">\(q(\mathbf x_0\vert\mathbf x_t)\)</span> 意义下 <span class="math inline">\(\mathbf x_0\)</span> 的平均值，并不是 ODE 的端点 <span class="math inline">\(\mathbf x_0\)</span>，因此并不支持一步生成；相反，consistency models 预测的就是 <span class="math inline">\(\mathbf x_0\)</span>，因此支持一步生成。</p>
+<h2 id="probability-flow-ode">Probability Flow ODE</h2>
+<p>Probability Flow ODE 的一般形式为： <span class="math display">\[
+\mathrm d\mathbf x_t=\left[\boldsymbol\mu(\mathbf x_t,t)-\frac{1}{2}\sigma^2(t)\nabla\log p_t(\mathbf x_t)\right]\mathrm dt
+\]</span> 为简单起见，文章采用 EDM 的设置 <span class="math inline">\(\boldsymbol\mu(\mathbf x_t,t)\equiv \mathbf 0,\,\sigma(t)=\sqrt{2t}\)</span>，那么有： <span class="math display">\[
+\mathrm d\mathbf x_t=-t\nabla\log p_t(\mathbf x_t)\mathrm dt\tag{1}\label{ode}
+\]</span> 设扩散模型训练得到的 score model 为 <span class="math inline">\(s_\phi(\mathbf x_t,t)\approx\nabla\log p_t(\mathbf x_t)\)</span>，代入上式得到 empirical PF ODE: <span class="math display">\[
+\mathrm d\mathbf x_t=-ts_\phi(\mathbf x_t,t)\mathrm dt\tag{2}\label{ode-e}
+\]</span> 则从 <span class="math inline">\(T\)</span> 到 <span class="math inline">\(\epsilon&gt;0\)</span> 迭代求解 <span class="math inline">\(\eqref{ode-e}\)</span> 式的过程就是生成过程。其中 <span class="math inline">\(\epsilon\)</span> 不取 0 是为了避免 score function 在 <span class="math inline">\(t=0\)</span> 处的数值不稳定问题。</p>
+<h2 id="consistency-models">Consistency Models</h2>
+<p>设 Probability Flow ODE <span class="math inline">\(\eqref{ode}\)</span> 式的轨迹为 <span class="math inline">\(\{\mathbf x_t\}_{t\in[\epsilon,T]}\)</span>，定义 consistency function 为 <span class="math inline">\(\mathbf f:\mathcal D\times[\epsilon,T]\to\mathcal D\)</span>，满足： <span class="math display">\[
+\mathbf f(\mathbf x_t,t)=\mathbf x_\epsilon,\quad\forall t\in[\epsilon,T]
+\]</span> Consistency function 具有 self-consistency 的性质，即对同一个 ODE 轨迹上的任意两点 <span class="math inline">\(\mathbf x_t,\mathbf x_{t&#39;}\)</span>，有： <span class="math display">\[
+\mathbf f(\mathbf x_t,t)=\mathbf f(\mathbf x_{t&#39;},t&#39;),\quad\forall t,t&#39;\in[\epsilon,T]
+\]</span> 另外还满足 boundary condition，即： <span class="math display">\[
+\mathbf f(\mathbf x_\epsilon,\epsilon)=\mathbf x_\epsilon
+\]</span> 为此作者将 consistency models 参数化为了如下形式： <span class="math display">\[
+\mathbf f_\theta(\mathbf x,t)=c_\text{skip}(t)\mathbf x+c_\text{out}(t)F_\theta(\mathbf x_t,t)\approx \mathbf f(\mathbf x,t)
+\]</span> 其中可微系数 <span class="math inline">\(c_\text{skip}(t),c_\text{out}(t)\)</span> 满足 <span class="math inline">\(c_\text{skip}(\epsilon)=1,\,c_\text{out}(\epsilon)=0\)</span>，这样就能满足 boundary condition.</p>
+<p>训练好 consistency model <span class="math inline">\(\mathbf f_\theta(\cdot,\cdot)\)</span> 后，只需采样 <span class="math inline">\(\hat{\mathbf x}_T\sim\mathcal N(\mathbf 0,T^2\mathbf I)\)</span>，然后计算 <span class="math inline">\(\hat{\mathbf x}_\epsilon=\mathbf f_\theta(\hat{\mathbf x}_T,T)\)</span> 即可。同时，我们也可以反复注入噪声来实现多步生成，算法如下所示：</p>
+<p><img src="sample-alg.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>由于 consistency model 定义了从高斯噪声到数据的一一映射，因此可以像 DDIM 一样完成隐空间插值和 zero-shot 的编辑。</p>
+<h2 id="training-via-distillation">Training via Distillation</h2>
+<p>Consistency models 有两种训练方式，蒸馏预训练的扩散模型 (consistency distillation) 或直接从头训练。</p>
+<p>首先来看第一种方式。对于从训练集中采样的 <span class="math inline">\(\mathbf x\sim p_\text{data}\)</span>，按原扩散模型的 perturbation kernel 添加噪声得到 <span class="math inline">\(\mathbf x_{t_{n+1}}\)</span>，然后使用预训练的 score model 去噪计算 <span class="math inline">\(\hat{\mathbf x}_{t_n}^\phi\)</span>： <span class="math display">\[
+\hat{\mathbf x}_{t_n}^{\phi}=\mathbf x_{t_{n+1}}+(t_n-t_{n+1})\Phi(\mathbf x_{t_{n+1}},t_{n+1};\phi)
+\]</span> 其中 <span class="math inline">\(\Phi(\cdot,\cdot,\phi)\)</span> 表示 ODE solver 的一步更新。例如，若使用 Euler solver，那么： <span class="math display">\[
+\hat{\mathbf x}_{t_n}^{\phi}=\mathbf x_{t_{n+1}}-(t_n-t_{n+1})t_{n+1}s_\phi(\mathbf x_{t_{n+1}},t_{n+1})
+\]</span> 这样，我们就得到了数据对 <span class="math inline">\((\hat{\mathbf x}_{t_n}^{\phi},\mathbf x_{t_{n+1}})\)</span>. 根据 self-consistency 性质，<span class="math inline">\(\mathbf f_\theta(\cdot,\cdot)\)</span> 分别作用在它们之上后应该得到相等的结果，因此定义 consistency distillation loss 如下： <span class="math display">\[
+\mathcal L_\text{CD}^N(\theta,\theta^-;\phi)=\mathbb E\left[\lambda(t_n)d\left(\mathbf f_\theta(\mathbf x_{t_{n+1}},t_{n+1}),\mathbf f_{\theta^-}(\hat{\mathbf x}_{t_n}^\phi,t_n)\right)\right]
+\]</span> 其中 <span class="math inline">\(d(\cdot,\cdot)\)</span> 可以是 L2 距离、L1 距离或 LPIPS. 参数 <span class="math inline">\(\theta\)</span> 用梯度下降优化，而 <span class="math inline">\(\theta^-\)</span> 则是通过 EMA 更新，即： <span class="math display">\[
+\theta^-\gets\text{stopgrad}(\mu\theta^-+(1-\mu)\theta)
+\]</span> 采用 EMA 更新而不是简单地设置 <span class="math inline">\(\theta^-=\theta\)</span> 有助于稳定训练过程并提升最后的性能。【为什么？】</p>
+<p>值得注意的是，由于我们的参数化使得模型始终满足 boundary condition <span class="math inline">\(\mathbf f_\theta(\mathbf x,\epsilon)=\mathbf x\)</span>，所以这样训练不会发生坍塌的平凡解 <span class="math inline">\(\mathbf f_\theta(\mathbf x,\epsilon)\equiv\mathbf 0\)</span>. 算法如下所示：</p>
+<p><img src="cd-alg.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<h2 id="training-in-isolation">Training in Isolation</h2>
+<p>在 consistency distillation 中，我们用到了预训练的 <span class="math inline">\(s_\phi(\mathbf x,t)\)</span> 来近似 score function <span class="math inline">\(\nabla\log p_t(\mathbf x)\)</span>. 但事实上，score function 有以下的无偏估计： <span class="math display">\[
+\nabla\log p_t(\mathbf x_t)=-\mathbb E\left[\frac{\mathbf x_t-\mathbf x}{t^2}\Bigg\vert\mathbf x_t\right],\quad \mathbf x\sim p_\text{data},\,\mathbf x_t\sim\mathcal N(\mathbf x;\mathbf0,t^2\mathbf I)
+\]</span> 因此，我们可以用上述无偏估计代替 score function，这样就可以直接从头训练 consistency model.</p>
+<p>具体而言，采样 <span class="math inline">\(\mathbf x\sim p_\text{data},\,\mathbf z\sim\mathcal N(\mathbf0,\mathbf I)\)</span>，计算 <span class="math inline">\(\mathbf x_{t_{n+1}}=\mathbf x+t_{n+1}\mathbf z\)</span>，将这次采样视作对上述期望的估计，有： <span class="math display">\[
+\nabla\log p_{t_{n+1}}(\mathbf x_{})\approx -\frac{\mathbf z}{t_{n+1}}
+\]</span> 所以一步去噪后的样本为： <span class="math display">\[
 \begin{align}
-C_n&amp;=\int_{\lambda_{t_{i-1}}}^{\lambda_{t_i}}e^{-\lambda}\frac{(\lambda-\lambda_{t_{i-1}})^n}{n!}\mathrm d\lambda\\
-&amp;=-\int_{\lambda_{t_{i-1}}}^{\lambda_{t_i}}\frac{(\lambda-\lambda_{t_{i-1}})^n}{n!}\mathrm de^{-\lambda}\\
-&amp;=\left(-\frac{(\lambda-\lambda_{t_{i-1}})^n}{n!}e^{-\lambda}\right)\Bigg\vert_{\lambda_{t_{i-1}}}^{\lambda_{t_i}}+\int_{\lambda_{t_{i-1}}}^{\lambda_{t_i}}e^{-\lambda}\frac{(\lambda-\lambda_{t_{i-1}})^{n-1}}{(n-1)!}\mathrm d\lambda\\
-&amp;=-\frac{h_i^n}{n!}e^{-\lambda_{t_i}}+C_{n-1}
+\hat{\mathbf x}_{t_n}&amp;=\mathbf x_{t_{n+1}}-(t_n-t_{n+1})t_{n+1}\cdot\left(-\frac{\mathbf z}{t_{n+1}}\right)\\
+&amp;=\mathbf x_{t_{n+1}}+(t_n-t_{n+1})\mathbf z\\
+&amp;=\mathbf x+t_{n+1}\mathbf z+(t_n-t_{n+1})\mathbf z\\
+&amp;=\mathbf x_t+t_n\mathbf z
 \end{align}
-\]</span> 可以发现系数存在递推关系。最后一项 <span class="math inline">\(C_0\)</span>​ 为： <span class="math display">\[
-C_0=\int_{\lambda_{t_{i-1}}}^{\lambda_{t_i}}e^{-\lambda}\mathrm d\lambda=e^{-\lambda_{t_{i-1}}}-e^{-\lambda_{t_i}}=\frac{\sigma_{t_i}}{\alpha_{t_i}}(e^{h_i}-1)
-\]</span> 据此可以计算出 <span class="math inline">\(C_1,C_2\)</span>： <span class="math display">\[
-\begin{align}
-C_1&amp;=e^{-\lambda_{t_{i-1}}}-(1+h_i)e^{-\lambda_{t_i}}=\frac{\sigma_{t_i}}{\alpha_{t_i}}(e^{h_i}-1-h_i)\\
-C_2&amp;=e^{-\lambda_{t_{i-1}}}-\left(1+h_i+\frac{h_i^2}{2}\right)e^{-\lambda_{t_i}}=\frac{\sigma_{t_i}}{\alpha_{t_i}}\left(e^{h_i}-1-h_i-\frac{h_i^2}{2}\right)
-\end{align}
-\]</span> 实际应用中，我们只考虑 <span class="math inline">\(k=1,2,3\)</span>，因此不必计算更多的 <span class="math inline">\(C_n\)</span>. 取 <span class="math inline">\(k=1,2,3\)</span> 相应得到的求解器称作 DPM-Solver-1, DPM-Solver-2, DPM-Solver-3，它们分别是 1,2,3 阶的 ODE 求解器。</p>
-<p>例如，当 <span class="math inline">\(k=1\)</span> 时，代入 <span class="math inline">\(C_0\)</span> 即得到 DPM-Solver-1 的更新式： <span class="math display">\[
-\begin{align}
-\mathbf x_{t_i}&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\alpha_{t_i}\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})C_0+\mathcal O(h_i^2)\\
-&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\sigma_{t_i}(e^{h_i}-1)\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})+\mathcal O(h_i^2)\\
-&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\sigma_{t_i}(e^{h_i}-1)\epsilon_\theta(\mathbf x_{t_{i-1}},t_{i-1})+\mathcal O(h_i^2)
-\end{align}
-\]</span></p>
-<p>可以发现这个式子与 DDIM 的更新式是一模一样的！因此 DDIM 就是一阶的 DPM-Solver.</p>
-<h3 id="观察-4数值估计导数项">观察 4：数值估计导数项</h3>
-<p>在计算更高阶的 DPM-Solver 时，我们需要计算 <span class="math inline">\(\eqref{obs3}\)</span> 式中关于神经网络的高阶导数项 <span class="math inline">\(\hat\epsilon_\theta^{(n)}(\hat{\mathbf x}_\lambda,\lambda)\)</span>. 这一项可以用数值方法估计。例如，对于一阶导，取 <span class="math inline">\(\lambda_{s_i}=r_1\lambda_{t_i}+(1-r_1)\lambda_{t_{i-1}},\,r_1\in(0,1)\)</span>，那么： <span class="math display">\[
-\hat\epsilon_\theta^{(1)}(\hat{\mathbf x}_{\lambda_{t_{i-1}}},{\lambda_{t_{i-1}}})\approx\frac{\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{s_i}},\lambda_{s_i})-\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})}{\lambda_{s_i}-\lambda_{t_{i-1}}}=\frac{\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{s_i}},\lambda_{s_i})-\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})}{r_1h_i}
-\]</span> 一般可以取 <span class="math inline">\(r_1=0.5\)</span>. 下面我们推导 DPM-Solver-2 的更新式。在 <span class="math inline">\(\eqref{obs3}\)</span> 式中取 <span class="math inline">\(k=2\)</span>​​，得： <span class="math display">\[
-\begin{align}
-\mathbf x_{t_i}&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\alpha_{t_i}\left(C_0\cdot\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})+C_1\cdot\hat\epsilon_\theta^{(1)}(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})\right)+\mathcal O(h_i^3)\\
-&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\sigma_{t_i}(e^{h_i}-1)\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})-\sigma_{t_i}(e^{h_i}-1-h_i)\hat\epsilon_\theta^{(1)}(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})+\mathcal O(h_i^3)\\
-&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\sigma_{t_i}(e^{h_i}-1)\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})-\sigma_{t_i}(e^{h_i}-1)\frac{h_i}{2}\hat\epsilon_\theta^{(1)}(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})+\mathcal O(h_i^3)\\
-&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\sigma_{t_i}(e^{h_i}-1)\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})-\frac{\sigma_{t_i}}{2r_1}(e^{h_i}-1)\left(\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{s_i}},\lambda_{s_i})-\hat\epsilon_\theta(\hat{\mathbf x}_{\lambda_{t_{i-1}}},\lambda_{t_{i-1}})\right)+\mathcal O(h_i^3)\\
-&amp;=\frac{\alpha_{t_i}}{\alpha_{t_{i-1}}}\mathbf x_{t_{i-1}}-\sigma_{t_i}(e^{h_i}-1)\epsilon_\theta(\mathbf x_{t_{i-1}},t_{i-1})-\frac{\sigma_{t_i}}{2r_1}(e^{h_i}-1)\left(\epsilon_\theta(\mathbf x_{s_i},s_i)-\epsilon_\theta(\mathbf x_{t_{i-1}},t_{i-1})\right)+\mathcal O(h_i^3)\\
-\end{align}
-\]</span> 其中第三个等号是因为： <span class="math display">\[
-(e^{h_i}-1-h_i)-(e^{h_i}-1)\frac{h_i}{2}=\frac{2e^{h_i}-2-h_i-h_ie^{h_i}}{2}=\frac{-h_i^3/6+\mathcal O(h_i^4)}{2}=\mathcal O(h_i^3)
-\]</span> 至于为什么要做这一步变换，我也不是很清楚，猜想这样可以把 <span class="math inline">\(h_i\)</span> 约掉，有利于数值稳定性。</p>
-<p>用类似的方式可以推出 DPM-Solver-3，不过推导过程会更麻烦。最终 DPM-Solver-1, DPM-Solver-2, DPM-Solver-3 的算法流程如下：</p>
-<p><img src="dpm-solver-1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p><img src="dpm-solver-2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p><img src="dpm-solver-3.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p>总结一下，DPM-Solver 的思想就是尽可能求解析解，从而减小离散化误差：</p>
-<p><img src="overview.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
+\]</span> 代入 consistency distillation loss，得到 consistency training loss 如下： <span class="math display">\[
+\mathcal L_\text{CT}^N(\theta,\theta^-)=\mathbb E\left[\lambda(t_n)d\left(\mathbf f_\theta(\mathbf x+t_{n+1}\mathbf z,t_{n+1}),\mathbf f_{\theta^-}(\mathbf x+t_n\mathbf z,t_n)\right)\right],\quad\mathbf z\sim \mathcal N(\mathbf0,\mathbf I)
+\]</span> 算法如下所示：</p>
+<p><img src="ct-alg.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
 
                 
               </div>
@@ -467,8 +441,8 @@ C_2&amp;=e^{-\lambda_{t_{i-1}}}-\left(1+h_i+\frac{h_i^2}{2}\right)e^{-\lambda_{t
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>DPM-Solver</div>
-      <div>https://xyfjason.github.io/blog-main/2024/05/14/DPM-Solver/</div>
+      <div>Consistency Models</div>
+      <div>https://xyfjason.github.io/blog-main/2024/05/05/Consistency-Models/</div>
     </div>
     <div class="license-meta">
       
@@ -480,7 +454,7 @@ C_2&amp;=e^{-\lambda_{t_{i-1}}}-\left(1+h_i+\frac{h_i^2}{2}\right)e^{-\lambda_{t
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年5月14日</div>
+          <div>2024年5月5日</div>
         </div>
       
       
@@ -512,12 +486,18 @@ C_2&amp;=e^{-\lambda_{t_{i-1}}}-\left(1+h_i+\frac{h_i^2}{2}\right)e^{-\lambda_{t
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/blog-main/2024/05/06/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E8%92%B8%E9%A6%8F%E6%96%B9%E6%B3%95/" title="扩散模型蒸馏方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">扩散模型蒸馏方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2024/05/06/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B%E8%92%B8%E9%A6%8F%E6%96%B9%E6%B3%95/" title="扩散模型蒸馏方法">
-                        <span class="hidden-mobile">扩散模型蒸馏方法</span>
+                      <a href="/blog-main/2024/04/30/%E5%86%8D%E7%94%9F%E6%A0%B8%E5%B8%8C%E5%B0%94%E4%BC%AF%E7%89%B9%E7%A9%BA%E9%97%B4/" title="再生核希尔伯特空间">
+                        <span class="hidden-mobile">再生核希尔伯特空间</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
