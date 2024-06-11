@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/analytic-dpm.png">
 <meta property="article:published_time" content="2023-01-14T08:02:42.000Z">
-<meta property="article:modified_time" content="2024-05-18T08:53:14.769Z">
+<meta property="article:modified_time" content="2024-05-23T13:25:36.708Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -431,7 +431,7 @@ A=\sqrt{\bar\alpha_{t-1}}-\sqrt{\bar\alpha_t}\cdot\frac{\sqrt{1-\bar\alpha_{t-1}
 \text{Cov}_{q(\x_{t-1}\vert\x_t)}(\x_{t-1})=\lambda_t^2\mathbf I+\mathbb E_{q(\x_0\vert\x_t)}\Big[\mu_t(\x_t,\x_0)\mu_t(\x_t,\x_0)^T\Big]-\mu_t(\x_t,\mathbb E[\x_0\vert\x_t])\mu_t(\x_t,\mathbb E[\x_0\vert\x_t])^T
 \]</span> 考虑到 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的协方差矩阵<strong>并不依赖于 <span class="math inline">\(\x_t\)</span></strong>，所以在上式的基础上对 <span class="math inline">\(\x_t\)</span> 取期望： <span class="math display">\[
 \mathbb E_{q(\x_t)}[\text{Cov}_{q(\x_{t-1}\vert\x_t)}(\x_{t-1})]=\lambda_t^2\mathbf I+\mathbb E_{q(\x_t)}\left[\mathbb E_{q(\x_0\vert\x_t)}\left[\mu_t(\x_t,\x_0)\mu_t(\x_t,\x_0)^T\right]-\mu_t(\x_t,\mathbb E[\x_0\vert\x_t])\mu_t(\x_t,\mathbb E[\x_0\vert\x_t])^T\right]
-\]</span> 又考虑到 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的协方差矩阵是一个<strong>各向同性对角阵</strong>（单位阵的倍数），我们只需要计算上述矩阵的对角线元素的平均，即求迹再除以 <span class="math inline">\(d\)</span>​： <span class="math display">\[
+\]</span> 又考虑到 <span class="math inline">\(p_\theta(\x_{t-1}\vert\x_t)\)</span> 的协方差矩阵是一个<strong>各向同性对角阵</strong>（单位阵的倍数），我们只需要计算上述矩阵的对角线元素的平均，即求迹再除以 <span class="math inline">\(d\)</span>： <span class="math display">\[
 \begin{align}
 \frac{1}{d}\text{tr}\left(\mathbb E_{q(\x_t)}[\text{Cov}_{q(\x_{t-1}\vert\x_t)}(\x_{t-1})]\right)&amp;=\lambda_t^2+\frac{1}{d}\mathbb E_{q(\x_t)}\left[\mathbb E_{q(\x_0\vert\x_t)}\left[\Vert\mu_t(\x_t,\x_0)\Vert_2^2\right]-\Vert\mu_t(\x_t,\mathbb E[\x_0\vert\x_t])\Vert_2^2\right]\\
 &amp;=\lambda_t^2+\frac{1}{d}\mathbb E_{q(\x_t)}\left[\mathbb E_{q(\x_0\vert\x_t)}\left[\Vert A\x_0+B\x_t\Vert_2^2\right]-\Vert A\E[\x_0\vert\x_t]+B\x_t\Vert_2^2\right]\\
@@ -439,7 +439,7 @@ A=\sqrt{\bar\alpha_{t-1}}-\sqrt{\bar\alpha_t}\cdot\frac{\sqrt{1-\bar\alpha_{t-1}
 &amp;=\lambda_t^2+\frac{1}{d}A^2\mathbb E_{q(\x_t)}\left[\mathbb E_{q(\x_0\vert\x_t)}\left[\Vert\x_0\Vert_2^2\right]-\Vert\mathbb E[\x_0\vert\x_t]\Vert_2^2\right]\\
 &amp;=\lambda_t^2+\frac{1}{d}A^2\mathbb E_{q(\x_t)}\left[\text{tr}\left(\text{Cov}_{q(\x_0\vert\x_t)}(\x_0)\right)\right]\\
 \end{align}
-\]</span> 进一步地，可以推导出 <span class="math inline">\(\E_{q(\x_t)}[\text{Cov}_{q(\x_0\vert\x_t)}(\x_0)]\)</span> 与 score function 由如下关系： <span class="math display">\[
+\]</span> 进一步地，可以推导出 <span class="math inline">\(\E_{q(\x_t)}[\text{Cov}_{q(\x_0\vert\x_t)}(\x_0)]\)</span> 与 score function 有如下关系： <span class="math display">\[
 \mathbb E_{q(\x_t)}[\text{Cov}_{q(\x_0\vert\x_t)}(\x_0)]=\frac{1-\bar\alpha_t}{\bar\alpha_t}\left(\mathbf I-(1-\bar\alpha_t)\mathbb E_{q(\x_t)}\left[\nabla_{\x_t}\log q(\x_t)\nabla_{\x_t}\log q(\x_t)^T\right]\right)
 \]</span></p>
 <p>代入可得最优方差为： <span class="math display">\[
