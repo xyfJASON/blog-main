@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="封面图片来自链接。  Brief Introduction 生成模型的目标是构建模型 \(p_\theta(x)\) 近似真实数据分布 \(p_\text{data}(x)\)，达成该目标的一种思路就是最大化训练样本的对数似然 \(\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]\). 然而，直接计算对数似然是十分困难的，为此，各种生成模型想方设法地绕">
+    <meta name="description" content="封面图片来自链接。  Brief Introduction 生成模型的目标是构建参数化模型 \(p_\theta(x)\) 近似真实数据分布 \(p_\text{data}(x)\)，达成该目标的一种思路就是最大化训练样本的对数似然： \[ \max_\theta\;\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)] \] 然而，直接计算对数似然是十分困">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Normalizing Flows">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/07/Normalizing-Flows/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="封面图片来自链接。  Brief Introduction 生成模型的目标是构建模型 \(p_\theta(x)\) 近似真实数据分布 \(p_\text{data}(x)\)，达成该目标的一种思路就是最大化训练样本的对数似然 \(\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]\). 然而，直接计算对数似然是十分困难的，为此，各种生成模型想方设法地绕">
+<meta property="og:description" content="封面图片来自链接。  Brief Introduction 生成模型的目标是构建参数化模型 \(p_\theta(x)\) 近似真实数据分布 \(p_\text{data}(x)\)，达成该目标的一种思路就是最大化训练样本的对数似然： \[ \max_\theta\;\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)] \] 然而，直接计算对数似然是十分困">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/flow.png">
 <meta property="article:published_time" content="2024-03-07T11:38:45.000Z">
-<meta property="article:modified_time" content="2024-05-18T11:16:05.454Z">
+<meta property="article:modified_time" content="2024-06-14T09:26:09.397Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          2.1k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          17 分钟
+          18 分钟
         
       </span>
     
@@ -331,14 +331,16 @@
 <p>封面图片来自<a target="_blank" rel="noopener" href="https://lilianweng.github.io/posts/2018-10-13-flow-models/">链接</a>。</p>
 </blockquote>
 <h2 id="brief-introduction">Brief Introduction</h2>
-<p>生成模型的目标是构建模型 <span class="math inline">\(p_\theta(x)\)</span> 近似真实数据分布 <span class="math inline">\(p_\text{data}(x)\)</span>，达成该目标的一种思路就是最大化训练样本的对数似然 <span class="math inline">\(\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]\)</span>. 然而，直接计算对数似然是十分困难的，为此，各种生成模型想方设法地绕过似然的直接计算。例如，VAE 优化的是对数似然的一个下界；GANs 则通过对抗训练隐式地优化对数似然。与这些模型不同的是，Flow 模型通过巧妙设计网络架构，使之能够直接计算似然函数。</p>
-<p>Flow 模型最早由 NICE<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dinh, Laurent, David Krueger, and Yoshua Bengio. Nice: Non-linear independent components estimation. *arXiv preprint arXiv:1410.8516* (2014).">[1]</span></a></sup>提出，后续由 Real-NVP<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dinh, Laurent, Jascha Sohl-Dickstein, and Samy Bengio. Density estimation using real nvp. *arXiv preprint arXiv:1605.08803* (2016).">[2]</span></a></sup>和 Glow<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Durk P., and Prafulla Dhariwal. Glow: Generative flow with invertible 1x1 convolutions. *Advances in neural information processing systems* 31 (2018).">[3]</span></a></sup>做出改进。值得一提的是，将 Flow 模型连续化可得到连续归一化流 CNF<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. *Advances in neural information processing systems* 31 (2018).">[4]</span></a></sup>. 由于 CNF 可以用 ODE 描述，因而能够与 Score-based Models 和 Diffusion Models 紧密联系在一起，代表工作有近年的 Rectified Flow<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. *arXiv preprint arXiv:2209.03003* (2022).">[5]</span></a></sup>和 Flow Matching<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. *arXiv preprint arXiv:2210.02747* (2022).">[6]</span></a></sup>等。不过本文的内容主要还是集中在 NICE、Real-NVP 和 Glow 上。</p>
+<p>生成模型的目标是构建参数化模型 <span class="math inline">\(p_\theta(x)\)</span> 近似真实数据分布 <span class="math inline">\(p_\text{data}(x)\)</span>，达成该目标的一种思路就是最大化训练样本的对数似然： <span class="math display">\[
+\max_\theta\;\mathbb E_{p_\text{data}(x)}[\log p_\theta(x)]
+\]</span> 然而，直接计算对数似然是十分困难的。为此，VAE 优化的并不是是对数似然本身，而是它的下界 ELBO；GANs 则通过对抗训练的方式隐式地优化对数似然。与这些模型不同的是，Normalizing Flow 模型（下文简称作 Flow 模型）通过巧妙设计网络架构，使之能够直接计算似然函数，从而直接优化对数似然。</p>
+<p>Flow 模型最早由 NICE<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dinh, Laurent, David Krueger, and Yoshua Bengio. Nice: Non-linear independent components estimation. *arXiv preprint arXiv:1410.8516* (2014).">[1]</span></a></sup>提出，后续有许多改进，如 Real-NVP<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dinh, Laurent, Jascha Sohl-Dickstein, and Samy Bengio. Density estimation using real nvp. *arXiv preprint arXiv:1605.08803* (2016).">[2]</span></a></sup>, Glow<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Kingma, Durk P., and Prafulla Dhariwal. Glow: Generative flow with invertible 1x1 convolutions. *Advances in neural information processing systems* 31 (2018).">[3]</span></a></sup>, Flow++<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote">&lt;span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Xi Chen, Aravind Srinivas, Yan Duan, and Pieter Abbeel. "Flow++: Improving flow-based generative models with variational dequantization and architecture design." In <em>International conference on machine learning</em>, pp. 2722-2730. PMLR, 2019."&gt;[4]</span></a></sup>等。值得一提的是，将 Flow 模型时间连续化可得到连续归一化流 CNF<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. *Advances in neural information processing systems* 31 (2018).">[5]</span></a></sup>. CNF 可以用 ODE 描述，与 Score-based Models 和 Diffusion Models 有密切的联系，代表工作包括近年的 Rectified Flow<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. *arXiv preprint arXiv:2209.03003* (2022).">[6]</span></a></sup>和 Flow Matching<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. *arXiv preprint arXiv:2210.02747* (2022).">[7]</span></a></sup>等。不过本文的内容主要集中在离散时间的 NICE, Real-NVP，Glow 和 Flow++ 上。</p>
 <h2 id="change-of-variables">Change of Variables</h2>
 <p>Flow 模型希望构建一个<strong>可逆</strong>非线性变换 <span class="math inline">\(f_\theta\)</span>，将输入 <span class="math inline">\(x\)</span> 映射到 <span class="math inline">\(z\)</span>，使得 <span class="math inline">\(p_Z(z)\)</span> 是一个简单分布（例如标准高斯分布）：</p>
 <p><img src="f.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
 <p>根据概率论的知识，有<strong>变量替换公式 (change of variables)</strong>： <span class="math display">\[
 p_\theta(x)=p_Z(f_\theta(x))\left|\det\left(\frac{\partial f_\theta(x)}{\partial x}\right)\right|
-\]</span> 其中 <span class="math inline">\(\det(\partial f_\theta(x)/\partial x)\)</span> 表示 <span class="math inline">\(f_\theta\)</span> 的 Jacobian 行列式。那么现在对数似然为： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\det(\partial f_\theta(x)/\partial x)\)</span> 表示 <span class="math inline">\(f_\theta\)</span> 的 Jacobian 行列式。于是对数似然为： <span class="math display">\[
 \log p_\theta(x)=\log p_Z(f_\theta(x))+\log\left|\det\left(\frac{\partial f_\theta(x)}{\partial x}\right)\right|
 \]</span> 因此，如果 Jacobian 行列式是容易计算的，那么对数似然就可以直接计算出来，从而可以优化求解 <span class="math inline">\(f_\theta\)</span> 了。</p>
 <p>进一步地，当训练完成后，由于 <span class="math inline">\(f_\theta\)</span> 可逆，所以只需要通过简单的 ancestral sampling 就可以生成新的数据： <span class="math display">\[
@@ -367,15 +369,15 @@ z\sim p(z),\quad x=f_\theta^{-1}(z)
 I_{d_1}&amp;0\\
 \frac{\partial{z_2}}{\partial x_1}&amp;I_{d_2}
 \end{pmatrix}=1
-\]</span> 因此前两点要求都满足了。但一层 coupling layer 的复杂程度有限，特别是其中有一部分是直接复制的，因此我们考虑<strong>堆叠多层 coupling layers</strong>. 不过，直接堆叠将得到下面的结构：</p>
+\]</span> 因此前两点要求都得到了满足。但一层 coupling layer 的复杂程度有限，特别是其中有一部分是直接复制的，因此我们考虑<strong>堆叠多层 coupling layers</strong>. 不过，直接堆叠将得到下面的结构：</p>
 <p><img src="stacking1.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<p>可以看见，上面的分支始终是直接复制的前一层的，最终也没有发生过改变，这不是我们希望的。为此，只需要相邻两层交换上下分支就可以解决这个问题：</p>
+<p>可以看见，上分支始终是直接复制前一层，最终也没有发生改变，这不是我们希望的。为此，只需要相邻两层交换上下分支就可以解决这个问题：</p>
 <p><img src="stacking2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<p>堆叠多层 coupling layers 显然并不改变可逆性，且 Jacobian 行列式也只是每一层 Jacobian 行列式的累乘： <span class="math display">\[
+<p>堆叠多层 coupling layers 显然并不改变可逆性，且 Jacobian 行列式是每一层 Jacobian 行列式的累乘： <span class="math display">\[
 \det\left(\frac{\partial(z_1^{(2)},z_2^{(2)})}{\partial(x_1,x_2)}\right)=\det\left(\frac{\partial(z_1^{(2)},z_2^{(2)})}{\partial(z_1^{(1)},z_2^{(1)})}\cdot\frac{\partial(z_1^{(1)},z_2^{(1)})}{\partial(x_1,x_2)}\right)=\det\left(\frac{\partial(z_1^{(2)},z_2^{(2)})}{\partial(z_1^{(1)},z_2^{(1)})}\right)\det\left(\frac{\partial(z_1^{(1)},z_2^{(1)})}{\partial(x_1,x_2)}\right)=1\cdot 1=1
-\]</span> 不过 Jacobian 行列式为 1 也意味着目前的结构不具备尺度缩放能力。为此，我们在最后添加一个尺度缩放层： <span class="math display">\[
-z=Sz^{(n)}=\text{diag}(s)z^{(n)}=\begin{bmatrix}S_{11}z_1^{(n)}\\S_{22}z_2^{(n)}\\\vdots\\S_{dd}z_d^{(n)}\end{bmatrix}
-\]</span> 那么： <span class="math display">\[
+\]</span> 不过 Jacobian 行列式为 1 意味着目前的结构不具备尺度缩放能力。为此，我们在最后添加一个尺度缩放层： <span class="math display">\[
+z=Sz^{(n)}=\text{diag}(s)z^{(n)}=\begin{bmatrix}S_{11}z_1^{(n)}&amp;S_{22}z_2^{(n)}&amp;\cdots&amp;S_{dd}z_d^{(n)}\end{bmatrix}^T
+\]</span> 尺度缩放层显然可逆，且 Jacobian 行列式为： <span class="math display">\[
 \det\left(\frac{\partial z}{\partial z^{(n)}}\right)=
 \det\begin{pmatrix}
 S_{11}&amp;0&amp;\cdots&amp;0\\
@@ -383,7 +385,13 @@ S_{11}&amp;0&amp;\cdots&amp;0\\
 \vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
 0&amp;0&amp;\cdots&amp;S_{dd}
 \end{pmatrix}=\prod_{i=1}^d S_{ii}
-\]</span> 这就完成了整个非线性映射 <span class="math inline">\(f_\theta\)</span> 的设计。</p>
+\]</span> 这就完成了整个非线性映射 <span class="math inline">\(f_\theta\)</span> 的设计。于是，在 NICE 的设计下，模型的对数似然为： <span class="math display">\[
+\log p_\theta(x)=\log p_Z(f_\theta(x))+\sum_{i=1}^d\log(|S_{ii}|)
+\]</span> 其中先验分布 <span class="math inline">\(p_Z(\cdot)\)</span> 可取标准高斯分布： <span class="math display">\[
+\log p_Z(z)=-\frac{1}{2}\Vert z\Vert^2-\frac{d}{2}\log(2\pi)
+\]</span> 也可以取标准 logistic 分布（一维下分布函数为 logistic 函数，多维下各维度独立）： <span class="math display">\[
+\log p_Z(z)=-\sum_{i=1}^d\big[\log(1+\exp(z_i))+\log(1+\exp(-z_i))\big]
+\]</span> 作者倾向于选取 logistic 分布。</p>
 <h2 id="real-nvp">Real NVP</h2>
 <p>Real NVP 是 NICE 作者的续作，将 NICE 中的 additive coupling layer 改进为了 <strong>affine coupling layer</strong>. 首先将数据 <span class="math inline">\(x\)</span> 划分为两部分 <span class="math inline">\(x_1\in\mathbb R^{d_1},x_2\in\mathbb R^{d_2}\)</span>，然后定义 <span class="math inline">\(z=(z_1,z_2)\)</span>​ 为： <span class="math display">\[
 \begin{align}
@@ -427,7 +435,7 @@ W=PL(U+\text{diag}(s))
 \]</span> 其中 <span class="math inline">\(P\)</span> 是一个置换矩阵，<span class="math inline">\(L\)</span> 是对角线为 1 的下三角矩阵，<span class="math inline">\(U\)</span> 是对角线为 0 的上三角矩阵，这样 <span class="math inline">\(\det(W)\)</span> 就是对角线上所有 <span class="math inline">\(s\)</span> 的乘积。作者初始化时随机采样一个旋转矩阵 <span class="math inline">\(W\)</span>，计算出 <span class="math inline">\(P\)</span> 后固定不动，优化 <span class="math inline">\(L,U,s\)</span>. 此时 <span class="math inline">\(P\)</span> 就起到了交叉信息流的作用，因此我们不必再手动交换分支了。</p>
 <p>Glow 的三个核心组件的逆变换和对数 Jacobian 行列式如下表所示：</p>
 <p><img src="glow-components.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
-<p>虽然 Glow 的效果非常不错，但是据说所需计算量极其巨大，OpenAI 用了 40 个 GPU，对于 CelebA-HQ 数据集训练了 4000 个 epochs……</p>
+<p>虽然 Glow 的效果非常不错，但是据说所需计算量极其巨大，OpenAI 用了 40 个 GPU，对于 CelebA-HQ 数据集 (256x256) 训练了 4000 个 epochs……</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -442,13 +450,16 @@ W=PL(U+\text{diag}(s))
 <span id="fn:3" class="footnote-text"><span>Kingma, Durk P., and Prafulla Dhariwal. Glow: Generative flow with invertible 1x1 convolutions. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:4" class="footnote-text"><span>Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:4" class="footnote-text"><span>Ho, Jonathan, Xi Chen, Aravind Srinivas, Yan Duan, and Pieter Abbeel. "Flow++: Improving flow-based generative models with variational dequantization and architecture design." In <em>International conference on machine learning</em>, pp. 2722-2730. PMLR, 2019. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:5" class="footnote-text"><span>Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. <em>arXiv preprint arXiv:2209.03003</em> (2022). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:5" class="footnote-text"><span>Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:6" class="footnote-text"><span>Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. <em>arXiv preprint arXiv:2210.02747</em> (2022). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:6" class="footnote-text"><span>Liu, Xingchao, Chengyue Gong, and Qiang Liu. Flow straight and fast: Learning to generate and transfer data with rectified flow. <em>arXiv preprint arXiv:2209.03003</em> (2022). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. <em>arXiv preprint arXiv:2210.02747</em> (2022). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
@@ -481,7 +492,7 @@ W=PL(U+\text{diag}(s))
   
     <span>></span>
     
-  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Normalizing-Flow/" class="category-chain-item">Normalizing Flow</a>
+  <a href="/blog-main/categories/%E6%8A%80%E6%9C%AF%E5%8D%9A%E5%AE%A2/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Normalizing-Flows/" class="category-chain-item">Normalizing Flows</a>
   
   
 

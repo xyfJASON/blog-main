@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reproducing.png">
 <meta property="article:published_time" content="2024-04-30T12:32:43.000Z">
-<meta property="article:modified_time" content="2024-05-12T12:21:54.286Z">
+<meta property="article:modified_time" content="2024-06-17T02:49:34.860Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -387,7 +387,8 @@ f(x)=\delta_x f=\langle f,f_{\delta_x}\rangle_{\mathcal H}
 <p><strong>推论：再生核是正定的</strong>。</p>
 <p>证明：由于 <span class="math inline">\(k(x,y)=\langle k(\cdot,x),k(\cdot,y)\rangle_\mathcal H\)</span>，所以在上述定理中取 <span class="math inline">\(\phi(x)=k(\cdot,x)\)</span>，可知再生核是正定的。证毕。</p>
 <h2 id="从正定函数构造-rkhs">从正定函数构造 RKHS</h2>
-<p>上一节中我们看到，给定一个 RKHS，可以构造其再生核。反过来，给定一个再生核，能否构造出对应的 RKHS 呢？事实上，不仅可以，我们还有更一般的结论：对于任意正定函数 <span class="math inline">\(k(\cdot,\cdot)\)</span>，我们都可以构造出唯一的 RKHS <span class="math inline">\(\mathcal H\)</span>，使得 <span class="math inline">\(k\)</span> 是其再生核。</p>
+<p>上一节中我们看到，给定一个 RKHS，可以构造其再生核。反过来，给定一个再生核，能否构造出对应的 RKHS 呢？答案是可以的。事实上，我们有 <strong>Moore-Aronszajn 定理</strong>：对于任意正定函数 <span class="math inline">\(k(\cdot,\cdot)\)</span>，都可以构造出唯一的 RKHS <span class="math inline">\(\mathcal H\)</span>，使得 <span class="math inline">\(k\)</span> 是其再生核。</p>
+<p>构造过程包含两步：首先构造一个 pre-RKHS，然后将其完备化得到 RKHS. 具体过程如下。</p>
 <p>首先，考虑到 RKHS 要求 <span class="math inline">\(\forall x\in\mathcal X,\,k(\cdot,x)\in\mathcal H\)</span>，因此我们不妨取所有 <span class="math inline">\(k(\cdot,x)\)</span>​ 做线性组合，张成 <span class="math inline">\(\mathcal H_0\)</span> 空间： <span class="math display">\[
 \mathcal H_0=\text{span}\{k(\cdot,x)\}_{x\in\mathcal X}=\left\{\sum_{i=1}^n\alpha_i k(\cdot,x_i)\ \Bigg\vert\ n\in\mathbb N,\,\alpha_i\in\mathbb R,\,x_i\in\mathcal X\right\}
 \]</span> 并定义其上的内积为： <span class="math display">\[
@@ -407,13 +408,12 @@ f(x)=\delta_x f=\langle f,f_{\delta_x}\rangle_{\mathcal H}
 \]</span> 并定义 <span class="math inline">\(\mathcal H\)</span> 上的内积 <span class="math inline">\(\langle f,g\rangle_{\mathcal H}\)</span> 是 <span class="math inline">\(\mathcal H_0\)</span> 中对应柯西列 <span class="math inline">\(\{f_n\},\{g_n\}\)</span> 内积的极限，那么 <span class="math inline">\(\mathcal H\)</span> 就是我们要构造的 RKHS.</p>
 <p>说着虽然简单，但严格证明还是挺麻烦的。我们需要验证：</p>
 <ol type="1">
-<li><span class="math inline">\(\langle f,g\rangle_{\mathcal H}\)</span> 这是良定义的，即极限存在且独立于柯西列的选取；</li>
+<li><span class="math inline">\(\langle f,g\rangle_{\mathcal H}\)</span> 是良定义的，即极限存在且独立于柯西列的选取；</li>
 <li><span class="math inline">\(\langle f,g\rangle_{\mathcal H}\)</span> 确实是一个内积，即满足内积的几条性质；</li>
 <li><span class="math inline">\(\mathcal H\)</span> 确实是一个希尔伯特空间，即是完备的；</li>
 <li><span class="math inline">\(\mathcal H\)</span> 确实是一个 RKHS，即 <span class="math inline">\(\delta_x\)</span> 连续（有界）。</li>
 </ol>
 <p>详细证明见参考资料<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dino Sejdinovic, Arthur Gretton. What is an RKHS? March 11, 2012">[1]</span></a></sup>的 4.1-4.4 节。</p>
-<p>上述构造称作 <strong>Moore-Aronszajn 定理</strong>。</p>
 <h2 id="特征空间与核函数">特征空间与核函数</h2>
 <p>上两节我们介绍了 RKHS 和再生核，说明了每个 RKHS 都有唯一的再生核，它是一个正定函数；反过来，对每个正定函数都可以构造出对应的 RKHS. 但是再生核的定义似乎与我们学习 SVM 时核函数的定义并不一样，它们之间有什么关系呢？</p>
 <p><strong>定义（核函数）</strong>：设 <span class="math inline">\(\mathcal X\)</span> 为一非空集合，函数 <span class="math inline">\(k:\mathcal X\times\mathcal X\to\mathbb R\)</span>. 如果存在希尔伯特空间 <span class="math inline">\(\mathcal H\)</span> 和映射 <span class="math inline">\(\phi:\mathcal X\to\mathcal H\)</span>，使得： <span class="math display">\[
