@@ -16,24 +16,26 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{z\sim p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference)。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期">
+    <meta name="description" content="在 Score-Based Generative Models 一文中，我们用到了 Langevin dynamics 进行采样，但没有解释其原理。另外，在 Elucidated Diffusion Models 一文中，我们提到常用的扩散 SDE 和 PF ODE 其实可以推广为一个由 PF ODE 与 Langevin diffusion SDE 组合而成的广义 SDE. 由此可见，Lange">
 <meta property="og:type" content="article">
-<meta property="og:title" content="变分推断">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/05/%E5%8F%98%E5%88%86%E6%8E%A8%E6%96%AD/index.html">
+<meta property="og:title" content="Langevin Dynamics">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/06/21/Langevin-Dynamics/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{z\sim p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference)。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期">
+<meta property="og:description" content="在 Score-Based Generative Models 一文中，我们用到了 Langevin dynamics 进行采样，但没有解释其原理。另外，在 Elucidated Diffusion Models 一文中，我们提到常用的扩散 SDE 和 PF ODE 其实可以推广为一个由 PF ODE 与 Langevin diffusion SDE 组合而成的广义 SDE. 由此可见，Lange">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
-<meta property="article:published_time" content="2024-03-05T08:23:28.000Z">
-<meta property="article:modified_time" content="2024-06-21T10:29:10.168Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/langevin-dynamics.png">
+<meta property="article:published_time" content="2024-06-21T05:36:18.000Z">
+<meta property="article:modified_time" content="2024-06-22T05:45:44.258Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
+<meta property="article:tag" content="stochastic process">
+<meta property="article:tag" content="physics">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/langevin-dynamics.png">
   
   
   
-  <title>变分推断 - xyfJASON</title>
+  <title>Langevin Dynamics - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -245,13 +247,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/vi.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/langevin-dynamics.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="变分推断"></span>
+            <span id="subtitle" data-typed-text="Langevin Dynamics"></span>
           
         </div>
 
@@ -262,8 +264,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-03-05 16:23" pubdate>
-          2024年3月5日 下午
+        <time datetime="2024-06-21 13:36" pubdate>
+          2024年6月21日 下午
         </time>
       </span>
     
@@ -274,7 +276,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.2k 字
+          1.9k 字
         
       </span>
     
@@ -285,7 +287,7 @@
         
         
         
-          19 分钟
+          16 分钟
         
       </span>
     
@@ -322,110 +324,119 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">变分推断</h1>
+            <h1 id="seo-header">Langevin Dynamics</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="近似推断">近似推断</h2>
-<p>在许多机器学习问题中，一个核心任务是给定观测数据 <span class="math inline">\(x\)</span>，估计隐变量 <span class="math inline">\(z\)</span> 的后验分布 <span class="math inline">\(p(z\vert x)\)</span>，或者估计某函数 <span class="math inline">\(f(z)\)</span> 关于后验分布的期望 <span class="math inline">\(\mathbb E_{z\sim p(z\vert x)}[f(z)]\)</span>. 这样的估计过程就是所谓的<strong>推断 (inference)</strong>。例如，在 <a href="/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/" title="EM算法">EM 算法</a>中我们就需要估计完整数据的对数似然关于后验分布的期望。</p>
-<p>然而，许多问题的后验分布是<strong>不可解 (intractable)</strong> 的，因为根据贝叶斯公式，后验分布为： <span class="math display">\[
-p(z\vert x)=\frac{p(x\vert z)p(z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\int_{z&#39;}p(x\vert z&#39;)p(z&#39;)\mathrm dz&#39;}
-\]</span> 其分母涉及对全体隐变量的积分，只有隐空间取值离散且维度较小时才有可能精确计算。因此，人们提出了许多<strong>近似推断 (approximate inference)</strong> 方法来解决这个问题。</p>
-<p>近似推断方法可以大体分为两类——确定性方法和随机性方法。确定性方法的典型代表就是<strong>变分推断 (variational inference)</strong>，而随机性方法的典型代表是<strong>马尔可夫蒙特卡洛 (MCMC)</strong>. 本文主要探究变分推断方法。</p>
-<p><img src="inference.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
-<h2 id="变分推断">变分推断</h2>
-<p>设观测数据为 <span class="math inline">\(x\)</span>，隐变量为 <span class="math inline">\(z\)</span>，同 EM 算法的推导一样，为 <span class="math inline">\(z\)</span> 引入一个分布 <span class="math inline">\(q(z)\)</span>，则有： <span class="math display">\[
-\begin{align}
-\log p(x)&amp;=\int_zq(z)\log p(x)\mathrm dz\\
-&amp;=\int_zq(z)\log\frac{p(x,z)}{p(z\vert x)}\mathrm dz\\
-&amp;=\int_zq(z)\log\left(\frac{p(x,z)}{q(z)}\cdot\frac{q(z)}{p(z\vert x)}\right)\mathrm d z\\
-&amp;=\int_zq(z)\log\frac{p(x,z)}{q(z)}\mathrm dz+\int_zq(z)\log\frac{q(z)}{p(z\vert x)}\mathrm dz\\
-&amp;=\mathcal L(q)+\text{KL}(q(z)\Vert p(z\vert x))
-\end{align}
-\]</span> 值得注意的是，这里没有将模型参数 <span class="math inline">\(\theta\)</span> 显式写出来。从频率派的角度而言，可以认为我们目前并不关心 <span class="math inline">\(\theta\)</span>，所以省略了；从贝叶斯的角度而言，可以认为参数被吸收进了隐变量 <span class="math inline">\(z\)</span> 之中，因而不再单独列出来。</p>
-<p>通过上面的推导，我们得到了对数似然的下界 <span class="math inline">\(\mathcal L(q)\)</span>，于是可以通过最大化 <span class="math inline">\(\mathcal L(q)\)</span> 来最大化对数似然 <span class="math inline">\(\log p(x)\)</span>. 显然，这个下界应该越紧越好，也就是说我们希望 KL 项越小越好。如果不限制 <span class="math inline">\(q(z)\)</span> 的形式，那么当 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 时 KL 项达到最小值 <span class="math inline">\(0\)</span>，事实上这就是 EM 算法做的事情。但是现在问题的基本假设是 <span class="math inline">\(p(z\vert x)\)</span> 是不可解的，因此直接令 <span class="math inline">\(q(z)=p(z\vert x)\)</span> 就行不通了。为此，我们考虑为 <span class="math inline">\(q(z)\)</span> <strong>引入一些假设</strong>以使得问题可解。值得注意的是，人为引入假设意味着 <span class="math inline">\(q(z)\)</span> 的形式被限制了，因此这样求出的解并不是真正的最优解，这就是为什么变分推断属于近似推断而非精确推断。</p>
-<p>根据引入的假设的不同，我们就得到了不同的变分推断方法，例如：</p>
+                <p>在 <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score-Based Generative Models</a> 一文中，我们用到了 Langevin dynamics 进行采样，但没有解释其原理。另外，在 <a href="/blog-main/2024/02/20/Elucidated-Diffusion-Models/" title="Elucidated Diffusion Models">Elucidated Diffusion Models</a> 一文中，我们提到常用的扩散 SDE 和 PF ODE 其实可以推广为一个由 PF ODE 与 Langevin diffusion SDE 组合而成的广义 SDE. 由此可见，Langevin dynamics 在扩散模型的研究中有着举足轻重的地位，因此本文探究其背后的原理。</p>
+<h2 id="物理背景">物理背景</h2>
+<p>Langevin dynamics 脱胎于经典的布朗运动模型：将花粉放入水杯之中，则花粉会因受到水分子的无规律撞击而做布朗运动，如图所示：</p>
+<p><img src="brown.gif" srcset="/blog-main/logo/imageloading.png" lazyload width=25% /></p>
+<p>本节将通过分析该模型下的牛顿第二定律、功能关系与 Langevin 方程，推导出 Langevin diffusion SDE，最后借助 Fokker-Planck 方程找到该 SDE 的平稳分布，为下一节基于 Langevin dynamics 的采样方法做准备。</p>
+<h3 id="牛顿第二定律">牛顿第二定律</h3>
+<p>设花粉的质量为 <span class="math inline">\(m\)</span>，在 <span class="math inline">\(t\)</span> 时刻位移为 <span class="math inline">\(\mathbf x=\mathbf x(t)\)</span>，受到的瞬时合力为 <span class="math inline">\(\mathbf F=\mathbf F(\mathbf x(t),t)\)</span>，则根据<strong>牛顿第二定律</strong>，有： <span class="math display">\[
+\mathbf F(\mathbf x,t)=m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}\tag{1}\label{newton}
+\]</span></p>
+<h3 id="功能关系">功能关系</h3>
+<p>根据<strong>动能定理</strong>，合外力对物体做的功等于物体动能变化量，因此在一个微小时间 <span class="math inline">\(\Delta t\)</span> 内，有： <span class="math display">\[
+\langle\mathbf F(\mathbf x,t),\Delta\mathbf x\rangle=\Delta E(\mathbf x)
+\]</span> 其中 <span class="math inline">\(\Delta\mathbf x\)</span> 表示这一段时间内花粉的位移，<span class="math inline">\(E(\mathbf x)\)</span> 表示花粉具有的动能。取 <span class="math inline">\(\Delta t\to 0\)</span> 得： <span class="math display">\[
+\langle \mathbf F(\mathbf x,t),\mathrm d\mathbf x\rangle=\mathrm dE(\mathbf x)\implies \mathbf F(\mathbf x,t)=\nabla E(\mathbf x)
+\]</span> 现在把整个水杯看作一个系统，则系统不受外力作用且只有保守力做功，因此整个系统<strong>机械能守恒</strong>，即： <span class="math display">\[
+E(\mathbf x)+U(\mathbf x)\equiv\text{const},\quad \forall\,\mathbf x
+\]</span> 其中 <span class="math inline">\(U(\mathbf x)\)</span> 表示系统的势能。这意味着 <span class="math inline">\(\nabla E(\mathbf x)+\nabla U(\mathbf x)\equiv 0\)</span>，因此： <span class="math display">\[
+\mathbf F(\mathbf x,t)=\nabla E(\mathbf x)=-\nabla U(\mathbf x)\tag{2}\label{potential}
+\]</span></p>
+<h3 id="langevin-方程">Langevin 方程</h3>
+<p>花粉的运动还可以用 <strong>Langevin 方程</strong>描述： <span class="math display">\[
+m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}+\boldsymbol\xi(t),\quad \boldsymbol\xi(t)\sim\mathcal N(\mathbf0,\sigma^2\mathbf I)\tag{3}\label{langevin}
+\]</span> Langevin 方程将花粉受到的力分为两部分：</p>
 <ul>
-<li><strong>平均场变分推断</strong>：假设 <span class="math inline">\(q(z)\)</span>​ 可分解为各分量密度函数之乘积，则可采用坐标上升法优化之；</li>
-<li><strong>随机梯度变分推断</strong>：假设 <span class="math inline">\(q(z)\)</span> 是以 <span class="math inline">\(\phi\)</span> 为参数的分布族，则可采用随机梯度下降优化之。</li>
+<li><span class="math inline">\(-\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}\)</span> 表示与速度大小正相关、方向相反的阻尼力，其中 <span class="math inline">\(\gamma\)</span> 为阻尼系数，由 Stokes' Law 给出；</li>
+<li><span class="math inline">\(\boldsymbol\xi(t)\)</span>​ 表示粒子受周围水分子无规律撞击的随机涨落力，是一个零均值正态随机变量。</li>
 </ul>
-<p>顺便补充一点，由于 <span class="math inline">\(\mathcal L(q)\)</span> 的自变量是概率密度<strong>函数</strong> <span class="math inline">\(q(z)\)</span>，所以 <span class="math inline">\(\mathcal L(q)\)</span> 是一个<strong>泛函</strong>。求泛函极值的方法被称作<strong>变分法</strong>，这就是变分推断这个名称的由来，也因此我们常称 <span class="math inline">\(\mathcal L(q)\)</span> 为变分下界。</p>
-<h3 id="平均场变分推断">平均场变分推断</h3>
-<p>设隐变量 <span class="math inline">\(z=(z_1,\ldots,z_m)\in\mathbb R^m\)</span>，并且假设 <span class="math inline">\(q(z)\)</span> 可分解为各分量密度函数之乘积： <span class="math display">\[
-q(z)=\prod_{i=1}^mq_i(z_i)
+<h3 id="langevin-sde">Langevin SDE</h3>
+<p>联立 <span class="math inline">\(\eqref{newton},\eqref{potential},\eqref{langevin}\)</span> 式得： <span class="math display">\[
+\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}=\nabla U(\mathbf x)+\boldsymbol\xi(t)
 \]</span></p>
-<blockquote>
-<p>注：其实 <span class="math inline">\(z_i\)</span> 不一定真的是一个分量，也可以是一些分量形成的一个组，但本质一样的，不影响推导。</p>
-</blockquote>
-<p>由于这种假设来源于统计力学中的平均场理论 (mean-field theory)，因此称该假设下的变分推断为<strong>平均场变分推断</strong>。</p>
-<p>将上式代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
-\begin{align}
-\mathcal L(q)&amp;=\int_zq(z)\Big(\log p(x,z)-\log q(z)\Big)\mathrm dz\\
-&amp;=\int_z\prod_{i=1}^mq_i(z_i)\bigg(\log p(x,z)-\sum_{k=1}^m\log q_k(z_k)\bigg)\mathrm dz\\
-&amp;=\int_z\prod_{i=1}^mq_i(z_i)\log p(x,z)\mathrm dz-\int_z\prod_{i=1}^mq_i(z_i)\sum_{k=1}^m\log q_k(z_k)\mathrm dz
-\end{align}
-\]</span> 为了最大化 <span class="math inline">\(L(q)\)</span>，可以逐个优化 <span class="math inline">\(q_j(z_j)\)</span> 并不断迭代。为此，固定 <span class="math inline">\(z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_m\)</span> 不动，将 <span class="math inline">\(z_j\)</span> 视为变量，则： <span class="math display">\[
-\begin{align}
-\mathcal L(q)&amp;=\int_{z_j}q_j(z_j)\left[\int_{z_{/j}}\log p(x,z)\prod_{i\neq j}q_i(z_i)\mathrm dz_{/j}\right]\mathrm dz_j-\int_{z_j}q_j(z_j)\log q_j(z_j)\mathrm dz_j+\text{const}\\
-&amp;=\int_{z_j}q_j(z_j)\mathbb E_{i\neq j}[\log p(x,z)]\mathrm dz_j-\int_{z_j}q_j(z_j)\log q_j(z_j)\mathrm dz_j+\text{const}\\
-&amp;=\int_{z_j}q_j(z_j)\Big(\mathbb E_{i\neq j}[\log p(x,z)]-\log q_j(z_j)\Big)\mathrm dz_j+\text{const}
-\end{align}
+<p>为了将上式写作 SDE 的形式，引入标准维纳过程 <span class="math inline">\(\mathbf w(t)\)</span> 代替 <span class="math inline">\(\boldsymbol\xi(t)\)</span>，那么有 <span class="math inline">\(\frac{\mathrm d\mathbf w(t)}{\mathrm dt}=\frac{\boldsymbol\xi(t)}{\sigma}\)</span>，代入得：</p>
+<p><span class="math display">\[
+\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}=\nabla U(\mathbf x)+\sigma\frac{\mathrm d\mathbf w(t)}{\mathrm dt}\implies
+\mathrm d\mathbf x=\frac{1}{\gamma}\nabla U(\mathbf x)\mathrm dt+\frac{\sigma}{\gamma}\mathrm d\mathbf w
+\]</span> 注意到 <span class="math inline">\(\gamma\)</span> 和 <span class="math inline">\(\sigma\)</span> 都是常数，为了后续形式上的简洁，不妨抛开它们的实际物理意义，令 <span class="math inline">\(\gamma=-1,\,\sigma=\sqrt{2}\)</span> 得： <span class="math display">\[
+\mathrm d\mathbf x=-\nabla U(\mathbf x)\mathrm dt+\sqrt{2}\mathrm d\mathbf w\tag{5}\label{diffsde}
+\]</span> 其中随机项 <span class="math inline">\(\mathrm d\mathbf w\)</span> 是零均值的，所以不必改变符号。称上式为 <strong>Langevin diffusion SDE</strong>. 下图模拟了单独一个粒子依 Langevin diffusion SDE 运动的动态：</p>
+<p><img src="single_particles.gif" srcset="/blog-main/logo/imageloading.png" lazyload width=35% alt="https://odie2630463.github.io/2020/09/28/langevin/" /></p>
+<h3 id="sde-的平稳分布">SDE 的平稳分布</h3>
+<p>考虑一堆依 Langevin diffusion SDE 运动的粒子，初始时它们服从某种概率分布，那么随运动进行它们的概率分布也将随时间变化。我们感兴趣的是，当运动足够长时间后，粒子的概率分布将收敛到怎样的平稳分布。</p>
+<p>设 <span class="math inline">\(p(\mathbf x,t)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 处的概率密度， 则计算 <span class="math inline">\(\eqref{diffsde}\)</span> 式的 <strong>Fokker-Planck 方程</strong>，有： <span class="math display">\[
+\frac{\partial}{\partial t}p(\mathbf x,t)=\nabla p(\mathbf x,t)^T\nabla U(\mathbf x)+p(\mathbf x,t)\Delta U(\mathbf x)+\Delta p(\mathbf x,t)
+\]</span> Fokker-Planck 方程描述了概率分布随时间是如何变化的。为求解<strong>平稳分布</strong>（即 <span class="math inline">\(p(\mathbf x,t)\)</span> 不随时间 <span class="math inline">\(t\)</span> 变化），令上式为 0 得： <span class="math display">\[
+\nabla p(\mathbf x)^T\nabla U(\mathbf x)+p(\mathbf x)\Delta U(\mathbf x)+\Delta p(\mathbf x)=0
+\]</span> 可以验证，如下形式的<strong>玻尔兹曼分布</strong>是上式的解（事实上是唯一的解）： <span class="math display">\[
+\tilde p(\mathbf x)=\frac{1}{Z}\exp\left(-U(\mathbf x)\right)\tag{6}\label{stationary}
+\]</span> 其中 <span class="math inline">\(Z\)</span> 为归一化系数。下图模拟了大量粒子依 Langevin diffusion SDE 运动的动态，并可视化了概率分布的变化：</p>
+<p><img src="FP_simulation_stat.gif" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="source:https://odie2630463.github.io/2020/09/28/langevin/" /></p>
+<h2 id="langevin-mcmc">Langevin MCMC</h2>
+<p>假设我们希望从分布 <span class="math inline">\(p(\mathbf x)\)</span> 中采样，根据上一节的理论，只需要找到合适的 <span class="math inline">\(U(\mathbf x)\)</span>，使得平稳分布 <span class="math inline">\(\tilde p(\mathbf x)=p(\mathbf x)\)</span>，那么按照 Langevin dynamics 的过程模拟即可。这一思想与 MCMC 是一致的。事实上，考虑到 SDE 就是连续时间、连续状态的马尔可夫过程，所以人们常将这类采样方法称作 <strong>Langevin MCMC</strong>.</p>
+<h3 id="ula">ULA</h3>
+<p>令 <span class="math inline">\(\tilde p(\mathbf x)=p(\mathbf x)\)</span>，代入 <span class="math inline">\(\eqref{stationary}\)</span> 式得： <span class="math display">\[
+\tilde p(\mathbf x)=\frac{1}{Z}\exp(-U(\mathbf x))=p(\mathbf x)\implies U(\mathbf x)=-\log p(\mathbf x)-\log Z
+\]</span> 因此我们要找的 <span class="math inline">\(U(\mathbf x)\)</span> 就是 <span class="math inline">\(-\log p(\mathbf x)\)</span> 差一个常数。两边求梯度： <span class="math display">\[
+\nabla U(\mathbf x)=-\nabla \log p(\mathbf x)
+\]</span> 这就出现了熟悉的 score function. 代入 <span class="math inline">\(\eqref{diffsde}\)</span> 式得： <span class="math display">\[
+\mathrm d\mathbf x=\nabla\log p(\mathbf x)\mathrm dt+\sqrt{2}\mathrm d\mathbf w\tag{6}\label{sde}
 \]</span></p>
-<p>其中 <span class="math inline">\(z_{/j}\)</span> 表示 <span class="math inline">\((z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_m)\)</span>，而 <span class="math inline">\(\mathbb E_{i\neq j}\)</span> 表示对 <span class="math inline">\(\prod_{i\neq j}q_i(z_i)\)</span> 求期望。注意到 <span class="math inline">\(\mathbb E_{i\neq j}[\log p(x,z)]\)</span> 是关于 <span class="math inline">\(x,z_j\)</span> 的函数，可以将其视作能量函数并构建玻尔兹曼分布 <span class="math inline">\(\tilde p(x,z_j)\)</span>： <span class="math display">\[
-\log \tilde p(x,z_j)=\mathbb E_{i\neq j}[\log p(x,z)]+\text{const}
-\]</span> 于是： <span class="math display">\[
-\mathcal L(q)=\int_{z_j}q_j(z_j)\log\frac{\tilde p(x,z_j)}{q_j(z_j)}\mathrm dz_j+\text{const}=-\text{KL}(q_j(z_j)\Vert \tilde p(x,z_j))+\text{const}
-\]</span> 因此最优解 <span class="math inline">\(q^\ast_j(z_j)\)</span> 为： <span class="math display">\[
-q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
-\]</span> 或写作： <span class="math display">\[
-\log q^\ast_j(z_j)=\mathbb E_{i\neq j}[\log p(x,z)]+\text{const}
-\]</span> 正如上文所言，整个优化过程是一个轮转迭代的过程——首先初始化所有的 <span class="math inline">\(q_i(z_i),\,i=1,\ldots,m\)</span>，然后根据上式循环更新各个分量——即坐标上升法。可以证明迭代过程能够收敛。</p>
-<h3 id="随机梯度变分推断">随机梯度变分推断</h3>
-<p>对于泛函优化问题，一个常用的方法是将作为自变量的那个函数<strong>参数化</strong>，这样优化对象就从函数变成了参数，问题从而转化成了一般的函数优化问题。在变分推断的语境中，就是将 <span class="math inline">\(q(z)\)</span> 限制为一个以 <span class="math inline">\(\phi\)</span> 为参数的分布族 <span class="math inline">\(q_\phi(z)\)</span>，那么此时 <span class="math inline">\(\mathcal L(q)\)</span> 就变成了关于 <span class="math inline">\(\phi\)</span> 的函数 <span class="math inline">\(\mathcal L(\phi)\)</span> ，于是使用随机梯度下降即可求解。这就是<strong>随机梯度变分推断 (SGVI)</strong> 或<strong>随机梯度贝叶斯方法 (SGVB)</strong>。</p>
-<p>具体而言，将 <span class="math inline">\(q_\phi(z)\)</span> 代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
-\mathcal L(\phi)=\int_zq_\phi(z)\log\frac{p(x,z)}{q_\phi(z)}\mathrm dz=\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
-\]</span> 对参数 <span class="math inline">\(\phi\)</span> 求梯度： <span class="math display">\[
-\begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\int_z\nabla_\phi\Big[q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\Big]\mathrm dz\\
-&amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz+\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
-\end{align}
-\]</span> 其中第二项： <span class="math display">\[
-\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz=-\int_z\nabla_\phi q_\phi(z)\mathrm dz=-\nabla_\phi\int_zq_\phi(z)\mathrm dz=0
-\]</span> 于是只剩下第一项。再利用 <span class="math inline">\(\nabla_\phi q_\phi(z)=q_\phi(z)\nabla_\phi \log q_\phi(z)\)</span>，可以将第一项写作期望的形式： <span class="math display">\[
-\begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\int_z q_\phi(z)\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\mathbb E_{q_\phi(z)}\Big[\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\Big]
-\end{align}
-\]</span> 训练时用采样近似期望，这样就估计出了梯度。然而，用这种方式估计的梯度的方差很大，导致训练不稳定，因此并不实用。</p>
-<p>一种常见的解决方案是<strong>重参数化技巧</strong>，相关内容在<a href="/blog-main/2022/06/22/SF%E4%BC%B0%E8%AE%A1%E4%B8%8E%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7/" title="SF估计与重参数化技巧">之前的文章</a>中有详细介绍。对于特定的分布（例如高斯分布或离散类别分布），我们可以构造函数 <span class="math inline">\(g_\phi\)</span> 使得 <span class="math inline">\(z=g_\phi(\epsilon)\)</span>，满足 <span class="math inline">\(z\sim q_\phi(z)\)</span> 并且 <span class="math inline">\(\epsilon\sim p(\epsilon)\)</span>，其中 <span class="math inline">\(p(\epsilon)\)</span> 是一个简单的分布。于是有： <span class="math display">\[
-\mathrm dz=g&#39;_\phi(\epsilon)\mathrm d\epsilon,\quad q_\phi(z)=\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)
-\]</span> 那么： <span class="math display">\[
-\begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_z q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\nabla_\phi\int_z\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\nabla_\phi\int_\epsilon\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big)g&#39;_\phi(\epsilon)\mathrm d\epsilon\\
-&amp;=\nabla_\phi\int_\epsilon p(\epsilon)\Big(\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big)\mathrm d\epsilon\\
-&amp;=\nabla_\phi\mathbb E_{p(\epsilon)}\Big[\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big]
-\end{align}
-\]</span> 用采样近似期望即可估计出梯度。</p>
+<p>这就是用于采样的 Langevin diffusion SDE 形式。</p>
+<p>实际操作时需要将 <span class="math inline">\(\eqref{sde}\)</span> 式进行 <strong>Euler-Maruyama 离散化</strong>： <span class="math display">\[
+\mathbf x_{t+1}=\mathbf x_t+\tau\nabla\log p(\mathbf x_t)+\sqrt{2\tau}\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf0,\mathbf I)\tag{7}\label{ula}
+\]</span> 其中 <span class="math inline">\(\tau\)</span> 为离散化的步长。称该采样算法为 <strong>ULA (Unadjusted Langevin Algorithm)</strong>.</p>
+<h3 id="联系梯度下降">联系梯度下降</h3>
+<p>注意到，如果 <span class="math inline">\(\eqref{ula}\)</span> 式中没有随机项，那么 ULA 就变成了梯度下降（梯度上升）： <span class="math display">\[
+\mathbf x_{t+1}=\mathbf x_t+\tau\nabla\log p(\mathbf x_t)
+\]</span> 其中梯度下降的“损失函数”就是负对数概率密度 <span class="math inline">\(-\log p(\mathbf x)\)</span>. 从这个角度看，ULA 可以直观理解为梯度下降+随机扰动：</p>
+<ul>
+<li>梯度下降项使得采样点不断向 <span class="math inline">\(p(\mathbf x)\)</span> 增大的方向移动，即向高密度区域聚集；</li>
+<li>随机扰动项使得优化算法变成了采样算法——如果只有梯度下降项，那么数据点最终会收敛到 <span class="math inline">\(p(\mathbf x)\)</span> 极大的地方，但采样应该允许取到 <span class="math inline">\(p(\mathbf x)\)</span>​ 较小的区域，因此加入随机扰动项实现这一点。</li>
+</ul>
+<p>下图展示了梯度下降与 ULA 的区别：</p>
+<p><img src="sgd-ld.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source:https://zhuanlan.zhihu.com/p/699598518" /></p>
+<h3 id="mala">MALA</h3>
+<p>在 ULA 中，我们不假思索地直接将 <span class="math inline">\(\eqref{sde}\)</span> 式离散化为了 <span class="math inline">\(\eqref{ula}\)</span> 式，但离散化后我们真的能得到想要的分布吗？具体而言，离散化后的 Langevin dynamics 形成了离散时间的马尔可夫链，在合适的条件下，它是不可约正常返的，因此存在极限分布 <span class="math inline">\(p_\tau\)</span> 且极限分布就是平稳分布。不过，由于离散误差，<span class="math inline">\(p_\tau\)</span> 与我们想要的 <span class="math inline">\(p\)</span> 之间存在一定的差异，一些理论工作正是研究不同步长 <span class="math inline">\(\tau\)</span> 下 <span class="math inline">\(p_\tau\)</span> 与 <span class="math inline">\(p\)</span> 之间的差异。</p>
+<p>为了改进 ULA 的误差，受到 <a href="/blog-main/2024/03/21/%E8%92%99%E7%89%B9%E5%8D%A1%E6%B4%9B%E9%87%87%E6%A0%B7/" title="蒙特卡洛采样">Metropolis-Hastings 采样</a>的启发，Roberts &amp; Tweedie 提出了 Metropolis Adjusted Langevin Agorithm (MALA)：</p>
+<ol type="1">
+<li><p>提议 <span class="math inline">\(\mathbf y_{t+1}=\mathbf x_t+\tau\nabla\log p(\mathbf x_t)+\sqrt{2\tau}\boldsymbol\epsilon,\,\boldsymbol\epsilon\sim\mathcal N(\mathbf0,\mathbf I)\)</span>；</p></li>
+<li><p>计算接受率： <span class="math display">\[
+\alpha_\tau(\mathbf x,\mathbf y)=1\wedge\frac{p(\mathbf y)r_\tau(\mathbf y,\mathbf x)}{p(\mathbf x)r_\tau(\mathbf x,\mathbf y)},\quad r_\tau(\mathbf x,\mathbf y)\propto \exp\left(-\frac{\Vert\mathbf y-\mathbf x+\tau\nabla\log p(\mathbf x)\Vert^2}{4\tau}\right)
+\]</span> 其中 <span class="math inline">\(\wedge\)</span> 表示取最小值操作；</p></li>
+<li><p>接受或拒绝提议。</p></li>
+</ol>
+<p>当然，MALA 也可以用于改进对一般的基于势能 <span class="math inline">\(U(\mathbf x)\)</span> 的 Langevin dynamics 的模拟。</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
 <ol>
 <li>
-<span id="fn:1" class="footnote-text"><span>Bishop, Christopher. Pattern Recognition and Machine Learning. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:1" class="footnote-text"><span>Paweł A. Pierzchlewicz. Langevin Monte Carlo: Sampling using Langevin Dynamics. https://perceptron.blog/langevin-dynamics/ <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>Chan, Stanley H. Tutorial on Diffusion Models for Imaging and Vision. <em>arXiv preprint arXiv:2403.18103</em> (2024). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:3" class="footnote-text"><span>Kingma, Diederik P., and Max Welling. Auto-encoding variational bayes. <em>arXiv preprint arXiv:1312.6114</em> (2013). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:3" class="footnote-text"><span>朗之万动力学原理简介 - Openverse的文章 - 知乎. https://zhuanlan.zhihu.com/p/699598518 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:4" class="footnote-text"><span>【机器学习-白板推导系列(十二)-变分推断（Variational Inference）】 https://www.bilibili.com/video/BV1DW41167vr/?p=4&amp;share_source=copy_web&amp;vd_source=a43b4442e295a96065c7ae919b4866d3 <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:4" class="footnote-text"><span>Yuansi Chen. Lecture 3 – Langevin algorithms. https://metaphor.ethz.ch/x/2024/fs/401-4634-24L/lec/Lecture03.pdf <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:5" class="footnote-text"><span>Kirill Neklyudov. Langevin Dynamics for sampling and global optimization. https://docs.google.com/presentation/d/1_yekoTv_CHRgz6vsT57RMDESHjlnbGQvq8tYCxKLyW0 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:6" class="footnote-text"><span>Alain Durmus, Eric Moulines. The Langevin MCMC: Theory and Methods. https://www.icts.res.in/sites/default/files/paap-2019-08-08-Eric%20Moulines.pdf <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Roberts, Gareth O., and Richard L. Tweedie. Exponential convergence of Langevin distributions and their discrete approximations. <em>Bernoulli</em> (1996): 341-363. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
@@ -472,6 +483,10 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
       
         <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
       
+        <a href="/blog-main/tags/stochastic-process/" class="print-no-link">#stochastic process</a>
+      
+        <a href="/blog-main/tags/physics/" class="print-no-link">#physics</a>
+      
     </div>
   
 </div>
@@ -482,8 +497,8 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>变分推断</div>
-      <div>https://xyfjason.github.io/blog-main/2024/03/05/变分推断/</div>
+      <div>Langevin Dynamics</div>
+      <div>https://xyfjason.github.io/blog-main/2024/06/21/Langevin-Dynamics/</div>
     </div>
     <div class="license-meta">
       
@@ -495,7 +510,7 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年3月5日</div>
+          <div>2024年6月21日</div>
         </div>
       
       
@@ -527,18 +542,12 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2024/03/07/Normalizing-Flows/" title="Normalizing Flows">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Normalizing Flows</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2024/03/02/%E5%AD%90%E7%A9%BA%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB/" title="子空间的距离">
-                        <span class="hidden-mobile">子空间的距离</span>
+                      <a href="/blog-main/2024/06/19/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84Lipschitz%E8%BF%9E%E7%BB%AD%E6%80%A7/" title="神经网络的Lipschitz连续性">
+                        <span class="hidden-mobile">神经网络的Lipschitz连续性</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
