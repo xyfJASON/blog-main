@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/flow-matching.png">
 <meta property="article:published_time" content="2024-06-22T13:08:11.000Z">
-<meta property="article:modified_time" content="2024-06-22T09:58:37.392Z">
+<meta property="article:modified_time" content="2024-06-23T03:34:16.846Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -274,7 +274,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.2k 字
+          3.4k 字
         
       </span>
     
@@ -285,7 +285,7 @@
         
         
         
-          27 分钟
+          29 分钟
         
       </span>
     
@@ -353,27 +353,28 @@ p_t(\mathbf x)=p_0(\boldsymbol\phi_t^{-1}(\mathbf x))\left|\det\left[\frac{\part
           </div></p>
 <p>现在，为了构建生成模型，我们只需要构建速度场 <span class="math inline">\(\mathbf v_t(\mathbf x)\)</span>，使得对应的概率密度路径 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足 <span class="math inline">\(p_0\)</span> 为某简单分布且 <span class="math inline">\(p_1\)</span> 为数据分布，这就是 flow matching 要完成的事。</p>
 <h2 id="flow-matching">Flow Matching</h2>
+<h3 id="原始损失函数">原始损失函数</h3>
 <p>设 <span class="math inline">\(p_t(\mathbf x)\)</span> 是一概率密度路径，满足 <span class="math inline">\(p_0\)</span> 为某简单分布（例如标准正态分布）且 <span class="math inline">\(p_1\)</span> 为数据分布，<span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 为对应的速度场（未知）。Flow matching<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. *arXiv preprint arXiv:2210.02747* (2022).">[1]</span></a></sup> 使用神经网络构建速度场 <span class="math inline">\(\mathbf v_{t}^{\theta}(\mathbf x)\)</span> 去近似 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，损失函数为： <span class="math display">\[
 \mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x)\Vert^2\right]
-\]</span> 然而式中真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 是未知的，自然无法使用 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 训练，怎么办呢？聪明的读者可能已经发现了，flow matching 的训练目标和遇到的问题与 score matching 一模一样，其中速度场直接对标 score function，所以把 score matching 的解决方法搬过来即可。借鉴 denoising score matching，我们每次针对单个样本去近似条件速度场，其中样本从数据集中采样，这样均摊下来就是在近似无条件的真实速度场了。</p>
+\]</span> 然而式中真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 是未知的，自然无法使用 <span class="math inline">\(\mathcal L_\text{FM}\)</span>​ 训练，怎么办呢？聪明的读者可能已经发现了，flow matching 的训练目标和遇到的问题与 score matching 一模一样，其中速度场直接对标 score function，所以把 score matching 的解决方法搬过来即可。借鉴 denoising score matching，我们每次针对单个样本去近似条件速度场，其中样本从数据集中采样，这样均摊下来就是在近似无条件的真实速度场了。</p>
+<h3 id="条件速度场">条件速度场</h3>
 <p>具体而言，给定某特定样本 <span class="math inline">\(\mathbf x_1\)</span>，称 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 为<strong>条件概率路径</strong>。那么，边缘概率路径可以通过条件概率路径对所有样本求期望得到： <span class="math display">\[
 p_t(\mathbf x)=\int p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1=\mathbb E_{q(\mathbf x_1)}[p_t(\mathbf x\vert\mathbf x_1)]
-\]</span> 进一步地，设条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 可以由<strong>条件速度场</strong> <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 得到（即二者满足连续性方程），那么速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 有如下关系： <span class="math display">\[
+\]</span> 设上述条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 可以由<strong>条件速度场</strong> <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 得到（即二者满足连续性方程），那么可以推得，速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 有如下关系： <span class="math display">\[
 \mathbf u_t(\mathbf x)=\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\mathbf u_t(\mathbf x\vert\mathbf x_1)]
-\]</span> 当然这个关系是需要证明的，我们只需要证明基于上面的方式定义的 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足连续性方程即可。证明过程并不复杂，直接代入： <span class="math display">\[
-\begin{align}
-\frac{\partial p_t(\mathbf x)}{\partial t}&amp;=\int\left(\frac{\partial}{\partial t}p_t(\mathbf x\vert\mathbf x_1)\right)q(\mathbf x_1)\mathrm d\mathbf x_1\\
-&amp;=-\int\nabla\cdot (p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1))q(\mathbf x_1)\mathrm d\mathbf x_1\\
-&amp;=-\nabla\cdot\left(\int p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1) \mathrm d\mathbf x_1\right)\\
-&amp;=-\nabla\cdot (p_t(\mathbf x)\mathbf u_t(\mathbf x))
-\end{align}
-\]</span> 这就完成了证明。</p>
-<div class="note note-secondary">
-            <p><strong>题外话</strong>：熟悉 score function 的读者应该知道，对 score function 也有类似的关系式： <span class="math display">\[\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\]</span></p>
+\]</span> <div class="note note-secondary">
+            <p>证明：我们只需要证明基于上面的方式定义的 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足连续性方程即可。直接代入： <span class="math display">\[\begin{align}\frac{\partial p_t(\mathbf x)}{\partial t}&amp;=\int\left(\frac{\partial}{\partial t}p_t(\mathbf x\vert\mathbf x_1)\right)q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\int\nabla\cdot (p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1))q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\nabla\cdot\left(\int p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1) \mathrm d\mathbf x_1\right)\\&amp;=-\nabla\cdot (p_t(\mathbf x)\mathbf u_t(\mathbf x))\end{align}\]</span> 证毕。</p>
+          </div></p>
+<div class="note note-info">
+            <p>熟悉 score function 的读者应该知道，对 score function 也有类似的关系式： <span class="math display">\[\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\]</span></p>
           </div>
-<p>现在，基于条件概率路径和条件速度场，原始的 flow matching 损失函数就可以改写做如下 conditional flow matching 损失函数： <span class="math display">\[
+<h3 id="cfm-损失函数">CFM 损失函数</h3>
+<p>基于条件概率路径和条件速度场，原始的 flow matching 损失函数可以改写做如下 conditional flow matching 损失函数： <span class="math display">\[
 \mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]
-\]</span> 可以证明 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 与 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 只差与 <span class="math inline">\(\theta\)</span> 无关的常数，因此对优化问题而言是等价的。推导过程其实与 score matching 到 denoising score matching 如出一辙（见 <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score-Based Generative Models</a> 一文），这里略去。</p>
+\]</span> 可以证明 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 与 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 只差与 <span class="math inline">\(\theta\)</span> 无关的常数，因此对优化问题而言是等价的。推导思路其实与 score matching 到 denoising score matching 如出一辙（感兴趣的读者可以参考<a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">这篇文章</a>）。</p>
+<div class="note note-secondary">
+            <p>证明：将 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 中的平方打开： <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)\Vert^2\right]+\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf u_t(\mathbf x)\Vert^2\right]-2\mathbb E_{t,p_t(\mathbf x)}\left[\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x)\right\rangle\right]\]</span> 第一项保留，第二项与 <span class="math inline">\(\theta\)</span>​ 无关扔掉，第三项做如下变形： <span class="math display">\[\begin{align}\mathbb E_{p_t(\mathbf x)}\left[\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x)\right\rangle\right]&amp;=\int p_t(\mathbf x)\left\langle\mathbf v_t^\theta(\mathbf x),\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1\right\rangle\mathrm d\mathbf x\\&amp;=\int\left\langle\mathbf v_t^\theta(\mathbf x),\int \mathbf u_t(\mathbf x\vert\mathbf x_1)p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1\right\rangle\mathrm d\mathbf x\\&amp;=\iint\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1\mathrm d\mathbf x\\&amp;=\mathbb E_{q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle\right]\end{align}\]</span> 加上第一项得： <span class="math display">\[\mathcal L&#39;_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)\Vert^2-2\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle\right]\]</span> 看起来不太好看，配个方就得到了 CFM 损失函数： <span class="math display">\[\mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\]</span></p>
+          </div>
 <p>现在，只要我们设计一个可解的条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span>，就可以基于 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 训练了。</p>
 <h2 id="条件速度场的设计">条件速度场的设计</h2>
 <h3 id="一般形式">一般形式</h3>
