@@ -13,8 +13,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -38,6 +36,12 @@
     <content type="html"><![CDATA[<h2 id="网站结构">网站结构</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">xyfjason.github.io                  # 引导页<br>├── xyfjason.github.io/homepage     # 学术主页<br>├── xyfjason.github.io/notes        # 笔记<br>├── xyfjason.github.io/blog-main    # 主博客<br>├── xyfjason.github.io/blog-xcpc    # ICPC/CCPC博客<br>└── xyfjason.github.io/blog-oi      # OI博客<br></code></pre></td></tr></table></figure><h2 id="引导页">引导页</h2><p>部署页面：<a href="https://xyfjason.github.io" class="uri">https://xyfjason.github.io</a></p><p>GitHub: <a href="https://github.com/xyfJASON/xyfjason.github.io" class="uri">https://github.com/xyfJASON/xyfjason.github.io</a></p><p>维护方法：修改 <code>index.html</code>，用 <code>git</code> 维护即可。</p><p>注意：GitHub bot 每天都会自动 commit，提交前记得 <code>git pull</code>.</p><h2 id="学术主页">学术主页</h2><p>部署页面：<a href="https://xyfjason.github.io/homepage" class="uri">https://xyfjason.github.io/homepage</a></p><p>GitHub: <a href="https://github.com/xyfJASON/homepage" class="uri">https://github.com/xyfJASON/homepage</a></p><p>维护方法：修改 <code>index.html</code>，用 <code>git</code> 维护即可。</p><h2 id="笔记">笔记</h2><p>部署页面：<a href="https://xyfjason.github.io/notes" class="uri">https://xyfjason.github.io/notes</a></p><p>GitHub: <a href="https://github.com/xyfJASON/notes" class="uri">https://github.com/xyfJASON/notes</a></p><p>维护方法：修改 <code>index.html</code> 和 <code>sources</code>，用 <code>git</code> 维护即可。</p><h2 id="主博客">主博客</h2><p>部署页面：<a href="https://xyfjason.github.io/blog-main" class="uri">https://xyfjason.github.io/blog-main</a></p><p>GitHub: <a href="https://github.com/xyfJASON/blog-main" class="uri">https://github.com/xyfJASON/blog-main</a></p><p>维护方法：Hexo</p><ul><li><code>hexo new</code> 新建文章</li><li><code>hexo s</code> 本地服务</li><li><code>hexo g -d</code> 部署文章</li></ul><h2 id="icpcccpc-博客">ICPC/CCPC 博客</h2><p>部署页面：<a href="https://xyfjason.github.io/blog-xcpc" class="uri">https://xyfjason.github.io/blog-xcpc</a></p><p>GitHub: <a href="https://github.com/xyfJASON/blog-xcpc" class="uri">https://github.com/xyfJASON/blog-xcpc</a></p><p>维护方法：Hexo</p><ul><li><code>hexo new</code> 新建文章</li><li><code>hexo s</code> 本地服务</li><li><code>hexo g -d</code> 部署文章</li></ul><h2 id="oi-博客">OI 博客</h2><p>部署页面：<a href="https://xyfjason.github.io/blog-oi" class="uri">https://xyfjason.github.io/blog-oi</a></p><p>GitHub: <a href="https://github.com/xyfJASON/blog-oi" class="uri">https://github.com/xyfJASON/blog-oi</a></p><p>维护方法：Hexo</p><ul><li><code>hexo new</code> 新建文章</li><li><code>hexo s</code> 本地服务</li><li><code>hexo g -d</code> 部署文章</li></ul>]]></content>
     
     
+    <categories>
+      
+      <category>技术栈</category>
+      
+    </categories>
+    
     
     <tags>
       
@@ -58,8 +62,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -90,8 +92,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -121,8 +121,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>深度学习</category>
       
     </categories>
@@ -130,9 +128,9 @@
     
     <tags>
       
-      <tag>linear algebra</tag>
-      
       <tag>machine learning</tag>
+      
+      <tag>linear algebra</tag>
       
     </tags>
     
@@ -149,8 +147,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>深度学习</category>
       
@@ -176,8 +172,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -206,8 +200,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models</category>
@@ -234,8 +226,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -264,8 +254,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -290,8 +278,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>机器学习</category>
       
@@ -536,8 +522,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -562,8 +546,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -592,8 +574,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -619,8 +599,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
       <category>数学</category>
@@ -630,9 +608,9 @@
     
     <tags>
       
-      <tag>linear algebra</tag>
-      
       <tag>machine learning</tag>
+      
+      <tag>linear algebra</tag>
       
     </tags>
     
@@ -649,8 +627,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>数学</category>
       
@@ -670,8 +646,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -701,8 +675,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>数学</category>
       
@@ -845,8 +817,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -871,8 +841,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>技术栈</category>
       
@@ -930,8 +898,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>数学</category>
       
       <category>图像处理</category>
@@ -960,8 +926,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>数学</category>
       
@@ -992,8 +956,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>数学</category>
       
       <category>图像处理</category>
@@ -1022,8 +984,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>技术栈</category>
       
@@ -1157,8 +1117,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>数学</category>
       
@@ -1351,8 +1309,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>AIGC</category>
       
     </categories>
@@ -1381,8 +1337,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>AIGC</category>
       
@@ -1737,8 +1691,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>GANs</category>
@@ -1770,8 +1722,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>技术栈</category>
       
     </categories>
@@ -1790,8 +1740,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -1820,8 +1768,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models</category>
@@ -1848,8 +1794,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>AIGC</category>
       
@@ -1880,8 +1824,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>AIGC</category>
       
     </categories>
@@ -1910,8 +1852,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>AIGC</category>
       
@@ -1942,8 +1882,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>GANs</category>
@@ -1970,8 +1908,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>AIGC</category>
       
@@ -2027,8 +1963,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
       <category>数学</category>
@@ -2083,8 +2017,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>计算机视觉</category>
       
     </categories>
@@ -2109,8 +2041,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2141,8 +2071,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models (Applications)</category>
@@ -2171,8 +2099,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2203,8 +2129,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models</category>
@@ -2231,8 +2155,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2263,8 +2185,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models (Applications)</category>
@@ -2293,8 +2213,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2325,8 +2243,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models</category>
@@ -2353,8 +2269,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2383,8 +2297,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models</category>
@@ -2411,8 +2323,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>深度学习</category>
       
@@ -2441,8 +2351,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>深度学习</category>
       
     </categories>
@@ -2469,8 +2377,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2518,8 +2424,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>Diffusion Models</category>
@@ -2546,8 +2450,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>生成模型</category>
       
@@ -2576,8 +2478,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>生成模型</category>
       
       <category>VAEs</category>
@@ -2605,8 +2505,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>计算机视觉</category>
       
     </categories>
@@ -2631,8 +2529,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>机器学习</category>
       
@@ -2659,8 +2555,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -2685,8 +2579,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>深度学习</category>
       
@@ -2715,8 +2607,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -2741,8 +2631,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>机器学习</category>
       
@@ -2796,8 +2684,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -2823,8 +2709,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>深度学习</category>
       
     </categories>
@@ -2847,12 +2731,10 @@
     <link href="/blog-main/2022/06/22/SF%E4%BC%B0%E8%AE%A1%E4%B8%8E%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7/"/>
     <url>/blog-main/2022/06/22/SF%E4%BC%B0%E8%AE%A1%E4%B8%8E%E9%87%8D%E5%8F%82%E6%95%B0%E5%8C%96%E6%8A%80%E5%B7%A7/</url>
     
-    <content type="html"><![CDATA[<h2 id="问题引入">问题引入</h2><p>一般而言，许多机器学习/深度学习的优化目标长这样： <span class="math display">\[\mathbb E_{z\sim \mathcal P}[f_\theta(z)]\tag{1}\label{1}\]</span> 训练时用采样近似上述期望： <span class="math display">\[\mathbb E_{z\sim\mathcal P}[f_\theta(z)]\approx\frac{1}{N}\sum_{n=1}^N f_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{2}\label{2}\]</span> 能够这么做的原因在于 <span class="math inline">\(\eqref{2}\)</span> 式是 <span class="math inline">\(\eqref{1}\)</span> 式的无偏估计，这一点相信大家都很清楚。但容易被忽略的一点是，由于常用的优化算法一般都是基于梯度的，我们还应保证从样本中计算的梯度也是真实梯度的无偏估计！幸运的是，对于上述形式的一般问题而言，这一点是容易成立的。可以计算真实梯度为： <span class="math display">\[\nabla_\theta\mathbb E_{z\sim \mathcal P}[f_\theta(z)]=\nabla_\theta\left[\int p(z)f_\theta(z)\mathrm dz\right]=\int p(z)\nabla_\theta f_\theta(z) \mathrm dz=\mathbb E_{z\sim \mathcal P}[\nabla_\theta f_\theta(z)]\tag{3}\label{3}\]</span> 而基于样本计算的梯度为： <span class="math display">\[\nabla_\theta\left[\frac{1}{N}\sum_{n=1}^N f_\theta(z^{(n)})\right]=\frac{1}{N}\sum_{n=1}^N\nabla_\theta f_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{4}\label{4}\]</span> 显然 <span class="math inline">\(\eqref{4}\)</span> 式的确是 <span class="math inline">\(\eqref{3}\)</span> 式的无偏估计。</p><p>然而，在有些问题中（变分推断、强化学习等），优化目标中的采样分布也由参数 <span class="math inline">\(\theta\)</span> 决定： <span class="math display">\[\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\tag{5}\label{5}\]</span> 此时一般问题的做法还能够无缝迁移过来吗？我们计算一下真实梯度： <span class="math display">\[\begin{align}\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]&amp;=\nabla_\theta\left[\int p_\theta(z)f_\theta(z)\mathrm dz\right]\\&amp;=\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz+\int p_\theta(z)\nabla_\theta f_\theta(z)\mathrm dz\\&amp;={\color{purple}{\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz}}+\mathbb E_{z\sim \mathcal P_\theta}[\nabla_\theta f_\theta(z)]\end{align}\tag{6}\label{6}\]</span> 可以看见，与 <span class="math inline">\(\eqref{3}\)</span> 式相比，<span class="math inline">\(\eqref{6}\)</span> 式多了紫色的这一项。但是，基于样本计算梯度的结果却依旧是 <span class="math inline">\(\eqref{4}\)</span> 式，二者对不上了！换句话说，<strong>采样是一个不可导的操作</strong>，从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样本来应该对 <span class="math inline">\(\theta\)</span> 的更新产生紫色部分的贡献，但是采样阻断了梯度的传播，导致这部分贡献丢失了。下面我们介绍两种解决这个问题的方法——SF 估计和重参数化技巧。</p><h2 id="score-function-估计">Score Function 估计</h2><p>事实上，紫色部分是可以处理为期望形式的： <span class="math display">\[\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz=\int f_\theta(z)p_\theta(z)\nabla_\theta\log p_\theta(z)\mathrm dz=\mathbb E_{z\sim\mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]\tag{7}\label{7}\]</span> 其中 <span class="math inline">\(\nabla_\theta\log p_\theta(z)\)</span> 称作 <strong>score function</strong>. 于是可以通过采样近似 <span class="math inline">\(\eqref{7}\)</span> 式： <span class="math display">\[\mathbb E_{z\sim\mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]\approx\frac{1}{N}\sum_{n=1}^Nf_\theta(z^{(n)})\nabla_\theta\log p_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{8}\label{8}\]</span> 这样就把丢失的紫色部分找了回来。但是实践中，人们发现使用 <span class="math inline">\(\eqref{8}\)</span> 式做估计的<strong>方差往往很大</strong>，影响训练的收敛。为了减小方差，一种方法是给 <span class="math inline">\(f_\theta(z)\)</span> 减去一个 baseline： <span class="math display">\[\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]=\mathbb E_{z\sim \mathcal P_\theta}[(f_\theta(z)-b)\nabla_\theta\log p_\theta(z)]\tag{9}\]</span> 上式成立的原因在于 score function 的期望为 0: <span class="math display">\[\mathbb E_{z\sim\mathcal P_\theta}[\nabla_\theta\log p_\theta(z)]=\int p_\theta(z)\nabla_\theta\log p_\theta(z)\mathrm dz=\int \nabla_\theta p_\theta(z)\mathrm dz=\nabla_\theta\int p_\theta(z)\mathrm dz=\nabla_\theta 1=0\tag{10}\]</span> 那么，只需要找到一个合适的 baseline <span class="math inline">\(b\)</span> 最小化方差即可： <span class="math display">\[\min_b\ \mathbb E_{z\sim\mathcal P_\theta}\left[((f_\theta(z)-b)\nabla_\theta\log p_\theta(z))^2\right]-\left(\mathbb E_{z\sim\mathcal P_\theta}[(f_\theta(z)-b)\nabla_\theta\log p_\theta(z)]\right)^2\tag{11}\]</span> 这种减小方差的方式在强化学习的策略梯度算法中有所应用。</p><h2 id="重参数化技巧">重参数化技巧</h2><p>相比 SF 估计利用 score function 把紫色部分估计了出来，重参数化技巧则直接绕过了从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样这一不可导操作。我们先从<strong>无参数</strong>分布 <span class="math inline">\(\mathcal Q\)</span> 中采样一个 <span class="math inline">\(\epsilon\)</span>，再通过变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span> 得到 <span class="math inline">\(z\)</span>，保证 <span class="math inline">\(z\sim\mathcal P_\theta\)</span> 即可。这样，梯度就能够不经过采样操作传递给 <span class="math inline">\(\theta\)</span>： <span class="math display">\[\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]=\nabla_\theta \mathbb E_{\epsilon\sim \mathcal Q}[f_\theta(g_\theta(\epsilon))]=\mathbb E_{\epsilon\sim \mathcal Q}[\nabla_\theta f_\theta(g_\theta(\epsilon))]\tag{12}\]</span> <img src="img.png" width=60% alt="采样操作在计算图之外"/></p><p>现在的问题就是，怎样确定分布 <span class="math inline">\(\mathcal Q\)</span> 和变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span>，使得变换后的结果满足 <span class="math inline">\(z\sim \mathcal P_\theta\)</span> 呢？这就得具体问题具体分析了。</p><h3 id="高斯分布情形">高斯分布情形</h3><p>在 VAE 中，<span class="math inline">\(\mathcal P_\theta\)</span> 是一个高斯分布，即：<span class="math inline">\(z\sim \mathcal P_\theta=\mathcal N(\mu_\theta, \sigma^2_\theta)\)</span>，其中 <span class="math inline">\(\mu_\theta, \sigma^2_\theta\)</span> 由一个 encoder 网络输出而来，<span class="math inline">\(\theta\)</span> 是这个 encoder 网络的参数。</p><p>这是一种较为简单的情形，我们很容易想到取 <span class="math inline">\(\epsilon\sim \mathcal Q=\mathcal N(0, 1)\)</span>，并作变换： <span class="math display">\[z=g_\theta(\epsilon)=\sigma_\theta \epsilon+\mu_\theta\]</span> 即可。</p><h3 id="离散分布情形">离散分布情形</h3><p>假若 <span class="math inline">\(z\)</span> 是离散随机变量，不妨设 <span class="math inline">\(z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>，其中 <span class="math inline">\(\sum_{i=1}^k p_i=1\)</span>，那么 <strong>Gumbel Max</strong> 提供了一种重参数化方式： <span class="math display">\[\hat z=\mathop{\text{argmax}}_{i=1}^k\left[\log p_i-\log(-\log \epsilon_i)\right]\quad\quad \epsilon_i\sim U[0,1]\tag{13}\]</span> 可以证明 <span class="math inline">\(\hat z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>​​​.</p><div class="note note-secondary">            <p>证明：不妨设 <span class="math inline">\(\text{argmax}\)</span> 输出为 <span class="math inline">\(1\)</span>，这意味着： <span class="math display">\[\log p_1-\log(-\log \epsilon_1)&gt;\log p_j-\log(-\log \epsilon_j)\quad\forall j\neq 1\]</span> 略作化简： <span class="math display">\[\epsilon_j&lt;\epsilon_1^{p_j/p_1}\quad\forall j\neq 1\]</span> 因为 <span class="math inline">\(\epsilon_i\)</span> 都是 <span class="math inline">\([0,1]\)</span> 上的均匀分布，所以在给定 <span class="math inline">\(\epsilon_1\)</span> 的条件下，上式成立的条件概率就是： <span class="math display">\[\prod_{j\neq 1}\epsilon_1^{p_j/p_1}=\epsilon_1^{1/p_1-1}\]</span> 因此采样结果为 <span class="math inline">\(1\)</span> 的概率是： <span class="math display">\[\int_0^1 \epsilon_1^{1/p_1-1}\mathrm d \epsilon_1=p_1\cdot\left.\epsilon_1^{1/p_1}\right|_0^1=p_1\]</span> 所以说，依据 Gumbel Max 采样和依据 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样效果相同。</p>          </div><p>但是这里有个问题，虽然 Gumbel Max 使得采样操作避开了求导，却又引入了 <span class="math inline">\(\text{argmax}\)</span> 这个不可导操作！因此，我们需要进一步地用可导的 <span class="math inline">\(\text{softmax}\)</span> 对 <span class="math inline">\(\text{argmax}\)</span> 做近似（或者更准确地说，是对 <span class="math inline">\(\text{argmax}\)</span> 对应的那个 <span class="math inline">\(\text{onehot}\)</span> 向量做近似），我们将下式称为 <strong>Gumbel Softmax</strong>： <span class="math display">\[\text{softmax}\left(\frac{\log p_i-\log (-\log \epsilon_i)}{\tau}\right)\quad\quad \epsilon_i\sim U[0,1]\tag{14}\label{14}\]</span> 其中 <span class="math inline">\(\tau&gt;0\)</span> 是温度参数，<span class="math inline">\(\tau\to 0\)</span> 时 <span class="math inline">\(\text{softmax}\to\text{onehot}\)</span>.</p><p><img src="paper.png" width=80% alt="source:[5]" /></p><p>总结一下，利用 Gumbel Softmax 估计 <span class="math inline">\(\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\)</span> 的流程为：</p><ol type="1"><li>采样 <span class="math inline">\(k\)</span> 个服从 <span class="math inline">\(U[0,1]\)</span> 的样本 <span class="math inline">\(\epsilon_i\)</span></li><li>计算 Gumbel Softmax <span class="math inline">\(\eqref{14}\)</span> 式，得到一个 <span class="math inline">\(k\)</span> 维向量 <span class="math inline">\(\tilde z\)</span></li><li>得到估计 <span class="math inline">\(\mathbb E_{z\sim P_\theta}[f_\theta(z)]\approx f_\theta(\tilde z)\)</span></li></ol><h2 id="参考资料">参考资料</h2><p>[1] 苏剑林. (Jun. 10, 2019). 《漫谈重参数：从正态分布到Gumbel Softmax 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/6705</p><p>[2] The Reparameterization Trick. https://gregorygundersen.com/blog/2018/04/29/reparameterization/</p><p>[3] PyTorch 32.Gumbel-Softmax Trick - 科技猛兽的文章 - 知乎 https://zhuanlan.zhihu.com/p/166632315</p><p>[4] 盘点深度学习中的不可导操作(次梯度和重参数化) - Houye的文章 - 知乎 https://zhuanlan.zhihu.com/p/97465608</p><p>[5] Jang, Eric, Shixiang Gu, and Ben Poole. Categorical reparameterization with gumbel-softmax. <em>arXiv preprint arXiv:1611.01144</em> (2016).</p><p>[6] 【Learning Notes】Gumbel 分布及应用浅析. https://blog.csdn.net/jackytintin/article/details/79364490]</p><p>[7] [知识点] Reparametrization tricks重参数技巧讲解及应用 - 救命稻草人来了的文章 - 知乎 https://zhuanlan.zhihu.com/p/35218887</p>]]></content>
+    <content type="html"><![CDATA[<h2 id="问题引入">问题引入</h2><p>一般而言，许多机器学习/深度学习的优化目标长这样： <span class="math display">\[\mathbb E_{z\sim \mathcal P}[f_\theta(z)]\tag{1}\label{1}\]</span> 训练时用采样近似上述期望： <span class="math display">\[\mathbb E_{z\sim\mathcal P}[f_\theta(z)]\approx\frac{1}{N}\sum_{n=1}^N f_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{2}\label{2}\]</span> 能够这么做的原因在于 <span class="math inline">\(\eqref{2}\)</span> 式是 <span class="math inline">\(\eqref{1}\)</span> 式的无偏估计，这一点相信大家都很清楚。但容易被忽略的一点是，由于常用的优化算法一般都是基于梯度的，我们还应保证从样本中计算的梯度也是真实梯度的无偏估计！幸运的是，对于上述形式的一般问题而言，这一点是容易成立的。可以计算真实梯度为： <span class="math display">\[\nabla_\theta\mathbb E_{z\sim \mathcal P}[f_\theta(z)]=\nabla_\theta\left[\int p(z)f_\theta(z)\mathrm dz\right]=\int p(z)\nabla_\theta f_\theta(z) \mathrm dz=\mathbb E_{z\sim \mathcal P}[\nabla_\theta f_\theta(z)]\tag{3}\label{3}\]</span> 而基于样本计算的梯度为： <span class="math display">\[\nabla_\theta\left[\frac{1}{N}\sum_{n=1}^N f_\theta(z^{(n)})\right]=\frac{1}{N}\sum_{n=1}^N\nabla_\theta f_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{4}\label{4}\]</span> 显然 <span class="math inline">\(\eqref{4}\)</span> 式的确是 <span class="math inline">\(\eqref{3}\)</span> 式的无偏估计。</p><p>然而，在有些问题中（变分推断、强化学习等），优化目标中的采样分布也由参数 <span class="math inline">\(\theta\)</span> 决定： <span class="math display">\[\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\tag{5}\label{5}\]</span> 此时一般问题的做法还能够无缝迁移过来吗？我们计算一下真实梯度： <span class="math display">\[\begin{align}\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]&amp;=\nabla_\theta\left[\int p_\theta(z)f_\theta(z)\mathrm dz\right]\\&amp;=\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz+\int p_\theta(z)\nabla_\theta f_\theta(z)\mathrm dz\\&amp;={\color{purple}{\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz}}+\mathbb E_{z\sim \mathcal P_\theta}[\nabla_\theta f_\theta(z)]\end{align}\tag{6}\label{6}\]</span> 可以看见，与 <span class="math inline">\(\eqref{3}\)</span> 式相比，<span class="math inline">\(\eqref{6}\)</span> 式多了紫色的这一项。但是，基于样本计算梯度的结果却依旧是 <span class="math inline">\(\eqref{4}\)</span> 式，二者对不上了！换句话说，<strong>采样是一个不可导的操作</strong>，从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样本来应该对 <span class="math inline">\(\theta\)</span> 的更新产生紫色部分的贡献，但是采样阻断了梯度的传播，导致这部分贡献丢失了。下面我们介绍两种解决这个问题的方法——SF 估计和重参数化技巧。</p><h2 id="score-function-估计">Score Function 估计</h2><p>事实上，紫色部分是可以处理为期望形式的： <span class="math display">\[\int f_\theta(z)\nabla_\theta p_\theta(z)\mathrm dz=\int f_\theta(z)p_\theta(z)\nabla_\theta\log p_\theta(z)\mathrm dz=\mathbb E_{z\sim\mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]\tag{7}\label{7}\]</span> 其中 <span class="math inline">\(\nabla_\theta\log p_\theta(z)\)</span> 称作 <strong>score function</strong>. 于是可以通过采样近似 <span class="math inline">\(\eqref{7}\)</span> 式： <span class="math display">\[\mathbb E_{z\sim\mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]\approx\frac{1}{N}\sum_{n=1}^Nf_\theta(z^{(n)})\nabla_\theta\log p_\theta(z^{(n)}),\quad z^{(1)},\ldots,z^{(N)}\sim\mathcal P\tag{8}\label{8}\]</span> 这样就把丢失的紫色部分找了回来。但是实践中，人们发现使用 <span class="math inline">\(\eqref{8}\)</span> 式做估计的<strong>方差往往很大</strong>，影响训练的收敛。为了减小方差，一种方法是给 <span class="math inline">\(f_\theta(z)\)</span> 减去一个 baseline： <span class="math display">\[\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)\nabla_\theta\log p_\theta(z)]=\mathbb E_{z\sim \mathcal P_\theta}[(f_\theta(z)-b)\nabla_\theta\log p_\theta(z)]\tag{9}\]</span> 上式成立的原因在于 score function 的期望为 0: <span class="math display">\[\mathbb E_{z\sim\mathcal P_\theta}[\nabla_\theta\log p_\theta(z)]=\int p_\theta(z)\nabla_\theta\log p_\theta(z)\mathrm dz=\int \nabla_\theta p_\theta(z)\mathrm dz=\nabla_\theta\int p_\theta(z)\mathrm dz=\nabla_\theta 1=0\tag{10}\]</span> 那么，只需要找到一个合适的 baseline <span class="math inline">\(b\)</span> 最小化方差即可： <span class="math display">\[\min_b\ \mathbb E_{z\sim\mathcal P_\theta}\left[((f_\theta(z)-b)\nabla_\theta\log p_\theta(z))^2\right]-\left(\mathbb E_{z\sim\mathcal P_\theta}[(f_\theta(z)-b)\nabla_\theta\log p_\theta(z)]\right)^2\tag{11}\]</span> 这种减小方差的方式在强化学习的策略梯度算法中有所应用。</p><h2 id="重参数化技巧">重参数化技巧</h2><p>相比 SF 估计利用 score function 把紫色部分估计了出来，重参数化技巧则直接绕过了从 <span class="math inline">\(\mathcal P_\theta\)</span> 中采样这一不可导操作。我们先从<strong>无参数</strong>分布 <span class="math inline">\(\mathcal Q\)</span> 中采样一个 <span class="math inline">\(\epsilon\)</span>，再通过变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span> 得到 <span class="math inline">\(z\)</span>，保证 <span class="math inline">\(z\sim\mathcal P_\theta\)</span> 即可。这样，梯度就能够不经过采样操作传递给 <span class="math inline">\(\theta\)</span>： <span class="math display">\[\nabla_\theta \mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]=\nabla_\theta \mathbb E_{\epsilon\sim \mathcal Q}[f_\theta(g_\theta(\epsilon))]=\mathbb E_{\epsilon\sim \mathcal Q}[\nabla_\theta f_\theta(g_\theta(\epsilon))]\tag{12}\]</span> <img src="img.png" width=55% alt="采样操作在计算图之外"/></p><p>现在的问题就是，怎样确定分布 <span class="math inline">\(\mathcal Q\)</span> 和变换 <span class="math inline">\(z=g_\theta(\epsilon)\)</span>，使得变换后的结果满足 <span class="math inline">\(z\sim \mathcal P_\theta\)</span> 呢？这就得具体问题具体分析了。</p><h3 id="高斯分布情形">高斯分布情形</h3><p>在 VAE 中，<span class="math inline">\(\mathcal P_\theta\)</span> 是一个高斯分布，即： <span class="math display">\[z\sim \mathcal P_\theta=\mathcal N(\mu_\theta, \sigma^2_\theta)\]</span> 其中 <span class="math inline">\(\mu_\theta, \sigma^2_\theta\)</span> 由一个 encoder 网络输出得到，<span class="math inline">\(\theta\)</span> 是这个 encoder 网络的参数。</p><p>这是一种较为简单的情形，很容易想到取 <span class="math inline">\(\epsilon\sim \mathcal Q=\mathcal N(0, 1)\)</span>，并作下述变换即可： <span class="math display">\[z=g_\theta(\epsilon)=\sigma_\theta \epsilon+\mu_\theta\]</span></p><h3 id="离散分布情形">离散分布情形</h3><p>假若 <span class="math inline">\(z\)</span> 是离散随机变量： <span class="math display">\[z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\]</span> 其中 <span class="math inline">\(\sum_{i=1}^k p_i=1\)</span>，那么 <strong>Gumbel Max</strong> 提供了一种重参数化方式： <span class="math display">\[\hat z=\mathop{\text{argmax}}_{i=1}^k\left[\log p_i-\log(-\log \epsilon_i)\right]\quad\quad \epsilon_i\sim U[0,1]\tag{13}\]</span> 可以证明 <span class="math inline">\(\hat z\sim \mathcal P_\theta=[p_1,p_2,\ldots,p_k]^T\)</span>​​​.</p><div class="note note-secondary">            <p>证明：不妨设 <span class="math inline">\(\text{argmax}\)</span> 输出为 <span class="math inline">\(1\)</span>，这意味着： <span class="math display">\[\log p_1-\log(-\log \epsilon_1)&gt;\log p_j-\log(-\log \epsilon_j)\quad\forall j\neq 1\]</span> 略作化简： <span class="math display">\[\epsilon_j&lt;\epsilon_1^{p_j/p_1}\quad\forall j\neq 1\]</span> 因为 <span class="math inline">\(\epsilon_i\)</span> 都是 <span class="math inline">\([0,1]\)</span> 上的均匀分布，所以在给定 <span class="math inline">\(\epsilon_1\)</span> 的条件下，上式成立的条件概率就是： <span class="math display">\[\prod_{j\neq 1}\epsilon_1^{p_j/p_1}=\epsilon_1^{1/p_1-1}\]</span> 因此采样结果为 <span class="math inline">\(1\)</span> 的概率是： <span class="math display">\[\int_0^1 \epsilon_1^{1/p_1-1}\mathrm d \epsilon_1=p_1\cdot\left.\epsilon_1^{1/p_1}\right|_0^1=p_1\]</span> 所以说，依据 Gumbel Max 采样和依据 <span class="math inline">\([p_1,p_2,\ldots,p_k]\)</span> 采样效果相同。</p>          </div><p>但是这里有个问题，虽然 Gumbel Max 使得采样操作避开了求导，却又引入了 <span class="math inline">\(\text{argmax}\)</span> 这个不可导操作！因此，我们需要进一步地用可导的 <span class="math inline">\(\text{softmax}\)</span> 对 <span class="math inline">\(\text{argmax}\)</span> 做近似（或者更准确地说，是对 <span class="math inline">\(\text{argmax}\)</span> 对应的那个 <span class="math inline">\(\text{onehot}\)</span> 向量做近似），我们将下式称为 <strong>Gumbel Softmax</strong>： <span class="math display">\[\text{softmax}\left(\frac{\log p_i-\log (-\log \epsilon_i)}{\tau}\right)\quad\quad \epsilon_i\sim U[0,1]\tag{14}\label{14}\]</span> 其中 <span class="math inline">\(\tau&gt;0\)</span> 是温度参数，<span class="math inline">\(\tau\to 0\)</span> 时 <span class="math inline">\(\text{softmax}\to\text{onehot}\)</span>.</p><p><img src="paper.png" width=70% alt="source:[5]" /></p><p>总结一下，利用 Gumbel Softmax 估计 <span class="math inline">\(\mathbb E_{z\sim \mathcal P_\theta}[f_\theta(z)]\)</span> 的流程为：</p><ol type="1"><li>采样 <span class="math inline">\(k\)</span> 个服从 <span class="math inline">\(U[0,1]\)</span> 的样本 <span class="math inline">\(\epsilon_i\)</span></li><li>计算 Gumbel Softmax <span class="math inline">\(\eqref{14}\)</span> 式，得到一个 <span class="math inline">\(k\)</span> 维向量 <span class="math inline">\(\tilde z\)</span></li><li>得到估计 <span class="math inline">\(\mathbb E_{z\sim P_\theta}[f_\theta(z)]\approx f_\theta(\tilde z)\)</span></li></ol><h2 id="参考资料">参考资料</h2><p>[1] 苏剑林. (Jun. 10, 2019). 《漫谈重参数：从正态分布到Gumbel Softmax 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/6705</p><p>[2] The Reparameterization Trick. https://gregorygundersen.com/blog/2018/04/29/reparameterization/</p><p>[3] PyTorch 32.Gumbel-Softmax Trick - 科技猛兽的文章 - 知乎 https://zhuanlan.zhihu.com/p/166632315</p><p>[4] 盘点深度学习中的不可导操作(次梯度和重参数化) - Houye的文章 - 知乎 https://zhuanlan.zhihu.com/p/97465608</p><p>[5] Jang, Eric, Shixiang Gu, and Ben Poole. Categorical reparameterization with gumbel-softmax. <em>arXiv preprint arXiv:1611.01144</em> (2016).</p><p>[6] 【Learning Notes】Gumbel 分布及应用浅析. https://blog.csdn.net/jackytintin/article/details/79364490]</p><p>[7] [知识点] Reparametrization tricks重参数技巧讲解及应用 - 救命稻草人来了的文章 - 知乎 https://zhuanlan.zhihu.com/p/35218887</p>]]></content>
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>机器学习</category>
       
@@ -2987,8 +2869,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>技术栈</category>
       
     </categories>
@@ -3068,8 +2948,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>技术栈</category>
       
     </categories>
@@ -3095,8 +2973,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>技术栈</category>
       
     </categories>
@@ -3121,8 +2997,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>计算机视觉</category>
       
@@ -3153,8 +3027,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
     </categories>
@@ -3180,8 +3052,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
       <category>xv6-lab</category>
@@ -3202,8 +3072,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>操作系统</category>
       
@@ -3226,8 +3094,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
       <category>xv6-lab</category>
@@ -3248,8 +3114,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>操作系统</category>
       
@@ -3272,8 +3136,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
       <category>xv6-lab</category>
@@ -3294,8 +3156,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>操作系统</category>
       
@@ -3318,8 +3178,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
       <category>xv6-lab</category>
@@ -3340,8 +3198,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>操作系统</category>
       
@@ -3364,8 +3220,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
       <category>xv6-lab</category>
@@ -3387,8 +3241,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
       <category>xv6-lab</category>
@@ -3409,8 +3261,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>计算机视觉</category>
       
@@ -3440,8 +3290,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>操作系统</category>
       
@@ -3487,8 +3335,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>操作系统</category>
       
     </categories>
@@ -3513,8 +3359,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>计算机视觉</category>
       
@@ -3543,8 +3387,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>机器学习</category>
       
     </categories>
@@ -3570,9 +3412,9 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>计算机视觉</category>
+      
+      <category>图像处理</category>
       
     </categories>
     
@@ -4387,8 +4229,6 @@
     
     <categories>
       
-      <category>技术博客</category>
-      
       <category>数学</category>
       
     </categories>
@@ -4510,8 +4350,6 @@
     
     
     <categories>
-      
-      <category>技术博客</category>
       
       <category>技术栈</category>
       
