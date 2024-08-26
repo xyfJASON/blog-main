@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reproducing.png">
 <meta property="article:published_time" content="2024-04-30T12:32:43.000Z">
-<meta property="article:modified_time" content="2024-06-17T02:49:34.860Z">
+<meta property="article:modified_time" content="2024-07-09T09:02:10.191Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -332,10 +332,10 @@
 \]</span></p>
 <h2 id="引言">引言</h2>
 <p>在<a href="/blog-main/2024/01/03/Support-Vector-Machine/" title="Support Vector Machine">学习 SVM</a> 时，我们了解到了解决线性不可分问题的一种常用技巧——<strong>核方法</strong>。核方法的基本思想是，对于数据空间中线性不可分的样本，将它们映射到更高维度（甚至无穷维）的特征空间后就可以变成线性可分的。进一步地，我们引入了<strong>核函数</strong>来实现高维特征空间中的内积运算，而不需要先将数据点映射到特征空间后再算内积。</p>
-<p>在之前的文章中，我们直接给出了几个常用核函数，但并没有说明怎样的函数可以成为核函数，核函数对应着怎样的特征映射和怎样的特征空间。要回答这些问题就需要学习<strong>再生核希尔伯特空间</strong>的相关内容。这部分内容建立在<strong>泛函分析</strong>的基础知识上，包括线性空间、赋范空间、巴拿赫空间、希尔伯特空间、对偶空间、Riesz 表示定理等，读者可参考泛函分析相关书籍。</p>
+<p>在之前的文章中，我们直接给出了几个常用核函数，但并没有说明怎样的函数可以成为核函数，核函数对应着怎样的特征映射和怎样的特征空间。要回答这些问题就需要学习<strong>再生核希尔伯特空间</strong>的相关内容。这部分内容需要<strong>泛函分析</strong>的前置知识，包括希尔伯特空间、对偶空间、Riesz 表示定理等，读者可参考泛函分析相关书籍。</p>
 <h2 id="再生核希尔伯特空间">再生核希尔伯特空间</h2>
 <h3 id="rkhs-的定义与性质">RKHS 的定义与性质</h3>
-<p><strong>定义（evaluation functional）</strong>：设 <span class="math inline">\(\mathcal H\)</span> 是非空集合 <span class="math inline">\(\mathcal X\)</span> 上的泛函构成的希尔伯特空间（完备的内积空间），即其每个元素都形如 <span class="math inline">\(f:\mathcal X\to\mathbb R\)</span>. 对于任一给定的 <span class="math inline">\(x\in\mathcal X\)</span>，称泛函： <span class="math display">\[
+<p><strong>定义（evaluation functional）</strong>：设 <span class="math inline">\(\mathcal H\)</span> 是非空集合 <span class="math inline">\(\mathcal X\)</span> 上的泛函构成的希尔伯特空间，即其每个元素都形如 <span class="math inline">\(f:\mathcal X\to\mathbb R\)</span>. 对于任一给定的 <span class="math inline">\(x\in\mathcal X\)</span>，称泛函： <span class="math display">\[
 \delta_x:\mathcal H\to\mathbb R,\quad f\mapsto \delta_x(f)=f(x)
 \]</span> 为点 <span class="math inline">\(x\)</span>​​​ 处的 (Dirac) evaluation functional.</p>
 <p>容易知道 <span class="math inline">\(\delta_x\)</span> 是<strong>线性</strong>的，这是因为对 <span class="math inline">\(\forall \alpha,\beta\in\mathbb R,\,\forall f,g\in\mathcal H\)</span>，有： <span class="math display">\[
@@ -356,23 +356,23 @@
 <li><span class="math inline">\(\forall x\in\mathcal X,\,\forall f\in\mathcal H\)</span>，<span class="math inline">\(\langle f,k(\cdot,x)\rangle_\mathcal H=f(x)\)</span>（再生性质）</li>
 </ul>
 <p>则称函数 <span class="math inline">\(k\)</span> 为 <span class="math inline">\(\mathcal H\)</span>​ 的再生核。</p>
-<p>再生性质可以理解为，<span class="math inline">\(f\)</span> 作用在 <span class="math inline">\(x\)</span> 上可以表示为 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(k(\cdot,x)\)</span> 的内积。特别地，若取 <span class="math inline">\(f=k(\cdot,y)\)</span>，则得到： <span class="math display">\[
+<p>再生性质可以理解为，<span class="math inline">\(f\)</span> 作用在 <span class="math inline">\(x\)</span> 上可以表示为 <span class="math inline">\(f\)</span> 与 <span class="math inline">\(k(\cdot,x)\)</span> 的内积。特别地，若取 <span class="math inline">\(f(\cdot)=k(\cdot,y)\)</span>，则得到： <span class="math display">\[
 k(x,y)=\langle k(\cdot,x),k(\cdot,y)\rangle_{\mathcal H}
-\]</span> 值得注意的是，再生核的定义与再生核希尔伯特空间的定义依旧是独立的，它们之间究竟有什么联系呢？</p>
+\]</span> 值得注意的是，再生核的定义与再生核希尔伯特空间的定义依旧毫不相干，它们之间究竟有什么联系呢？</p>
 <p><strong>定理（再生核的存在性）</strong>：<span class="math inline">\(\mathcal H\)</span> 是一个再生核希尔伯特空间，当且仅当 <span class="math inline">\(\mathcal H\)</span> 有一个再生核。</p>
 <p>证明：首先证从右到左。设 <span class="math inline">\(k\)</span> 为 <span class="math inline">\(\mathcal H\)</span> 的再生核，我们希望证明对任意 <span class="math inline">\(x\in\mathcal X\)</span>，<span class="math inline">\(\delta_x\)</span> 都是有界的。对 <span class="math inline">\(\forall f\in\mathcal H\)</span>，有： <span class="math display">\[
 |\delta_x f|=|f(x)|=|\langle f,k(\cdot,x)\rangle_{\mathcal H}|\leq\Vert f\Vert_{\mathcal H}\Vert k(\cdot,x)\Vert_{\mathcal H}=\Vert f\Vert_{\mathcal H}\langle k(\cdot,x),k(\cdot,x)\rangle_\mathcal H^{1/2}=\Vert f\Vert_\mathcal H k(x,x)^{1/2}
 \]</span> 其中不等号应用了柯西不等式。这就证明了 <span class="math inline">\(\delta_x\)</span> 是有界的。</p>
 <p>然后证从左到右。设 <span class="math inline">\(\mathcal H\)</span> 是一个再生核希尔伯特空间，我们只需要构造出一个再生核即可。根据 RKHS 的定义，对任一给定 <span class="math inline">\(x\)</span>，<span class="math inline">\(\delta_x\)</span> 是 <span class="math inline">\(\mathcal H\)</span> 上的线性有界泛函，即 <span class="math inline">\(\delta_x\in\mathcal H&#39;\)</span>，那么根据 Riesz 表示定理，对 <span class="math inline">\(\forall f\in\mathcal H\)</span>，存在 <span class="math inline">\(f_{\delta_x}\in\mathcal H\)</span> 使得： <span class="math display">\[
 f(x)=\delta_x f=\langle f,f_{\delta_x}\rangle_{\mathcal H}
-\]</span> 因此我们可以定义 <span class="math inline">\(k(\cdot,x)=f_{\delta_x}(\cdot)\)</span>，这样就满足了再生性质。另外，显然 <span class="math inline">\(k(\cdot,x)\in\mathcal H\)</span>，因此函数 <span class="math inline">\(k\)</span> 就是一个再生核。这就完成了证明。</p>
-<p>上面的证明过程不仅说明了再生核的存在性，<strong>还借助 <span class="math inline">\(\delta_x\)</span> 与 Reisz 表示定理给出了再生核的构造方法</strong>。下面我们说明再生核是唯一的。</p>
+\]</span> 因此我们可以定义 <span class="math inline">\(k(\cdot,x)\coloneqq f_{\delta_x}(\cdot)\)</span>，这样就满足了再生性质，因此函数 <span class="math inline">\(k\)</span> 就是一个再生核。这就完成了证明。</p>
+<p>上面的证明过程不仅说明了再生核的存在性，<strong>还借助 <span class="math inline">\(\delta_x\)</span> 与 Reisz 表示定理给出了再生核</strong>。下面我们说明再生核是唯一的。</p>
 <p><strong>定理（再生核的唯一性）</strong>：若再生核 <span class="math inline">\(k\)</span>​ 存在，则是唯一的。</p>
-<p>证明：假设 <span class="math inline">\(\mathcal H\)</span> 有两个再生核 <span class="math inline">\(k_1,k_2\)</span>，那么对 <span class="math inline">\(\forall x\in\mathcal X,\,\forall f\in\mathcal H\)</span>，有 <span class="math display">\[
+<p>证明：假设 <span class="math inline">\(\mathcal H\)</span> 有两个再生核 <span class="math inline">\(k_1,k_2\)</span>，那么对 <span class="math inline">\(\forall x\in\mathcal X,\,\forall f\in\mathcal H\)</span>，有： <span class="math display">\[
 \langle f,k_1(\cdot,x)-k_2(\cdot,x)\rangle_{\mathcal H}=\langle f,k_1(\cdot,x)\rangle_{\mathcal H}-\langle f,k_2(\cdot,x)\rangle_{\mathcal H}=f(x)-f(x)=0
-\]</span> 特别地，取 <span class="math inline">\(f=k_1(\cdot,x)-k_2(\cdot,x)\)</span>，那么有 <span class="math inline">\(\Vert k_1(\cdot,x)-k_2(\cdot,x)\Vert_\mathcal H=0\)</span>，故 <span class="math inline">\(k_1=k_2\)</span>. 证毕。</p>
+\]</span> 特别地，取 <span class="math inline">\(f(\cdot)=k_1(\cdot,x)-k_2(\cdot,x)\)</span>，那么有 <span class="math inline">\(\Vert k_1(\cdot,x)-k_2(\cdot,x)\Vert_\mathcal H=0\)</span>，故 <span class="math inline">\(k_1=k_2\)</span>. 证毕。</p>
 <p>最后我们说明再生核的一个重要性质——正定性。</p>
-<p><strong>定义（正定性）</strong>：设 <span class="math inline">\(h:\mathcal X\times\mathcal X\to\mathbb R\)</span> 是对称函数，若对 <span class="math inline">\(\forall n\geq 1,\,\forall (a_1,\ldots,a_n)\in\mathbb R^n,\,\forall (x_1,\ldots,x_n)\in\mathcal X^n\)</span>，有： <span class="math display">\[
+<p><strong>定义（正定性）</strong>：设 <span class="math inline">\(h:\mathcal X\times\mathcal X\to\mathbb R\)</span> 是对称函数，若对 <span class="math inline">\(\forall n\geq 1,\,\forall (a_1,\ldots,a_n)\in\mathbb R^n,\,\forall (x_1,\ldots,x_n)\in\mathcal X^n\)</span>，都有： <span class="math display">\[
 \sum_{i=1}^n\sum_{j=1}^na_ia_jh(x_i,x_j)\geq0
 \]</span> 则称 <span class="math inline">\(h\)</span> 是正定的。进一步，若对不同的 <span class="math inline">\(i,j\)</span>，等式仅在所有 <span class="math inline">\(a_i=0\)</span> 时才成立，则称 <span class="math inline">\(h\)</span>​ 是严格正定的。</p>
 <p>注：一些资料将上述定义的正定称为半正定，而严格正定称为正定。</p>
@@ -387,14 +387,13 @@ f(x)=\delta_x f=\langle f,f_{\delta_x}\rangle_{\mathcal H}
 <p><strong>推论：再生核是正定的</strong>。</p>
 <p>证明：由于 <span class="math inline">\(k(x,y)=\langle k(\cdot,x),k(\cdot,y)\rangle_\mathcal H\)</span>，所以在上述定理中取 <span class="math inline">\(\phi(x)=k(\cdot,x)\)</span>，可知再生核是正定的。证毕。</p>
 <h2 id="从正定函数构造-rkhs">从正定函数构造 RKHS</h2>
-<p>上一节中我们看到，给定一个 RKHS，可以构造其再生核。反过来，给定一个再生核，能否构造出对应的 RKHS 呢？答案是可以的。事实上，我们有 <strong>Moore-Aronszajn 定理</strong>：对于任意正定函数 <span class="math inline">\(k(\cdot,\cdot)\)</span>，都可以构造出唯一的 RKHS <span class="math inline">\(\mathcal H\)</span>，使得 <span class="math inline">\(k\)</span> 是其再生核。</p>
-<p>构造过程包含两步：首先构造一个 pre-RKHS，然后将其完备化得到 RKHS. 具体过程如下。</p>
+<p>在上一节中我们看到，一个 RKHS 具有唯一的再生核，且再生核是正定的。反过来，我们有 <strong>Moore-Aronszajn 定理</strong>：对于任意正定函数 <span class="math inline">\(k(\cdot,\cdot)\)</span>，都可以构造出唯一的 RKHS <span class="math inline">\(\mathcal H\)</span>，使得 <span class="math inline">\(k\)</span> 是其再生核。构造过程包含两步：首先构造一个 pre-RKHS，然后将其完备化得到 RKHS. 具体过程如下。</p>
 <p>首先，考虑到 RKHS 要求 <span class="math inline">\(\forall x\in\mathcal X,\,k(\cdot,x)\in\mathcal H\)</span>，因此我们不妨取所有 <span class="math inline">\(k(\cdot,x)\)</span>​ 做线性组合，张成 <span class="math inline">\(\mathcal H_0\)</span> 空间： <span class="math display">\[
-\mathcal H_0=\text{span}\{k(\cdot,x)\}_{x\in\mathcal X}=\left\{\sum_{i=1}^n\alpha_i k(\cdot,x_i)\ \Bigg\vert\ n\in\mathbb N,\,\alpha_i\in\mathbb R,\,x_i\in\mathcal X\right\}
+\mathcal H_0=\text{span}\{k(\cdot,x)\}_{x\in\mathcal X}=\bigcup_{n=1}^{\infty}\left\{\sum_{i=1}^n\alpha_i k(\cdot,x_i)\ \Bigg\vert\ \alpha_i\in\mathbb R,\,x_i\in\mathcal X\right\}
 \]</span> 并定义其上的内积为： <span class="math display">\[
 \langle f,g\rangle_{\mathcal H_0}=\sum_{i=1}^n\sum_{j=1}^m\alpha_i\beta_j k(x_i,y_j)
-\]</span> 其中 <span class="math inline">\(f=\sum_{i=1}^n\alpha_ik(\cdot,x_i),\,g=\sum_{j=1}^m\beta_jk(\cdot,y_j)\)</span>​.</p>
-<p>值得高亮一点的是，若取 <span class="math inline">\(g=k(\cdot,x)\)</span>，则有： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(f(\cdot)=\sum_{i=1}^n\alpha_ik(\cdot,x_i),\,g(\cdot)=\sum_{j=1}^m\beta_jk(\cdot,y_j)\)</span>.</p>
+<p>值得强调一点的是，若取 <span class="math inline">\(g=k(\cdot,x)\)</span>，则有： <span class="math display">\[
 \langle f,k(\cdot,x)\rangle_{\mathcal H_0}=\sum_{i=1}^n\alpha_i k(x_i,x)=f(x)
 \]</span> 也就是说上面定义的内积具有再生性质。</p>
 <p>不过，这样构造的 <span class="math inline">\(\mathcal H_0\)</span> 不一定完备，因此姑且称作 pre-RKHS. 它满足两条性质：</p>
@@ -403,7 +402,7 @@ f(x)=\delta_x f=\langle f,f_{\delta_x}\rangle_{\mathcal H}
 <li><span class="math inline">\(\mathcal H_0\)</span> 上的任一逐点收敛到 <span class="math inline">\(0\)</span> 元素的柯西列 <span class="math inline">\(\{f_n\}\)</span> 也依范数收敛到 <span class="math inline">\(0\)</span>​ 元素。</li>
 </ul>
 <p>注意第二条性质也意味着：<span class="math inline">\(\mathcal H_0\)</span> 上逐点收敛到 <span class="math inline">\(f\)</span> 的柯西列 <span class="math inline">\(\{f_n\}\)</span> 也依范数收敛到 <span class="math inline">\(f\)</span>. 上述性质的详细证明见参考资料<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dino Sejdinovic, Arthur Gretton. What is an RKHS? March 11, 2012">[1]</span></a></sup>的 4.5 节。</p>
-<p>接下来，由于 <span class="math inline">\(\mathcal H_0\)</span> 不一定完备，因此将 <span class="math inline">\(\mathcal H_0\)</span> 延拓为 <span class="math inline">\(\mathcal H\)</span>： <span class="math display">\[
+<p>接下来，由于 <span class="math inline">\(\mathcal H_0\)</span> 不一定完备，将 <span class="math inline">\(\mathcal H_0\)</span> 延拓为 <span class="math inline">\(\mathcal H\)</span>： <span class="math display">\[
 \mathcal H=\Big\{f:\mathcal X\to\mathbb R \mid \exists\{f_n\}\subset\mathcal H_0\;\text{s.t.}\;f_n\to f(n\to\infty)\Big\}
 \]</span> 并定义 <span class="math inline">\(\mathcal H\)</span> 上的内积 <span class="math inline">\(\langle f,g\rangle_{\mathcal H}\)</span> 是 <span class="math inline">\(\mathcal H_0\)</span> 中对应柯西列 <span class="math inline">\(\{f_n\},\{g_n\}\)</span> 内积的极限，那么 <span class="math inline">\(\mathcal H\)</span> 就是我们要构造的 RKHS.</p>
 <p>说着虽然简单，但严格证明还是挺麻烦的。我们需要验证：</p>
@@ -414,15 +413,17 @@ f(x)=\delta_x f=\langle f,f_{\delta_x}\rangle_{\mathcal H}
 <li><span class="math inline">\(\mathcal H\)</span> 确实是一个 RKHS，即 <span class="math inline">\(\delta_x\)</span> 连续（有界）。</li>
 </ol>
 <p>详细证明见参考资料<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dino Sejdinovic, Arthur Gretton. What is an RKHS? March 11, 2012">[1]</span></a></sup>的 4.1-4.4 节。</p>
+<p>综合上一节与这一节的结论，我们知道一个 RKHS 有唯一的再生核，该再生核是一个正定函数，因此根据 Moore-Aronszajn 定理可以反过来构造出一个 RKHS. 显然，这前后两个 RKHS 应该是相同的，否则违反了 RKHS 与再生核之间的一一对应关系。因此 RKHS 与再生核之间有如下的构造关系：</p>
+<p><img src="hk.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
 <h2 id="特征空间与核函数">特征空间与核函数</h2>
-<p>上两节我们介绍了 RKHS 和再生核，说明了每个 RKHS 都有唯一的再生核，它是一个正定函数；反过来，对每个正定函数都可以构造出对应的 RKHS. 但是再生核的定义似乎与我们学习 SVM 时核函数的定义并不一样，它们之间有什么关系呢？</p>
+<p>再生核的定义似乎与我们学习 SVM 时核函数的定义并不一样，它们之间有什么关系呢？</p>
 <p><strong>定义（核函数）</strong>：设 <span class="math inline">\(\mathcal X\)</span> 为一非空集合，函数 <span class="math inline">\(k:\mathcal X\times\mathcal X\to\mathbb R\)</span>. 如果存在希尔伯特空间 <span class="math inline">\(\mathcal H\)</span> 和映射 <span class="math inline">\(\phi:\mathcal X\to\mathcal H\)</span>，使得： <span class="math display">\[
 k(x,y)=\langle\phi(x),\phi(y)\rangle_\mathcal H,\quad \forall x,y\in\mathcal X
 \]</span> 则称 <span class="math inline">\(k(\cdot,\cdot)\)</span> 为核函数。此时也称 <span class="math inline">\(\mathcal H\)</span> 为特征空间，<span class="math inline">\(\phi\)</span>​ 为特征映射。</p>
-<p>根据上文正定性的定理容易知道，核函数一定是正定函数。</p>
-<p>另外，由于再生核满足 <span class="math inline">\(k(x,y)=\langle k(\cdot,x),k(\cdot,y)\rangle_\mathcal H\)</span>，因此也是核函数（取映射 <span class="math inline">\(\phi=k(\cdot,x)\)</span> 即可）。</p>
-<p>于是，综合以上所有内容，现在我们有以下结论：所有再生核都是核函数，所有核函数都是正定函数，所有正定函数都是某个 RKHS 的再生核。<strong>因此，再生核、核函数和正定函数是一回事！</strong></p>
-<p>现在我们就可以回答引言中的问题了：任何一个正定函数 <span class="math inline">\(k(\cdot,\cdot)\)</span> 都可以是核函数，这个核函数对应的特征空间就是 Moore-Aronszajn 定理构造的 RKHS，对应的特征映射就是 <span class="math inline">\(\phi=k(\cdot,x)\)</span>.</p>
+<p>根据上文关于正定性的定理容易知道，核函数是正定的，于是根据 Moore-Aronszajn 定理可知，它是某唯一 RKHS 的再生核。反过来，对于再生核 <span class="math inline">\(k(\cdot,\cdot)\)</span>，由于它满足 <span class="math inline">\(k(x,y)=\langle k(\cdot,x),k(\cdot,y)\rangle_\mathcal H\)</span>，因此取 <span class="math inline">\(\phi(x)=k(\cdot,x)\)</span> 可知，再生核是一个核函数，此时称 <span class="math inline">\(\phi\)</span> 为 <span class="math inline">\(k\)</span> 的典范 (canonical) 特征映射。综上，核函数与再生核也是一一对应的关系。</p>
+<p>于是，综合以上所有内容，我们可以作出如下关系图：</p>
+<p><img src="relation.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
+<p>现在我们就可以回答引言中的问题了：任何一个正定函数 <span class="math inline">\(k(\cdot,\cdot)\)</span> 都可以是核函数，这个核函数对应的特征空间就是 Moore-Aronszajn 定理构造的 RKHS，对应的特征映射就是 <span class="math inline">\(\phi\)</span>，其中 <span class="math inline">\(\phi(x)=k(\cdot,x)\)</span>.</p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">

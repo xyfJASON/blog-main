@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fourier.png">
 <meta property="article:published_time" content="2023-12-27T02:47:48.000Z">
-<meta property="article:modified_time" content="2024-01-25T12:24:41.305Z">
+<meta property="article:modified_time" content="2024-08-25T04:40:27.919Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="image processing">
 <meta property="article:tag" content="signal processing">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.2k 字
+          3.3k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          27 分钟
+          28 分钟
         
       </span>
     
@@ -366,15 +366,15 @@ S(u)=\frac{1}{h}\sum_{n=-\infty}^{\infty}\mathscr F\{e^{j2\pi nx/h}\}=\frac{1}{h
 \]</span> 由此可以看出，<strong><span class="math inline">\(\tilde F(u)\)</span> 是一个以 <span class="math inline">\(\frac{2\pi}{h}\)</span> 为周期的连续周期函数</strong>，它是 <span class="math inline">\(F(u)\)</span> 的<strong>多份平移后的副本的叠加</strong>。</p>
 <p>特别地，假设 <span class="math inline">\(f(x)\)</span> 是一个<strong>有限带宽</strong>的函数，即其傅里叶变换 <span class="math inline">\(F(u)\)</span> 仅在一个有限范围 <span class="math inline">\([-u_\max,u_\max]\)</span> 内不为零。那么：</p>
 <ul>
-<li>如果周期 <span class="math inline">\(\frac{2\pi}{h}&lt;2u_\max\)</span>，平移后的 <span class="math inline">\(F(u)\)</span> 之间就会发生重叠，导致相加后在重叠区间内的 <span class="math inline">\(F(u)\)</span> 丢失了；这被称作<strong>欠采样</strong>，即采样的间隔 <span class="math inline">\(h\)</span> 太大。</li>
-<li>如果周期 <span class="math inline">\(\frac{2\pi}{h}&gt;2u_\max\)</span>，那么各个平移后的 <span class="math inline">\(F(u)\)</span> 不仅没有重叠，还隔开了一段距离，这段距离上 <span class="math inline">\(\tilde F(u)=0\)</span>；这被称作<strong>过采样</strong>。</li>
-<li>临界状态就是 <span class="math inline">\(\frac{2\pi}{h}=2u_\max\)</span>，各个平移后的 <span class="math inline">\(F(u)\)</span> 刚好不会发生重叠。</li>
+<li>欠采样：周期 <span class="math inline">\(\frac{2\pi}{h}&lt;2u_\max\)</span>，平移后的 <span class="math inline">\(F(u)\)</span> 之间就会发生重叠，导致相加后在重叠区间内的 <span class="math inline">\(F(u)\)</span> 丢失了，这种现象称作<strong>混叠 (aliasing)</strong>；</li>
+<li>过采样：周期 <span class="math inline">\(\frac{2\pi}{h}&gt;2u_\max\)</span>，那么各个平移后的 <span class="math inline">\(F(u)\)</span> 不仅没有重叠，还隔开了一段距离，这段距离上 <span class="math inline">\(\tilde F(u)=0\)</span>；</li>
+<li>临界采样：周期 <span class="math inline">\(\frac{2\pi}{h}=2u_\max\)</span>，各个平移后的 <span class="math inline">\(F(u)\)</span> 刚好不会发生重叠。</li>
 </ul>
-<p>下图展示了一个例子，第一行是一个有限带宽函数的傅里叶变换，第二、三、四行分别展示了过采样、临界采样和欠采样后，函数的傅里叶变换：</p>
+<p>下图展示了一个例子，第一行是一个有限带宽函数的傅里叶变换结果，第二、三、四行分别展示了过采样、临界采样和欠采样后，函数的傅里叶变换结果：</p>
 <p><img src="sampling-theorem.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="截图自 Digital Image Processing，符号与本文有所不同" width=50% /></p>
-<p>根据上面的讨论，要想重建出原本的有限带宽函数，采样率需要满足： <span class="math display">\[
-f_\text{sampling}=\frac{1}{h}&gt;2\cdot\frac{u_\max}{2\pi}=2 f_\max\tag{1-10}
-\]</span> 其中 <span class="math inline">\(f_\max\)</span> 表示信号的最大频率，这就是<strong>采样定理</strong>。</p>
+<p>因此，要想重建出原本的有限带宽函数，我们要避免欠采样，也即采样率需要满足： <span class="math display">\[
+f_\text{sampling}=\frac{1}{h}\geq2\cdot\frac{u_\max}{2\pi}=2 f_\max\tag{1-10}
+\]</span> 其中 <span class="math inline">\(f_\max\)</span> 表示信号的最大频率，这就是<strong>采样定理</strong>。当然，如果原信号本身不是有限带宽的，即不存在最大频率 <span class="math inline">\(f_\max\)</span>，自然就不可能在采样后完美重建。好在现实中大多数信号可以近似为有限带宽的，因此只要采样率充分高，就能将重建误差控制在可接受范围内。</p>
 <p>另外，从上面的图可以看出，当 <span class="math inline">\(\tilde f(x)\)</span> 满足采样定理时，只需要拿出 <span class="math inline">\(\tilde F(u)\)</span> 的一个周期并放大 <span class="math inline">\(h\)</span> 倍，就能还原 <span class="math inline">\(F(u)\)</span>： <span class="math display">\[
 F(u)=H(u)\tilde F(u),\quad\text{where}\;H(u)=\begin{cases}h&amp;-u_\max\leq u\leq u_\max\\0&amp;\text{otherwise}\end{cases}\tag{1-11}\label{DTFT2}
 \]</span> 这里 <span class="math inline">\(H(u)\)</span> 相当于是一个理想低通滤波器。</p>
@@ -397,7 +397,7 @@ f_{-n}=\frac{h}{2\pi}\int_{-\pi/h}^{\pi/h}\tilde F(u)e^{-jnhu}\mathrm du\tag{1-1
 f_n=\frac{h}{2\pi}\int_{-\pi/h}^{\pi/h}\tilde F(u)e^{jnhu}\mathrm du\tag{1-16}\label{IDTFT}
 \]</span> 这就是离散时间傅里叶逆变换。</p>
 <h3 id="小结">小结</h3>
-<p>在开启下一节之前，我们先对这一节的内容做一个小结。在从傅里叶变换推导到离散时间傅里叶变换的过程中，我们对函数的时域表示进行了采样，发现它的频域表示从非周期函数变成了周期函数。那么，基于傅里叶变换在形式上的对称性，容易想到，如果我们对函数的频域表示进行采样，那么它的时域表示应该也会从非周期函数变成周期函数——这不就是从傅里叶变换推导回了傅里叶级数吗？事实上，对比傅里叶级数 <span class="math inline">\(\eqref{FS}\)</span> 和离散时间傅立叶变换 <span class="math inline">\(\eqref{DTFT},\eqref{IDTFT}\)</span>，可以发现二者在形式上是对称的。</p>
+<p>在开启下一节之前，我们先对这一节的内容做一个小结。在从傅里叶变换推导到离散时间傅里叶变换的过程中，我们对函数的时域表示进行了采样，发现它的频域表示从非周期函数变成了周期函数。那么，基于傅里叶变换在形式上的对称性，容易想到，如果我们对函数的频域表示进行采样，那么它的时域表示应该也会从非周期函数变成周期函数——这不就是从傅里叶变换推导回了傅里叶级数吗？事实上，对比傅里叶级数 <span class="math inline">\(\eqref{FS}\)</span> 和离散时间傅立叶变换 <span class="math inline">\(\eqref{DTFT},\eqref{IDTFT}\)</span>，可以发现二者在形式上的确是对称的。</p>
 <p>值得注意的是，时域和频域在周期性/非周期性和离散性/连续性上有着固定的对应关系——<strong>时域上周期（非周期）对应频域上离散（连续）；时域上离散（连续）对应频域上周期（非周期）</strong>。对于傅立叶级数、傅立叶变换和离散时间傅立叶变换，分别有：</p>
 <ul>
 <li>傅立叶级数：时域周期连续、频域离散非周期</li>
