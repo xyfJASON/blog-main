@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 内积空间与正交基 在线性代数相关课程中我们学过，\(n\) 维线性空间中的 \(n\) 个线性无关向量构成了该空间的一组基，空间中的任一向量都可以唯一表示为这组基的线性组合。进一步地，如果在线性空间中定义内积运算，就得到了内积空间。 在更高阶的课程中，我们将上述有限维线性空">
+    <meta name="description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 内积空间与正交基 在线性代数相关课程中我们学过，\(n\) 维线性空间中的 \(n\) 个线性无关向量构成了该空间的一组基，空间中的任一向量都可以唯一表示为这组基的线性组合。进一步地，如果在线性空间中定义内积运算，就得到了内积空间，内积为零的向量称作正交。 在更高阶的课程中">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fourier Transform 1 (FS, FT)">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/27/Fourier-Transform-1-FS-FT/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 内积空间与正交基 在线性代数相关课程中我们学过，\(n\) 维线性空间中的 \(n\) 个线性无关向量构成了该空间的一组基，空间中的任一向量都可以唯一表示为这组基的线性组合。进一步地，如果在线性空间中定义内积运算，就得到了内积空间。 在更高阶的课程中，我们将上述有限维线性空">
+<meta property="og:description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 内积空间与正交基 在线性代数相关课程中我们学过，\(n\) 维线性空间中的 \(n\) 个线性无关向量构成了该空间的一组基，空间中的任一向量都可以唯一表示为这组基的线性组合。进一步地，如果在线性空间中定义内积运算，就得到了内积空间，内积为零的向量称作正交。 在更高阶的课程中">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fourier.png">
 <meta property="article:published_time" content="2023-12-27T02:47:30.000Z">
-<meta property="article:modified_time" content="2024-08-26T11:59:00.396Z">
+<meta property="article:modified_time" content="2024-08-31T09:33:01.535Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="image processing">
 <meta property="article:tag" content="signal processing">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.9k 字
+          6k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          50 分钟
+          51 分钟
         
       </span>
     
@@ -332,25 +332,26 @@
 \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}=}}
 \]</span></p>
 <h2 id="内积空间与正交基">内积空间与正交基</h2>
-<p>在线性代数相关课程中我们学过，<span class="math inline">\(n\)</span> 维线性空间中的 <span class="math inline">\(n\)</span> 个线性无关向量构成了该空间的一组基，空间中的任一向量都可以唯一表示为这组基的线性组合。进一步地，如果在线性空间中定义内积运算，就得到了内积空间。</p>
-<p>在更高阶的课程中，我们将上述有限维线性空间扩展到无限维的情形。其中一个典型的例子就是 <span class="math inline">\(C[a,b]\)</span>——即考虑<strong>区间 <span class="math inline">\([a,b]\)</span> 上所有连续函数，按照一般的函数加法与数乘构成的线性空间</strong>。进一步地，定义两个函数的内积为： <span class="math display">\[
-\langle f(x),g(x)\rangle\coloneqq\int_a^bf^\ast(x)g(x)\mathrm dx\tag{1-1},\quad f,g\in C[a,b]
-\]</span> 其中 <span class="math inline">\(f^\ast\)</span> 表示取 <span class="math inline">\(f\)</span> 的共轭，可以验证这构成了一个合法的内积空间。</p>
-<p>在内积空间中，正交是非常好的性质，向量关于正交基的坐标（即组合系数）可以简单地推导出来。具体而言，设定义在 <span class="math inline">\(D\)</span> 上的正交函数系 <span class="math inline">\(\{\varphi_n(x)\mid n\in\mathbb N\}\)</span> 构成内积空间的一个正交基，那么 <span class="math inline">\(D\)</span> 上的任意连续函数 <span class="math inline">\(f(x)\)</span> 都可以表示为该基的线性组合： <span class="math display">\[
+<p>在线性代数相关课程中我们学过，<span class="math inline">\(n\)</span> 维线性空间中的 <span class="math inline">\(n\)</span> 个线性无关向量构成了该空间的一组基，空间中的任一向量都可以唯一表示为这组基的线性组合。进一步地，如果在线性空间中定义内积运算，就得到了内积空间，内积为零的向量称作正交。</p>
+<p>在更高阶的课程中，我们将上述有限维线性空间扩展到无穷维的情形，例如函数空间。然而，当空间维数从有限扩展到无穷时，许多结论需要小心推广。例如，无穷维空间中不一定存在一组基，使得任意向量都能唯一表示为基向量的线性组合。假若这样的基确实存在，我们称之为完备的。幸运的是，本文并不考虑不完备的情形。</p>
+<p>具体地，让我们考察区间 <span class="math inline">\([a,b]\)</span> 上所有可积函数按照一般的函数加法与数乘构成的线性空间 <span class="math inline">\(\mathscr R\)</span>（请读者自行验证这确实是一个线性空间），并定义两个函数的内积为： <span class="math display">\[
+\langle f(x),g(x)\rangle\coloneqq\int_a^bf^\ast(x)g(x)\mathrm dx\tag{1-1}
+\]</span> 其中 <span class="math inline">\(f^\ast\)</span> 表示取 <span class="math inline">\(f\)</span> 的共轭。需要注意的是，上述定义的内积不一定满足正定性，即 <span class="math inline">\(\langle f,f\rangle=0\centernot\implies f=0\)</span>.</p>
+<p>在内积空间中，正交是非常好的性质，向量关于正交基的坐标（即组合系数）可以简单地推导出来。具体而言，设正交函数系 <span class="math inline">\(\{\varphi_n(x)\mid n\in\mathbb N\}\)</span> 构成 <span class="math inline">\(\mathscr R\)</span> 的一个完备正交基，那么 <span class="math inline">\(\mathscr R\)</span> 中的任意函数 <span class="math inline">\(f(x)\)</span> 都可以唯一表示为该基的线性组合： <span class="math display">\[
 f(x)=\sum_{n}c_n\varphi_n(x)\tag{1-2}\label{cn-fx}
 \]</span> 为了计算系数 <span class="math inline">\(c_n\)</span>，考虑 <span class="math inline">\(f(x)\)</span> 与 <span class="math inline">\(\varphi_n(x)\)</span> 的内积： <span class="math display">\[
 \langle f(x),\varphi_n(x)\rangle=\sum_ic_i\langle\varphi_i(x),\varphi_n(x)\rangle=c_n\langle\varphi_n(x),\varphi_n(x)\rangle\tag{1-3}
 \]</span></p>
 <p>于是： <span class="math display">\[
 c_n=\frac{\langle f(x),\varphi_n(x)\rangle}{\langle\varphi_n(x),\varphi_n(x)\rangle}\tag{1-4}\label{fx-cn}
-\]</span> 注意到，给定正交函数系 <span class="math inline">\(\{\phi_n(x)\}\)</span> 后，式 <span class="math inline">\(\eqref{cn-fx}\)</span> 指示了已知 <span class="math inline">\(c_n\)</span> 求 <span class="math inline">\(f(x)\)</span> 的过程，式 <span class="math inline">\(\eqref{fx-cn}\)</span> 则指示了已知 <span class="math inline">\(f(x)\)</span> 求 <span class="math inline">\(c_n\)</span> 的过程，因此二者构成一个<strong>变换对</strong>： <span class="math display">\[
+\]</span> 注意到，给定正交函数系 <span class="math inline">\(\{\varphi_n(x)\}\)</span> 后，式 <span class="math inline">\(\eqref{cn-fx}\)</span> 指示了已知 <span class="math inline">\(c_n\)</span> 求 <span class="math inline">\(f(x)\)</span> 的过程，式 <span class="math inline">\(\eqref{fx-cn}\)</span> 则指示了已知 <span class="math inline">\(f(x)\)</span> 求 <span class="math inline">\(c_n\)</span> 的过程，因此二者构成一个<strong>变换对</strong>： <span class="math display">\[
 f(x)=\sum_nc_n\varphi_n(x)\iff c_n=\frac{\langle f(x),\varphi_n(x)\rangle}{\langle\varphi_n(x),\varphi_n(x)\rangle}\tag{1-5}
 \]</span> 傅里叶级数不过就是取该正交函数系为三角函数系的特殊情形。</p>
 <h2 id="傅立叶级数-fs">傅立叶级数 (FS)</h2>
 <h3 id="以-2pi-为周期的周期函数">以 <span class="math inline">\(2\pi\)</span> 为周期的周期函数</h3>
 <p>在<strong>区间 <span class="math inline">\([-\pi,\pi]\)</span> 上</strong>，利用积化和差公式可以证明，如下的三角函数系两两正交： <span class="math display">\[
 \{1,\cos x,\sin x,\cos 2x,\sin 2x,\ldots,\cos nx,\sin nx,\ldots\}\tag{2-1}\label{basis1}
-\]</span> 于是根据第一节的内容，<span class="math inline">\([-\pi,\pi]\)</span> 上的连续函数 <span class="math inline">\(f(x)\)</span> 可以表示为该基的线性组合： <span class="math display">\[
+\]</span> 于是根据第一节的内容，<span class="math inline">\([-\pi,\pi]\)</span> 上的可积函数 <span class="math inline">\(f(x)\)</span> 可以表示为该基的线性组合： <span class="math display">\[
 f(x)=\frac{a_0}{2}+\sum_{n=1}^{\infty}(a_n\cos nx+b_n\sin nx)\tag{2-2}\label{fs1}
 \]</span> 其中系数为： <span class="math display">\[
 \begin{align}
@@ -408,6 +409,7 @@ c_n=\frac{\langle f(x),e^{jn\omega x}\rangle}{\langle e^{jn\omega x},e^{jn\omega
 <li>在任何一个周期中，<span class="math inline">\(f(x)\)</span> 包含有限个极值点；</li>
 <li>在任何一个周期中，<span class="math inline">\(f(x)\)</span> 都绝对可积。</li>
 </ol>
+<p>狄利克雷条件的推导是数学分析的内容，读者可自行查阅相关教材。</p>
 <p>值得注意的是，狄利克雷条件只是充分条件，存在可以展开为傅立叶级数的函数不满足这些条件。最简单的例子就是正弦函数 <span class="math inline">\(y=\sin x\)</span>，它本身就是傅立叶级数的一个基，自然能展开为傅立叶级数，但它明显不是绝对可积的。</p>
 <h3 id="时域频域与可视化">时域、频域与可视化</h3>
 <p>周期函数 <span class="math inline">\(f(x)\)</span> 可以看作是一个连续的周期信号，自变量是时间，函数值为信号的值（在信号处理相关书籍中一般写作 <span class="math inline">\(x(t)\)</span>），我们称之为信号的<strong>时域表示</strong>。例如下图是一个周期为 <span class="math inline">\(2\pi\)</span> 的矩形波：</p>
