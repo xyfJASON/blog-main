@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="二维傅里叶变换 二维连续傅里叶变换 设 \(f(x,y)\) 是一个二元函数，其中 \(x,y\) 为连续变量。类似于一维的傅里叶变换和逆变换，二维的傅里叶变换为： \[ F(u,v)&#x3D;\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}f(x,y)e^{-j(ux+vy)}\mathrm dx\mathrm dy\label{2D-FT} \] 逆变换为：">
+    <meta name="description" content="二维离散傅里叶变换 分量形式 设 \(f(x,y)\) 是一个二元函数，其中 \(x\in\{0,\ldots,M-1\},\,y\in\{0,\ldots,N-1\}\). 类似于一维的离散傅里叶变换和逆变换，二维离散傅里叶变换为： \[ F(u,v)&#x3D;\sum_{x&#x3D;0}^{M-1}\sum_{y&#x3D;0}^{N-1}f(x,y)e^{-j2\pi(ux&#x2F;M+vy&#x2F;N)},\quad u&#x3D;0,\l">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fourier Transform 3 (2D DFT, Image)">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/12/27/Fourier-Transform-3-2D-DFT-Image/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="二维傅里叶变换 二维连续傅里叶变换 设 \(f(x,y)\) 是一个二元函数，其中 \(x,y\) 为连续变量。类似于一维的傅里叶变换和逆变换，二维的傅里叶变换为： \[ F(u,v)&#x3D;\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}f(x,y)e^{-j(ux+vy)}\mathrm dx\mathrm dy\label{2D-FT} \] 逆变换为：">
+<meta property="og:description" content="二维离散傅里叶变换 分量形式 设 \(f(x,y)\) 是一个二元函数，其中 \(x\in\{0,\ldots,M-1\},\,y\in\{0,\ldots,N-1\}\). 类似于一维的离散傅里叶变换和逆变换，二维离散傅里叶变换为： \[ F(u,v)&#x3D;\sum_{x&#x3D;0}^{M-1}\sum_{y&#x3D;0}^{N-1}f(x,y)e^{-j2\pi(ux&#x2F;M+vy&#x2F;N)},\quad u&#x3D;0,\l">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fourier.png">
 <meta property="article:published_time" content="2023-12-27T02:48:15.000Z">
-<meta property="article:modified_time" content="2024-08-26T11:59:07.595Z">
+<meta property="article:modified_time" content="2024-09-01T15:56:26.741Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="image processing">
 <meta property="article:tag" content="signal processing">
@@ -275,7 +275,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          2.1k 字
         
       </span>
     
@@ -286,7 +286,7 @@
         
         
         
-          17 分钟
+          18 分钟
         
       </span>
     
@@ -328,60 +328,69 @@
             
               <div class="markdown-body">
                 
-                <h2 id="二维傅里叶变换">二维傅里叶变换</h2>
-<h3 id="二维连续傅里叶变换">二维连续傅里叶变换</h3>
-<p>设 <span class="math inline">\(f(x,y)\)</span> 是一个二元函数，其中 <span class="math inline">\(x,y\)</span> 为连续变量。类似于一维的傅里叶变换和逆变换，二维的傅里叶变换为： <span class="math display">\[
-F(u,v)=\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}f(x,y)e^{-j(ux+vy)}\mathrm dx\mathrm dy\label{2D-FT}
-\]</span> 逆变换为： <span class="math display">\[
-f(x,y)=\frac{1}{4\pi^2}\int_{-\infty}^{\infty}\int_{-\infty}^{\infty}F(u,v)e^{j(ux+vy)}\mathrm dx\mathrm dy\label{2D-IFT}
-\]</span></p>
-<h3 id="二维离散傅里叶变换">二维离散傅里叶变换</h3>
+                <h2 id="二维离散傅里叶变换">二维离散傅里叶变换</h2>
+<h3 id="分量形式">分量形式</h3>
 <p>设 <span class="math inline">\(f(x,y)\)</span> 是一个二元函数，其中 <span class="math inline">\(x\in\{0,\ldots,M-1\},\,y\in\{0,\ldots,N-1\}\)</span>. 类似于一维的离散傅里叶变换和逆变换，二维离散傅里叶变换为： <span class="math display">\[
 F(u,v)=\sum_{x=0}^{M-1}\sum_{y=0}^{N-1}f(x,y)e^{-j2\pi(ux/M+vy/N)},\quad u=0,\ldots,M-1,\;v=0,\ldots,N-1\label{2D-DFT}
 \]</span> 逆变换为： <span class="math display">\[
 f(x,y)=\frac{1}{MN}\sum_{u=0}^{M-1}\sum_{v=0}^{N-1}F(u,v)e^{j2\pi(ux/M+vy/N)},\quad x=0,\ldots,M-1,\;y=0,\ldots,N-1\label{2D-IDFT}
 \]</span></p>
-<h3 id="二维离散傅里叶变换的性质">二维离散傅里叶变换的性质</h3>
-<p>可类比一维离散傅里叶变换的性质。</p>
-<h4 id="平移性质">平移性质</h4>
-<p>设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v)\)</span>，则： <span class="math display">\[
+<h3 id="矩阵形式">矩阵形式</h3>
+<p>同一维情形类似，我们也可以将二维 DFT 写作矩阵形式。视 <span class="math inline">\(F(u,v),f(u,v)\)</span> 为 <span class="math inline">\(M\times N\)</span> 的矩阵，记 <span class="math inline">\(\omega_M=e^{-j2\pi/M},\,\omega_N=e^{-j2\pi/N}\)</span> 分别为 <span class="math inline">\(M\)</span> 次单位复数根和 <span class="math inline">\(N\)</span> 次单位复数根，构建矩阵： <span class="math display">\[
+\mathcal F_M=\begin{bmatrix}
+1&amp;1&amp;1&amp;\cdots&amp;1\\
+1&amp;\omega_M^{1}&amp;\omega_M^{2}&amp;\cdots&amp;\omega_M^{(M-1)}\\
+1&amp;\omega_M^{2}&amp;\omega_M^{4}&amp;\cdots&amp;\omega_M^{2(M-1)}\\
+\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+1&amp;\omega_M^{(M-1)}&amp;\omega_M^{2(M-1)}&amp;\cdots&amp;\omega_M^{(M-1)^2}
+\end{bmatrix},\quad
+\mathcal F_N=\begin{bmatrix}
+1&amp;1&amp;1&amp;\cdots&amp;1\\
+1&amp;\omega_N^{1}&amp;\omega_N^{2}&amp;\cdots&amp;\omega_N^{(N-1)}\\
+1&amp;\omega_N^{2}&amp;\omega_N^{4}&amp;\cdots&amp;\omega_N^{2(N-1)}\\
+\vdots&amp;\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+1&amp;\omega_N^{(N-1)}&amp;\omega_N^{2(N-1)}&amp;\cdots&amp;\omega_N^{(N-1)^2}
+\end{bmatrix}
+\]</span> 则二维离散傅里叶变换可以写作： <span class="math display">\[
+F=\mathcal F_Mf\mathcal F_N^T
+\]</span> 进一步地，利用拉直算子 <span class="math inline">\(\text{vec}(\cdot)\)</span> 以及 Kronecker 积的性质 <span class="math inline">\(\text{vec}(AXB)=(B^T\otimes A)\text{vec}(X)\)</span>，上式也可写作： <span class="math display">\[
+\text{vec}(F)=(\mathcal F_N\otimes \mathcal F_M)\text{vec}(f)
+\]</span> 该形式与一维情形具有统一的形式，能方便后续的推导。</p>
+<h3 id="性质">性质</h3>
+<p>二维 DFT 的大部分性质可类比一维 DFT 的性质推广而来。</p>
+<p><strong>平移性质</strong>：设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v)\)</span>，则： <span class="math display">\[
 \begin{align}
 &amp;\mathscr F\{f(x-x_0,y-y_0)\}=e^{-j2\pi(ux_0/M+vy_0/N)}F(u,v)\\
 &amp;\mathscr F^{-1}\{F(u-u_0,v-v_0)\}=e^{j2\pi (u_0x/M+v_0y/N)}f(x,y)
 \end{align}
 \]</span></p>
-<h4 id="旋转性质">旋转性质</h4>
-<p>使用极坐标：<span class="math inline">\(x=r\cos\theta,\,y=r\sin\theta,\,u=\omega\cos\varphi,\,v=\omega\sin\varphi\)</span>，可得如下变换对： <span class="math display">\[
+<p><strong>旋转性质</strong>：使用极坐标：<span class="math inline">\(x=r\cos\theta,\,y=r\sin\theta,\,u=\omega\cos\varphi,\,v=\omega\sin\varphi\)</span>，可得如下变换对： <span class="math display">\[
 f(r,\theta+\theta_0)\iff F(\omega,\varphi+\theta_0)
 \]</span> 即若 <span class="math inline">\(f(x,y)\)</span> 旋转 <span class="math inline">\(\theta_0\)</span> 角度，则 <span class="math inline">\(F(u,v)\)</span> 也旋转相同的角度，反之亦然。</p>
-<h4 id="周期性">周期性</h4>
-<p><span class="math display">\[
+<p><strong>周期性</strong>： <span class="math display">\[
 \begin{align}
 &amp;F(u,v)=F(u+k_1M,v+k_2N)&amp;&amp;k_1,k_2\in\mathbb Z\\
 &amp;f(x,y)=f(x+k_1M,y+k_2N)&amp;&amp;k_1,k_2\in\mathbb Z
 \end{align}
 \]</span></p>
-<h4 id="共轭对称性">共轭对称性</h4>
-<p>若 <span class="math inline">\(f(x,y)\)</span> 是实函数，则 <span class="math inline">\(F(u,v)\)</span> 是共轭对称的（实部偶函数，虚部奇函数），即： <span class="math display">\[
+<p><strong>共轭对称性</strong>：若 <span class="math inline">\(f(x,y)\)</span> 是实函数，则 <span class="math inline">\(F(u,v)\)</span> 是共轭对称的（实部偶函数，虚部奇函数），即： <span class="math display">\[
 F^\ast(u,v)=F(-u,-v)
 \]</span> 若 <span class="math inline">\(f(x,y)\)</span> 是虚函数，则 <span class="math inline">\(F(u,v)\)</span> 是共轭反对称的（实部奇函数，虚部偶函数），即： <span class="math display">\[
 F^\ast(u,v)=-F(-u,-v)
 \]</span></p>
-<h4 id="频谱和功率谱">频谱和功率谱</h4>
-<p>由于 DFT 是复函数，因此可以用极坐标表示： <span class="math display">\[
+<p><strong>频谱和功率谱</strong>：由于 DFT 是复函数，因此可以用极坐标表示： <span class="math display">\[
 \begin{align}
 &amp;F(u,v)=R(u,v)+jI(u,v)=|F(u,v)|e^{j\phi(u,v)}\\
 \text{where}\quad&amp;|F(u,v)|=\sqrt{R^2(u,v)+I^2(u,v)}\\
 &amp;\phi(u,v)=\arctan\frac{I(u,v)}{R(u,v)}
 \end{align}
-\]</span> 其中 <span class="math inline">\(|F(u,v)|\)</span> 称为幅度谱，<span class="math inline">\(\phi(u,v)\)</span> 称为相位谱，二者统称为频谱。</p>
-<p>功率谱定义为幅度谱的平方： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(|F(u,v)|\)</span> 称为幅度谱，<span class="math inline">\(\phi(u,v)\)</span> 称为相位谱，二者统称为频谱。另外，功率谱定义为幅度谱的平方：</p>
+<p><span class="math display">\[
 P(u,v)=|F(u,v)|^2=R^2(u,v)+I^2(u,v)
 \]</span> 前文说到，对于实函数 <span class="math inline">\(f(x,y)\)</span>，其傅里叶变换 <span class="math inline">\(F(u,v)\)</span> 是共轭对称的，于是容易知道其频谱是关于原点偶对称的，而相位谱是关于原点奇对称的： <span class="math display">\[
 |F(u,v)|=|F(-u,-v)|\quad\quad\phi(u,v)=-\phi(-u,-v)
 \]</span></p>
-<h4 id="二维循环卷积定理">二维循环卷积定理</h4>
-<p>设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v),\,\mathscr F\{g(x,y)\}=G(u,v)\)</span>，则： <span class="math display">\[
+<p><strong>二维循环卷积定理</strong>：设 <span class="math inline">\(\mathscr F\{f(x,y)\}=F(u,v),\,\mathscr F\{g(x,y)\}=G(u,v)\)</span>，则： <span class="math display">\[
 \begin{align}
 &amp;\mathscr F\{f(x,y)\ast g(x,y)\}=F(u,v)\cdot G(u,v)\\
 &amp;\mathscr F\{f(x,y)\cdot g(x,y)\}=\frac{1}{MN}F(u,v)\ast G(u,v)
@@ -393,7 +402,7 @@ P(u,v)=|F(u,v)|^2=R^2(u,v)+I^2(u,v)
 <p>前文中我们研究的一元函数可以看作是时域信号，但是对于图像而言，时域信号这个说法显然不合适了。那应该怎么理解呢？</p>
 <p>首先，一幅数字图像其实是一个二元函数 <span class="math inline">\(f=f(x,y)\)</span>，其中自变量 <span class="math inline">\((x,y)\)</span> 是像素的坐标，函数值是像素的灰度级。因此，将图像在三维空间中绘制出来，就好像一个连绵不断的山脉，类似于信号波形的二维版本。只不过这里自变量表示空间位置而非时间，因此我们称之为<strong>空间域</strong>。</p>
 <p>与时域信号类似，我们可以用无数个二维的不同角频率的正余弦函数去近似一幅图像。其中，图像变化比较剧烈的地方——比如边缘、纹理等细节，需要依靠高频的正余弦函数去拟合；相反，图像大体的构图就对应低频的正余弦函数。因此，我们经常把图像的细节称作高频分量，而整体构图称作低频分量。</p>
-<p>对图像做二维离散傅里叶变换就得到了其<strong>频域</strong>表示，将频域表示的频谱可视化出来就是频谱图。频域滤波指在频谱图上使用一个滤波器对图像做滤波的过程。然而，出于可视化、浮点误差等考虑，接下来我们关注对图像做频域滤波时的一些值得注意的方面。</p>
+<p>对图像做二维离散傅里叶变换就得到了其<strong>频域</strong>表示，将频域表示的频谱可视化出来就是频谱图。频域滤波指在频谱图上使用一个滤波器对图像做滤波的过程。然而，出于可视化、浮点误差等考虑，下面我们关注对图像做频域滤波时一些值得注意的方面。</p>
 <h3 id="循环卷积与交叠误差">循环卷积与交叠误差</h3>
 <p>根据循环卷积定理，在空间域中做<strong>循环卷积</strong>等价于在频域中做乘法。然而，我们在图像处理中使用的卷积通常是 <strong>padding 0 的卷积</strong>，两种卷积方式导致的结果差别就是所谓的交叠误差。</p>
 <p>幸运的是交叠误差很容易解决。设 <span class="math inline">\(f(x,y)\)</span> 和 <span class="math inline">\(h(x,y)\)</span> 分别是 <span class="math inline">\(A\times B\)</span> 和 <span class="math inline">\(C\times D\)</span> 的图像，则选取 <span class="math inline">\(P\geq A+C-1\)</span> 和 <span class="math inline">\(Q\geq B+D-1\)</span>，将 <span class="math inline">\(f\)</span> 和 <span class="math inline">\(h\)</span> 都往右下填充 0 直到 <span class="math inline">\(P\times Q\)</span> 大小，那么在频域中处理（对应循环卷积）与直接 padding 0 的卷积结果就一样了。</p>
