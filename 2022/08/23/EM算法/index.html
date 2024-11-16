@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="EM 算法是极大似然法的推广，用于解决存在隐变量（hidden variables &#x2F; latent factors）的参数估计问题。 1 EM 算法 1.1 问题描述 极大似然法是最常用的参数估计方法之一。设观测变量为 \(x\)，模型参数为 \(\theta\)，则极大似然法通过最大化似然函数 \(P(x\vert\theta)\) 或对数似然 \(\log P(x\vert\theta)\)">
+    <meta name="description" content="EM 算法是极大似然法的推广，用于解决存在隐变量（hidden variables &#x2F; latent factors）的参数估计问题。 1 EM 算法 1.1 问题描述 极大似然法是最常用的参数估计方法之一。设观测变量为 \(x\)，模型参数为 \(\theta\)，则极大似然法通过最大化对数似然 \(\log p(x;\theta)\) 来求解最优的参数 \(\theta\). 然而在一些问题中">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EM算法">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/08/23/EM%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="EM 算法是极大似然法的推广，用于解决存在隐变量（hidden variables &#x2F; latent factors）的参数估计问题。 1 EM 算法 1.1 问题描述 极大似然法是最常用的参数估计方法之一。设观测变量为 \(x\)，模型参数为 \(\theta\)，则极大似然法通过最大化似然函数 \(P(x\vert\theta)\) 或对数似然 \(\log P(x\vert\theta)\)">
+<meta property="og:description" content="EM 算法是极大似然法的推广，用于解决存在隐变量（hidden variables &#x2F; latent factors）的参数估计问题。 1 EM 算法 1.1 问题描述 极大似然法是最常用的参数估计方法之一。设观测变量为 \(x\)，模型参数为 \(\theta\)，则极大似然法通过最大化对数似然 \(\log p(x;\theta)\) 来求解最优的参数 \(\theta\). 然而在一些问题中">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/EM.png">
 <meta property="article:published_time" content="2022-08-23T05:51:28.000Z">
-<meta property="article:modified_time" content="2024-08-26T11:58:49.756Z">
+<meta property="article:modified_time" content="2024-11-16T15:48:49.051Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -330,34 +330,34 @@
                 <p><strong>EM 算法是极大似然法的推广</strong>，用于解决存在<strong>隐变量（hidden variables / latent factors）</strong>的参数估计问题。</p>
 <h2 id="em-算法">1 EM 算法</h2>
 <h3 id="问题描述">1.1 问题描述</h3>
-<p>极大似然法是最常用的参数估计方法之一。设观测变量为 <span class="math inline">\(x\)</span>，模型参数为 <span class="math inline">\(\theta\)</span>，则极大似然法通过最大化似然函数 <span class="math inline">\(P(x\vert\theta)\)</span> 或对数似然 <span class="math inline">\(\log P(x\vert\theta)\)</span> 来求解最优的 <span class="math inline">\(\theta\)</span>. 然而在一些问题中，观测变量 <span class="math inline">\(x\)</span> 依赖于<strong>隐变量</strong> <span class="math inline">\(z\)</span>，此时根据全概率公式有： <span class="math display">\[
-P(x\vert\theta)=\sum_zP(x,z\vert\theta)
-\]</span> （这里假设隐变量是离散的，连续情形只需将求和改为积分即可）那么对数似然为： <span class="math display">\[
-L(\theta)=\log P(x\vert \theta)=\log\left(\sum_{z} P(x,z\vert\theta)\right)
+<p>极大似然法是最常用的参数估计方法之一。设观测变量为 <span class="math inline">\(x\)</span>，模型参数为 <span class="math inline">\(\theta\)</span>，则极大似然法通过最大化对数似然 <span class="math inline">\(\log p(x;\theta)\)</span> 来求解最优的参数 <span class="math inline">\(\theta\)</span>. 然而在一些问题中，观测变量 <span class="math inline">\(x\)</span> 依赖于<strong>隐变量</strong> <span class="math inline">\(z\)</span>，此时根据全概率公式有： <span class="math display">\[
+p(x;\theta)=\int p(x,z;\theta)\mathrm dz
+\]</span> 于是对数似然为： <span class="math display">\[
+L(\theta)=\log p(x;\theta)=\log\left(\int p(x,z;\theta)\mathrm dz\right)
 \]</span> 如果仍然使用极大似然法，我们会发现 <span class="math inline">\(L(\theta)\)</span> 的导数将变得非常复杂，<strong>要优化的参数之间无法分离，导致无法写出封闭形式的解</strong>。这时就需要用到 EM 算法了。</p>
 <h3 id="理论推导">1.2 理论推导</h3>
 <p>为了解决上述问题，我们为隐变量 <span class="math inline">\(z\)</span> 引入一个概率分布 <span class="math inline">\(q(z)\)</span>，则有： <span class="math display">\[
-L(\theta)=\log\left(\sum_{z} P(x,z\vert\theta)\right)
-=\log\left(\sum_z q(z)\frac{P(x,z\vert \theta)}{q(z)}\right)\geq\sum_zq(z)\log\frac{P(x,z\vert \theta)}{q(z)}=J(\theta,q)
-\]</span> 其中不等式应用了 Jensen's inequality. 于是我们找到了“一族” <span class="math inline">\(L(\theta)\)</span> 的下界 <span class="math inline">\(J(\theta,q)\)</span>，称为<strong>证据下界 ELBO (Evidence Lower BOund)</strong>。“一族”的意思是通过改变 <span class="math inline">\(q\)</span>，我们能够得到不同的下界函数。特别地，根据 Jensen's inequality 的取等条件，可以知道当 <span class="math inline">\(q(z)=P(z\vert x,\theta)\)</span> 时等号成立。的确，把 <span class="math inline">\(q^\ast(z)=P(z\vert x,\theta)\)</span> 代入上式即可验证这一点： <span class="math display">\[
-J(\theta,q^\ast)=\sum_z P(z\vert x,\theta)\log \frac{P(x,z\vert \theta)}{P(z\vert x,\theta)}=\sum_zP(z\vert x,\theta)\log P(x\vert \theta)=\log P(x\vert \theta)=L(\theta)
+L(\theta)=\log\left(\int p(x,z;\theta)\mathrm dz\right)
+=\log\left(\int q(z)\frac{p(x,z;\theta)}{q(z)}\mathrm dz\right)\geq\int q(z)\log\frac{p(x,z;\theta)}{q(z)}\mathrm dz=J(\theta,q)
+\]</span> 其中应用了 Jensen 不等式。于是我们找到了<strong>一族</strong> <span class="math inline">\(L(\theta)\)</span> 的下界 <span class="math inline">\(J(\theta,q)\)</span>，称为<strong>证据下界 (Evidence Lower BOund, ELBO)</strong>。“一族”的意思是通过改变 <span class="math inline">\(q\)</span>，我们能够得到不同的下界函数。特别地，根据 Jensen 不等式的取等条件可知，当 <span class="math inline">\(q(z)=p(z\vert x;\theta)\)</span> 时等号成立。的确，把 <span class="math inline">\(q^\ast(z)=p(z\vert x;\theta)\)</span> 代入即可验证这一点： <span class="math display">\[
+J(\theta,q^\ast)=\int p(z\vert x;\theta)\log\frac{p(x,z;\theta)}{p(z\vert x;\theta)}\mathrm dz=\int p(z\vert x;\theta)\log p(x;\theta)\mathrm dz=\log p(x;\theta)=L(\theta)
 \]</span></p>
-<p>因此，<span class="math inline">\(J(\theta,q)\)</span> 是 <span class="math inline">\(L(\theta)\)</span> 的<strong>紧的下界</strong>，所以我们可以通过优化 <span class="math inline">\(J(\theta,q)\)</span> 达到优化 <span class="math inline">\(L(\theta)\)</span> 的目的，即： <span class="math display">\[
+<p>这说明 <span class="math inline">\(J(\theta,q)\)</span> 不仅是 <span class="math inline">\(L(\theta)\)</span> 的下界，还是<strong>紧的下界</strong>，所以我们可以通过优化 <span class="math inline">\(J(\theta,q)\)</span> 达到优化 <span class="math inline">\(L(\theta)\)</span> 的目的，即： <span class="math display">\[
 \max_\theta L(\theta)\iff\max_{\theta,q}J(\theta,q)
-\]</span> 不过，同时优化 <span class="math inline">\(\theta\)</span> 和 <span class="math inline">\(q\)</span> 依旧非常困难，因此 EM 算法采用<strong>交替迭代</strong>的方式优化：</p>
+\]</span> 代价是原本只需要优化一个变量 <span class="math inline">\(\theta\)</span>，现在要优化两个变量 <span class="math inline">\(\theta\)</span> 和 <span class="math inline">\(q\)</span>. 同时优化二者比较困难，因此 EM 算法采用<strong>交替迭代</strong>的方式优化：</p>
 <ul>
 <li><p><strong>E-step</strong> 固定 <span class="math inline">\(\theta\)</span> 优化 <span class="math inline">\(q\)</span>： <span class="math display">\[
 q^{(t+1)}=\arg\max_q J(\theta^{(t)},q)
-\]</span> 根据上面的讨论，这一步的最优解就是取 <span class="math inline">\(q^{(t+1)}(z)=P(z\vert x,\theta^{(t)})\)</span>，以使得 <span class="math inline">\(J(\theta^{(t)},q^{(t+1)})=L(\theta^{(t)})\)</span>；</p></li>
+\]</span> 根据上面的讨论，这一步的最优解就是取 <span class="math inline">\(q^{(t+1)}(z)=p(z\vert x;\theta^{(t)})\)</span>，以使得 <span class="math inline">\(J(\theta^{(t)},q^{(t+1)})=L(\theta^{(t)})\)</span>.</p></li>
 <li><p><strong>M-step</strong> 固定 <span class="math inline">\(q\)</span> 优化 <span class="math inline">\(\theta\)</span>： <span class="math display">\[
 \theta^{(t+1)}=\arg\max_\theta J(\theta,q^{(t+1)})
 \]</span> 注意上述优化目标可以拆出一个与 <span class="math inline">\(\theta\)</span> 无关的常数项： <span class="math display">\[
 \begin{align}
-J(\theta,q^{(t+1)})&amp;=\sum_zq^{(t+1)}(z)\log P(x,z\vert\theta)-\sum_zq^{(t+1)}(z)\log q^{(t+1)}(z)\\
-&amp;=\underbrace{\sum_z P(z\vert x,\theta^{(t)})\log P(x,z\vert\theta)}_{Q(\theta,\theta^{(t)})}+\underbrace{H(q^{(t+1)}(z))}_\text{constant}
+J(\theta,q^{(t+1)})&amp;=\int q^{(t+1)}(z)\log p(x,z;\theta)\mathrm dz-\int q^{(t+1)}(z)\log q^{(t+1)}(z)\mathrm dz\\
+&amp;=\underbrace{\int p(z\vert x;\theta^{(t)})\log p(x,z;\theta)\mathrm dz}_{Q(\theta,\theta^{(t)})}+\underbrace{H(q^{(t+1)}(z))}_\text{constant}
 \end{align}
 \]</span> 因此只需要优化 <span class="math inline">\(Q(\theta,\theta^{(t)})\)</span> 即可： <span class="math display">\[
-\theta^{(t+1)}=\arg\max_\theta Q(\theta,\theta^{(t)})
+\theta^{(t+1)}=\arg\max_\theta~Q(\theta,\theta^{(t)})
 \]</span></p></li>
 </ul>
 <p>经过一轮 E-step 和 M-step，有： <span class="math display">\[
@@ -368,62 +368,59 @@ L(\theta^{(t+1)})\geq J(\theta^{(t+1)},q^{(t+1)})\geq J(\theta^{(t)},q^{(t+1)})=
 <h3 id="进一步分析">1.3 进一步分析</h3>
 <p>在上一节中，我们推出了 <span class="math inline">\(L(\theta)\geq J(\theta,q)\)</span>，那他俩之间究竟差了个什么呢？ <span class="math display">\[
 \begin{align}
-L(\theta)-J(\theta,q)&amp;=\log P(x\vert \theta)-\sum_zq(z)\log\frac{P(x,z\vert\theta)}{q(z)}\\
-&amp;=\sum_zq(z)\left[\log P(x\vert \theta)-\log\frac{P(x,z\vert \theta)}{q(z)}\right]\\
-&amp;=\sum_z q(z)\log \frac{q(z)}{P(z\vert x,\theta)}\\
-&amp;=\mathrm{KL}(q(z)\|P(z\vert x,\theta))
+L(\theta)-J(\theta,q)&amp;=\log p(x;\theta)-\int q(z)\log\frac{p(x,z;\theta)}{q(z)}\mathrm dz\\
+&amp;=\int q(z)\left[\log p(x;\theta)-\log\frac{p(x,z;\theta)}{q(z)}\right]\mathrm dz\\
+&amp;=\int q(z)\log \frac{q(z)}{p(z\vert x;\theta)}\mathrm dz\\
+&amp;=\mathrm{KL}(q(z)\|p(z\vert x;\theta))
 \end{align}
-\]</span> 啊！原来是引入的分布 <span class="math inline">\(q(z)\)</span> 与后验分布 <span class="math inline">\(P(z\vert x,\theta)\)</span> 之间的 KL 散度。之前推导过程中的 Jensen's inequality，其实对应着这里的 KL 散度非负。事实上，存在其他的推导方法能直接写出 <span class="math inline">\(L(\theta)=J(\theta,q)+\mathrm{KL}(q(z)\|P(z\vert x,\theta))\)</span> 这个等式而避开 Jensen's inequality 的，如下所示：</p>
+\]</span> 啊！原来是引入的分布 <span class="math inline">\(q(z)\)</span> 与后验分布 <span class="math inline">\(p(z\vert x;\theta)\)</span> 之间的 KL 散度。之前推导过程中使用的 Jensen 不等式，其实对应着这里的 KL 散度非负。事实上，我们能避开 Jensen 不等式直接推导出 <span class="math inline">\(L(\theta)=J(\theta,q)+\mathrm{KL}(q(z)\|p(z\vert x;\theta))\)</span>，如下所示：</p>
 <p><span class="math display">\[
 \begin{align}
-L(\theta)&amp;=\log P(x\vert \theta)\\
-&amp;=\sum_z q(z)\log P(x\vert \theta)\\
-&amp;=\sum_z q(z)\log\left(\frac{P(x,z\vert \theta)}{P(z\vert x,\theta)}\cdot\frac{q(z)}{q(z)} \right)\\
-&amp;=\sum_z q(z)\left[\log\frac{P(x,z\vert \theta)}{q(z)}+\log\frac{q(z)}{P(z\vert x,\theta)} \right]\\
-&amp;=J(\theta,q)+\mathrm{KL}(q(z)\|P(z\vert x,\theta))
+L(\theta)&amp;=\log p(x;\theta)\\
+&amp;=\int q(z)\log p(x;\theta)\mathrm dz\\
+&amp;=\int q(z)\log\left(\frac{p(x,z;\theta)}{p(z\vert x;\theta)}\cdot\frac{q(z)}{q(z)} \right)\mathrm dz\\
+&amp;=\int q(z)\left[\log\frac{p(x,z;\theta)}{q(z)}+\log\frac{q(z)}{p(z\vert x;\theta)} \right]\mathrm dz\\
+&amp;=J(\theta,q)+\mathrm{KL}(q(z)\|p(z\vert x;\theta))
 \end{align}
-\]</span> 从等式的角度看，<span class="math inline">\(L(\theta)\)</span> <strong>被划分成了两部分——ELBO 和 KL 散度</strong>. 在 E-step 中，我们让 <span class="math inline">\(\mathrm{KL}=0\)</span>，也就是让 <span class="math inline">\(L(\theta)=J(\theta,q)\)</span>；在 M-step 中，固定 <span class="math inline">\(q\)</span> 优化 <span class="math inline">\(J(\theta,q)\)</span>，进而优化了 <span class="math inline">\(L(\theta)\)</span>；这时由于 <span class="math inline">\(\theta\)</span> 变了，KL 散度不再是零，我们便继续下一轮迭代，如下图所示：</p>
+\]</span> 观察上式，<span class="math inline">\(L(\theta)\)</span> <strong>被划分成了两部分——ELBO 和 KL 散度</strong>。在 E-step 中，我们固定 <span class="math inline">\(\theta\)</span> 取 <span class="math inline">\(q(z)=p(z\vert x;\theta)\)</span>，使得 KL 项为零，也就是让 <span class="math inline">\(L(\theta)=J(\theta,q)\)</span>；在 M-step 中，我们固定 <span class="math inline">\(q\)</span> 优化 <span class="math inline">\(J(\theta,q)\)</span>，进而优化了 <span class="math inline">\(L(\theta)\)</span>；这时由于 <span class="math inline">\(\theta\)</span> 变了，KL 散度不再是零，我们便继续下一轮迭代，如下图所示：</p>
 <p><img src="img2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% alt="摘自PRML，符号略有不同" /></p>
 <h3 id="算法步骤">1.4 算法步骤</h3>
 <p>综上所述，EM 算法的步骤如下：</p>
 <ol type="1">
 <li><p>随机初始化 <span class="math inline">\(\theta^{(0)}\)</span>；</p></li>
 <li><p><strong>E-step</strong>：给定 <span class="math inline">\(\theta^{(t)}\)</span>，求隐变量的后验分布： <span class="math display">\[
-P(z\vert x,\theta^{(t)})
+p(z\vert x,\theta^{(t)})
 \]</span> 然后计算优化目标： <span class="math display">\[
-Q(\theta,\theta^{(t)})=\sum_zP(z\vert x,\theta^{(t)})\log P(x,z\vert \theta)
+Q(\theta,\theta^{(t)})=\int p(z\vert x;\theta^{(t)})\log p(x,z;\theta)\mathrm dz
 \]</span></p></li>
-<li><p><strong>M-step</strong>：优化上式： <span class="math display">\[
-\theta^{(t+1)}=\arg\max_\theta Q(\theta,\theta^{(t)})
+<li><p><strong>M-step</strong>：优化上式，得到 <span class="math inline">\(\theta^{(t+1)}\)</span>： <span class="math display">\[
+\theta^{(t+1)}=\arg\max_\theta~Q(\theta,\theta^{(t)})
 \]</span></p></li>
 <li><p>迭代执行 2、3 步直至收敛。</p></li>
 </ol>
 <h3 id="收敛性">1.5 收敛性</h3>
 <p>EM 算法一定收敛吗？这里的收敛其实包含两层意思：<span class="math inline">\(L(\theta)\)</span> 收敛和 <span class="math inline">\(\theta\)</span> 收敛，<strong>前者并不能蕴含后者</strong>。</p>
 <ol type="1">
-<li><span class="math inline">\(L(\theta)\)</span> 收敛：上文已经说明了 <span class="math inline">\(L(\theta)\)</span> 在优化过程中单调不减，又它显然有上界 <span class="math inline">\(0\)</span>，根据单调有界定理，<span class="math inline">\(L(\theta)\)</span> 必然收敛。</li>
+<li><span class="math inline">\(L(\theta)\)</span> 收敛：上文已经说明了 <span class="math inline">\(L(\theta)\)</span> 在优化过程中单调不减，又它显然有上界，根据单调有界定理，<span class="math inline">\(L(\theta)\)</span> 必然收敛。</li>
 <li><span class="math inline">\(\theta\)</span> 收敛：见参考文献<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Wu, CF Jeff. On the convergence properties of the EM algorithm. *The Annals of statistics* (1983): 95-103.">[5]</span></a></sup>。</li>
 </ol>
 <p>注意，虽然 EM 算法一定收敛，<strong>但是可能收敛到局部最优解</strong>。因此实践中往往选取不同的初值多跑几次，选择最佳的结果。</p>
 <h3 id="关于独立重复试验的注解">1.6 关于独立重复试验的注解</h3>
 <p>在上面的推导中，我们把所有的观测结果直接记作 <span class="math inline">\(x\)</span>，这使得结论具有普适性。但实践中我们往往做的是独立重复试验，有 <span class="math inline">\(n\)</span> 个相互独立的样本 <span class="math inline">\(x=(x_1,\ldots,x_n)\)</span>，各样本对应各自的隐变量 <span class="math inline">\(z=(z_1,\ldots,z_n)\)</span>.</p>
 <p>基于独立性，有： <span class="math display">\[
-P(z\vert x,\theta)=\prod_{i=1}^nP(z_i\vert x_i,\theta)\quad\quad P(x,z\vert\theta)=\prod_{i=1}^nP(x_i,z_i\vert \theta)
+p(z\vert x;\theta)=\prod_{i=1}^np(z_i\vert x_i;\theta),\qquad p(x,z;\theta)=\prod_{i=1}^np(x_i,z_i;\theta)
 \]</span> 如果把它们直接代入 <span class="math inline">\(Q(\theta,\theta^{(t)})\)</span> 之中，会得到非常丑陋的结果： <span class="math display">\[
 \begin{align}
-Q(\theta,\theta^{(t)})&amp;=\sum_zP(z\vert x,\theta^{(t)})\log P(x,z\vert \theta)\\
-&amp;=\sum_{z_1,\ldots,z_n}\left[\left(\prod_{i=1}^nP(z_i\vert x_i,\theta)\right)\log\left(\prod_{j=1}^nP(x_j,z_j\vert \theta)\right)\right]\\
-&amp;=\sum_{z_1,\ldots,z_n}\left[\left(\prod_{i=1}^nP(z_i\vert x_i,\theta)\right)\sum_{j=1}^n\log\left(P(x_j,z_j\vert \theta)\right)\right]\\
+Q(\theta,\theta^{(t)})&amp;=\sum_zp(z\vert x;\theta^{(t)})\log p(x,z;\theta)\\
+&amp;=\int\left[\left(\prod_{i=1}^np(z_i\vert x_i;\theta)\right)\log\left(\prod_{j=1}^np(x_j,z_j; \theta)\right)\right]\mathrm d z_1\cdots\mathrm dz_n\\
+&amp;=\int\left[\left(\prod_{i=1}^np(z_i\vert x_i;\theta)\right)\sum_{j=1}^n\log\left(p(x_j,z_j; \theta)\right)\right]\mathrm d z_1\cdots\mathrm dz_n\\
 \end{align}
-\]</span> 这是因为我们代入得太晚——在 Jensen's inequality 把对数和求和的顺序交换后，再代入就很难化简式子了（当然如果你头够铁，也不是不能化简，见参考资料<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="高斯混合模型（GMM）推导及实现 - 永远在你身后的文章 - 知乎 https://zhuanlan.zhihu.com/p/85338773">[9]</span></a></sup><sup id="fnref:10" class="footnote-ref"><a href="#fn:10" rel="footnote"><span class="hint--top hint--rounded" aria-label="机器学习-白板推导系列(十一)-高斯混合模型GMM（Gaussian Mixture Model）https://www.bilibili.com/video/BV13b411w7Xj?p=3&amp;share_source=copy_web&amp;vd_source=a43b4442e295a96065c7ae919b4866d3">[10]</span></a></sup>）。如果我们在最开始就代入： <span class="math display">\[
-L(\theta)=\log\prod_{i=1}^nP(x_i\vert\theta)=\sum_{i=1}^n\log P(x_i\vert\theta)=\sum_{i=1}^n\log\left(\sum_{z_i}P(x_i,z_i\vert\theta)\right)
-\]</span> 继续推导，会发现只需要在相应地方加上求和 <span class="math inline">\(\sum_{i=1}^n\)</span>、给 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(z\)</span> 加上下标 <span class="math inline">\(i\)</span> 即可，整个推导过程没有什么大的变化。最终优化目标写作： <span class="math display">\[
-Q(\theta,\theta^{(t)})=\sum_{i=1}^n\sum_{z_i}P(z_i\vert x_i,\theta^{(t)})\log P(x_i,z_i\vert \theta)
+\]</span> 这是因为我们代入得太晚——在 Jensen 不等式把对数和求和的顺序交换后，再代入就很难化简式子了（当然如果你头够铁，也不是不能化简，见参考资料<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="高斯混合模型（GMM）推导及实现 - 永远在你身后的文章 - 知乎 https://zhuanlan.zhihu.com/p/85338773">[9]</span></a></sup><sup id="fnref:10" class="footnote-ref"><a href="#fn:10" rel="footnote"><span class="hint--top hint--rounded" aria-label="机器学习-白板推导系列(十一)-高斯混合模型GMM（Gaussian Mixture Model）https://www.bilibili.com/video/BV13b411w7Xj?p=3&amp;share_source=copy_web&amp;vd_source=a43b4442e295a96065c7ae919b4866d3">[10]</span></a></sup>）。但如果我们在最开始就代入： <span class="math display">\[
+L(\theta)=\log\prod_{i=1}^np(x_i;\theta)=\sum_{i=1}^n\log p(x_i;\theta)=\sum_{i=1}^n\log\left(\int p(x_i,z_i;\theta)\mathrm dz_i\right)
+\]</span> 继续推导，会发现只需要在相应地方加上求和 <span class="math inline">\(\sum_{i=1}^n\)</span>，并给 <span class="math inline">\(x\)</span> 和 <span class="math inline">\(z\)</span> 加上下标 <span class="math inline">\(i\)</span> 即可，整个推导过程没有什么大的变化。最终优化目标写作： <span class="math display">\[
+Q(\theta,\theta^{(t)})=\sum_{i=1}^n\int p(z_i\vert x_i;\theta^{(t)})\log p(x_i,z_i;\theta)\mathrm dz_i
 \]</span></p>
 <h2 id="例子双硬币问题">2 例子：双硬币问题</h2>
-<blockquote>
-<p>本例来源于参考资料<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Do, Chuong B., and Serafim Batzoglou. What is the expectation maximization algorithm?. *Nature biotechnology* 26, no. 8 (2008): 897-899.">[1]</span></a></sup>.</p>
-</blockquote>
 <p>假设有两枚硬币 A,B，它们正面朝上的概率未知，分别记作 <span class="math inline">\(\theta_A,\theta_B\)</span>. 为了估计 <span class="math inline">\(\theta_A,\theta_B\)</span>​，考虑做如下试验：首先<strong>等概率</strong>地随机选取一枚硬币，然后抛掷这枚硬币 10 次。假设我们一共做了 5 次试验，得到的结果如下：</p>
 <table>
 <thead>
@@ -468,7 +465,7 @@ Q(\theta,\theta^{(t)})=\sum_{i=1}^n\sum_{z_i}P(z_i\vert x_i,\theta^{(t)})\log P(
 \end{align}
 \]</span> 值得注意的是，虽然这个结果直观上很容易理解，但本质上是<strong>极大似然估计</strong>。其对数似然为： <span class="math display">\[
 \begin{align}
-L(\hat\theta_A,\hat\theta_B)&amp;=\log\left[P(24H,6T\vert \hat\theta_A)\cdot P(9H,11T\vert\hat\theta_B)\right]\\
+L(\hat\theta_A,\hat\theta_B)&amp;=\log\left[P(24H,6T;\hat\theta_A)\cdot P(9H,11T;\hat\theta_B)\right]\\
 &amp;=\log\left[(\hat\theta_A)^{24}(1-\hat\theta_A)^6\right]+\log\left[(\hat\theta_B)^9(1-\hat\theta_B)^{11}\right]\\
 &amp;=24\log(\hat\theta_A)+6\log(1-\hat\theta_A)+9\log(\hat\theta_B)+11\log(1-\hat\theta_B)
 \end{align}
@@ -517,15 +514,15 @@ L(\hat\theta_A,\hat\theta_B)&amp;=\log\left[P(24H,6T\vert \hat\theta_A)\cdot P(9
 <p>其中 <span class="math inline">\(x_i\)</span> 表示第 <span class="math inline">\(i\)</span> 次试验中正面朝上的次数，<span class="math inline">\(z_i\in\{A,B\}\)</span> 表示选取的硬币，是隐变量。应用 EM 算法：</p>
 <ol type="1">
 <li><p>随机初始化 <span class="math inline">\(\theta^{(0)}=(\theta_A^{(0)},\theta_B^{(0)})=(0.60,0.50)\)</span>；</p></li>
-<li><p><strong>E-step</strong>：求隐变量的后验分布 <span class="math inline">\(P(z_i\vert x_i,\theta^{(0)})\)</span>，以第一次试验为例： <span class="math display">\[
+<li><p><strong>E-step</strong>：求隐变量的后验分布 <span class="math inline">\(P(z_i\vert x_i;\theta^{(0)})\)</span>，以第一次试验为例： <span class="math display">\[
 \begin{align}
-&amp;P(z_1=A\vert x_1,\theta^{(0)})=\frac{P(z_1=A,x_1\vert\theta^{(0)})}{P(x_1\vert \theta^{(0)})}=\frac{(0.6)^5\times (0.4)^5}{(0.6)^5\times (0.4)^5+(0.5)^{10}}=0.45\\
-&amp;P(z_1=B\vert x_1,\theta^{(0)})=1-P(z_1=A\vert x_1,\theta^{(0)})=0.55
+&amp;P(z_1=A\vert x_1;\theta^{(0)})=\frac{P(z_1=A,x_1;\theta^{(0)})}{P(x_1;\theta^{(0)})}=\frac{(0.6)^5\times (0.4)^5}{(0.6)^5\times (0.4)^5+(0.5)^{10}}=0.45\\
+&amp;P(z_1=B\vert x_1;\theta^{(0)})=1-P(z_1=A\vert x_1;\theta^{(0)})=0.55
 \end{align}
-\]</span> 为了书写方便，以下将 <span class="math inline">\(P(z_i=A\vert x_i,\theta^{(0)})\)</span> 和 <span class="math inline">\(P(z_i=B\vert x_i,\theta^{(0)})\)</span> 分别简记为 <span class="math inline">\(p_i\)</span> 和 <span class="math inline">\((1-p_i)\)</span>. 计算优化目标 <span class="math inline">\(Q(\theta,\theta^{(0)})\)</span>： <span class="math display">\[
+\]</span> 为了书写方便，以下将 <span class="math inline">\(P(z_i=A\vert x_i;\theta^{(0)})\)</span> 和 <span class="math inline">\(P(z_i=B\vert x_i;\theta^{(0)})\)</span> 分别简记为 <span class="math inline">\(p_i\)</span> 和 <span class="math inline">\((1-p_i)\)</span>. 计算优化目标 <span class="math inline">\(Q(\theta,\theta^{(0)})\)</span>： <span class="math display">\[
 \begin{align}
-Q(\theta,\theta^{(0)})&amp;=\sum_{i=1}^5\sum_{z_i\in\{A,B\}}P(z_i\vert x_i,\theta^{(0)})\log P(x_i,z_i\vert \theta)\\
-&amp;=\sum_{i=1}^5P(z_i=A\vert x_i,\theta^{(0)})\log P(x_i,z_i=A\vert \theta)+P(z_i=B\vert x_i,\theta^{(0)})\log P(x_i,z_i=B\vert \theta)\\
+Q(\theta,\theta^{(0)})&amp;=\sum_{i=1}^5\sum_{z_i\in\{A,B\}}P(z_i\vert x_i;\theta^{(0)})\log P(x_i,z_i;\theta)\\
+&amp;=\sum_{i=1}^5P(z_i=A\vert x_i;\theta^{(0)})\log P(x_i,z_i=A;\theta)+P(z_i=B\vert x_i;\theta^{(0)})\log P(x_i,z_i=B;\theta)\\
 &amp;=\sum_{i=1}^5 p_{i}\log\left[\theta_A^{x_i}(1-\theta_A)^{10-x_i}\right]+(1-p_i)\log\left[\theta_B^{x_i}(1-\theta_B)^{10-x_i}\right]
 \end{align}
 \]</span></p></li>
@@ -538,17 +535,17 @@ Q(\theta,\theta^{(0)})&amp;=\sum_{i=1}^5\sum_{z_i\in\{A,B\}}P(z_i\vert x_i,\thet
 </ol>
 <h2 id="应用高斯混合模型gmm">3 应用：高斯混合模型（GMM）</h2>
 <p>设有 <span class="math inline">\(K\)</span> 个 <span class="math inline">\(d\)</span> 维高斯分布： <span class="math display">\[
-\phi(x\vert \mu_k,\Sigma_k)=\frac{1}{(2\pi)^{d/2}|\Sigma_k|^{1/2} }\exp\left(-\frac{1}{2}(x-\mu_k)^T\Sigma_k^{-1}(x-\mu_k)\right),\quad k=1,\ldots,K
+\phi(x;\mu_k,\Sigma_k)=\frac{1}{(2\pi)^{d/2}|\Sigma_k|^{1/2} }\exp\left(-\frac{1}{2}(x-\mu_k)^T\Sigma_k^{-1}(x-\mu_k)\right),\quad k=1,\ldots,K
 \]</span> 样本 <span class="math inline">\(\{x_1,\ldots,x_n:x_i\in\mathbb R^d\}\)</span> 是由如下过程产生的：首先随机选取一个高斯分布（第 <span class="math inline">\(k\)</span> 个高斯分布被选中的概率是 <span class="math inline">\(\alpha_k\)</span>，其中 <span class="math inline">\(\sum_{k=1}^K\alpha_k=1\)</span>），再从被选中的高斯分布中采样。试估计这 <span class="math inline">\(K\)</span> 个高斯分布的参数 <span class="math inline">\(\theta=\{(\alpha_k,\mu_k,\Sigma_k)\mid k=1,\ldots,K\}\)</span>.</p>
 <p>和双硬币问题非常相似，这个问题中我们不知道每次采样究竟选取的是哪个高斯分布，所以可以定义隐变量 <span class="math inline">\(z_i\in\{1,\ldots,K\}\)</span> 表示第 <span class="math inline">\(i\)</span> 个样本来自哪个高斯分布。使用 EM 算法求解：</p>
 <p><strong>E-step</strong>：隐变量的后验分布为： <span class="math display">\[
-P(z_i=k\vert x_i,\theta^{(t)})=\frac{P(x_i,z_i=k\vert \theta^{(t)})}{P(x_i\vert\theta^{(t)})}=\frac{\alpha_k^{(t)}\phi(x_i\vert \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i\vert \mu_j^{(t)},\Sigma_j^{(t)})}
+P(z_i=k\vert x_i;\theta^{(t)})=\frac{P(x_i,z_i=k;\theta^{(t)})}{P(x_i;\theta^{(t)})}=\frac{\alpha_k^{(t)}\phi(x_i;\mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i;\mu_j^{(t)},\Sigma_j^{(t)})}
 \]</span></p>
 <p>为书写方便，以下将其简记为 <span class="math inline">\(p_{ik}\)</span>，注意这是一个常数。计算优化目标 <span class="math inline">\(Q(\theta,\theta^{(t)})\)</span>： <span class="math display">\[
 \begin{align}
-Q(\theta,\theta^{(t)})&amp;=\sum_{i=1}^n\sum_{k=1}^KP(z_i=k\vert x_i,\theta^{(t)})\log P(x_i,z_i=k\vert \theta)\\
-&amp;=\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\left(\alpha_k\phi(x_i\vert \mu_k,\Sigma_k)\right)\\
-&amp;=\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\left[\log\alpha_k+\log\phi(x_i\vert \mu_k,\Sigma_k)\right]
+Q(\theta,\theta^{(t)})&amp;=\sum_{i=1}^n\sum_{k=1}^KP(z_i=k\vert x_i;\theta^{(t)})\log P(x_i,z_i=k;\theta)\\
+&amp;=\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\left(\alpha_k\phi(x_i;\mu_k,\Sigma_k)\right)\\
+&amp;=\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\left[\log\alpha_k+\log\phi(x_i;\mu_k,\Sigma_k)\right]
 \end{align}
 \]</span> <strong>M-step</strong>（大计算量警告，不想看可略过）：</p>
 <p>首先解 <span class="math inline">\(\alpha\)</span>：结合条件 <span class="math inline">\(\sum_{k=1}^K\alpha_k=1\)</span>，去掉 <span class="math inline">\(Q(\theta,\theta^{(t)})\)</span> 中与 <span class="math inline">\(\alpha\)</span> 无关的部分，优化问题化作： <span class="math display">\[
@@ -568,7 +565,7 @@ L(\theta)=\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\alpha_k+\lambda\left(\sum_{k=1}^K\a
 \]</span> <br/></p>
 <p>然后解 <span class="math inline">\(\mu\)</span>：去掉 <span class="math inline">\(Q(\theta,\theta^{(t)})\)</span> 中与 <span class="math inline">\(\mu\)</span>​ 无关的部分，优化目标化作： <span class="math display">\[
 \begin{align}
-Q(\theta,\theta^{(t)})&amp;\to\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\phi(x_i\vert\mu_i,\Sigma_i)\\
+Q(\theta,\theta^{(t)})&amp;\to\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\phi(x_i;\mu_i,\Sigma_i)\\
 &amp;=\sum_{i=1}^n\sum_{k=1}^K p_{ik}\left(\log\frac{1}{ {(\sqrt{2\pi})}^d|\Sigma_k|^{1/2} }-\frac{1}{2}(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k)\right)\\
 &amp;\to\sum_{i=1}^n\sum_{k=1}^K p_{ik}\left(\frac{1}{2}(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k)\right)=\mathrel{\vcenter{:}}Q&#39;(\theta,\theta^{(t)})
 \end{align}
@@ -586,7 +583,7 @@ Q(\theta,\theta^{(t)})&amp;\to\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\phi(x_i\vert\mu
 \]</span> <br/></p>
 <p>最后解 <span class="math inline">\(\Sigma\)</span>：去掉 <span class="math inline">\(Q(\theta,\theta^{(t)})\)</span> 中与 <span class="math inline">\(\Sigma\)</span> 无关的部分，优化目标化作： <span class="math display">\[
 \begin{align}
-Q(\theta,\theta^{(t)})&amp;\to\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\phi(x_i\vert\mu_i,\Sigma_i)\\
+Q(\theta,\theta^{(t)})&amp;\to\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\phi(x_i;\mu_i,\Sigma_i)\\
 &amp;=\sum_{i=1}^n\sum_{k=1}^K p_{ik}\left(\log\frac{1}{ {(\sqrt{2\pi})}^d}-\frac{1}{2}\log|\Sigma_k|-\frac{(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k)}{2}\right)\\
 &amp;\to\sum_{i=1}^n\sum_{k=1}^K p_{ik}\left(\log|\Sigma_k|+(x_i-\mu_k)^T\Sigma_k^{-1}(x_i-\mu_k)\right)=\mathrel{\vcenter{:}}Q&#39;&#39;(\theta,\theta^{(t)})
 \end{align}
@@ -600,7 +597,7 @@ Q(\theta,\theta^{(t)})&amp;\to\sum_{i=1}^n\sum_{k=1}^Kp_{ik}\log\phi(x_i\vert\mu
 <ol type="1">
 <li><p>随机初始化模型参数 <span class="math inline">\(\alpha_k,\mu_k,\Sigma_k,\,k=1,\ldots,K\)</span>.</p></li>
 <li><p><strong>E-step</strong>：计算隐变量的概率分布： <span class="math display">\[
-p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i\vert \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i\vert \mu_j^{(t)},\Sigma_j^{(t)})}
+p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i;\mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}^K\alpha_j^{(t)}\phi(x_i;\mu_j^{(t)},\Sigma_j^{(t)})}
 \]</span></p></li>
 <li><p><strong>M-step</strong>：计算新参数： <span class="math display">\[
 \begin{align}
@@ -612,10 +609,10 @@ p_{ik}=\frac{\alpha_k^{(t)}\phi(x_i\vert \mu_k^{(t)},\Sigma_k^{(t)})}{\sum_{j=1}
 <li><p>迭代执行第 2、3 步。</p></li>
 </ol>
 <h2 id="一点注记">4 一点注记</h2>
-<p>EM 算法在 E-step 要求我们能表达出隐变量的后验概率 <span class="math inline">\(P(z\vert x,\theta)\)</span>，从上面两个例子（双硬币问题、GMM）可以看出，可以通过贝叶斯公式计算之： <span class="math display">\[
-P(z\vert x,\theta)=\frac{P(x,z\vert \theta)}{P(x\vert \theta)}=\frac{P(x\vert z,\theta)P(z\vert\theta)}{\sum_\hat z P(x\vert\hat z,\theta)P(\hat z\vert \theta)}
-\]</span> 所以说我们终究没有避开计算似然 <span class="math inline">\(P(x\vert \theta)\)</span>，<strong>因此要明晰的一点是，阻碍我们直接使用极大似然法的不是计算似然本身，而是解令对数似然偏导为零后得到的那个方程组</strong>。</p>
-<p>这自然带来了一个问题，如果似然本身就是 intractable 的，那么我们也无法计算后验概率 <span class="math inline">\(P(z\vert x,\theta)\)</span>，那么 EM 算法就做不下去了，典型的例子就是 VAE。至于 VAE 怎么解决这个问题的，留给后文吧。</p>
+<p>EM 算法在 E-step 要求我们能表达出隐变量的后验概率 <span class="math inline">\(p(z\vert x;\theta)\)</span>，从上面两个例子（双硬币问题、GMM）可以看出，可以通过贝叶斯公式计算之： <span class="math display">\[
+p(z\vert x;\theta)=\frac{p(x,z;\theta)}{p(x;\theta)}=\frac{p(x\vert z;\theta)p(z;\theta)}{\int p(x\vert\hat z;\theta)p(\hat z\vert \theta)\mathrm d\hat z}
+\]</span> 所以说我们终究没有避开计算似然 <span class="math inline">\(p(x;\theta)\)</span>，<strong>因此要明晰的一点是，阻碍我们直接使用极大似然法的不是计算似然本身，而是解令对数似然偏导为零后得到的那个方程组</strong>。</p>
+<p>这自然带来了一个问题，如果似然本身就是<strong>不可解 (intractable)</strong> 的，那么我们也无法计算后验概率 <span class="math inline">\(p(z\vert x;\theta)\)</span>，那么 EM 算法就做不下去了，典型的例子就是 VAE。至于 VAE 怎么解决这个问题的，留给后面的文章吧。</p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
