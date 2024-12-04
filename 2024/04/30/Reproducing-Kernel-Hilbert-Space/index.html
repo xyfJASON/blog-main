@@ -18,14 +18,14 @@
   
     <meta name="description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 引言 在学习 SVM 时，我们了解到了解决线性不可分问题的一种常用技巧——核方法。核方法的基本思想是，对于数据空间中线性不可分的样本，将它们映射到更高维度（甚至无穷维）的特征空间后就可以变成线性可分的。进一步地，我们引入了核函数来实现高维特征空间中的内积运算，而不需要先将数">
 <meta property="og:type" content="article">
-<meta property="og:title" content="再生核希尔伯特空间">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/30/%E5%86%8D%E7%94%9F%E6%A0%B8%E5%B8%8C%E5%B0%94%E4%BC%AF%E7%89%B9%E7%A9%BA%E9%97%B4/index.html">
+<meta property="og:title" content="Reproducing Kernel Hilbert Space">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="\[ \newcommand{\coloneqq}{\mathrel{\mathrel{\vcenter{:}}&#x3D;}} \] 引言 在学习 SVM 时，我们了解到了解决线性不可分问题的一种常用技巧——核方法。核方法的基本思想是，对于数据空间中线性不可分的样本，将它们映射到更高维度（甚至无穷维）的特征空间后就可以变成线性可分的。进一步地，我们引入了核函数来实现高维特征空间中的内积运算，而不需要先将数">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reproducing.png">
 <meta property="article:published_time" content="2024-04-30T12:32:43.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:02:17.031Z">
+<meta property="article:modified_time" content="2024-11-29T07:29:36.986Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,7 +33,7 @@
   
   
   
-  <title>再生核希尔伯特空间 - xyfJASON</title>
+  <title>Reproducing Kernel Hilbert Space - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -251,7 +251,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="再生核希尔伯特空间"></span>
+            <span id="subtitle" data-typed-text="Reproducing Kernel Hilbert Space"></span>
           
         </div>
 
@@ -322,7 +322,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">再生核希尔伯特空间</h1>
+            <h1 id="seo-header">Reproducing Kernel Hilbert Space</h1>
             
             
               <div class="markdown-body">
@@ -333,7 +333,7 @@
 <h2 id="引言">引言</h2>
 <p>在<a href="/blog-main/2024/01/03/Support-Vector-Machine/" title="Support Vector Machine">学习 SVM</a> 时，我们了解到了解决线性不可分问题的一种常用技巧——<strong>核方法</strong>。核方法的基本思想是，对于数据空间中线性不可分的样本，将它们映射到更高维度（甚至无穷维）的特征空间后就可以变成线性可分的。进一步地，我们引入了<strong>核函数</strong>来实现高维特征空间中的内积运算，而不需要先将数据点映射到特征空间后再算内积。</p>
 <p>在之前的文章中，我们直接给出了几个常用核函数，但并没有说明怎样的函数可以成为核函数，核函数对应着怎样的特征映射和怎样的特征空间。要回答这些问题就需要学习<strong>再生核希尔伯特空间</strong>的相关内容。这部分内容需要<strong>泛函分析</strong>的前置知识，包括希尔伯特空间、对偶空间、Riesz 表示定理等，读者可参考泛函分析相关书籍。</p>
-<h2 id="再生核希尔伯特空间">再生核希尔伯特空间</h2>
+<h2 id="再生核希尔伯特空间-rkhs">再生核希尔伯特空间 (RKHS)</h2>
 <h3 id="rkhs-的定义与性质">RKHS 的定义与性质</h3>
 <p><strong>定义（evaluation functional）</strong>：设 <span class="math inline">\(\mathcal H\)</span> 是非空集合 <span class="math inline">\(\mathcal X\)</span> 上的泛函构成的希尔伯特空间，即其每个元素都形如 <span class="math inline">\(f:\mathcal X\to\mathbb R\)</span>. 对于任一给定的 <span class="math inline">\(x\in\mathcal X\)</span>，称泛函： <span class="math display">\[
 \delta_x:\mathcal H\to\mathbb R,\quad f\mapsto \delta_x(f)=f(x)
@@ -488,8 +488,8 @@ k(x,y)=\langle\phi(x),\phi(y)\rangle_\mathcal H,\quad \forall x,y\in\mathcal X
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>再生核希尔伯特空间</div>
-      <div>https://xyfjason.github.io/blog-main/2024/04/30/再生核希尔伯特空间/</div>
+      <div>Reproducing Kernel Hilbert Space</div>
+      <div>https://xyfjason.github.io/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/</div>
     </div>
     <div class="license-meta">
       

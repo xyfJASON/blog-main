@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mmd.png">
 <meta property="article:published_time" content="2024-07-08T08:24:58.000Z">
-<meta property="article:modified_time" content="2024-08-26T11:59:24.905Z">
+<meta property="article:modified_time" content="2024-11-29T08:20:55.303Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -339,7 +339,7 @@ p=q\quad\iff\quad\mathbb E_p[f(x)]=\mathbb E_q[f(x)],\;\forall f\in C(\mathcal X
 <p>基于上述定理，当 <span class="math inline">\(p=q\)</span> 时总有 <span class="math inline">\(\mathbb E_{p}[f(x)]-\mathbb E_{q}[f(x)]=0\)</span>，因此用这个差值作为衡量指标似乎是一个不错的选择。不过这个差值还依赖于 <span class="math inline">\(f\)</span> 的选取，一个自然的想法是选择使得差值最大的那个 <span class="math inline">\(f\)</span>. 综上，我们得到了 MMD 的定义。</p>
 <p><strong>定义 (MMD)</strong>：设 <span class="math inline">\(\mathcal F\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的泛函的集合，<span class="math inline">\(p,q,X,Y\)</span> 如上文所定义。定义 MMD 为： <span class="math display">\[
 \text{MMD}[\mathcal F,p,q]\coloneqq\sup_{f\in\mathcal F}\Big(\mathbb E_{p}[f(x)]-\mathbb E_{q}[f(x)]\Big)
-\]</span> 当取 <span class="math inline">\(\mathcal F=C(\mathcal X)\)</span> 我们就回到了定理 1 的情形，但是对于实际求解而言，<span class="math inline">\(C(\mathcal X)\)</span> 的范围太大了。因此，MMD 作者将 <span class="math inline">\(\mathcal F\)</span> 限制为 universal <a href="/blog-main/2024/04/30/%E5%86%8D%E7%94%9F%E6%A0%B8%E5%B8%8C%E5%B0%94%E4%BC%AF%E7%89%B9%E7%A9%BA%E9%97%B4/" title="再生核希尔伯特空间">再生核希尔伯特空间 (RKHS)</a> 中的单位球。若加入 <span class="math inline">\(\mathcal X\)</span> 是紧的这一条件，那么 universal RKHS 在 <span class="math inline">\(C(\mathcal X)\)</span> 中在 <span class="math inline">\(L_\infty\)</span> 范数下是稠密的。这引出了下面的定理，表明限制 <span class="math inline">\(\mathcal F\)</span> 为 universal RKHS 中的单位球是可行的。</p>
+\]</span> 当取 <span class="math inline">\(\mathcal F=C(\mathcal X)\)</span> 我们就回到了定理 1 的情形，但是对于实际求解而言，<span class="math inline">\(C(\mathcal X)\)</span> 的范围太大了。因此，MMD 作者将 <span class="math inline">\(\mathcal F\)</span> 限制为 universal <a href="/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/" title="Reproducing Kernel Hilbert Space">再生核希尔伯特空间 (RKHS)</a> 中的单位球。若加入 <span class="math inline">\(\mathcal X\)</span> 是紧的这一条件，那么 universal RKHS 在 <span class="math inline">\(C(\mathcal X)\)</span> 中在 <span class="math inline">\(L_\infty\)</span> 范数下是稠密的。这引出了下面的定理，表明限制 <span class="math inline">\(\mathcal F\)</span> 为 universal RKHS 中的单位球是可行的。</p>
 <p><strong>定理 2</strong>：设 <span class="math inline">\(\mathcal X\)</span> 是一个紧的度量空间，<span class="math inline">\(\mathcal H\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的泛函构成的 universal RKHS，相应的再生核为 <span class="math inline">\(k(\cdot,\cdot)\)</span>. 设 <span class="math inline">\(\mathcal F\)</span> 为 <span class="math inline">\(\mathcal H\)</span> 中的单位球，则： <span class="math display">\[
  p=q\quad\iff\quad\text{MMD}[\mathcal F,p,q]=0
 \]</span> 选择 RKHS 的好处在于，利用再生核的再生性，我们能很方便地计算 MMD. 具体而言，设 <span class="math inline">\(\phi(x)=k(\cdot,x)\in\mathcal H\)</span>，则根据再生性有： <span class="math display">\[
