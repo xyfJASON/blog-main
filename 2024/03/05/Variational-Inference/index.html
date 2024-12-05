@@ -16,16 +16,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{z\sim p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference)。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期">
+    <meta name="description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference) 问题。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期望。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Variational Inference">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/03/05/Variational-Inference/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{z\sim p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference)。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期">
+<meta property="og:description" content="近似推断 在许多机器学习问题中，一个核心任务是给定观测数据 \(x\)，估计隐变量 \(z\) 的后验分布 \(p(z\vert x)\)，或者估计某函数 \(f(z)\) 关于后验分布的期望 \(\mathbb E_{p(z\vert x)}[f(z)]\). 这样的估计过程就是所谓的推断 (inference) 问题。例如，在 EM 算法中我们就需要估计完整数据的对数似然关于后验分布的期望。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vi.png">
 <meta property="article:published_time" content="2024-03-05T08:23:28.000Z">
-<meta property="article:modified_time" content="2024-12-04T07:43:25.322Z">
+<meta property="article:modified_time" content="2024-12-04T12:25:12.546Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -328,19 +328,19 @@
               <div class="markdown-body">
                 
                 <h2 id="近似推断">近似推断</h2>
-<p>在许多机器学习问题中，一个核心任务是给定观测数据 <span class="math inline">\(x\)</span>，估计隐变量 <span class="math inline">\(z\)</span> 的后验分布 <span class="math inline">\(p(z\vert x)\)</span>，或者估计某函数 <span class="math inline">\(f(z)\)</span> 关于后验分布的期望 <span class="math inline">\(\mathbb E_{z\sim p(z\vert x)}[f(z)]\)</span>. 这样的估计过程就是所谓的<strong>推断 (inference)</strong>。例如，在 <a href="/blog-main/2022/08/23/EM-Algorithm/" title="EM Algorithm">EM 算法</a>中我们就需要估计完整数据的对数似然关于后验分布的期望。</p>
-<p>然而，许多问题的后验分布是<strong>不可解 (intractable)</strong> 的，因为根据贝叶斯公式，后验分布为： <span class="math display">\[
-p(z\vert x)=\frac{p(x\vert z)p(z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\int_{z&#39;}p(x\vert z&#39;)p(z&#39;)\mathrm dz&#39;}
-\]</span> 其分母涉及对全体隐变量的积分，只有隐空间取值离散且维度较小时才有可能精确计算。因此，人们提出了许多<strong>近似推断 (approximate inference)</strong> 方法来解决这个问题。</p>
+<p>在许多机器学习问题中，一个核心任务是给定观测数据 <span class="math inline">\(x\)</span>，估计隐变量 <span class="math inline">\(z\)</span> 的后验分布 <span class="math inline">\(p(z\vert x)\)</span>，或者估计某函数 <span class="math inline">\(f(z)\)</span> 关于后验分布的期望 <span class="math inline">\(\mathbb E_{p(z\vert x)}[f(z)]\)</span>. 这样的估计过程就是所谓的<strong>推断 (inference)</strong> 问题。例如，在 <a href="/blog-main/2022/08/23/EM-Algorithm/" title="EM Algorithm">EM 算法</a>中我们就需要估计完整数据的对数似然关于后验分布的期望。</p>
+<p>然而，许多问题的后验分布是<strong>不可解 (intractable)</strong> 的，这是因为根据贝叶斯公式，后验分布为： <span class="math display">\[
+p(z\vert x)=\frac{p(x\vert z)p(z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\int p(x\vert z)p(z)\mathrm dz}
+\]</span> 其分母涉及对全体隐变量的积分，只有隐空间取值离散且维度较小时才有可能精确计算（比如高斯混合模型）。因此，人们提出了许多<strong>近似推断 (approximate inference)</strong> 方法来解决这个问题。</p>
 <p>近似推断方法可以大体分为两类——确定性方法和随机性方法。确定性方法的典型代表就是<strong>变分推断 (variational inference)</strong>，而随机性方法的典型代表是<strong>马尔可夫蒙特卡洛 (MCMC)</strong>. 本文主要探究变分推断方法。</p>
 <p><img src="inference.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
 <h2 id="变分推断">变分推断</h2>
 <p>设观测数据为 <span class="math inline">\(x\)</span>，隐变量为 <span class="math inline">\(z\)</span>，同 EM 算法的推导一样，为 <span class="math inline">\(z\)</span> 引入一个分布 <span class="math inline">\(q(z)\)</span>，则有： <span class="math display">\[
 \begin{align}
-\log p(x)&amp;=\int_zq(z)\log p(x)\mathrm dz\\
-&amp;=\int_zq(z)\log\frac{p(x,z)}{p(z\vert x)}\mathrm dz\\
-&amp;=\int_zq(z)\log\left(\frac{p(x,z)}{q(z)}\cdot\frac{q(z)}{p(z\vert x)}\right)\mathrm d z\\
-&amp;=\int_zq(z)\log\frac{p(x,z)}{q(z)}\mathrm dz+\int_zq(z)\log\frac{q(z)}{p(z\vert x)}\mathrm dz\\
+\log p(x)&amp;=\int q(z)\log p(x)\mathrm dz\\
+&amp;=\int q(z)\log\frac{p(x,z)}{p(z\vert x)}\mathrm dz\\
+&amp;=\int q(z)\log\left(\frac{p(x,z)}{q(z)}\cdot\frac{q(z)}{p(z\vert x)}\right)\mathrm d z\\
+&amp;=\int q(z)\log\frac{p(x,z)}{q(z)}\mathrm dz+\int q(z)\log\frac{q(z)}{p(z\vert x)}\mathrm dz\\
 &amp;=\mathcal L(q)+\text{KL}(q(z)\Vert p(z\vert x))
 \end{align}
 \]</span> 值得注意的是，这里没有将模型参数 <span class="math inline">\(\theta\)</span> 显式写出来。从频率派的角度而言，可以认为我们目前并不关心 <span class="math inline">\(\theta\)</span>，所以省略了；从贝叶斯的角度而言，可以认为参数被吸收进了隐变量 <span class="math inline">\(z\)</span> 之中，因而不再单独列出来。</p>
@@ -356,14 +356,14 @@ p(z\vert x)=\frac{p(x\vert z)p(z)}{p(x)}=\frac{p(x\vert z)p(z)}{\displaystyle\in
 q(z)=\prod_{i=1}^mq_i(z_i)
 \]</span></p>
 <blockquote>
-<p>注：其实 <span class="math inline">\(z_i\)</span> 不一定真的是一个分量，也可以是一些分量形成的一个组，但本质一样的，不影响推导。</p>
+<p>注：<span class="math inline">\(z_i\)</span> 也可以是一些分量形成的一个组，但本质一样的，不影响推导。</p>
 </blockquote>
 <p>由于这种假设来源于统计力学中的平均场理论 (mean-field theory)，因此称该假设下的变分推断为<strong>平均场变分推断</strong>。</p>
 <p>将上式代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
 \begin{align}
-\mathcal L(q)&amp;=\int_zq(z)\Big(\log p(x,z)-\log q(z)\Big)\mathrm dz\\
-&amp;=\int_z\prod_{i=1}^mq_i(z_i)\bigg(\log p(x,z)-\sum_{k=1}^m\log q_k(z_k)\bigg)\mathrm dz\\
-&amp;=\int_z\prod_{i=1}^mq_i(z_i)\log p(x,z)\mathrm dz-\int_z\prod_{i=1}^mq_i(z_i)\sum_{k=1}^m\log q_k(z_k)\mathrm dz
+\mathcal L(q)&amp;=\int q(z)\Big(\log p(x,z)-\log q(z)\Big)\mathrm dz\\
+&amp;=\int \prod_{i=1}^mq_i(z_i)\bigg(\log p(x,z)-\sum_{k=1}^m\log q_k(z_k)\bigg)\mathrm dz\\
+&amp;=\int \prod_{i=1}^mq_i(z_i)\log p(x,z)\mathrm dz-\int \prod_{i=1}^mq_i(z_i)\sum_{k=1}^m\log q_k(z_k)\mathrm dz
 \end{align}
 \]</span> 为了最大化 <span class="math inline">\(L(q)\)</span>，可以逐个优化 <span class="math inline">\(q_j(z_j)\)</span> 并不断迭代。为此，固定 <span class="math inline">\(z_1,\ldots,z_{j-1},z_{j+1},\ldots,z_m\)</span> 不动，将 <span class="math inline">\(z_j\)</span> 视为变量，则： <span class="math display">\[
 \begin{align}
@@ -384,33 +384,33 @@ q^\ast_j(z_j)=\tilde p(x,z_j)\propto \exp(\mathbb E_{i\neq j}[\log p(x,z)])
 <h3 id="随机梯度变分推断">随机梯度变分推断</h3>
 <p>对于泛函优化问题，一个常用的方法是将作为自变量的那个函数<strong>参数化</strong>，这样优化对象就从函数变成了参数，问题从而转化成了一般的函数优化问题。在变分推断的语境中，就是将 <span class="math inline">\(q(z)\)</span> 限制为一个以 <span class="math inline">\(\phi\)</span> 为参数的分布族 <span class="math inline">\(q_\phi(z)\)</span>，那么此时 <span class="math inline">\(\mathcal L(q)\)</span> 就变成了关于 <span class="math inline">\(\phi\)</span> 的函数 <span class="math inline">\(\mathcal L(\phi)\)</span> ，于是使用随机梯度下降即可求解。这就是<strong>随机梯度变分推断 (SGVI)</strong> 或<strong>随机梯度贝叶斯方法 (SGVB)</strong>。</p>
 <p>具体而言，将 <span class="math inline">\(q_\phi(z)\)</span> 代入 <span class="math inline">\(\mathcal L(q)\)</span> 得： <span class="math display">\[
-\mathcal L(\phi)=\int_zq_\phi(z)\log\frac{p(x,z)}{q_\phi(z)}\mathrm dz=\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
-\]</span> 对参数 <span class="math inline">\(\phi\)</span> 求梯度： <span class="math display">\[
+\mathcal L(\phi)=\int q_\phi(z)\log\frac{p(x,z)}{q_\phi(z)}\mathrm dz=\int q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
+\]</span> 计算参数 <span class="math inline">\(\phi\)</span> 的梯度： <span class="math display">\[
 \begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_zq_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\int_z\nabla_\phi\Big[q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\Big]\mathrm dz\\
-&amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz+\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
+\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
+&amp;=\int \nabla_\phi\Big[q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\Big]\mathrm dz\\
+&amp;=\int \nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz+\int q_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz
 \end{align}
 \]</span> 其中第二项： <span class="math display">\[
-\int_zq_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz=-\int_z\nabla_\phi q_\phi(z)\mathrm dz=-\nabla_\phi\int_zq_\phi(z)\mathrm dz=0
+\int q_\phi(z)\nabla_\phi\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz=-\int \nabla_\phi q_\phi(z)\mathrm dz=-\nabla_\phi\int q_\phi(z)\mathrm dz=0
 \]</span> 于是只剩下第一项。再利用 <span class="math inline">\(\nabla_\phi q_\phi(z)=q_\phi(z)\nabla_\phi \log q_\phi(z)\)</span>，可以将第一项写作期望的形式： <span class="math display">\[
 \begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\int_z\nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\int_z q_\phi(z)\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
+\nabla_\phi\mathcal L(\phi)&amp;=\int \nabla_\phi q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
+&amp;=\int  q_\phi(z)\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
 &amp;=\mathbb E_{q_\phi(z)}\Big[\nabla_\phi\log q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\Big]
 \end{align}
-\]</span> 训练时用采样近似期望，这样就估计出了梯度。然而，用这种方式估计的梯度的方差很大，导致训练不稳定，因此并不实用。</p>
+\]</span> 训练时用蒙特卡洛采样估计期望，这样就估计出了梯度。然而，用这种方式估计的梯度的方差很大，导致训练不稳定，因此并不实用。</p>
 <p>一种常见的解决方案是<strong>重参数化技巧</strong>，相关内容在<a href="/blog-main/2022/09/06/Score-Function-Estimator-and-Reparameterization-Trick/" title="Score Function Estimator and Reparameterization Trick">之前的文章</a>中有详细介绍。对于特定的分布（例如高斯分布或离散类别分布），我们可以构造函数 <span class="math inline">\(g_\phi\)</span> 使得 <span class="math inline">\(z=g_\phi(\epsilon)\)</span>，满足 <span class="math inline">\(z\sim q_\phi(z)\)</span> 并且 <span class="math inline">\(\epsilon\sim p(\epsilon)\)</span>，其中 <span class="math inline">\(p(\epsilon)\)</span> 是一个简单的分布。于是有： <span class="math display">\[
 \mathrm dz=g&#39;_\phi(\epsilon)\mathrm d\epsilon,\quad q_\phi(z)=\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)
 \]</span> 那么： <span class="math display">\[
 \begin{align}
-\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int_z q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
-&amp;=\nabla_\phi\int_z\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
+\nabla_\phi\mathcal L(\phi)&amp;=\nabla_\phi\int  q_\phi(z)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
+&amp;=\nabla_\phi\int \frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,z)-\log q_\phi(z)\Big)\mathrm dz\\
 &amp;=\nabla_\phi\int_\epsilon\frac{1}{g&#39;_\phi(\epsilon)}p(\epsilon)\Big(\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big)g&#39;_\phi(\epsilon)\mathrm d\epsilon\\
 &amp;=\nabla_\phi\int_\epsilon p(\epsilon)\Big(\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big)\mathrm d\epsilon\\
 &amp;=\nabla_\phi\mathbb E_{p(\epsilon)}\Big[\log p(x,g_\phi(\epsilon))-\log q_\phi(g_\phi(\epsilon))\Big]
 \end{align}
-\]</span> 用采样近似期望即可估计出梯度。</p>
+\]</span> 用蒙特卡洛采样估计期望即可估计出梯度。</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
