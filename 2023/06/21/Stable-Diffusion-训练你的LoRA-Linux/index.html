@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
   <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -25,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/lora.png">
 <meta property="article:published_time" content="2023-06-21T09:08:13.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:00:58.527Z">
+<meta property="article:modified_time" content="2024-08-26T12:01:00.000Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="AIGC">
@@ -52,7 +55,7 @@
 <!-- 主题依赖的图标库，不要自行修改 -->
 <!-- Do not modify the link that theme dependent icons -->
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
 
 
 
@@ -73,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -368,7 +371,7 @@
 <table>
 
 <thead>
-<tr class="header">
+<tr>
 <th>Option Name</th>
 <th>Example Setting</th>
 <th><code>[general]</code></th>
@@ -378,7 +381,7 @@
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>batch_size</code></td>
 <td><code>1</code></td>
 <td>o</td>
@@ -386,7 +389,7 @@
 <td></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>enable_bucket</code></td>
 <td><code>true</code></td>
 <td>o</td>
@@ -394,7 +397,7 @@
 <td></td>
 <td>开启 bucket 来支持不同长宽比的训练图片</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>resolution</code></td>
 <td><code>256</code>, <code>[512, 512]</code></td>
 <td>o</td>
@@ -402,7 +405,7 @@
 <td></td>
 <td>训练时的图片分辨率</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>flip_aug</code></td>
 <td><code>true</code></td>
 <td>o</td>
@@ -410,7 +413,7 @@
 <td>o</td>
 <td>水平翻转数据增强，要求训练目标对左右方向不敏感</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>random_crop</code></td>
 <td><code>false</code></td>
 <td>o</td>
@@ -418,7 +421,7 @@
 <td>o</td>
 <td>随机裁剪数据增强</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>color_aug</code></td>
 <td><code>false</code></td>
 <td>o</td>
@@ -426,7 +429,7 @@
 <td>o</td>
 <td>颜色数据增强，要求训练目标对颜色不敏感</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>shuffle_caption</code></td>
 <td><code>true</code></td>
 <td>o</td>
@@ -434,7 +437,7 @@
 <td>o</td>
 <td>打乱文本描述</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>keep_tokens</code></td>
 <td><code>2</code></td>
 <td>o</td>
@@ -442,7 +445,7 @@
 <td>o</td>
 <td>保持前多少个 token 顺序不被打乱</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>num_repeats</code></td>
 <td><code>10</code></td>
 <td>o</td>
@@ -456,7 +459,7 @@
 <table>
 
 <thead>
-<tr class="header">
+<tr>
 <th>Option name</th>
 <th>Example</th>
 <th><code>[general]</code></th>
@@ -466,7 +469,7 @@
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>image_dir</code></td>
 <td><code>‘C:\hoge’</code></td>
 <td>-</td>
@@ -474,7 +477,7 @@
 <td>o (required)</td>
 <td>图片目录路径，必需项，图片应直接存在该目录下</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>caption_extension</code></td>
 <td><code>".txt"</code></td>
 <td>o</td>
@@ -482,7 +485,7 @@
 <td>o</td>
 <td>文本描述文件的扩展名</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>class_tokens</code></td>
 <td><code>“sks girl”</code></td>
 <td>-</td>
@@ -490,7 +493,7 @@
 <td>o</td>
 <td>标识符+类别</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>is_reg</code></td>
 <td><code>false</code></td>
 <td>-</td>
@@ -504,7 +507,7 @@
 <table>
 
 <thead>
-<tr class="header">
+<tr>
 <th>Option name</th>
 <th>Example</th>
 <th><code>[general]</code></th>
@@ -514,7 +517,7 @@
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>image_dir</code></td>
 <td><code>‘C:\hoge’</code></td>
 <td>-</td>
@@ -522,7 +525,7 @@
 <td>o</td>
 <td>图片目录路径，图片应直接存在该目录下</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>metadata_file</code></td>
 <td><code>'C:\piyo\piyo_md.json'</code></td>
 <td>-</td>
@@ -697,7 +700,7 @@
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
+                    <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
               
@@ -838,7 +841,6 @@
     <div class="footer-content">
        <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
     </div>
-  
   
   
   

@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
   <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -25,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/unsplash_hole.jpg">
 <meta property="article:published_time" content="2021-10-18T05:42:06.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:02:33.265Z">
+<meta property="article:modified_time" content="2024-08-26T12:02:34.000Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer vision">
 <meta property="article:tag" content="deep learning">
@@ -51,7 +54,7 @@
 <!-- 主题依赖的图标库，不要自行修改 -->
 <!-- Do not modify the link that theme dependent icons -->
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
 
 
 
@@ -72,7 +75,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -597,7 +600,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <table>
 
 <thead>
-<tr class="header">
+<tr>
 <th><strong>方法</strong></th>
 <th><strong>insight</strong></th>
 <th><strong>mask</strong> <strong>形状</strong></th>
@@ -607,7 +610,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>Context Encoder (L2 + Adv)</strong> <br>Context Encoders: Feature Learning by Inpainting</td>
 <td>Encoder-decoder 架构 指出仅 L2 模糊的原因，用 GAN 来细化结果<br>channel-wise fc 获取全局信息</td>
 <td>64x64 rect</td>
@@ -615,7 +618,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L2 loss (only in masked region)</td>
 <td>Adversarial loss (only in masked region)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Context Encoder (only L2)</strong> <br>Context Encoders: Feature Learning by Inpainting</td>
 <td></td>
 <td>multiple holes</td>
@@ -623,7 +626,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L2 loss (only in masked region)</td>
 <td>无</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>GLCIC (aka. GLGAN)</strong> <br>Globally and Locally Consistent Image Completion</td>
 <td>Global + Local discriminators FCN 使得输入大小可变<br>fc -&gt; dilated conv</td>
 <td>train: one random rect，width &amp; height ~ [96, 128]（由训练方法和 local discriminator 架构决定的）<br>test: multiple holes</td>
@@ -631,7 +634,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L2 loss (only in masked region)<br>Global discriminator (adversarial loss)</td>
 <td>Local discriminator (adversarial loss)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>PGGAN</strong> <br>Patch-Based Image Inpainting with Generative Adversarial Networks</td>
 <td>Local discriminator -&gt; PatchGAN</td>
 <td>free</td>
@@ -639,7 +642,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L1 loss<br>Global GAN (adversarial loss)</td>
 <td>PatchGAN (adversarial loss)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Shift-Net</strong> <br>Shift-Net: Image Inpainting via Deep Feature Rearrangement</td>
 <td>Shift-connect layer<br>Guidance loss</td>
 <td>free</td>
@@ -647,7 +650,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L1 loss<br>Guidance loss</td>
 <td>PatchGAN (adversarial loss)<br>Shift-connection</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Contextual Attention</strong> <strong>(DeepFill v1)</strong> <br>Generative Image Inpainting with Contextual Attention</td>
 <td>Contextual Attention<br>Spatially discounted L1 loss<br>Coarse-to-fine 二级结构</td>
 <td>train: one random rect<br>test: multiple holes</td>
@@ -655,7 +658,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>Spatially discounted L1 loss (weighted L1 loss)<br>Global WGAN-GP loss</td>
 <td>Contextual Attention<br>Local WGAN-GP loss</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>GMCNN</strong> <br>Image Inpainting via Generative Multi-column Convolutional Neural Networks</td>
 <td>Multi-column<br>ID-MRF loss</td>
 <td>train: 256x256 rect</td>
@@ -663,7 +666,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>Spatially Variant Reconstruction loss (weighted L1 loss)<br>Global WGAN-GP loss</td>
 <td>Local WGAN-GP loss<br>ID-MRF loss</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>PartialConv</strong> <br>Image Inpainting for Irregular Holes Using Partial Convolutions</td>
 <td>Partial Convolution<br>No discriminator</td>
 <td>free</td>
@@ -671,7 +674,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L1 loss<br>Perceptual loss<br>TV loss</td>
 <td>Perceptual loss<br>Style loss</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>EdgeConnect</strong> <br>EdgeConnect: Generative Image Inpainting with Adversarial Edge Learning</td>
 <td>lines first, color next</td>
 <td>free</td>
@@ -679,7 +682,7 @@ L_{FM}=\mathbb E\left[\sum_{i=1}^L\frac{1}{N_i}||D_1^{(i)}(C_{gt})-D_1^{(i)}(C_{
 <td>L1 loss<br>Perceptual loss</td>
 <td>Edge prior<br>Perceptual loss<br>Style loss<br>Adversarial loss (D2)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>DeepFill v2</strong> <br>Free-Form Image Inpainting with Gated Convolution</td>
 <td>Gated Convolution</td>
 <td>free</td>
@@ -859,7 +862,7 @@ m&#39;=\sigma\left(m&#39;_{Partial}+\text{conv}(M)\right)
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
+                    <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
               
@@ -1000,7 +1003,6 @@ m&#39;=\sigma\left(m&#39;_{Partial}+\text{conv}(M)\right)
     <div class="footer-content">
        <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
     </div>
-  
   
   
   

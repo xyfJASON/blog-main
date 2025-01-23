@@ -7,8 +7,11 @@
 
 <head>
   <meta charset="UTF-8">
+
   <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
   <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   
@@ -25,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vq.png">
 <meta property="article:published_time" content="2023-03-29T07:26:12.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:01:27.326Z">
+<meta property="article:modified_time" content="2024-08-26T12:01:28.000Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -50,7 +53,7 @@
 <!-- 主题依赖的图标库，不要自行修改 -->
 <!-- Do not modify the link that theme dependent icons -->
 
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
 
 
 
@@ -71,7 +74,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -374,7 +377,7 @@ e_i=\frac{1}{n_i}\sum_{j=1}^{n_i} z_{i,j}
           </div>
 <h3 id="prior-learning">Prior Learning</h3>
 <p>VQ-VAE 训练结束后，我们就可以用它重构输入图像了。但是怎么直接生成新图像呢？</p>
-<p>在说明这一点之前，我们必须要对 VQ-VAE 的隐空间有充分的理解。设输入图像 <span class="math inline">\(x\in\mathbb R^{3\times H\times W}\)</span>，其编码器输出为 <span class="math inline">\(z_e(x)\in\mathbb R^{c\times h\times w}\)</span>，量化操作的索引矩阵记作 <span class="math inline">\(\text{index}(x)\in\mathbb N^{h\times w}\)</span>. 一个误解是 VQ-VAE 的隐空间是所有 <span class="math inline">\(\text{index}(x)\)</span> 构成的 <span class="math inline">\(\mathbb N^{h\times w}\)</span>，但这是错误的！在第一小节中我们说过，隐空间其实是一个个索引构成的 <span class="math inline">\(\mathbb N\)</span>. 这说明，VQ-VAE 并没有对索引矩阵中<strong>索引之间的关系</strong>进行建模，如果我们直接随机均匀采样 <span class="math inline">\(h\times w\)</span> 个索引凑在一起组成一张索引矩阵，它大概率并不对应一个自然图像的编码结果，所以也不能生成一个自然图像。</p>
+<p>在说明这一点之前，我们必须要对 VQ-VAE 的隐空间有充分的理解。设输入图像 <span class="math inline">\(x\in\mathbb R^{3\times  H\times W}\)</span>，其编码器输出为 <span class="math inline">\(z_e(x)\in\mathbb R^{c\times h\times w}\)</span>，量化操作的索引矩阵记作 <span class="math inline">\(\text{index}(x)\in\mathbb N^{h\times w}\)</span>. 一个误解是 VQ-VAE 的隐空间是所有 <span class="math inline">\(\text{index}(x)\)</span> 构成的 <span class="math inline">\(\mathbb N^{h\times w}\)</span>，但这是错误的！在第一小节中我们说过，隐空间其实是一个个索引构成的 <span class="math inline">\(\mathbb N\)</span>. 这说明，VQ-VAE 并没有对索引矩阵中<strong>索引之间的关系</strong>进行建模，如果我们直接随机均匀采样 <span class="math inline">\(h\times w\)</span> 个索引凑在一起组成一张索引矩阵，它大概率并不对应一个自然图像的编码结果，所以也不能生成一个自然图像。</p>
 <p>因此，为了生成新图像，我们必须学习一个新的生成模型，对索引之间的分布做建模。鉴于索引是离散的，一个自然的选择就是 PixelCNN. 如果是音频数据，那么就用 WaveNet. 当然，有兴趣也可以尝试其他生成模型。</p>
 <h3 id="index-collapse-perplexity">Index Collapse &amp; Perplexity</h3>
 <p>虽然作者声称 VQ-VAE 不会遭遇 VAE 的 posterior collapse 问题，但我在实践中发现，它很容易遭遇 index collapse——编码器输出的所有特征向量全部被量化到一个或少数几个 codes 上。从某种意义上说，这也算是一种 posterior collapse 吧。起初我以为自己的实现有误，但一番搜索发现连 <a target="_blank" rel="noopener" href="https://github.com/karpathy/deep-vector-quantization">Andrej Karpathy</a> 也受其困扰。一个常见的解决方案是用 K-Means 初始化 codebook，但我实测发现用处不大😅，而<strong>调小学习率</strong>会有帮助。</p>
@@ -437,7 +440,7 @@ q(x_{t-1}\vert x_t,x_0)=\frac{q(x_t\vert x_{t-1},x_0)q(x_{t-1}\vert x_0)}{q(x_t\
 <table>
 
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: center;">Model</th>
 <th style="text-align: center;">Stage-1<br/>(latent space learning)</th>
 <th style="text-align: center;">Latent Space</th>
@@ -445,25 +448,25 @@ q(x_{t-1}\vert x_t,x_0)=\frac{q(x_t\vert x_{t-1},x_0)q(x_{t-1}\vert x_0)}{q(x_t\
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: center;">VQ-VAE</td>
 <td style="text-align: center;">VQ-VAE</td>
 <td style="text-align: center;">Discrete<br/>(after quantization)</td>
 <td style="text-align: center;">Autoregressive<br/>PixelCNN</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: center;">VQGAN</td>
 <td style="text-align: center;">VQGAN<br/>(VQ-VAE + GAN + Perceptual Loss)</td>
 <td style="text-align: center;">Discrete<br/>(after quantization)</td>
 <td style="text-align: center;">Autoregressive<br/>GPT-2 (Transformer)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: center;">VQ-Diffusion</td>
 <td style="text-align: center;">VQ-VAE</td>
 <td style="text-align: center;">Discrete<br/>(after quantization)</td>
 <td style="text-align: center;">Discrete Diffusion</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: center;">Latent Diffusion<br/>(VQ-reg)</td>
 <td style="text-align: center;">VAE or VQGAN</td>
 <td style="text-align: center;">Continuous<br/>(before quantization)</td>
@@ -567,7 +570,7 @@ q(x_{t-1}\vert x_t,x_0)=\frac{q(x_t\vert x_{t-1},x_0)q(x_{t-1}\vert x_0)}{q(x_t\
               
                 <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
                   <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
+                    <i class="iconfont icon-cc-by"></i>
                   </span>
                 </a>
               
@@ -708,7 +711,6 @@ q(x_{t-1}\vert x_t,x_0)=\frac{q(x_t\vert x_{t-1},x_0)q(x_{t-1}\vert x_0)}{q(x_t\
     <div class="footer-content">
        <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
     </div>
-  
   
   
   
