@@ -19,26 +19,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="在 Score-Based Generative Models 一文中，我们用到了 Langevin dynamics 进行采样，但没有解释其原理。另外，在 Elucidated Diffusion Models 一文中，我们提到常用的扩散 SDE 和 PF ODE 其实可以推广为一个由 PF ODE 与 Langevin diffusion SDE 组合而成的广义 SDE. 由此可见，Lange">
+    <meta name="description" content="一维情形 考察如下随机微分方程 (SDE)： \[ X_t&#x3D;f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t \] 其中 \(W_t\) 是维纳过程，\(f(X_t,t)\) 是 drift 系数，\(g(X_t,t)\) 是 diffusion 系数。Fokker-Planck Equation 也称作 Kolmogorov Forward Equation (KF">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Langevin Dynamics">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/06/21/Langevin-Dynamics/index.html">
+<meta property="og:title" content="Fokker-Planck Equation">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2025/02/20/Fokker-Planck-Equation/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="在 Score-Based Generative Models 一文中，我们用到了 Langevin dynamics 进行采样，但没有解释其原理。另外，在 Elucidated Diffusion Models 一文中，我们提到常用的扩散 SDE 和 PF ODE 其实可以推广为一个由 PF ODE 与 Langevin diffusion SDE 组合而成的广义 SDE. 由此可见，Lange">
+<meta property="og:description" content="一维情形 考察如下随机微分方程 (SDE)： \[ X_t&#x3D;f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t \] 其中 \(W_t\) 是维纳过程，\(f(X_t,t)\) 是 drift 系数，\(g(X_t,t)\) 是 diffusion 系数。Fokker-Planck Equation 也称作 Kolmogorov Forward Equation (KF">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/langevin-dynamics.png">
-<meta property="article:published_time" content="2024-06-21T05:36:18.000Z">
-<meta property="article:modified_time" content="2025-02-20T06:03:19.879Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fokker-planck.png">
+<meta property="article:published_time" content="2025-02-20T03:37:41.000Z">
+<meta property="article:modified_time" content="2025-02-20T05:58:18.690Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="machine learning">
 <meta property="article:tag" content="stochastic process">
-<meta property="article:tag" content="physics">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/langevin-dynamics.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fokker-planck.png">
   
   
   
-  <title>Langevin Dynamics - xyfJASON</title>
+  <title>Fokker-Planck Equation - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -250,13 +248,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/langevin-dynamics.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/fokker-planck.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Langevin Dynamics"></span>
+            <span id="subtitle" data-typed-text="Fokker-Planck Equation"></span>
           
         </div>
 
@@ -267,8 +265,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2024-06-21 13:36" pubdate>
-          2024年6月21日 下午
+        <time datetime="2025-02-20 11:37" pubdate>
+          2025年2月20日 中午
         </time>
       </span>
     
@@ -279,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          1.2k 字
         
       </span>
     
@@ -290,7 +288,7 @@
         
         
         
-          16 分钟
+          10 分钟
         
       </span>
     
@@ -327,124 +325,82 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Langevin Dynamics</h1>
+            <h1 id="seo-header">Fokker-Planck Equation</h1>
             
             
               <div class="markdown-body">
                 
-                <p>在 <a href="/blog-main/2022/10/13/Score-Based-Generative-Models/" title="Score-Based Generative Models">Score-Based Generative Models</a> 一文中，我们用到了 Langevin dynamics 进行采样，但没有解释其原理。另外，在 <a href="/blog-main/2024/02/20/Elucidated-Diffusion-Models/" title="Elucidated Diffusion Models">Elucidated Diffusion Models</a> 一文中，我们提到常用的扩散 SDE 和 PF ODE 其实可以推广为一个由 PF ODE 与 Langevin diffusion SDE 组合而成的广义 SDE. 由此可见，Langevin dynamics 在扩散模型的研究中有着举足轻重的地位，因此本文探究其背后的原理。</p>
-<h2 id="物理背景">物理背景</h2>
-<p>Langevin dynamics 脱胎于经典的布朗运动模型：将花粉放入水杯之中，则花粉会因受到水分子的无规律撞击而做布朗运动，如图所示：</p>
-<p><img src="brown.gif" srcset="/blog-main/logo/imageloading.png" lazyload width=25% /></p>
-<p>本节将通过分析该模型下的牛顿第二定律、功能关系与 Langevin 方程，推导出 Langevin diffusion SDE，最后借助 Fokker-Planck 方程找到该 SDE 的平稳分布，为下一节基于 Langevin dynamics 的采样方法做准备。</p>
-<h3 id="牛顿第二定律">牛顿第二定律</h3>
-<p>设花粉的质量为 <span class="math inline">\(m\)</span>，在 <span class="math inline">\(t\)</span> 时刻位移为 <span class="math inline">\(\mathbf x=\mathbf x(t)\)</span>，受到的瞬时合力为 <span class="math inline">\(\mathbf F=\mathbf F(\mathbf x(t),t)\)</span>，则根据<strong>牛顿第二定律</strong>，有： <span class="math display">\[
-\mathbf F(\mathbf x,t)=m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}\tag{1}\label{newton}
-\]</span></p>
-<h3 id="功能关系">功能关系</h3>
-<p>根据<strong>动能定理</strong>，合外力对物体做的功等于物体动能变化量，因此在一个微小时间 <span class="math inline">\(\Delta t\)</span> 内，有： <span class="math display">\[
-\langle\mathbf F(\mathbf x,t),\Delta\mathbf x\rangle=\Delta E(\mathbf x)
-\]</span> 其中 <span class="math inline">\(\Delta\mathbf x\)</span> 表示这一段时间内花粉的位移，<span class="math inline">\(E(\mathbf x)\)</span> 表示花粉具有的动能。取 <span class="math inline">\(\Delta t\to 0\)</span> 得： <span class="math display">\[
-\langle \mathbf F(\mathbf x,t),\mathrm d\mathbf x\rangle=\mathrm dE(\mathbf x)\implies \mathbf F(\mathbf x,t)=\nabla E(\mathbf x)
-\]</span> 现在把整个水杯看作一个系统，则系统不受外力作用且只有保守力做功，因此整个系统<strong>机械能守恒</strong>，即： <span class="math display">\[
-E(\mathbf x)+U(\mathbf x)\equiv\text{const},\quad \forall\,\mathbf x
-\]</span> 其中 <span class="math inline">\(U(\mathbf x)\)</span> 表示系统的势能。这意味着 <span class="math inline">\(\nabla E(\mathbf x)+\nabla U(\mathbf x)\equiv 0\)</span>，因此： <span class="math display">\[
-\mathbf F(\mathbf x,t)=\nabla E(\mathbf x)=-\nabla U(\mathbf x)\tag{2}\label{potential}
-\]</span></p>
-<h3 id="langevin-方程">Langevin 方程</h3>
-<p>花粉的运动还可以用 <strong>Langevin 方程</strong>描述： <span class="math display">\[
-m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}+\boldsymbol\xi(t),\quad \boldsymbol\xi(t)\sim\mathcal N(\mathbf0,\sigma^2\mathbf I)\tag{3}\label{langevin}
-\]</span> Langevin 方程将花粉受到的力分为两部分：</p>
-<ul>
-<li><span class="math inline">\(-\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}\)</span> 表示与速度大小正相关、方向相反的阻尼力，其中 <span class="math inline">\(\gamma\)</span> 为阻尼系数，由 Stokes' Law 给出；</li>
-<li><span class="math inline">\(\boldsymbol\xi(t)\)</span>​ 表示粒子受周围水分子无规律撞击的随机涨落力，是一个零均值正态随机变量。</li>
-</ul>
-<h3 id="langevin-sde">Langevin SDE</h3>
-<p>联立 <span class="math inline">\(\eqref{newton},\eqref{potential},\eqref{langevin}\)</span> 式得： <span class="math display">\[
-\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}=\nabla U(\mathbf x)+\boldsymbol\xi(t)
-\]</span></p>
-<p>为了将上式写作 SDE 的形式，引入标准维纳过程 <span class="math inline">\(\mathbf w(t)\)</span> 代替 <span class="math inline">\(\boldsymbol\xi(t)\)</span>，那么有 <span class="math inline">\(\frac{\mathrm d\mathbf w(t)}{\mathrm dt}=\frac{\boldsymbol\xi(t)}{\sigma}\)</span>，代入得：</p>
-<p><span class="math display">\[
-\gamma\frac{\mathrm d\mathbf x(t)}{\mathrm dt}=\nabla U(\mathbf x)+\sigma\frac{\mathrm d\mathbf w(t)}{\mathrm dt}\implies
-\mathrm d\mathbf x=\frac{1}{\gamma}\nabla U(\mathbf x)\mathrm dt+\frac{\sigma}{\gamma}\mathrm d\mathbf w
-\]</span> 注意到 <span class="math inline">\(\gamma\)</span> 是一个物理常数，简便起见不妨抛开其实际物理意义，直接令 <span class="math inline">\(\gamma=-1\)</span> 得： <span class="math display">\[
-\mathrm d\mathbf x=-\nabla U(\mathbf x)\mathrm dt+\sigma\mathrm d\mathbf w
-\]</span> 进一步地，为了后续形式上的简便，将参数 <span class="math inline">\(\sigma\)</span> 换成 <span class="math inline">\(\sqrt{2}\sigma\)</span> 得： <span class="math display">\[
-\mathrm d\mathbf x=-\nabla U(\mathbf x)\mathrm dt+\sqrt{2}\sigma\mathrm d\mathbf w\tag{5}\label{diffsde}
-\]</span> 称上式为 <strong>Langevin diffusion SDE</strong>. 下图模拟了单独一个粒子依 Langevin diffusion SDE 运动的动态：</p>
-<p><img src="single_particles.gif" srcset="/blog-main/logo/imageloading.png" lazyload width=35% alt="https://odie2630463.github.io/2020/09/28/langevin/" /></p>
-<h3 id="langevin-sde-的平稳分布">Langevin SDE 的平稳分布</h3>
-<p>考虑一堆依 Langevin diffusion SDE 运动的粒子，初始时它们服从某种概率分布，那么随运动进行它们的概率分布也将随时间变化。我们感兴趣的是，当运动足够长时间后，粒子的概率分布将收敛到怎样的平稳分布。</p>
-<p>设 <span class="math inline">\(p(\mathbf x,t)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 处的概率密度， 则计算 <span class="math inline">\(\eqref{diffsde}\)</span> 式的 <a href="/blog-main/2025/02/20/Fokker-Planck-Equation/" title="Fokker-Planck Equation">Fokker-Planck 方程</a>，有： <span class="math display">\[
-\frac{\partial}{\partial t}p(\mathbf x,t)=\nabla p(\mathbf x,t)^T\nabla U(\mathbf x)+p(\mathbf x,t)\Delta U(\mathbf x)+\sigma^2\Delta p(\mathbf x,t)
-\]</span> Fokker-Planck 方程描述了概率分布随时间是如何变化的。为求解<strong>平稳分布</strong>（即 <span class="math inline">\(p(\mathbf x,t)\)</span> 不随时间 <span class="math inline">\(t\)</span> 变化），令上式为 0 得： <span class="math display">\[
-\nabla p(\mathbf x)^T\nabla U(\mathbf x)+p(\mathbf x)\Delta U(\mathbf x)+\sigma^2\Delta p(\mathbf x)=0
-\]</span> 可以验证，如下形式的<strong>玻尔兹曼分布</strong>是上式的解（事实上是唯一的解）： <span class="math display">\[
-\tilde p(\mathbf x)=\frac{1}{Z}\exp\left(-\frac{U(\mathbf x)}{\sigma^2}\right)\tag{6}\label{stationary}
-\]</span> 其中 <span class="math inline">\(Z\)</span> 为归一化系数。下图模拟了大量粒子依 Langevin diffusion SDE 运动的动态，并可视化了概率分布的变化：</p>
-<p><img src="FP_simulation_stat.gif" srcset="/blog-main/logo/imageloading.png" lazyload width=60% alt="source:https://odie2630463.github.io/2020/09/28/langevin/" /></p>
-<h2 id="langevin-mcmc">Langevin MCMC</h2>
-<p>假设我们希望从分布 <span class="math inline">\(p(\mathbf x)\)</span> 中采样，根据上一节的理论，只需要找到合适的 <span class="math inline">\(U(\mathbf x)\)</span>，使得平稳分布 <span class="math inline">\(\tilde p(\mathbf x)=p(\mathbf x)\)</span>，那么按照 Langevin dynamics 的过程模拟即可。这一思想与 MCMC 是一致的。事实上，考虑到 SDE 就是连续时间、连续状态的马尔可夫过程，所以人们常将这类采样方法称作 <strong>Langevin MCMC</strong>.</p>
-<h3 id="ula">ULA</h3>
-<p>令 <span class="math inline">\(\tilde p(\mathbf x)=p(\mathbf x)\)</span>，代入 <span class="math inline">\(\eqref{stationary}\)</span> 式得： <span class="math display">\[
-\tilde p(\mathbf x)=\frac{1}{Z}\exp\left(-\frac{U(\mathbf x)}{\sigma^2}\right)=p(\mathbf x)\implies U(\mathbf x)=-\sigma^2(\log p(\mathbf x)-\log Z)
-\]</span> 因此我们要找的 <span class="math inline">\(U(\mathbf x)\)</span> 就是 <span class="math inline">\(-\log p(\mathbf x)\)</span> 差一个常数的若干倍。两边求梯度： <span class="math display">\[
-\nabla U(\mathbf x)=-\sigma^2\nabla \log p(\mathbf x)
-\]</span> 这就出现了熟悉的 score function. 代入 <span class="math inline">\(\eqref{diffsde}\)</span> 式得： <span class="math display">\[
-\mathrm d\mathbf x=\sigma^2\nabla\log p(\mathbf x)\mathrm dt+\sqrt{2}\sigma\mathrm d\mathbf w\tag{6}\label{sde}
-\]</span></p>
-<p>这就是用于采样的 Langevin diffusion SDE 形式。</p>
-<p>实际操作时需要将 <span class="math inline">\(\eqref{sde}\)</span> 式进行 <strong>Euler-Maruyama 离散化</strong>： <span class="math display">\[
-\mathbf x_{t+1}=\mathbf x_t+\tau\nabla\log p(\mathbf x_t)+\sqrt{2\tau}\boldsymbol\epsilon,\quad\boldsymbol\epsilon\sim\mathcal N(\mathbf0,\mathbf I)\tag{7}\label{ula}
-\]</span> 其中 <span class="math inline">\(\tau\)</span> 为离散化的步长。称该采样算法为 <strong>ULA (Unadjusted Langevin Algorithm)</strong>.</p>
-<h3 id="联系梯度下降">联系梯度下降</h3>
-<p>注意到，如果 <span class="math inline">\(\eqref{ula}\)</span> 式中没有随机项，那么 ULA 就变成了梯度下降（梯度上升）： <span class="math display">\[
-\mathbf x_{t+1}=\mathbf x_t+\tau\nabla\log p(\mathbf x_t)
-\]</span> 其中梯度下降的“损失函数”就是负对数概率密度 <span class="math inline">\(-\log p(\mathbf x)\)</span>. 从这个角度看，ULA 可以直观理解为梯度下降+随机扰动：</p>
-<ul>
-<li>梯度下降项使得采样点不断向 <span class="math inline">\(p(\mathbf x)\)</span> 增大的方向移动，即向高密度区域聚集；</li>
-<li>随机扰动项使得优化算法变成了采样算法——如果只有梯度下降项，那么数据点最终会收敛到 <span class="math inline">\(p(\mathbf x)\)</span> 极大的地方，但采样应该允许取到 <span class="math inline">\(p(\mathbf x)\)</span>​ 较小的区域，因此加入随机扰动项实现这一点。</li>
-</ul>
-<p>下图展示了梯度下降与 ULA 的区别：</p>
-<p><img src="sgd-ld.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% alt="source:https://zhuanlan.zhihu.com/p/699598518" /></p>
-<h3 id="mala">MALA</h3>
-<p>在 ULA 中，我们不假思索地直接将 <span class="math inline">\(\eqref{sde}\)</span> 式离散化为了 <span class="math inline">\(\eqref{ula}\)</span> 式，但离散化后我们真的能得到想要的分布吗？具体而言，离散化后的 Langevin dynamics 形成了离散时间的马尔可夫链，在合适的条件下，它是不可约正常返的，因此存在极限分布 <span class="math inline">\(p_\tau\)</span> 且极限分布就是平稳分布。不过，由于离散误差，<span class="math inline">\(p_\tau\)</span> 与我们想要的 <span class="math inline">\(p\)</span> 之间存在一定的差异，一些理论工作正是研究不同步长 <span class="math inline">\(\tau\)</span> 下 <span class="math inline">\(p_\tau\)</span> 与 <span class="math inline">\(p\)</span> 之间的差异。</p>
-<p>为了改进 ULA 的误差，受到 <a href="/blog-main/2024/03/21/Monte-Carlo-Sampling/" title="Monte-Carlo Sampling">Metropolis-Hastings 采样</a>的启发，Roberts &amp; Tweedie 提出了 Metropolis Adjusted Langevin Agorithm (MALA)：</p>
-<ol type="1">
-<li><p>提议 <span class="math inline">\(\mathbf y_{t+1}=\mathbf x_t+\tau\nabla\log p(\mathbf x_t)+\sqrt{2\tau}\boldsymbol\epsilon,\,\boldsymbol\epsilon\sim\mathcal N(\mathbf0,\mathbf I)\)</span>；</p></li>
-<li><p>计算接受率： <span class="math display">\[
-\alpha_\tau(\mathbf x,\mathbf y)=1\wedge\frac{p(\mathbf y)r_\tau(\mathbf y,\mathbf x)}{p(\mathbf x)r_\tau(\mathbf x,\mathbf y)},\quad r_\tau(\mathbf x,\mathbf y)\propto \exp\left(-\frac{\Vert\mathbf y-\mathbf x+\tau\nabla\log p(\mathbf x)\Vert^2}{4\tau}\right)
-\]</span> 其中 <span class="math inline">\(\wedge\)</span> 表示取最小值操作；</p></li>
-<li><p>接受或拒绝提议。</p></li>
-</ol>
-<p>这个<a href="https://chi-feng.github.io/mcmc-demo/app.html?algorithm=MALA&amp;target=banana">链接</a>中有非常直观的 MALA 算法采样过程的可视化。</p>
-<h2 id="references">References</h2>
+                <h2 id="一维情形">一维情形</h2>
+<p>考察如下随机微分方程 (SDE)： <span class="math display">\[
+X_t=f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t
+\]</span> 其中 <span class="math inline">\(W_t\)</span> 是维纳过程，<span class="math inline">\(f(X_t,t)\)</span> 是 drift 系数，<span class="math inline">\(g(X_t,t)\)</span> 是 diffusion 系数。Fokker-Planck Equation 也称作 Kolmogorov Forward Equation (KFE)，描述了该 SDE 的概率密度 <span class="math inline">\(p(x,t)\)</span> 随时间的变化情况。</p>
+<h3 id="准备工作">准备工作</h3>
+<p>在极小的 <span class="math inline">\(\Delta t\)</span> 时间内，上述 SDE 可以离散化为： <span class="math display">\[
+\Delta X_t=f(X_t,t)\Delta t+g(X_t,t)\Delta W_t
+\]</span> 其中变化量 <span class="math inline">\(\Delta X_t=X_{t+\Delta t}-X_t\)</span>，随机项变化量 <span class="math inline">\(\Delta W_t=W_{t+\Delta t}-W_t\sim\mathcal N(0,\Delta t)\)</span>.</p>
+<p>假设给定 <span class="math inline">\(X_t=z\)</span>，则变化量的一阶矩为： <span class="math display">\[
+\mathbb E\left[\Delta X_t\vert X_t=z\right]=\mathbb E\left[f(X_t,t)\Delta t+g(X_t,t)\Delta W_t\vert X_t=z\right]=f(z,t)\Delta t
+\]</span> 变化量的二阶矩为： <span class="math display">\[
+\begin{align}
+\mathbb E\left[\Delta X_t^2\vert X_t=z\right]&amp;=\mathbb E\left[f^2(X_t,t)\Delta t^2+f(X_t,t)g(X_t,t)\Delta t\Delta W_t+g^2(X_t,t)\Delta W_t^2\vert X_t=z\right]\\
+&amp;=f^2(z,t)\Delta t^2+0+g^2(z,t)\Delta t\\
+&amp;=g^2(z,t)\Delta t+o(\Delta t)
+\end{align}
+\]</span> 更高阶的矩显然都是 <span class="math inline">\(o(\Delta t)\)</span>. 我们将在后续推导中使用上述结论。</p>
+<h3 id="fp-方程的推导">FP 方程的推导</h3>
+<p>考察从 <span class="math inline">\(t\)</span> 时刻到 <span class="math inline">\(t+\Delta t\)</span> 的转移，有： <span class="math display">\[
+p(x,t+\Delta t)=\int p(x,t+\Delta t\vert z,t)p(z,t)\mathrm dz
+\]</span> 等式两边同时乘上任一光滑紧支的辅助函数 <span class="math inline">\(R(x)\)</span>，并对 <span class="math inline">\(x\)</span> 积分，得： <span class="math display">\[
+\text{LHS}=\int R(x)p(x,t+\Delta t)\mathrm dx=\iint R(x) p(x,t+\Delta t\vert z,t)p(z,t)\mathrm dx\mathrm dz=\text{RHS}
+\]</span> 将左式中的 <span class="math inline">\(p(x,t+\Delta t)\)</span> 对时间变量在 <span class="math inline">\(t\)</span> 处展开： <span class="math display">\[
+p(x,t+\Delta t)=p(x,t)+\frac{\partial p(x,t)}{\partial t}\Delta t+o(\Delta t)
+\]</span> 代回左式得： <span class="math display">\[
+\text{LHS}=\int R(x)p(x,t)\mathrm dx+\Delta t\int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx+o(\Delta t)
+\]</span> 对右式，将 <span class="math inline">\(R(x)\)</span> 在 <span class="math inline">\(z\)</span> 处展开： <span class="math display">\[
+R(x)=R(z)+R&#39;(z)(x-z)+\frac{1}{2}R&#39;&#39;(z)(x-z)^2+o((x-z)^2)
+\]</span> 与右式中的 <span class="math inline">\(p(x,t+\Delta t\vert z,t)\)</span> 相结合，有： <span class="math display">\[
+\begin{align}
+\int R(x)p(x,t+\Delta t\vert z,t)\mathrm dx
+=&amp;~\int R(z)p(x,t+\Delta t\vert z,t)\mathrm dx\\
+&amp;+\int R&#39;(z)(x-z)p(x,t+\Delta t\vert z,t)\mathrm dx\\
+&amp;+\frac{1}{2}\int R&#39;&#39;(z)(x-z)^2p(x,t+\Delta t\vert z,t)\mathrm dx\\
+&amp;+o((x-z)^2)\\
+=&amp;~R(z)+R&#39;(z)f(z,t)\Delta t+\frac{1}{2}R&#39;&#39;(z)g^2(z,t)\Delta t+o(\Delta t)
+\end{align}
+\]</span> 其中最后一行使用了准备工作中给出的结论。代回右式，得： <span class="math display">\[
+\text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\left[\int R&#39;(z)f(z,t)p(z,t)\mathrm dz+\frac{1}{2}\int R&#39;&#39;(z)g^2(z,t)p(z,t)\mathrm dz\right]+o(\Delta t)
+\]</span> 对括号中 <span class="math inline">\(\Delta t\)</span> 的一阶项，做分部积分得（假设概率密度 <span class="math inline">\(p(z,t)\)</span> 在无穷远处为零）： <span class="math display">\[
+\int R&#39;(z)f(z,t)p(z,t)\mathrm dz=-\int R(z)\frac{\partial}{\partial z}[f(z,t)p(z,t)]\mathrm dz
+\]</span> 以及： <span class="math display">\[
+\begin{align}
+\frac{1}{2}\int R&#39;&#39;(z)g^2(z,t)p(z,t)\mathrm dz&amp;=-\frac{1}{2}\int R&#39;(z)\frac{\partial}{\partial z}[g^2(z,t)p(z,t)]\mathrm dz=\frac{1}{2}\int R(z)\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\mathrm dz
+\end{align}
+\]</span> 因此： <span class="math display">\[
+\text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz+o(\Delta t)
+\]</span> 左右式相等，发现 <span class="math inline">\(\Delta t\)</span> 的零阶项相互抵消，再忽略高阶项，则只剩下一阶项： <span class="math display">\[
+\int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx=\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz
+\]</span> 右边积分变量改写作 <span class="math inline">\(x\)</span>，移项合并得： <span class="math display">\[
+\int R(x)\left[\frac{\partial p(x,t)}{\partial t}+\frac{\partial}{\partial x}[f(x,t)p(x,t)]-\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]\right]\mathrm dx=0
+\]</span> 根据 <span class="math inline">\(R(x)\)</span> 的任意性，括号内应为零，即： <span class="math display">\[
+\frac{\partial p(x,t)}{\partial t}=-\frac{\partial}{\partial x}[f(x,t)p(x,t)]+\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]
+\]</span> 这就是 Fokker-Planck 方程。</p>
+<h2 id="多维情形">多维情形</h2>
+<p>上文我们推导了一维情形下的 FP 方程，该结论可以推广到多维情形下。设有 <span class="math inline">\(\mathbb R^d\)</span> 空间中的 SDE： <span class="math display">\[
+\mathrm d\mathbf x_t=\mathbf f(\mathbf x_t,t)\mathrm dt+\mathbf G(\mathbf x_t,t)\mathrm d\mathbf w_t
+\]</span> 其中 <span class="math inline">\(\mathbf f(\cdot,t):\mathbb R^d\to\mathbb R^d\)</span> 为 drift 系数，<span class="math inline">\(\mathbf G(\cdot,t):\mathbb R^d\to\mathbb R^{d\times d}\)</span> 为 diffusion 系数，则其 FP 方程为： <span class="math display">\[
+\frac{\partial p(\mathbf x,t)}{\partial t}=-\sum_{i=1}^d\frac{\partial}{\partial x_i}[f_i(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}\sum_{i=1}^d\sum_{j=1}^d\frac{\partial^2}{\partial x_i\partial x_j}\left[\sum_{k=1}^dG_{ik}(\mathbf x,t)G_{jk}(\mathbf x,t)p(\mathbf x,t)\right]
+\]</span> 特别地，在扩散模型中，diffusion 系数一般取为 <span class="math inline">\(\mathbf G(\mathbf x_t,t)=g(t)\mathbf I\)</span>，此时 FP 方程简化为： <span class="math display">\[
+\frac{\partial p(\mathbf x,t)}{\partial t}=-\nabla_{\mathbf x}\cdot[\mathbf f(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}g^2(t)\Delta_{\mathbf x}p(\mathbf x,t)
+\]</span> 其中 <span class="math inline">\(\Delta_{\mathbf x}=\nabla_{\mathbf x}\cdot\nabla_{\mathbf x}\)</span> 表示拉普拉斯算子。</p>
+<h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
 <ol>
 <li>
-<span id="fn:1" class="footnote-text"><span>Paweł A. Pierzchlewicz. Langevin Monte Carlo: Sampling using Langevin Dynamics. https://perceptron.blog/langevin-dynamics/ <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:1" class="footnote-text"><span>Nikola Petrov. Derivation of the Fokker-Planck equation. <a target="_blank" rel="noopener" href="https://math.ou.edu/~npetrov/fokker-planck.pdf" class="uri">https://math.ou.edu/~npetrov/fokker-planck.pdf</a> <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Chan, Stanley H. Tutorial on Diffusion Models for Imaging and Vision. <em>arXiv preprint arXiv:2403.18103</em> (2024). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:3" class="footnote-text"><span>朗之万动力学原理简介 - Openverse的文章 - 知乎. https://zhuanlan.zhihu.com/p/699598518 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:4" class="footnote-text"><span>Yuansi Chen. Lecture 3 – Langevin algorithms. https://metaphor.ethz.ch/x/2024/fs/401-4634-24L/lec/Lecture03.pdf <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:5" class="footnote-text"><span>Kirill Neklyudov. Langevin Dynamics for sampling and global optimization. https://docs.google.com/presentation/d/1_yekoTv_CHRgz6vsT57RMDESHjlnbGQvq8tYCxKLyW0 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:6" class="footnote-text"><span>Alain Durmus, Eric Moulines. The Langevin MCMC: Theory and Methods. https://www.icts.res.in/sites/default/files/paap-2019-08-08-Eric%20Moulines.pdf <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:7" class="footnote-text"><span>Roberts, Gareth O., and Richard L. Tweedie. Exponential convergence of Langevin distributions and their discrete approximations. <em>Bernoulli</em> (1996): 341-363. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:8" class="footnote-text"><span>Roy Friedman. A Simplified Overview of Langevin Dynamics. https://friedmanroy.github.io/blog/2022/Langevin/ <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>M. R. Rahimi Tabar. Kramers–Moyal Expansion and Fokker–Planck Equation. <a target="_blank" rel="noopener" href="https://link.springer.com/content/pdf/10.1007/978-3-030-18472-8_3.pdf" class="uri">https://link.springer.com/content/pdf/10.1007/978-3-030-18472-8_3.pdf</a> <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
@@ -467,7 +423,7 @@ m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  <a href="/blog-main/categories/%E6%95%B0%E5%AD%A6/" class="category-chain-item">数学</a>
   
   
 
@@ -482,11 +438,7 @@ m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
-      
         <a href="/blog-main/tags/stochastic-process/" class="print-no-link">#stochastic process</a>
-      
-        <a href="/blog-main/tags/physics/" class="print-no-link">#physics</a>
       
     </div>
   
@@ -498,8 +450,8 @@ m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Langevin Dynamics</div>
-      <div>https://xyfjason.github.io/blog-main/2024/06/21/Langevin-Dynamics/</div>
+      <div>Fokker-Planck Equation</div>
+      <div>https://xyfjason.github.io/blog-main/2025/02/20/Fokker-Planck-Equation/</div>
     </div>
     <div class="license-meta">
       
@@ -511,7 +463,7 @@ m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2024年6月21日</div>
+          <div>2025年2月20日</div>
         </div>
       
       
@@ -543,18 +495,12 @@ m\frac{\mathrm d^2\mathbf x(t)}{\mathrm dt^2}=-\gamma\frac{\mathrm d\mathbf x(t)
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2024/06/22/Flow-Matching/" title="Flow Matching">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Flow Matching</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2024/06/19/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84Lipschitz%E8%BF%9E%E7%BB%AD%E6%80%A7/" title="神经网络的Lipschitz连续性">
-                        <span class="hidden-mobile">神经网络的Lipschitz连续性</span>
+                      <a href="/blog-main/2024/10/25/Principal-Component-Analysis/" title="Principal Component Analysis">
+                        <span class="hidden-mobile">Principal Component Analysis</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
