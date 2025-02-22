@@ -8,7 +8,7 @@
     <link href="/blog-main/2025/02/20/Fokker-Planck-Equation/"/>
     <url>/blog-main/2025/02/20/Fokker-Planck-Equation/</url>
     
-    <content type="html"><![CDATA[<h2 id="一维情形">一维情形</h2><p>考察如下随机微分方程 (SDE)： <span class="math display">\[X_t=f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t\]</span> 其中 <span class="math inline">\(W_t\)</span> 是维纳过程，<span class="math inline">\(f(X_t,t)\)</span> 是 drift 系数，<span class="math inline">\(g(X_t,t)\)</span> 是 diffusion 系数。Fokker-Planck Equation 也称作 Kolmogorov Forward Equation (KFE)，描述了该 SDE 的概率密度 <span class="math inline">\(p(x,t)\)</span> 随时间的变化情况。</p><h3 id="准备工作">准备工作</h3><p>在极小的 <span class="math inline">\(\Delta t\)</span> 时间内，上述 SDE 可以离散化为： <span class="math display">\[\Delta X_t=f(X_t,t)\Delta t+g(X_t,t)\Delta W_t\]</span> 其中变化量 <span class="math inline">\(\Delta X_t=X_{t+\Delta t}-X_t\)</span>，随机项变化量 <span class="math inline">\(\Delta W_t=W_{t+\Delta t}-W_t\sim\mathcal N(0,\Delta t)\)</span>.</p><p>假设给定 <span class="math inline">\(X_t=z\)</span>，则变化量的一阶矩为： <span class="math display">\[\mathbb E\left[\Delta X_t\vert X_t=z\right]=\mathbb E\left[f(X_t,t)\Delta t+g(X_t,t)\Delta W_t\vert X_t=z\right]=f(z,t)\Delta t\]</span> 变化量的二阶矩为： <span class="math display">\[\begin{align}\mathbb E\left[\Delta X_t^2\vert X_t=z\right]&amp;=\mathbb E\left[f^2(X_t,t)\Delta t^2+f(X_t,t)g(X_t,t)\Delta t\Delta W_t+g^2(X_t,t)\Delta W_t^2\vert X_t=z\right]\\&amp;=f^2(z,t)\Delta t^2+0+g^2(z,t)\Delta t\\&amp;=g^2(z,t)\Delta t+o(\Delta t)\end{align}\]</span> 更高阶的矩显然都是 <span class="math inline">\(o(\Delta t)\)</span>. 我们将在后续推导中使用上述结论。</p><h3 id="fp-方程的推导">FP 方程的推导</h3><p>考察从 <span class="math inline">\(t\)</span> 时刻到 <span class="math inline">\(t+\Delta t\)</span> 的转移，有： <span class="math display">\[p(x,t+\Delta t)=\int p(x,t+\Delta t\vert z,t)p(z,t)\mathrm dz\]</span> 等式两边同时乘上任一光滑紧支的辅助函数 <span class="math inline">\(R(x)\)</span>，并对 <span class="math inline">\(x\)</span> 积分，得： <span class="math display">\[\text{LHS}=\int R(x)p(x,t+\Delta t)\mathrm dx=\iint R(x) p(x,t+\Delta t\vert z,t)p(z,t)\mathrm dx\mathrm dz=\text{RHS}\]</span> 将左式中的 <span class="math inline">\(p(x,t+\Delta t)\)</span> 对时间变量在 <span class="math inline">\(t\)</span> 处展开： <span class="math display">\[p(x,t+\Delta t)=p(x,t)+\frac{\partial p(x,t)}{\partial t}\Delta t+o(\Delta t)\]</span> 代回左式得： <span class="math display">\[\text{LHS}=\int R(x)p(x,t)\mathrm dx+\Delta t\int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx+o(\Delta t)\]</span> 对右式，将 <span class="math inline">\(R(x)\)</span> 在 <span class="math inline">\(z\)</span> 处展开： <span class="math display">\[R(x)=R(z)+R&#39;(z)(x-z)+\frac{1}{2}R&#39;&#39;(z)(x-z)^2+o((x-z)^2)\]</span> 与右式中的 <span class="math inline">\(p(x,t+\Delta t\vert z,t)\)</span> 相结合，有： <span class="math display">\[\begin{align}\int R(x)p(x,t+\Delta t\vert z,t)\mathrm dx=&amp;~\int R(z)p(x,t+\Delta t\vert z,t)\mathrm dx\\&amp;+\int R&#39;(z)(x-z)p(x,t+\Delta t\vert z,t)\mathrm dx\\&amp;+\frac{1}{2}\int R&#39;&#39;(z)(x-z)^2p(x,t+\Delta t\vert z,t)\mathrm dx\\&amp;+o((x-z)^2)\\=&amp;~R(z)+R&#39;(z)f(z,t)\Delta t+\frac{1}{2}R&#39;&#39;(z)g^2(z,t)\Delta t+o(\Delta t)\end{align}\]</span> 其中最后一行使用了准备工作中给出的结论。代回右式，得： <span class="math display">\[\text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\left[\int R&#39;(z)f(z,t)p(z,t)\mathrm dz+\frac{1}{2}\int R&#39;&#39;(z)g^2(z,t)p(z,t)\mathrm dz\right]+o(\Delta t)\]</span> 对括号中 <span class="math inline">\(\Delta t\)</span> 的一阶项，做分部积分得（假设概率密度 <span class="math inline">\(p(z,t)\)</span> 在无穷远处为零）： <span class="math display">\[\int R&#39;(z)f(z,t)p(z,t)\mathrm dz=-\int R(z)\frac{\partial}{\partial z}[f(z,t)p(z,t)]\mathrm dz\]</span> 以及： <span class="math display">\[\begin{align}\frac{1}{2}\int R&#39;&#39;(z)g^2(z,t)p(z,t)\mathrm dz&amp;=-\frac{1}{2}\int R&#39;(z)\frac{\partial}{\partial z}[g^2(z,t)p(z,t)]\mathrm dz=\frac{1}{2}\int R(z)\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\mathrm dz\end{align}\]</span> 因此： <span class="math display">\[\text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz+o(\Delta t)\]</span> 左右式相等，发现 <span class="math inline">\(\Delta t\)</span> 的零阶项相互抵消，再忽略高阶项，则只剩下一阶项： <span class="math display">\[\int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx=\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz\]</span> 右边积分变量改写作 <span class="math inline">\(x\)</span>，移项合并得： <span class="math display">\[\int R(x)\left[\frac{\partial p(x,t)}{\partial t}+\frac{\partial}{\partial x}[f(x,t)p(x,t)]-\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]\right]\mathrm dx=0\]</span> 根据 <span class="math inline">\(R(x)\)</span> 的任意性，括号内应为零，即： <span class="math display">\[\frac{\partial p(x,t)}{\partial t}=-\frac{\partial}{\partial x}[f(x,t)p(x,t)]+\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]\]</span> 这就是 Fokker-Planck 方程。</p><h2 id="多维情形">多维情形</h2><p>上文我们推导了一维情形下的 FP 方程，该结论可以推广到多维情形下。设有 <span class="math inline">\(\mathbb R^d\)</span> 空间中的 SDE： <span class="math display">\[\mathrm d\mathbf x_t=\mathbf f(\mathbf x_t,t)\mathrm dt+\mathbf G(\mathbf x_t,t)\mathrm d\mathbf w_t\]</span> 其中 <span class="math inline">\(\mathbf f(\cdot,t):\mathbb R^d\to\mathbb R^d\)</span> 为 drift 系数，<span class="math inline">\(\mathbf G(\cdot,t):\mathbb R^d\to\mathbb R^{d\times d}\)</span> 为 diffusion 系数，则其 FP 方程为： <span class="math display">\[\frac{\partial p(\mathbf x,t)}{\partial t}=-\sum_{i=1}^d\frac{\partial}{\partial x_i}[f_i(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}\sum_{i=1}^d\sum_{j=1}^d\frac{\partial^2}{\partial x_i\partial x_j}\left[\sum_{k=1}^dG_{ik}(\mathbf x,t)G_{jk}(\mathbf x,t)p(\mathbf x,t)\right]\]</span> 特别地，在扩散模型中，diffusion 系数一般取为 <span class="math inline">\(\mathbf G(\mathbf x_t,t)=g(t)\mathbf I\)</span>，此时 FP 方程简化为： <span class="math display">\[\frac{\partial p(\mathbf x,t)}{\partial t}=-\nabla_{\mathbf x}\cdot[\mathbf f(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}g^2(t)\Delta_{\mathbf x}p(\mathbf x,t)\]</span> 其中 <span class="math inline">\(\Delta_{\mathbf x}=\nabla_{\mathbf x}\cdot\nabla_{\mathbf x}\)</span> 表示拉普拉斯算子。</p><h2 id="参考资料">参考资料</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Nikola Petrov. Derivation of the Fokker-Planck equation. <a href="https://math.ou.edu/~npetrov/fokker-planck.pdf" class="uri">https://math.ou.edu/~npetrov/fokker-planck.pdf</a> <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>M. R. Rahimi Tabar. Kramers–Moyal Expansion and Fokker–Planck Equation. <a href="https://link.springer.com/content/pdf/10.1007/978-3-030-18472-8_3.pdf" class="uri">https://link.springer.com/content/pdf/10.1007/978-3-030-18472-8_3.pdf</a> <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
+    <content type="html"><![CDATA[<h2 id="一维情形">一维情形</h2><p>考察如下随机微分方程 (SDE)： <span class="math display">\[X_t=f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t\]</span> 其中 <span class="math inline">\(W_t\)</span> 是维纳过程，<span class="math inline">\(f(X_t,t)\)</span> 是 drift 系数，<span class="math inline">\(g(X_t,t)\)</span> 是 diffusion 系数。Fokker-Planck 方程描述了满足该 SDE 的 <span class="math inline">\(X_t\)</span> 的概率密度 <span class="math inline">\(p(x,t)\)</span> 随时间的变化情况。</p><h3 id="准备工作">准备工作</h3><p>在极小的 <span class="math inline">\(\Delta t\)</span> 时间内，上述 SDE 可以离散化为： <span class="math display">\[\Delta X_t=f(X_t,t)\Delta t+g(X_t,t)\Delta W_t\]</span> 其中变化量 <span class="math inline">\(\Delta X_t=X_{t+\Delta t}-X_t\)</span>，随机项变化量 <span class="math inline">\(\Delta W_t=W_{t+\Delta t}-W_t\sim\mathcal N(0,\Delta t)\)</span>.</p><p>假设给定 <span class="math inline">\(X_t=z\)</span>，则变化量的一阶矩为： <span class="math display">\[\mathbb E\left[\Delta X_t\vert X_t=z\right]=\mathbb E\left[f(X_t,t)\Delta t+g(X_t,t)\Delta W_t\vert X_t=z\right]=f(z,t)\Delta t\]</span> 二阶矩为： <span class="math display">\[\begin{align}\mathbb E\left[\Delta X_t^2\vert X_t=z\right]&amp;=\mathbb E\left[f^2(X_t,t)\Delta t^2+f(X_t,t)g(X_t,t)\Delta t\Delta W_t+g^2(X_t,t)\Delta W_t^2\vert X_t=z\right]\\&amp;=f^2(z,t)\Delta t^2+0+g^2(z,t)\Delta t\\&amp;=g^2(z,t)\Delta t+o(\Delta t)\end{align}\]</span> 更高阶的矩都是 <span class="math inline">\(o(\Delta t)\)</span>. 我们将在后续推导中使用上述结论。</p><h3 id="推导过程">推导过程</h3><p>考察从 <span class="math inline">\(t\)</span> 时刻到 <span class="math inline">\(t+\Delta t\)</span> 时刻的转移，有： <span class="math display">\[p(x,t+\Delta t)=\int p(x,t+\Delta t\vert z,t)p(z,t)\mathrm dz\]</span> 等式两边同时乘上任一光滑紧支的辅助函数 <span class="math inline">\(R(x)\)</span>，并对 <span class="math inline">\(x\)</span> 积分，得： <span class="math display">\[\text{LHS}=\int R(x)p(x,t+\Delta t)\mathrm dx=\iint R(x) p(x,t+\Delta t\vert z,t)p(z,t)\mathrm dx\mathrm dz=\text{RHS}\]</span> 将左式中的 <span class="math inline">\(p(x,t+\Delta t)\)</span> 在 <span class="math inline">\(t\)</span> 处展开： <span class="math display">\[p(x,t+\Delta t)=p(x,t)+\frac{\partial p(x,t)}{\partial t}\Delta t+o(\Delta t)\]</span> 代回左式得： <span class="math display">\[\text{LHS}=\int R(x)p(x,t)\mathrm dx+\Delta t\int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx+o(\Delta t)\]</span> 对右式，将 <span class="math inline">\(R(x)\)</span> 在 <span class="math inline">\(z\)</span> 处展开： <span class="math display">\[R(x)=R(z)+R&#39;(z)(x-z)+\frac{1}{2}R&#39;&#39;(z)(x-z)^2+o((x-z)^2)\]</span> 与右式中的 <span class="math inline">\(p(x,t+\Delta t\vert z,t)\)</span> 相结合，有： <span class="math display">\[\begin{align}\int R(x)p(x,t+\Delta t\vert z,t)\mathrm dx=&amp;~\int R(z)p(x,t+\Delta t\vert z,t)\mathrm dx\\&amp;+\int R&#39;(z)(x-z)p(x,t+\Delta t\vert z,t)\mathrm dx\\&amp;+\frac{1}{2}\int R&#39;&#39;(z)(x-z)^2p(x,t+\Delta t\vert z,t)\mathrm dx\\&amp;+o((x-z)^2)\\=&amp;~R(z)+R&#39;(z)f(z,t)\Delta t+\frac{1}{2}R&#39;&#39;(z)g^2(z,t)\Delta t+o(\Delta t)\end{align}\]</span> 其中最后一行使用了准备工作中给出的结论。代回右式，得： <span class="math display">\[\text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\left[\int R&#39;(z)f(z,t)p(z,t)\mathrm dz+\frac{1}{2}\int R&#39;&#39;(z)g^2(z,t)p(z,t)\mathrm dz\right]+o(\Delta t)\]</span> 对括号中 <span class="math inline">\(\Delta t\)</span> 的一阶项，做分部积分得（假设概率密度 <span class="math inline">\(p(z,t)\)</span> 在无穷远处为零）： <span class="math display">\[\int R&#39;(z)f(z,t)p(z,t)\mathrm dz=-\int R(z)\frac{\partial}{\partial z}[f(z,t)p(z,t)]\mathrm dz\]</span> 以及： <span class="math display">\[\begin{align}\frac{1}{2}\int R&#39;&#39;(z)g^2(z,t)p(z,t)\mathrm dz&amp;=-\frac{1}{2}\int R&#39;(z)\frac{\partial}{\partial z}[g^2(z,t)p(z,t)]\mathrm dz=\frac{1}{2}\int R(z)\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\mathrm dz\end{align}\]</span> 因此： <span class="math display">\[\text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz+o(\Delta t)\]</span> 左右式相等，发现 <span class="math inline">\(\Delta t\)</span> 的零阶项相互抵消，再忽略高阶项，则只剩下一阶项： <span class="math display">\[\int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx=\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz\]</span> 右边积分变量改写作 <span class="math inline">\(x\)</span>，移项合并得： <span class="math display">\[\int R(x)\left[\frac{\partial p(x,t)}{\partial t}+\frac{\partial}{\partial x}[f(x,t)p(x,t)]-\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]\right]\mathrm dx=0\]</span> 根据 <span class="math inline">\(R(x)\)</span> 的任意性，括号内应为零，即： <span class="math display">\[\frac{\partial p(x,t)}{\partial t}=-\frac{\partial}{\partial x}[f(x,t)p(x,t)]+\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]\tag{Fokker-Planck Equation}\]</span> 这就是 Fokker-Planck 方程。</p><h2 id="多维情形">多维情形</h2><p>上文我们推导了一维情形下的 FP 方程，该结论可以推广到多维情形下。设有 <span class="math inline">\(\mathbb R^d\)</span> 空间中的 SDE： <span class="math display">\[\mathrm d\mathbf x_t=\mathbf f(\mathbf x_t,t)\mathrm dt+\mathbf G(\mathbf x_t,t)\mathrm d\mathbf w_t\]</span> 其中 <span class="math inline">\(\mathbf f(\cdot,t):\mathbb R^d\to\mathbb R^d\)</span> 为 drift 系数，<span class="math inline">\(\mathbf G(\cdot,t):\mathbb R^d\to\mathbb R^{d\times d}\)</span> 为 diffusion 系数，则其 FP 方程为： <span class="math display">\[\frac{\partial p(\mathbf x,t)}{\partial t}=-\sum_{i=1}^d\frac{\partial}{\partial x_i}[f_i(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}\sum_{i=1}^d\sum_{j=1}^d\frac{\partial^2}{\partial x_i\partial x_j}\left[\sum_{k=1}^dG_{ik}(\mathbf x,t)G_{jk}(\mathbf x,t)p(\mathbf x,t)\right]\]</span> 特别地，若将 diffusion 系数简化为 <span class="math inline">\(\mathbf G(\mathbf x_t,t)=g(t)\mathbf I\)</span>，此时 FP 方程简化为： <span class="math display">\[\frac{\partial p(\mathbf x,t)}{\partial t}=-\nabla_{\mathbf x}\cdot[\mathbf f(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}g^2(t)\Delta_{\mathbf x}p(\mathbf x,t)\]</span> 其中 <span class="math inline">\(\Delta_{\mathbf x}=\nabla_{\mathbf x}\cdot\nabla_{\mathbf x}\)</span> 表示拉普拉斯算子。</p><h2 id="参考资料">参考资料</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Nikola Petrov. Derivation of the Fokker-Planck equation. <a href="https://math.ou.edu/~npetrov/fokker-planck.pdf" class="uri">https://math.ou.edu/~npetrov/fokker-planck.pdf</a> <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>M. R. Rahimi Tabar. Kramers–Moyal Expansion and Fokker–Planck Equation. <a href="https://link.springer.com/content/pdf/10.1007/978-3-030-18472-8_3.pdf" class="uri">https://link.springer.com/content/pdf/10.1007/978-3-030-18472-8_3.pdf</a> <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
     
     
     <categories>
@@ -203,9 +203,9 @@
     
     <tags>
       
-      <tag>linear algebra</tag>
-      
       <tag>machine learning</tag>
+      
+      <tag>linear algebra</tag>
       
     </tags>
     
@@ -683,9 +683,9 @@
     
     <tags>
       
-      <tag>linear algebra</tag>
-      
       <tag>machine learning</tag>
+      
+      <tag>linear algebra</tag>
       
     </tags>
     
@@ -785,9 +785,9 @@
     
     <tags>
       
-      <tag>probability</tag>
-      
       <tag>stochastic process</tag>
+      
+      <tag>probability</tag>
       
     </tags>
     
@@ -814,9 +814,9 @@
     
     <tags>
       
-      <tag>probability</tag>
-      
       <tag>stochastic process</tag>
+      
+      <tag>probability</tag>
       
     </tags>
     
@@ -843,9 +843,9 @@
     
     <tags>
       
-      <tag>probability</tag>
-      
       <tag>stochastic process</tag>
+      
+      <tag>probability</tag>
       
     </tags>
     
@@ -872,9 +872,9 @@
     
     <tags>
       
-      <tag>probability</tag>
-      
       <tag>stochastic process</tag>
+      
+      <tag>probability</tag>
       
     </tags>
     
@@ -953,9 +953,9 @@
     
     <tags>
       
-      <tag>probability</tag>
-      
       <tag>stochastic process</tag>
+      
+      <tag>probability</tag>
       
     </tags>
     
