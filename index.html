@@ -976,7 +976,7 @@
       
       <a class="index-excerpt " href="/blog-main/2024/05/14/DPM-Solver/" target="_self">
         <div>
-          DPM-Solver 从扩散 ODE 入手 相比扩散 SDE，由于扩散 ODE 没有随机性，更适合采用大步长以加速采样，因此本文作者只考虑扩散 ODE： \[ \mathrm d\mathbf x_t=\left[f(t)\mathbf x_t-\frac{1}{2}g^2(t)\nabla_{\mathbf x}\log q(\mathbf x_t)\right]\mathrm dt \] 代入
+          DPM-Solver 从扩散 ODE 入手 相比扩散 SDE，由于扩散 ODE 没有随机性，更适合采用大步长以加速采样，因此本文作者只考虑扩散 ODE： \[ \mathrm d\mathbf x_t=\left[f(t)\mathbf x_t-\frac{1}{2}g^2(t)\nabla_{\mathbf x_t}\log q(\mathbf x_t)\right]\mathrm dt \]
         </div>
       </a>
 
