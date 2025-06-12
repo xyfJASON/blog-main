@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="简介 众所周知，Transformer 中的注意力机制并不区分各个 token 的顺序，可以认为是对 token 集合进行操作，因此在需要明确 token 顺序的场景下，我们必须人为地在 token 中注入位置信息，这就是位置编码 (positional encoding)。理想的位置编码应该具有如下性质：  唯一性：每个位置都配备唯一的编码； 相对性：两个位置编码之间存在只与相对位置有关（与绝对">
+    <meta name="description" content="简介 众所周知，Transformer 中的注意力机制并不区分各个 token 的顺序，可以认为是对 token 集合进行操作，因此在需要明确 token 顺序的场景下，我们必须人为地在 token 中注入位置信息，这就是位置编码 (positional encoding) 的作用。一般认为，理想的位置编码应该尽可能满足下列性质：  唯一性：每个位置都配备唯一的编码； 相对性：两个位置编码之间存在">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Transformer中的位置编码">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/06/10/Transformer%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="简介 众所周知，Transformer 中的注意力机制并不区分各个 token 的顺序，可以认为是对 token 集合进行操作，因此在需要明确 token 顺序的场景下，我们必须人为地在 token 中注入位置信息，这就是位置编码 (positional encoding)。理想的位置编码应该具有如下性质：  唯一性：每个位置都配备唯一的编码； 相对性：两个位置编码之间存在只与相对位置有关（与绝对">
+<meta property="og:description" content="简介 众所周知，Transformer 中的注意力机制并不区分各个 token 的顺序，可以认为是对 token 集合进行操作，因此在需要明确 token 顺序的场景下，我们必须人为地在 token 中注入位置信息，这就是位置编码 (positional encoding) 的作用。一般认为，理想的位置编码应该尽可能满足下列性质：  唯一性：每个位置都配备唯一的编码； 相对性：两个位置编码之间存在">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/positional-encoding.png">
 <meta property="article:published_time" content="2024-06-10T07:35:40.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:01:14.000Z">
+<meta property="article:modified_time" content="2025-06-12T08:27:46.306Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="deep learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.8k 字
+          3.1k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          24 分钟
+          26 分钟
         
       </span>
     
@@ -331,102 +331,105 @@
               <div class="markdown-body">
                 
                 <h2 id="简介">简介</h2>
-<p>众所周知，Transformer 中的注意力机制并不区分各个 token 的顺序，可以认为是对 token 集合进行操作，因此在需要明确 token 顺序的场景下，我们必须人为地在 token 中注入位置信息，这就是位置编码 (positional encoding)。理想的位置编码应该具有如下性质：</p>
+<p>众所周知，Transformer 中的注意力机制并不区分各个 token 的顺序，可以认为是对 token <strong>集合</strong>进行操作，因此在需要明确 token 顺序的场景下，我们必须人为地在 token 中注入位置信息，这就是位置编码 (positional encoding) 的作用。一般认为，理想的位置编码应该尽可能满足下列性质：</p>
 <ol type="1">
 <li>唯一性：每个位置都配备唯一的编码；</li>
-<li>相对性：两个位置编码之间存在只与相对位置有关（与绝对位置无关）的关系式；</li>
+<li>相对性：两个位置编码之间存在只与相对位置有关、与绝对位置无关的关系式；</li>
 <li>外推性：模型能够直接泛化到比训练序列长度更长的情形下；</li>
 <li>远程衰减性：随着两个位置之间的距离变大，它们位置编码的相似度变小。</li>
 </ol>
 <h2 id="可学习位置编码">可学习位置编码</h2>
-<p>最简单的想法就是让模型自己学习位置编码。设 <span class="math inline">\(\{\mathbf x_i\}_{i=0}^{N-1}\)</span> 表示 token embedding 序列，其中 <span class="math inline">\(\mathbf x_i\in\mathbb R^d\)</span>. 可学习位置编码用 <code>nn.Embedding()</code> 初始化 <span class="math inline">\(N\)</span> 个 <span class="math inline">\(d\)</span> 维向量 <span class="math inline">\(\{\mathbf p_i\}_{i=0}^{N-1}\)</span> 作为位置编码，与对应位置的 embedding 相加，作为可学习参数参与训练。</p>
-<p>可学习位置编码原理简单，实现方便，但是缺点也很明显：一是位置编码是模型隐式地学习出来的，因此不能保证具有相对性和远程衰减性；二是位置编码的数量固定为训练时设置的数量，因此无法在测试时外推到更长的序列上。</p>
-<p>使用可学习位置编码的工作包括 BERT<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Devlin, Jacob, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transformers for language understanding. *arXiv preprint arXiv:1810.04805* (2018).">[2]</span></a></sup>, GPT-1<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Brown, Tom, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D. Kaplan, Prafulla Dhariwal, Arvind Neelakantan et al. Language models are few-shot learners. *Advances in neural information processing systems* 33 (2020): 1877-1901.">[3]</span></a></sup>, ViT<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dosovitskiy, Alexey, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani et al. An image is worth 16x16 words: Transformers for image recognition at scale. *arXiv preprint arXiv:2010.11929* (2020).">[4]</span></a></sup> 等。下图展示了预训练的 ViT 中可学习位置编码互相之间的 cosine 相似度：</p>
+<p>最直接的想法就是让模型自己学习位置编码。设 <span class="math inline">\(\{\mathbf x_i\}_{i=0}^{N-1}\)</span> 表示 token 序列的 embedding，其中 <span class="math inline">\(\mathbf x_i\in\mathbb R^d\)</span> 表示第 <span class="math inline">\(i\)</span> 个位置的 <span class="math inline">\(d\)</span> 维词嵌入向量。可学习位置编码首先用 <code>nn.Embedding()</code> 初始化 <span class="math inline">\(N\)</span> 个 <span class="math inline">\(d\)</span> 维向量 <span class="math inline">\(\{\mathbf p_i\}_{i=0}^{N-1}\)</span>，然后与对应位置的 embedding 相加，送给 Transformer 训练： <span class="math display">\[
+\mathbf x_i\gets\mathbf x_i+\mathbf p_i
+\]</span> 可学习位置编码原理简单，实现方便，但是缺点也很明显：一是位置编码是模型隐式地学习出来的，因此不能保证具有相对性和远程衰减性；二是位置编码的数量固定为训练时设置的数量，因此无法在测试时外推到更长的序列上。</p>
+<p>在视觉领域，ViT 就是用的可学习位置编码。下图展示了预训练的 ViT 中可学习位置编码互相之间的 cosine 相似度：</p>
 <p><img src="vit.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
 <p>可以看见，模型确实学习到了合理的位置编码——距离越近，编码相似度越高。另外，由于图像数据是 2D 的，上图还显现出了有趣的行结构与列结构，也证明了可学习位置编码的有效性。</p>
 <h2 id="sinusoidal-位置编码">Sinusoidal 位置编码</h2>
-<p>设 <span class="math inline">\(\{\mathbf x_i\}_{i=0}^{N-1}\)</span> 表示 token embedding 序列，<span class="math inline">\(\{\mathbf p_i\}_{i=0}^{N-1}\)</span> 表示位置编码序列。Sinusoidal 位置编码<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. *Advances in neural information processing systems* 30 (2017).">[1]</span></a></sup>设计为： <span class="math display">\[
+<h3 id="基本形式">基本形式</h3>
+<p>Sinusoidal 位置编码依然是直接加在 embedding 序列上，但有着特别的设计： <span class="math display">\[
 \begin{align}
 p_{i, 2j} = \sin\left(\frac{i}{10000^{2j/d}}\right),\quad p_{i, 2j+1} = \cos\left(\frac{i}{10000^{2j/d}}\right)
 \end{align}
-\]</span> 其中 <span class="math inline">\(p_{i,k}\)</span> 表示 <span class="math inline">\(\mathbf p_i\)</span> 的第 <span class="math inline">\(k\)</span> 个分量，计算出的 <span class="math inline">\(\mathbf p_i\)</span> 将与 <span class="math inline">\(\mathbf x_i\)</span> 相加后送入后续模块。</p>
-<p>上面这个式子看起来有点抽象，我们不妨可视化一下：</p>
+\]</span> 其中 <span class="math inline">\(p_{i,k}\)</span> 表示 <span class="math inline">\(\mathbf p_i\)</span> 的第 <span class="math inline">\(k\)</span> 个分量。这个式子看起来有点抽象，我们不妨可视化一下：</p>
 <p><img src="sin.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
-<p>图中共有 50 个位置编码，每个编码是 128 维的向量。第 <span class="math inline">\(i\)</span> 行代表位置编码 <span class="math inline">\(\mathbf p_i\)</span> 这个向量，第 <span class="math inline">\(k\)</span> 列代表所有位置编码在第 <span class="math inline">\(k\)</span> 维上的取值。可以看见，若固定维度 <span class="math inline">\(k=2j\)</span> 或 <span class="math inline">\(k=2j+1\)</span>，那么各位置编码在这一维度上连起来形成一条周期为 <span class="math inline">\(2\pi\cdot 10000^{2j/d}\)</span> 的三角函数曲线。例如：</p>
+<p>图中共有 50 个位置编码，每个编码是 128 维的向量。第 <span class="math inline">\(i\)</span> 行代表位置编码 <span class="math inline">\(\mathbf p_i\)</span> 这个向量，第 <span class="math inline">\(k\)</span> 列代表所有位置编码在第 <span class="math inline">\(k\)</span> 维上的取值。可以看见，对于第 <span class="math inline">\(k=2j\)</span> 或 <span class="math inline">\(k=2j+1\)</span> 维，各位置编码在这一维度上连起来形成一条周期为 <span class="math inline">\(2\pi\cdot 10000^{2j/d}\)</span> 的正弦/余弦曲线。例如：</p>
 <ul>
-<li>当 <span class="math inline">\(j=0\)</span> 时，曲线周期为 <span class="math inline">\(2\pi\)</span>，即上图第一列形成一条周期为 <span class="math inline">\(2\pi\)</span> 的三角函数曲线；</li>
-<li>当 <span class="math inline">\(j=\lfloor d/2\rfloor\)</span> 时，曲线周期为 <span class="math inline">\(20000\pi\)</span>，即上图最后一列形成周期为 <span class="math inline">\(20000\pi\)</span> 的三角函数曲线。不过此时周期太大，所以看不出变化。</li>
+<li>当 <span class="math inline">\(j=0\)</span> 时，曲线周期为 <span class="math inline">\(2\pi\)</span>，即上图第一列形成一条周期为 <span class="math inline">\(2\pi\)</span> 的正弦曲线；</li>
+<li>当 <span class="math inline">\(j=d/2\)</span> 时，曲线周期为 <span class="math inline">\(20000\pi\)</span>，即上图最后一列形成周期为 <span class="math inline">\(20000\pi\)</span> 的余弦曲线。不过此时周期太大，所以看不出变化。</li>
 </ul>
-<p>可见，sinusoidal 位置编码的设计思路与二进制编码非常像——低位周期小频率高、高位周期大频率低，因此在某种程度上，sinusoidal 位置编码可以看作是二进制编码的连续版本。</p>
-<p>现在，有几个问题有待回答：</p>
+<p>可见，sinusoidal 位置编码的设计思路与二进制编码非常像——低位周期小频率高、高位周期大频率低，因此在<strong>某种程度上，sinusoidal 位置编码可以看作是二进制编码的连续化</strong>。</p>
+<h3 id="几个问题">几个问题</h3>
+<p>针对 sinusoidal 位置编码的设计方式，还有几点疑惑有待回答：</p>
 <ol type="1">
 <li>为什么既要用 <span class="math inline">\(\sin\)</span>，又要用 <span class="math inline">\(\cos\)</span>？</li>
 <li>为什么周期要设计为指数函数的形式？</li>
-<li>为什么底数是 10000？</li>
+<li>为什么指数函数的底数是 10000？</li>
 </ol>
-<p>对于第一个问题，答案是：这样设计使得 sinusoidal 位置编码具有相对性。具体而言，考虑位置偏移量 <span class="math inline">\(\delta\)</span>，有： <span class="math display">\[
+<p>对于第一个问题，答案是这样设计使得 sinusoidal 位置编码具有相对性。具体而言，考虑位置偏移量 <span class="math inline">\(\delta\)</span>，有： <span class="math display">\[
 \begin{bmatrix}p_{i+\delta,2j}\\p_{i+\delta,2j+1}\end{bmatrix}=\begin{bmatrix}\cos(\delta\omega_j)&amp;\sin(\delta\omega_j)\\-\sin(\delta\omega_j)&amp;\cos(\delta\omega_j)\end{bmatrix}
 \begin{bmatrix}p_{i,2j}\\p_{i,2j+1}\end{bmatrix}
-\]</span> 其中 <span class="math inline">\(\omega_j=1/10000^{2j/d}\)</span>. 这说明 <span class="math inline">\(\mathbf p_{i+\delta}\)</span> 各维度可以由 <span class="math inline">\(\mathbf p_i\)</span> 各维度线性表示，且表示系数只与相对位置 <span class="math inline">\(\delta\)</span> 有关，与绝对位置 <span class="math inline">\(i\)</span> 无关。如果只用 <span class="math inline">\(\sin\)</span> 或只用 <span class="math inline">\(\cos\)</span>，也许就没有这样的线性表示了。当然，<span class="math inline">\(\sin\)</span> 与 <span class="math inline">\(\cos\)</span> 不必按奇偶位置交替放置，也可以前一半放 <span class="math inline">\(\sin\)</span>，后一半放 <span class="math inline">\(\cos\)</span>.</p>
+\]</span> 其中 <span class="math inline">\(\omega_j=1/10000^{2j/d}\)</span>. 完整写出来就是： <span class="math display">\[
+\mathbf p_{i+\delta}=\begin{bmatrix}
+\cos(\delta\omega_0)&amp;\sin(\delta\omega_0)&amp;&amp;&amp;\\
+-\sin(\delta\omega_0)&amp;\cos(\delta\omega_0)&amp;&amp;&amp;\\
+&amp;&amp;\ddots\\
+&amp;&amp;&amp;\cos(\delta\omega_{d/2-1})&amp;\sin(\delta\omega_{d/2-1})\\
+&amp;&amp;&amp;\cos(\delta\omega_{d/2-1})&amp;\sin(\delta\omega_{d/2-1})\\
+\end{bmatrix}\mathbf p_i
+\]</span> 可见 <span class="math inline">\(\mathbf p_{i+\delta}\)</span> 可以由 <span class="math inline">\(\mathbf p_i\)</span> 经过线性变换得到，且该变换只与相对位置 <span class="math inline">\(\delta\)</span> 有关，与绝对位置 <span class="math inline">\(i\)</span> 无关。更具体地说，这个线性变换是每两维一组的旋转变换。如果只用 <span class="math inline">\(\sin\)</span> 或只用 <span class="math inline">\(\cos\)</span>，就没有这样的相对关系了。当然，<span class="math inline">\(\sin\)</span> 与 <span class="math inline">\(\cos\)</span> 不必按奇偶位置交替放置，也可以前一半放 <span class="math inline">\(\sin\)</span>，后一半放 <span class="math inline">\(\cos\)</span>.</p>
 <p>对于第二个问题，个人倾向于认为这只是作者的经验性选择，没有什么特别的道理，也许线性形式或者多项式形式都是可行的。</p>
-<p>对于第三个问题，根据我们前面的讨论，可以知道底数与最大周期息息相关——若底数为 <span class="math inline">\(B\)</span>，则最大周期为 <span class="math inline">\(2B\pi\)</span>. 可以肯定的是，<span class="math inline">\(B\)</span> 应该足够大以保证最大周期能够覆盖序列长度，否则可能出现两个位置有相同（或相近）的位置编码，违反唯一性。但是 <span class="math inline">\(B=10000\)</span> 意味着最大周期为 <span class="math inline">\(20000\pi\approx62\text{k}\)</span>​，显然远远大于当年（论文发表于 2017 年）实际需要的序列长度，为什么不选小一些的数呢？这个问题我还没有确切的答案。有人认为，位置编码与 token embedding 相加会干扰 token embedding 中的信息，而底数 10000 让位置编码的后半部分基本相同而变得无用，正好为 token embedding 留下了空间。</p>
-<p>最后，由于三角函数具有周期性，因此 sinusoidal 位置编码具有一定（比较有限）的外推性。另外，sinusoidal 位置编码也具有（大致）远程衰减性，如下图所示：</p>
-<p><img src="sin-dist.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% alt="source: Transformer Architecture: The Positional Encoding" /></p>
-<p>PyTorch 实现：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">SinusoidalPosEmb</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, dim: <span class="hljs-built_in">int</span></span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        self.dim = dim<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, p: Tensor</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        Args:</span><br><span class="hljs-string">            p (Tensor): [bs]</span><br><span class="hljs-string">        Returns:</span><br><span class="hljs-string">            embed (Tensor): sinusoidal embeddings of shape [bs, dim]</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        half_dim = self.dim // <span class="hljs-number">2</span><br>        embed = math.log(<span class="hljs-number">10000</span>) / (half_dim - <span class="hljs-number">1</span>)<br>        embed = torch.exp(torch.arange(half_dim, device=p.device) * -embed)<br>        embed = p[:, <span class="hljs-literal">None</span>] * embed[<span class="hljs-literal">None</span>, :]<br>        embed = torch.cat((embed.sin(), embed.cos()), dim=-<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> embed<br></code></pre></td></tr></table></figure>
-<h2 id="相对位置编码">相对位置编码</h2>
-<p>相对位置编码不再只关注于给输入的 embedding 注入位置信息，而是结合了 attention 的计算过程进行设计。考虑配备了位置编码 <span class="math inline">\(\{\mathbf p_i\}_{i=0}^{N-1}\)</span> 的 token embedding 序列 <span class="math inline">\(\{\mathbf x_i\}_{i=0}^{N-1}\)</span>，则 attention map 的计算过程为： <span class="math display">\[
-\begin{align}
-&amp;\mathbf q_i=(\mathbf x_i+\mathbf p_i)\mathbf W_q\\
-&amp;\mathbf k_i=(\mathbf x_i+\mathbf p_i)\mathbf W_k\\
-&amp;\mathbf v_i=(\mathbf x_i+\mathbf p_i)\mathbf W_v\\
-&amp;a_{i,j}=\text{softmax}\left(\mathbf q_i\mathbf k_j^T\right)\\
-&amp;\mathbf o_i=\sum_{j}a_{i,j}\mathbf v_i
-\end{align}
-\]</span> 其中向量都是行向量。展开 <span class="math inline">\(a_{i,j}\)</span> 得到： <span class="math display">\[
-\begin{align}
-a_{i,j}&amp;=\text{softmax}\left((\mathbf x_i+\mathbf p_i)\mathbf W_q\mathbf W_k^T(\mathbf x_j+\mathbf p_j)^T\right)\\
-&amp;=\text{softmax}\left(\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\mathbf p_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf p_j^T+\mathbf p_i\mathbf W_q\mathbf W_k^T\mathbf p_j^T\right)
-\end{align}
-\]</span> 可以看见，所谓位置编码，就是在计算 attention map 的时候，在无位置编码的基础上添加了 2 个与位置编码相关的“一次项”和 1 个“二次项”。现在，为了实现相对位置编码，我们只需将这三项改造为与相对位置 <span class="math inline">\(i-j\)</span> 有关、或与位置完全无关的项即可。不同论文采用了不同的做法：</p>
-<ul>
-<li><p>论文<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Shaw, Peter, Jakob Uszkoreit, and Ashish Vaswani. Self-attention with relative position representations. *arXiv preprint arXiv:1803.02155* (2018).">[5]</span></a></sup>丢弃与 <span class="math inline">\(\mathbf p_i\)</span> 有关的项，然后将第三项中的 <span class="math inline">\(\mathbf p_j\mathbf W_k\)</span> 改作 <span class="math inline">\(\mathbf R_{i,j}\)</span>： <span class="math display">\[
-a_{i,j}=\text{softmax}\left(\mathbf x_i\mathbf W_q(\mathbf x_j\mathbf W_k+\mathbf R_{i,j})^T\right)
-\]</span></p></li>
-<li><p>Transformer-XL<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Dai, Zihang, Zhilin Yang, Yiming Yang, Jaime Carbonell, Quoc V. Le, and Ruslan Salakhutdinov. Transformer-xl: Attentive language models beyond a fixed-length context. *arXiv preprint arXiv:1901.02860* (2019).">[6]</span></a></sup> 和 XLNet<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Yang, Zhilin, Zihang Dai, Yiming Yang, Jaime Carbonell, Russ R. Salakhutdinov, and Quoc V. Le. Xlnet: Generalized autoregressive pretraining for language understanding. *Advances in neural information processing systems* 32 (2019).">[7]</span></a></sup> 将 <span class="math inline">\(\mathbf p_j\)</span> 替换为 <span class="math inline">\(\mathbf R_{i,j}\)</span>，两个 <span class="math inline">\(\mathbf p_i\mathbf W_q\)</span> 分别替换为可学习向量 <span class="math inline">\(\mathbf u,\mathbf v\)</span>： <span class="math display">\[
-a_{i,j}=\text{softmax}\left(\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\mathbf u\mathbf W_k^T\mathbf x_j^T+\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf R_{i,j}^T+\mathbf v\mathbf W_k^T\mathbf R_{i,j}^T\right)
-\]</span> 进一步地，考虑到 <span class="math inline">\(\mathbf R_{i,j}\)</span> 所在空间与 <span class="math inline">\(\mathbf x_j\)</span> 不一定相同，因此将 <span class="math inline">\(\mathbf R_{i,j}\)</span> 前面的投影矩阵 <span class="math inline">\(\mathbf W_k\)</span> 换成新的矩阵 <span class="math inline">\(\tilde{\mathbf W}_k\)</span>​： <span class="math display">\[
-a_{i,j}=\text{softmax}\left(\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\mathbf u\mathbf W_k^T\mathbf x_j^T+\mathbf x_i\mathbf W_q\tilde{\mathbf W}_k^T\mathbf R_{i,j}^T+\mathbf v\tilde{\mathbf W}_k^T\mathbf R_{i,j}^T\right)
-\]</span></p></li>
-<li><p>T5<sup id="fnref:8" class="footnote-ref"><a href="#fn:8" rel="footnote"><span class="hint--top hint--rounded" aria-label="Raffel, Colin, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J. Liu. Exploring the limits of transfer learning with a unified text-to-text transformer. *Journal of machine learning research* 21, no. 140 (2020): 1-67.">[8]</span></a></sup> 直接丢弃“一次项”，将“二次项”简化为可学习的标量参数 <span class="math inline">\(\beta_{i,j}\)</span>： <span class="math display">\[
-a_{i,j}=\text{softmax}\left(\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\beta_{i,j}\right)
-\]</span></p></li>
-<li><p>DeBERTa<sup id="fnref:9" class="footnote-ref"><a href="#fn:9" rel="footnote"><span class="hint--top hint--rounded" aria-label="He, Pengcheng, Xiaodong Liu, Jianfeng Gao, and Weizhu Chen. Deberta: Decoding-enhanced bert with disentangled attention. *arXiv preprint arXiv:2006.03654* (2020).">[9]</span></a></sup> 则丢弃“二次项”，将“一次项”中的 <span class="math inline">\(\mathbf p_i,\mathbf p_j\)</span> 替换为 <span class="math inline">\(\mathbf R_{j,i},\mathbf R_{i,j}\)</span>： <span class="math display">\[
-a_{i,j}=\text{softmax}\left(\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\mathbf R_{j,i}\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf R_{i,j}^T\right)
-\]</span></p></li>
-</ul>
+<p>对于第三个问题，根据我们前面的讨论，可以知道底数与最大周期有关——若底数为 <span class="math inline">\(B\)</span>，则最大周期为 <span class="math inline">\(2B\pi\)</span>. 可以肯定的是，<span class="math inline">\(B\)</span> 应该足够大以保证最大周期能够覆盖序列长度，否则可能出现两个位置有相同（或相近）的位置编码，违反唯一性。但是 <span class="math inline">\(B=10000\)</span> 意味着最大周期为 <span class="math inline">\(20000\pi\approx62\text{k}\)</span>​，显然远远大于当年（论文发表于 2017 年）实际需要的序列长度，为什么不选小一些的数呢？这个问题我还没有确切的答案。有人认为，位置编码与 token embedding 相加会干扰 token embedding 中的信息，而底数 10000 让位置编码的后半部分基本相同而变得无用，正好为 token embedding 留下了空间。</p>
+<h3 id="参考实现">参考实现</h3>
+<p>在视觉生成领域，sinusoidal 位置编码被广泛应用于编码扩散模型的时间步，PyTorch 参考实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_sinusoidal_pos_embed</span>(<span class="hljs-params">pos: Tensor, dim: <span class="hljs-built_in">int</span>, max_period: <span class="hljs-built_in">float</span> = <span class="hljs-number">10000</span></span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        pos: 1-D Tensor of N indices, may be fractional</span><br><span class="hljs-string">        dim: dimension of the embeddings</span><br><span class="hljs-string">        max_period: controls the maximum period of the embeddings</span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        embed: sinusoidal embeddings of shape [N, dim]</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">assert</span> dim % <span class="hljs-number">2</span> == <span class="hljs-number">0</span><br>    half_dim = dim // <span class="hljs-number">2</span><br>    freqs = torch.arange(half_dim, dtype=torch.float32) / half_dim<br>    freqs = torch.exp(-math.log(max_period) * freqs).to(device=pos.device)<br>    embed = pos.<span class="hljs-built_in">float</span>()[:, <span class="hljs-literal">None</span>] * freqs[<span class="hljs-literal">None</span>]<br>    embed = torch.cat([torch.cos(embed), torch.sin(embed)], dim=-<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">return</span> embed<br></code></pre></td></tr></table></figure>
+<p>Sinusoidal 位置编码也常被应用于编码图像坐标，此时可以将其扩展为 2D 形式。具体而言，我们将位置编码的维度拆成两半，前一半编码纵坐标（图像的高）、后一半编码横坐标（图像的宽）即可，参考实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">get_2d_sinusoidal_pos_embed</span>(<span class="hljs-params">height: <span class="hljs-built_in">int</span>, width: <span class="hljs-built_in">int</span>, dim: <span class="hljs-built_in">int</span>, max_period: <span class="hljs-built_in">float</span> = <span class="hljs-number">10000</span></span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        height: height of the image</span><br><span class="hljs-string">        width: width of the image</span><br><span class="hljs-string">        dim: dimention of the embeddings</span><br><span class="hljs-string">        max_period: controls the maximum period of the embeddings</span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        embed: sinusoidal embeddings of shape [H*W, dim]</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    <span class="hljs-keyword">assert</span> dim % <span class="hljs-number">4</span> == <span class="hljs-number">0</span><br>    grid_h = torch.arange(height, dtype=torch.float32)<br>    grid_w = torch.arange(width, dtype=torch.float32)<br>    grid = torch.meshgrid(grid_h, grid_w, indexing=<span class="hljs-string">&#x27;ij&#x27;</span>)<br>    embed_h = get_sinusoidal_pos_embed(grid[<span class="hljs-number">0</span>].flatten(), dim//<span class="hljs-number">2</span>, max_period=max_period)<br>    embed_w = get_sinusoidal_pos_embed(grid[<span class="hljs-number">1</span>].flatten(), dim//<span class="hljs-number">2</span>, max_period=max_period)<br>    embed = torch.cat([embed_h, embed_w], dim=<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">return</span> embed<br></code></pre></td></tr></table></figure>
+<p>我们可以快速验证一下 2D sinusoidal 位置编码的相关性。下面的代码片段计算了一个高 16、宽 32 的图像的位置编码，随机选择了三个位置计算与其他所有位置的点积相似度，并作图可视化：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python">embed = get_2d_sinusoidal_pos_embed(<span class="hljs-number">16</span>, <span class="hljs-number">32</span>, <span class="hljs-number">128</span>).reshape(<span class="hljs-number">16</span>, <span class="hljs-number">32</span>, -<span class="hljs-number">1</span>)<br>fig, ax = plt.subplots(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>, figsize=(<span class="hljs-number">15</span>, <span class="hljs-number">3</span>))<br>ax[<span class="hljs-number">0</span>].imshow(torch.<span class="hljs-built_in">sum</span>(embed[<span class="hljs-number">3</span>:<span class="hljs-number">4</span>, <span class="hljs-number">28</span>:<span class="hljs-number">29</span>] * embed, dim=-<span class="hljs-number">1</span>))<br>ax[<span class="hljs-number">1</span>].imshow(torch.<span class="hljs-built_in">sum</span>(embed[<span class="hljs-number">7</span>:<span class="hljs-number">8</span>, <span class="hljs-number">13</span>:<span class="hljs-number">14</span>] * embed, dim=-<span class="hljs-number">1</span>))<br>ax[<span class="hljs-number">2</span>].imshow(torch.<span class="hljs-built_in">sum</span>(embed[<span class="hljs-number">14</span>:<span class="hljs-number">15</span>, <span class="hljs-number">4</span>:<span class="hljs-number">5</span>] * embed, dim=-<span class="hljs-number">1</span>))<br>plt.tight_layout()<br>plt.show()<br></code></pre></td></tr></table></figure>
+<p><img src="sin-sim.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
+<p>可以看见距离越近的位置编码相似度越高，这在一定程度上说明了 2D sinusoidal 位置编码的合理性。</p>
 <h2 id="rope-旋转位置编码">RoPE 旋转位置编码</h2>
-<p>RoPE<sup id="fnref:10" class="footnote-ref"><a href="#fn:10" rel="footnote"><span class="hint--top hint--rounded" aria-label="Su, Jianlin, Murtadha Ahmed, Yu Lu, Shengfeng Pan, Wen Bo, and Yunfeng Liu. Roformer: Enhanced transformer with rotary position embedding. Neurocomputing 568 (2024): 127063.">[10]</span></a></sup>是当前 LLM 的默认选择，以绝对位置编码的形式实现了相对性，由苏神在他的<a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/8265">博客</a>中提出。</p>
-<p>首先考虑二维情形，对于 <span class="math inline">\(\mathbf x\in\mathbb R^2\)</span> 及其位置 <span class="math inline">\(m\)</span>，RoPE 定义为： <span class="math display">\[
+<p>RoPE 是当前 LLM 的默认选择，以绝对位置编码的形式实现了相对性，由苏神在他的<a target="_blank" rel="noopener" href="https://spaces.ac.cn/archives/8265">博客</a>和论文 Roformer 中提出。</p>
+<h3 id="基本形式-1">基本形式</h3>
+<p>上文介绍的可学习和 sinusoidal 位置编码都是直接加在 token embeddings 上送给 Transformer，并没有考虑这些 token 后续是如何交互的。而 RoPE 则显式地考虑了 token 在 attention 机制中的内积运算，得到了一个更为优雅的解。</p>
+<p>首先考虑<strong>二维情形</strong>，对于 <span class="math inline">\(\mathbf x\in\mathbb R^2\)</span> 及 <span class="math inline">\(m\in\mathbb R\)</span>，定义 RoPE 操作为： <span class="math display">\[
 \text{RoPE}(\mathbf x,m)=\begin{bmatrix}\cos m\theta&amp;-\sin m\theta\\\sin m\theta&amp;\cos m\theta\end{bmatrix}\begin{bmatrix}x_0\\x_1\end{bmatrix}=\mathcal R_m\mathbf x
-\]</span> 相当于将 <span class="math inline">\(\mathbf x\)</span> 逆时针旋转 <span class="math inline">\(m\theta\)</span> 的角度，其中 <span class="math inline">\(\theta\)</span> 是一个超参数。在计算 attention 时，取位置 <span class="math inline">\(m,n\)</span> 上的 <span class="math inline">\(\mathbf q,\mathbf k\)</span> 做内积，得： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\mathcal R_m\)</span> 是一个旋转矩阵，将 <span class="math inline">\(\mathbf x\)</span> 逆时针旋转 <span class="math inline">\(m\theta\)</span> 的角度，其中 <span class="math inline">\(\theta\)</span> 是一个超参数。在计算 attention 时，取位置 <span class="math inline">\(m,n\)</span> 上的 <span class="math inline">\(\mathbf q,\mathbf k\)</span>，分别实施 RoPE 操作，再做内积得： <span class="math display">\[
 \begin{align}
 \Big\langle\text{RoPE}(\mathbf q,m),\text{RoPE}(\mathbf k,n)\Big\rangle
 &amp;=\mathbf q^T\mathcal R_m^T\mathcal R_n\mathbf k=\mathbf q^T\mathcal R_{n-m}\mathbf k
 \end{align}
-\]</span> 可以看见内积结果只与相对位置 <span class="math inline">\(n-m\)</span> 有关，这体现出了 RoPE 的相对性。</p>
-<p>对于 <span class="math inline">\(d\)</span> 维情形，不妨设 <span class="math inline">\(d\)</span> 是偶数，那么将二维情形拼接起来即可： <span class="math display">\[
-\text{RoPE}(\mathbf x,m)=\begin{equation}\underbrace{\begin{bmatrix} 
-\cos m\theta_0 &amp; -\sin m\theta_0 &amp; 0 &amp; 0 &amp; \cdots &amp; 0 &amp; 0 \\ 
-\sin m\theta_0 &amp; \cos m\theta_0 &amp; 0 &amp; 0 &amp; \cdots &amp; 0 &amp; 0 \\ 
-0 &amp; 0 &amp; \cos m\theta_1 &amp; -\sin m\theta_1 &amp; \cdots &amp; 0 &amp; 0 \\ 
-0 &amp; 0 &amp; \sin m\theta_1 &amp; \cos m\theta_1 &amp; \cdots &amp; 0 &amp; 0 \\ 
-\vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \vdots \\ 
-0 &amp; 0 &amp; 0 &amp; 0 &amp; \cdots &amp; \cos m\theta_{d/2-1} &amp; -\sin m\theta_{d/2-1} \\ 
-0 &amp; 0 &amp; 0 &amp; 0 &amp; \cdots &amp; \sin m\theta_{d/2-1} &amp; \cos m\theta_{d/2-1} \\ 
-\end{bmatrix}}_{\mathcal{R}_m} \begin{bmatrix}x_0 \\ x_1 \\ x_2 \\ x_3 \\ \vdots \\ x_{d-2} \\ x_{d-1}\end{bmatrix}\end{equation}
-\]</span> 其中 <span class="math inline">\(\theta_0,\ldots,\theta_{d/2-1}\)</span> 是超参数，沿用 sinusoidal 位置编码的超参数，可选取 <span class="math inline">\(\theta_j=10000^{-2j/d}\)</span>​.</p>
-<p>可以看见，RoPE 其实和 sinusoidal 位置编码有很多相似之处，只不过 sinusoidal 是加式编码，而 RoPE 是乘式编码。乘式编码结合 attention 中的内积运算，使得 RoPE 体现出来的相对性比 sinusoidal 位置编码更加“显式”。</p>
+\]</span> 基于旋转矩阵的良好性质 <span class="math inline">\(\mathcal R_m^T\mathcal R_n=\mathcal R_{n-m}\)</span>，可以看见内积结果只与相对位置 <span class="math inline">\(n-m\)</span> 有关，这体现出了 RoPE 的相对性。</p>
+<p>对于 <strong><span class="math inline">\(d\)</span> 维情形</strong>（<span class="math inline">\(d\)</span> 是偶数），与 sinusoidal 类似，只需将二维情形拼接起来即可： <span class="math display">\[
+\text{RoPE}(\mathbf x,m)=\begin{equation}\begin{bmatrix} 
+\cos(m\theta_0) &amp; -\sin(m\theta_0) &amp;&amp;\\ 
+\sin(m\theta_0) &amp; \cos(m\theta_0) &amp;&amp;\\
+&amp;&amp; \ddots &amp;&amp;\\ 
+&amp;&amp;&amp;\cos (m\theta_{d/2-1}) &amp; -\sin (m\theta_{d/2-1}) \\ 
+&amp;&amp;&amp;\sin (m\theta_{d/2-1}) &amp; \cos (m\theta_{d/2-1}) \\ 
+\end{bmatrix} \begin{bmatrix}x_0 \\ x_1 \\ \vdots \\ x_{d-2} \\ x_{d-1}\end{bmatrix}\end{equation}=\mathcal R_m\mathbf x
+\]</span> 其中 <span class="math inline">\(\theta_0,\ldots,\theta_{d/2-1}\)</span> 是超参数，沿用 sinusoidal 位置编码的设计，可选取 <span class="math inline">\(\theta_j=10000^{-2j/d}\)</span>​​.</p>
+<p>不过由于旋转矩阵 <span class="math inline">\(\mathcal R_m\)</span> 非常稀疏，所以实现时不会用矩阵乘法，而是改写为如下形式： <span class="math display">\[
+\text{RoPE}(\mathbf x,m)=\begin{bmatrix}x_0\\x_1\\\vdots\\x_{d-2}\\x_{d-1}\end{bmatrix}\odot\begin{bmatrix}
+\cos(m\theta_0)\\\cos(m\theta_0)\\\vdots\\\cos(m\theta_{d/2-1})\\\cos(m\theta_{d/2-1})
+\end{bmatrix}+\begin{bmatrix}-x_1\\x_0\\\vdots\\-x_{d-1}\\x_{d-2}\end{bmatrix}\odot\begin{bmatrix}
+\sin(m\theta_0)\\\sin(m\theta_0)\\\vdots\\\sin(m\theta_{d/2-1})\\\sin(m\theta_{d/2-1})
+\end{bmatrix}
+\]</span> 其中 <span class="math inline">\(\odot\)</span> 表示逐元素乘积。</p>
+<p>可以看见，RoPE 其实和 sinusoidal 位置编码有很多相似之处，只不过 sinusoidal 是加式编码，而 RoPE 是乘式编码。乘式编码结合 attention 中的内积运算，使得 RoPE 自然而然地展现出了相对性，比 sinusoidal 位置编码更加显式和优雅。</p>
+<h3 id="参考实现复数">参考实现（复数）</h3>
+<p>由于二维平面上的旋转可以视为复平面上的乘法，所以我们可以用复数来实现 RoPE. 具体而言，首先把 <span class="math inline">\(\mathbf x\in\mathbb R^d\)</span> 沿维度两两成组，转换为复数向量： <span class="math display">\[
+\mathbf x=\begin{bmatrix}x_0\\x_1\\\vdots\\x_{d-1}\end{bmatrix}\in\mathbb R^d
+\;\longrightarrow\;
+\hat{\mathbf x}=\begin{bmatrix}x_0+ix_1\\x_2+ix_3\\\vdots\\x_{d-2}+ix_{d-1}\end{bmatrix}\in\mathbb C^{d/2}
+\]</span> 那么 RoPE 操作可以改写为： <span class="math display">\[
+\text{RoPE}(\hat{\mathbf x},m)=\begin{bmatrix}x_0+ix_1\\x_2+ix_3\\\vdots\\x_{d-2}+ix_{d-1}\end{bmatrix}\odot\begin{bmatrix}
+e^{im\theta_0}\\e^{im\theta_1}\\\vdots\\e^{im\theta_{d/2-1}}
+\end{bmatrix}\in\mathbb C^{d/2}
+\]</span> 其中 <span class="math inline">\(\odot\)</span> 表示逐元素的复数乘法。计算完毕后再把复数的实部和虚部拆开 reshape 回 <span class="math inline">\(\mathbb R^d\)</span> 即可。PyTorch 参考代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">precompute_freqs_cis</span>(<span class="hljs-params">dim: <span class="hljs-built_in">int</span>, seq_len: <span class="hljs-built_in">int</span>, base: <span class="hljs-built_in">float</span> = <span class="hljs-number">10000</span></span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        dim: dimension of the embeddings</span><br><span class="hljs-string">        seq_len: sequence length</span><br><span class="hljs-string">        base: base for the thetas</span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        freqs_cis: a Tensor of shape (seq_len, dim/2)</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    freqs = <span class="hljs-number">1.0</span> / (base ** (torch.arange(<span class="hljs-number">0</span>, dim, <span class="hljs-number">2</span>)[: (dim // <span class="hljs-number">2</span>)].<span class="hljs-built_in">float</span>() / dim))<br>    t = torch.arange(seq_len, device=freqs.device)<br>    freqs = torch.outer(t, freqs).<span class="hljs-built_in">float</span>()<br>    freqs_cis = torch.polar(torch.ones_like(freqs), freqs) <br>    <span class="hljs-keyword">return</span> freqs_cis<br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">apply_rope</span>(<span class="hljs-params">xq: Tensor, xk: Tensor, freqs_cis: Tensor</span>):<br>    <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">    Args:</span><br><span class="hljs-string">        xq: queries, Tensor of shape (..., seq_len, dim)</span><br><span class="hljs-string">        xk: keys, Tensor of shape (..., seq_len, dim)</span><br><span class="hljs-string">        freqs_cis: precomputed freqs</span><br><span class="hljs-string">    Returns:</span><br><span class="hljs-string">        queries and keys after applying rope</span><br><span class="hljs-string">    &quot;&quot;&quot;</span><br>    xq_ = torch.view_as_complex(xq.<span class="hljs-built_in">float</span>().reshape(*xq.shape[:-<span class="hljs-number">1</span>], -<span class="hljs-number">1</span>, <span class="hljs-number">2</span>))<br>    xk_ = torch.view_as_complex(xk.<span class="hljs-built_in">float</span>().reshape(*xk.shape[:-<span class="hljs-number">1</span>], -<span class="hljs-number">1</span>, <span class="hljs-number">2</span>))<br>    xq_out = torch.view_as_real(xq_ * freqs_cis).reshape(*xq.shape)<br>    xk_out = torch.view_as_real(xk_ * freqs_cis).reshape(*xk.shape)<br>    <span class="hljs-keyword">return</span> xq_out.type_as(xq), xk_out.type_as(xk)<br></code></pre></td></tr></table></figure>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -435,55 +438,37 @@ a_{i,j}=\text{softmax}\left(\mathbf x_i\mathbf W_q\mathbf W_k^T\mathbf x_j^T+\ma
 <span id="fn:1" class="footnote-text"><span>Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. <em>Advances in neural information processing systems</em> 30 (2017). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Devlin, Jacob, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transformers for language understanding. <em>arXiv preprint arXiv:1810.04805</em> (2018). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>Dosovitskiy, Alexey, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani et al. An image is worth 16x16 words: Transformers for image recognition at scale. <em>arXiv preprint arXiv:2010.11929</em> (2020). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:3" class="footnote-text"><span>Brown, Tom, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D. Kaplan, Prafulla Dhariwal, Arvind Neelakantan et al. Language models are few-shot learners. <em>Advances in neural information processing systems</em> 33 (2020): 1877-1901. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:3" class="footnote-text"><span>Su, Jianlin, Murtadha Ahmed, Yu Lu, Shengfeng Pan, Wen Bo, and Yunfeng Liu. Roformer: Enhanced transformer with rotary position embedding. Neurocomputing 568 (2024): 127063. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:4" class="footnote-text"><span>Dosovitskiy, Alexey, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani et al. An image is worth 16x16 words: Transformers for image recognition at scale. <em>arXiv preprint arXiv:2010.11929</em> (2020). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:4" class="footnote-text"><span>苏剑林. (Feb. 03, 2021). 《让研究人员绞尽脑汁的Transformer位置编码 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/8130 <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:5" class="footnote-text"><span>Shaw, Peter, Jakob Uszkoreit, and Ashish Vaswani. Self-attention with relative position representations. <em>arXiv preprint arXiv:1803.02155</em> (2018). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:5" class="footnote-text"><span>苏剑林. (Mar. 08, 2021). 《Transformer升级之路：1、Sinusoidal位置编码追根溯源 》[Blog post]. Retrieved from https://www.spaces.ac.cn/archives/8231 <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:6" class="footnote-text"><span>Dai, Zihang, Zhilin Yang, Yiming Yang, Jaime Carbonell, Quoc V. Le, and Ruslan Salakhutdinov. Transformer-xl: Attentive language models beyond a fixed-length context. <em>arXiv preprint arXiv:1901.02860</em> (2019). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:6" class="footnote-text"><span>苏剑林. (Mar. 23, 2021). 《Transformer升级之路：2、博采众长的旋转式位置编码 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/8265 <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:7" class="footnote-text"><span>Yang, Zhilin, Zihang Dai, Yiming Yang, Jaime Carbonell, Russ R. Salakhutdinov, and Quoc V. Le. Xlnet: Generalized autoregressive pretraining for language understanding. <em>Advances in neural information processing systems</em> 32 (2019). <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:7" class="footnote-text"><span>BERT为何使用学习的position embedding而非正弦position encoding? - 纳米酱的回答 - 知乎 https://www.zhihu.com/question/307293465/answer/1028613658 <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:8" class="footnote-text"><span>Raffel, Colin, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, and Peter J. Liu. Exploring the limits of transfer learning with a unified text-to-text transformer. <em>Journal of machine learning research</em> 21, no. 140 (2020): 1-67. <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:8" class="footnote-text"><span>Amirhossein Kazemnejad. Transformer Architecture: The Positional Encoding. https://kazemnejad.com/blog/transformer_architecture_positional_encoding/ <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:9" class="footnote-text"><span>He, Pengcheng, Xiaodong Liu, Jianfeng Gao, and Weizhu Chen. Deberta: Decoding-enhanced bert with disentangled attention. <em>arXiv preprint arXiv:2006.03654</em> (2020). <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:9" class="footnote-text"><span>Timo Denk. Linear Relationships in the Transformer’s Positional Encoding. https://blog.timodenk.com/linear-relationships-in-the-transformers-positional-encoding/ <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:10" class="footnote-text"><span>Su, Jianlin, Murtadha Ahmed, Yu Lu, Shengfeng Pan, Wen Bo, and Yunfeng Liu. Roformer: Enhanced transformer with rotary position embedding. Neurocomputing 568 (2024): 127063. <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:10" class="footnote-text"><span>Alibi位置向量外推性：看起来很长其实还是短. https://developer.aliyun.com/article/842370 <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:11" class="footnote-text"><span>苏剑林. (Feb. 03, 2021). 《让研究人员绞尽脑汁的Transformer位置编码 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/8130 <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:11" class="footnote-text"><span>EleutherAI. Rotary Embeddings: A Relative Revolution. https://blog.eleuther.ai/rotary-embeddings/ <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:12" class="footnote-text"><span>苏剑林. (Mar. 08, 2021). 《Transformer升级之路：1、Sinusoidal位置编码追根溯源 》[Blog post]. Retrieved from https://www.spaces.ac.cn/archives/8231 <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:13" class="footnote-text"><span>苏剑林. (Mar. 23, 2021). 《Transformer升级之路：2、博采众长的旋转式位置编码 》[Blog post]. Retrieved from https://spaces.ac.cn/archives/8265 <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:14" class="footnote-text"><span>BERT为何使用学习的position embedding而非正弦position encoding? - 纳米酱的回答 - 知乎 https://www.zhihu.com/question/307293465/answer/1028613658 <a href="#fnref:14" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:15" class="footnote-text"><span>Amirhossein Kazemnejad. Transformer Architecture: The Positional Encoding. https://kazemnejad.com/blog/transformer_architecture_positional_encoding/ <a href="#fnref:15" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:16" class="footnote-text"><span>Zhang, Aston, Zachary C. Lipton, Mu Li, and Alexander J. Smola. Dive Into Deep Learning. https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html <a href="#fnref:16" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:17" class="footnote-text"><span>Alibi位置向量外推性：看起来很长其实还是短. https://developer.aliyun.com/article/842370 <a href="#fnref:17" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:18" class="footnote-text"><span>EleutherAI. Rotary Embeddings: A Relative Revolution. https://blog.eleuther.ai/rotary-embeddings/ <a href="#fnref:18" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:12" class="footnote-text"><span>十分钟读懂旋转编码（RoPE）. https://www.zhihu.com/tardis/bd/art/647109286 <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
