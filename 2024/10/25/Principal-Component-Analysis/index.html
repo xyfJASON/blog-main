@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="主成分分析 主成分分析 (Principal Component Analysis, PCA) 是一种数据降维方法，旨在用低维向量尽可能准确地表示原始的高维数据。 推导：最小化近似误差 设有数据集 \(\{\mathbf x_n\}_{n&#x3D;1}^N\)，其中每个数据点 \(\mathbf x_n\in\mathbb R^d\). 不失一般性地，假设数据的均值为 \(0\)，否则可以事先进行中心化。">
+    <meta name="description" content="主成分分析 主成分分析 (Principal Component Analysis, PCA) 是一种经典的数据降维方法。 推导：最小化近似误差 设有数据集 \(\{\mathbf x_n\}_{n&#x3D;1}^N\)，其中每个数据点 \(\mathbf x_n\in\mathbb R^d\). 不失一般性地，假设数据的均值为 \(0\)，否则可以事先进行中心化。主成分分析希望找到 \(r\;(r&amp;lt">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Principal Component Analysis">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/10/25/Principal-Component-Analysis/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="主成分分析 主成分分析 (Principal Component Analysis, PCA) 是一种数据降维方法，旨在用低维向量尽可能准确地表示原始的高维数据。 推导：最小化近似误差 设有数据集 \(\{\mathbf x_n\}_{n&#x3D;1}^N\)，其中每个数据点 \(\mathbf x_n\in\mathbb R^d\). 不失一般性地，假设数据的均值为 \(0\)，否则可以事先进行中心化。">
+<meta property="og:description" content="主成分分析 主成分分析 (Principal Component Analysis, PCA) 是一种经典的数据降维方法。 推导：最小化近似误差 设有数据集 \(\{\mathbf x_n\}_{n&#x3D;1}^N\)，其中每个数据点 \(\mathbf x_n\in\mathbb R^d\). 不失一般性地，假设数据的均值为 \(0\)，否则可以事先进行中心化。主成分分析希望找到 \(r\;(r&amp;lt">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/pca.png">
 <meta property="article:published_time" content="2024-10-25T07:13:40.000Z">
-<meta property="article:modified_time" content="2025-08-21T12:38:55.674Z">
+<meta property="article:modified_time" content="2025-08-24T07:25:24.827Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.7k 字
+          3.1k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          23 分钟
+          27 分钟
         
       </span>
     
@@ -331,12 +331,12 @@
               <div class="markdown-body">
                 
                 <h2 id="主成分分析">主成分分析</h2>
-<p>主成分分析 (Principal Component Analysis, PCA) 是一种数据降维方法，旨在用低维向量尽可能准确地表示原始的高维数据。</p>
+<p>主成分分析 (Principal Component Analysis, PCA) 是一种经典的数据降维方法。</p>
 <h3 id="推导最小化近似误差">推导：最小化近似误差</h3>
 <p>设有数据集 <span class="math inline">\(\{\mathbf x_n\}_{n=1}^N\)</span>，其中每个数据点 <span class="math inline">\(\mathbf x_n\in\mathbb R^d\)</span>. 不失一般性地，<strong>假设数据的均值为 <span class="math inline">\(0\)</span></strong>，否则可以事先进行中心化。主成分分析希望找到 <span class="math inline">\(r\;(r&lt;d)\)</span> 个<strong>标准正交</strong>向量 <span class="math inline">\(\mathbf w_1,\mathbf w_2,\ldots,\mathbf w_r\in\mathbb R^d\)</span> 作为基底，用它们的线性组合近似表示原数据： <span class="math display">\[
 \mathbf x_n\xleftarrow{\text{approximate}} \hat{\mathbf x}_n=\sum_{i=1}^rz_n^i\mathbf w_i=\mathbf W\mathbf z_n,\quad n=1,2,\ldots,N
-\]</span> 其中 <span class="math inline">\(\mathbf W=[\mathbf w_1,\mathbf w_2,\cdots,\mathbf w_r]\in\mathbb R^{d\times r}\)</span>，满足 <span class="math inline">\(\mathbf W^\mathsf T\mathbf W=\mathbf I_r\)</span>（根据标准正交性）；<span class="math inline">\(\mathbf z_n=(z_n^1,z_n^2,\ldots,z_n^r)^\mathsf T\in\mathbb R^r\)</span> 是表示坐标，也就是数据 <span class="math inline">\(\mathbf x_n\)</span> 降维后的结果。换句话说，我们将数据点 <span class="math inline">\(\mathbf x_n\)</span> 从 <span class="math inline">\(\mathbb R^d\)</span> 映射到了由 <span class="math inline">\(\mathbf w_1,\mathbf w_2,\ldots,\mathbf w_r\)</span> 张成的 <span class="math inline">\(r\)</span> 维子空间中。</p>
-<p>为了找到最优的基底和表示坐标，我们最小化近似误差（也称作重构损失）： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\mathbf W=[\mathbf w_1,\mathbf w_2,\cdots,\mathbf w_r]\in\mathbb R^{d\times r}\)</span>，满足 <span class="math inline">\(\mathbf W^\mathsf T\mathbf W=\mathbf I_r\)</span>；<span class="math inline">\(\mathbf z_n=(z_n^1,z_n^2,\ldots,z_n^r)^\mathsf T\in\mathbb R^r\)</span> 是表示坐标，也就是数据 <span class="math inline">\(\mathbf x_n\)</span> 降维后的结果。换句话说，我们将数据点 <span class="math inline">\(\mathbf x_n\)</span> 从 <span class="math inline">\(\mathbb R^d\)</span> 映射到了由 <span class="math inline">\(\mathbf w_1,\mathbf w_2,\ldots,\mathbf w_r\)</span> 张成的 <span class="math inline">\(r\)</span> 维子空间中。</p>
+<p>为了找到最优的基底和表示坐标，我们最小化近似误差： <span class="math display">\[
 \mathcal L(\mathbf W,\{\mathbf z_n\})=\frac{1}{N}\sum_{n=1}^N\left\Vert\mathbf x_n-\mathbf W\mathbf z_n\right\Vert^2
 \]</span> 首先求解各个 <span class="math inline">\(\mathbf z_n\)</span>. 上式对 <span class="math inline">\(\mathbf z_n\)</span> 求导并令为零，有： <span class="math display">\[
 \nabla_{\mathbf z_n}\mathcal L(\mathbf W,\{\mathbf z_n\})=-\frac{2}{N}\sum_{n=1}^N\mathbf W^\mathsf T(\mathbf x_n-\mathbf W\mathbf z_n)=-\frac{2}{N}\sum_{n=1}^N\left(\mathbf W^\mathsf T\mathbf x_n-\mathbf z_n\right)=\mathbf 0
@@ -352,12 +352,12 @@
 \end{align}
 \]</span> 这里我们引入了记号： <span class="math display">\[
 \mathbf S=\frac{1}{N}\sum_{n=1}^N\mathbf x_n\mathbf x_n^\mathsf T
-\]</span> 表示<strong>样本协方差矩阵</strong>。由于第一项与 <span class="math inline">\(\mathbf W\)</span> 无关，可以扔掉，因此现在优化问题化作： <span class="math display">\[
+\]</span> 表示<strong>样本协方差矩阵</strong>。由于第一项与 <span class="math inline">\(\mathbf W\)</span> 无关，因此现在优化问题化作： <span class="math display">\[
 \begin{align}
 \max_{\mathbf W}&amp;~~\mathrm{tr}(\mathbf W^\mathsf T\mathbf S\mathbf W)\\
 \text{s.t.}&amp;~~\mathbf W^\mathsf T\mathbf W=\mathbf I_r
 \end{align}
-\]</span> 这是经典的 Rayleigh 商问题的矩阵版本。为求解之，引入拉格朗日乘子 <span class="math inline">\(\mathbf H\in\mathbb R^{r\times r}\)</span>，构造拉格朗日函数： <span class="math display">\[
+\]</span> 这是经典的 <strong>Rayleigh 商</strong>问题的矩阵版本。引入拉格朗日乘子 <span class="math inline">\(\mathbf H\in\mathbb R^{r\times r}\)</span>，构造拉格朗日函数： <span class="math display">\[
 L(\mathbf W,\mathbf H)=\mathrm{tr}(\mathbf W^\mathsf T\mathbf S\mathbf W)-\mathrm{tr}(\mathbf H^\mathsf T(\mathbf W^\mathsf T\mathbf W-\mathbf I_r))
 \]</span> 对 <span class="math inline">\(\mathbf W\)</span> 求导并令为零，得： <span class="math display">\[
 \begin{gather}
@@ -369,41 +369,60 @@ L(\mathbf W,\mathbf H)=\mathrm{tr}(\mathbf W^\mathsf T\mathbf S\mathbf W)-\mathr
 \mathbf S\mathbf W=\mathbf W\mathbf P\mathbf\Lambda\mathbf P^\mathsf T\\
 \mathbf S(\mathbf W\mathbf P)=(\mathbf W\mathbf P)\mathbf\Lambda
 \end{gather}
-\]</span> 这说明，<span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 是 <span class="math inline">\(\mathbf S\)</span> 的 <span class="math inline">\(r\)</span> 个特征值，<span class="math inline">\(\mathbf W\mathbf P\)</span> 各列是对应的 <span class="math inline">\(r\)</span> 个特征向量。但是 <span class="math inline">\(\mathbf S\)</span> 一共有 <span class="math inline">\(d\)</span> 个特征值，为了确定究竟选取哪 <span class="math inline">\(r\)</span> 个特征值，我们考察此时的优化目标： <span class="math display">\[
+\]</span> 这说明，<span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 是 <span class="math inline">\(\mathbf S\)</span> 的 <span class="math inline">\(r\)</span> 个特征值，<span class="math inline">\(\mathbf W\mathbf P\)</span> 各列是对应的 <span class="math inline">\(r\)</span> 个特征向量。但是 <span class="math inline">\(\mathbf S\)</span> 一共有 <span class="math inline">\(d\)</span> 个特征值，为了确定究竟选取哪 <span class="math inline">\(r\)</span> 个特征值，考察此时的优化目标： <span class="math display">\[
 \mathrm{tr}(\mathbf W^\mathsf T\mathbf S\mathbf W)=\mathrm{tr}\left((\mathbf W\mathbf P)^\mathsf T\mathbf S(\mathbf W\mathbf P)\right)=\mathrm{tr}\left((\mathbf W\mathbf P)^\mathsf T(\mathbf W\mathbf P)\mathbf\Lambda\right)=\mathrm{tr}(\mathbf\Lambda)=\sum_{i=1}^r\lambda_i
-\]</span> 可见优化目标就是 <span class="math inline">\(r\)</span> 个特征值之和。由于我们想<strong>最大化</strong>优化目标，因此 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 应该取为 <span class="math inline">\(\mathbf S\)</span> <strong>最大的 <span class="math inline">\(r\)</span> 个特征值</strong>；相应地，<span class="math inline">\(\mathbf W\mathbf P\)</span> 各列就是对应的特征向量。又由于 <span class="math inline">\(\mathbf P\)</span> 是正交矩阵，因此 <span class="math inline">\(\mathbf W\mathbf P\)</span> 各列张成的空间就是 <span class="math inline">\(\mathbf W\)</span> 各列张成的空间，也就是数据点 <span class="math inline">\(\{\mathbf x_n\}\)</span> 投影到的空间。换句话说，我们要寻找的低维子空间，就是 <span class="math inline">\(\mathbf S\)</span> 最大的 <span class="math inline">\(r\)</span> 个特征值对应的特征向量所张成的空间。由于实对称矩阵的特征向量必然正交，因此我们直接取 <span class="math inline">\(\mathbf w_1,\mathbf w_2,\ldots,\mathbf w_r\)</span> 为 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 对应的特征向量即可。</p>
+\]</span> 可见优化目标就是 <span class="math inline">\(r\)</span> 个特征值之和。由于我们想<strong>最大化</strong>优化目标，因此 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 应该取为 <span class="math inline">\(\mathbf S\)</span> <strong>最大的 <span class="math inline">\(r\)</span> 个特征值</strong>；相应地，<span class="math inline">\(\mathbf W\mathbf P\)</span> 各列就是对应的特征向量。注意到由于 <span class="math inline">\(\mathbf P\)</span> 是正交矩阵，<span class="math inline">\(\mathbf W\mathbf P\)</span> 各列张成的空间就是 <span class="math inline">\(\mathbf W\)</span> 各列张成的空间，因此我们要寻找的投影子空间就是 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 对应的特征向量所张成的空间。又由于实对称矩阵的特征向量必然正交，因此我们直接取 <span class="math inline">\(\mathbf w_1,\mathbf w_2,\ldots,\mathbf w_r\)</span> 为 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_r\)</span> 对应的特征向量即可，并称它们为第 <span class="math inline">\(1,2,\ldots,r\)</span> 个主成分。</p>
 <p>总结一下，PCA 的执行过程为：</p>
 <ol type="1">
 <li>中心化数据 <span class="math inline">\(\{\mathbf x_n\}_{n=1}^N\)</span>，计算样本协方差矩阵 <span class="math inline">\(\mathbf S\)</span>；</li>
 <li>求解 <span class="math inline">\(\mathbf S\)</span> 最大的 <span class="math inline">\(r\)</span> 个特征值所对应的特征向量，排列为投影矩阵 <span class="math inline">\(\mathbf W=[\mathbf w_1,\mathbf w_2,\ldots,\mathbf w_r]\)</span>；</li>
 <li>执行降维 <span class="math inline">\(\mathbf z_n=\mathbf W^\mathsf T\mathbf x_n\)</span>；</li>
-<li>若要从降维结果重构原数据，只需执行 <span class="math inline">\(\hat{\mathbf x}_n=\mathbf W\mathbf z_n\)</span>.</li>
+<li>若要从降维结果重构原数据，执行 <span class="math inline">\(\hat{\mathbf x}_n=\mathbf W\mathbf z_n\)</span>.</li>
 </ol>
-<h3 id="解释方差最大化">解释：方差最大化</h3>
-<p>PCA 寻找到的子空间有一个特点，即数据投影在该空间后方差最大，直观上也就是分布最散。为了看清这一点，考察降维投影后的数据 <span class="math inline">\(\mathbf z_n=\mathbf W^\mathsf T\mathbf x_n\)</span>，由于我们假设了原数据的均值为零，因此易知投影后数据的均值也是零，故其协方差矩阵为： <span class="math display">\[
+<h3 id="解释最大化投影方差">解释：最大化投影方差</h3>
+<p>PCA 寻找到的子空间除了使得近似误差最小以外，还可以解释为使得数据投影后的方差最大。为了看清这一点，考察降维投影后的数据 <span class="math inline">\(\mathbf z_n=\mathbf W^\mathsf T\mathbf x_n\)</span>，由于我们假设了原数据的均值为零，因此易知投影后数据的均值也是零，故其协方差矩阵为： <span class="math display">\[
 \mathbf\Sigma=\frac{1}{N}\sum_{n=1}^N\mathbf z_n\mathbf z_n^\mathsf T=\frac{1}{N}\sum_{n=1}^N\mathbf W^\mathsf T\mathbf x_n\mathbf x_n^\mathsf T\mathbf W=\mathbf W^\mathsf T\mathbf S\mathbf W
-\]</span> 回顾上文推导的近似误差： <span class="math display">\[
+\]</span> 回顾上文推导的近似误差表达式： <span class="math display">\[
 \mathcal L(\mathbf W)=\mathrm{tr}(\mathbf S)-\mathrm{tr}(\mathbf W^\mathsf T\mathbf S\mathbf W)
 \]</span> 也即： <span class="math display">\[
 \mathrm{tr}(\mathbf S)=\mathcal L(\mathbf W)+\mathrm{tr}(\mathbf\Sigma)
-\]</span> 可见原数据各维方差之和等于近似误差加上投影数据各维方差之和。由于原数据方差是定值，因此最小化近似误差与最大化投影数据方差是等价的。几何上，原数据方差可以视为数据点到原点的距离，近似误差就是投影垂线的长度，而投影数据方差可看作投影垂足到原点的距离，因此上式描述的其实就是勾股定理——当斜边固定时，两条直角边呈负相关关系。</p>
-<h3 id="计算上的考量">计算上的考量</h3>
-<p>通过前面的推导，我们知道 PCA 就是要求解样本协方差矩阵 <span class="math inline">\(\mathbf S\)</span> 的前 <span class="math inline">\(r\)</span> 大的特征值与对应的特征向量。然而众所周知，求解特征值与特征向量并不是一件容易的事，所以我们会有一些计算上的考量。</p>
-<p>首先，我们最好保证数据在各个维度上的取值范围差不多，否则 PCA 的解将偏向于取值范围大的维度，因为它们具有更大的方差。因此实践中我们最好对数据进行标准化，而非仅仅中心化。等价地，这相当于我们用相关矩阵、而非协方差矩阵去求解。</p>
-<p>其次，在高维场景下，即 <span class="math inline">\(d&gt;N\)</span> 时，为了节省计算量，我们可以求解 Gram 矩阵 <span class="math inline">\(\mathbf X\mathbf X^\mathsf T\in\mathbb R^{N\times N}\)</span> 而非协方差矩阵 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\in\mathbb R^{d\times d}\)</span> 的特征值与特征向量。这是因为 <span class="math inline">\(\mathbf X\mathbf X^\mathsf T\)</span> 与 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 有着相同的非零特征值，并且特征向量也有简单的变换关系。具体而言，假设 <span class="math inline">\(\mathbf X\mathbf X^\mathsf T\)</span> 的特征值分解为： <span class="math display">\[
-(\mathbf X\mathbf X^\mathsf T)\mathbf U=\mathbf U\boldsymbol\Lambda
+\]</span> 可见原数据各维方差之和等于近似误差加上投影数据各维方差之和。由于原数据方差是定值，因此<strong>最小化近似误差</strong>与<strong>最大化投影数据方差</strong>是等价的。几何直观上，考察单个数据点，则原数据方差体现为数据点到原点的距离，近似误差就是投影垂线的长度，而投影数据方差可看作投影垂足到原点的距离，因此上式描述的其实就是勾股定理。显然，当斜边（原数据方差）固定时，两条直角边（近似误差、投影数据方差）呈负相关关系。</p>
+<h3 id="实践三点计算考量">实践：三点计算考量</h3>
+<p>通过前面的推导，我们知道 PCA 就是要求解 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 前 <span class="math inline">\(r\)</span> 大的特征值对应的特征向量，其中 <span class="math inline">\(\mathbf X=(\mathbf x_1^\mathsf T,\mathbf x_2^\mathsf T,\ldots,\mathbf x_N^\mathsf T)^\mathsf T\in\mathbb R^{N\times d}\)</span> 表示样本构成的矩阵。不过在实践中，我们还有几点计算上的考量。</p>
+<p>首先，我们最好保证数据在各个维度上的取值范围差不多，否则 PCA 的解将偏向于取值范围大的维度，因为它们具有更大的方差。因此实践中我们最好对数据进行<strong>标准化</strong>，而非仅仅<strong>中心化</strong>。</p>
+<p>其次，在高维场景下，即 <span class="math inline">\(d&gt;N\)</span> 时，为了节省计算量，我们可以求解 Gram 矩阵 <span class="math inline">\(\mathbf X\mathbf X^\mathsf T\in\mathbb R^{N\times N}\)</span> 而非 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\in\mathbb R^{d\times d}\)</span> 的特征值与特征向量。这是因为二者有相同的非零特征值，并且特征向量也有简单的变换关系。具体而言，设有： <span class="math display">\[
+\mathbf X\mathbf X^\mathsf T\mathbf U=\mathbf U\boldsymbol\Lambda
 \]</span> 其中 <span class="math inline">\(\mathbf U\)</span> 是特征向量构成的矩阵，<span class="math inline">\(\boldsymbol\Lambda\)</span> 是特征值构成的对角阵。那么左乘 <span class="math inline">\(\mathbf X^\mathsf T\)</span> 得： <span class="math display">\[
-(\mathbf X^\mathsf T\mathbf X)(\mathbf X^\mathsf T\mathbf U)=(\mathbf X^\mathsf T\mathbf U)\boldsymbol\Lambda
-\]</span> 这说明 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 的特征值也是 <span class="math inline">\(\boldsymbol\Lambda\)</span>，而特征向量构成的矩阵为 <span class="math inline">\(\mathbf V=\mathbf X^\mathsf T\mathbf U\)</span>. 不过这些特征向量并未归一化，因为</p>
-<p>我们将会看到，这种计算方式也让我们能够在 PCA 中用上核技巧。</p>
-<p>最后，根据特征值与奇异值的关系，求解 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 的特征值与特征向量，其实等价于求解 <span class="math inline">\(\mathbf X\)</span> 的奇异值与右奇异向量。这是因为，设有奇异值分解 <span class="math inline">\(\mathbf X=\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T\)</span>，那么： <span class="math display">\[
+\mathbf X^\mathsf T\mathbf X(\mathbf X^\mathsf T\mathbf U)=(\mathbf X^\mathsf T\mathbf U)\boldsymbol\Lambda
+\]</span> 这说明 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 的特征值也是 <span class="math inline">\(\boldsymbol\Lambda\)</span>，而特征向量构成的矩阵为 <span class="math inline">\(\mathbf X^\mathsf T\mathbf U\)</span>. 不过这些特征向量尚未归一化，因为： <span class="math display">\[
+(\mathbf X^\mathsf T\mathbf U)^\mathsf T(\mathbf X^\mathsf T\mathbf U)=\mathbf U^\mathsf T\mathbf X\mathbf X^\mathsf T\mathbf U=\mathbf U^\mathsf T\mathbf U\mathbf\Lambda=\mathbf\Lambda
+\]</span> 因此归一化后的特征向量矩阵应为： <span class="math display">\[
+\mathbf V=\mathbf X^\mathsf T\mathbf U\mathbf\Lambda^{-1/2}
+\]</span> 我们将会看到，这种计算方式也让我们能够在 PCA 中用上核技巧。</p>
+<p>最后，根据特征值与奇异值的关系，求解 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 的特征值与特征向量，等价于求解 <span class="math inline">\(\mathbf X\)</span> 的奇异值与右奇异向量。这是因为，设有奇异值分解 <span class="math inline">\(\mathbf X=\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T\)</span>，那么： <span class="math display">\[
 \mathbf X^\mathsf T\mathbf X=(\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T)^\mathsf T(\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T)=\mathbf V\boldsymbol\Sigma^2\mathbf V^\mathsf T
-\]</span> 所以我们也可以直接求解 <span class="math inline">\(\mathbf X\)</span> 最大的 <span class="math inline">\(r\)</span> 个奇异值对应的右奇异向量。</p>
+\]</span> 所以我们直接求解 <span class="math inline">\(\mathbf X\)</span> 最大的 <span class="math inline">\(r\)</span> 个奇异值对应的右奇异向量即可。</p>
+<h3 id="补充线性自编码器">补充：线性自编码器</h3>
+<p>如果我们将降维过程视作编码器，重构过程视作解码器，那么先降维、再重构的过程就构成了一个自编码器 (autoencoder)： <span class="math display">\[
+\min_{\text{encode},\,\text{decode}}~\mathcal L=\frac{1}{N}\sum_{n=1}^N\left\Vert\mathbf x_n-\text{decode}(\text{encode}(\mathbf x_n))\right\Vert^2
+\]</span> 对比 PCA 的优化目标： <span class="math display">\[
+\min_{\mathbf W}~\mathcal L=\frac{1}{N}\sum_{n=1}^N\left\Vert\mathbf x_n-\mathbf W\mathbf W^\mathsf T\mathbf x_n\right\Vert^2
+\]</span> 可见 PCA 就是在「编解码器均为正交变换且互为转置」的限制下的自编码器。</p>
+<p>事实上，即便抛弃正交和转置的限制，我们仍然能够证明 PCA 与线性自编码器是等价的。具体而言，取： <span class="math display">\[
+\begin{gather}
+\text{encode}(\mathbf x;\mathbf W_\text{enc})=\mathbf W_\text{enc}\mathbf x\in\mathbb R^r\\
+\text{decode}(\mathbf z;\mathbf W_\text{dec})=\mathbf W_\text{dec}\mathbf z\in\mathbb R^d
+\end{gather}
+\]</span> 其中 <span class="math inline">\(\mathbf W_\text{enc}\in\mathbb R^{r\times d},\;\mathbf W_\text{dec}\in\mathbb R^{d\times r}\)</span>. 那么重构损失写作： <span class="math display">\[
+\mathcal L(\mathbf W_\text{enc},\mathbf W_\text{dec})=\frac{1}{N}\sum_{n=1}^N\left\Vert\mathbf x_n-\mathbf W_\text{dec}\mathbf W_\text{enc}\mathbf x_n\right\Vert^2=\frac{1}{N}\left\Vert\mathbf X^\mathsf T-\mathbf W_\text{dec}\mathbf W_\text{enc}\mathbf X^\mathsf T\right\Vert_F^2
+\]</span> 这是一个经典的最佳低秩逼近问题。根据 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Low-rank_approximation">Eckart–Young–Mirsky</a> 定理，设 <span class="math inline">\(\mathbf X\)</span> 的奇异值分解为 <span class="math inline">\(\mathbf X=\mathbf U\mathbf\Sigma\mathbf V^\mathsf T\)</span>，其中 <span class="math inline">\(\mathbf U\in\mathbb R^{N\times k},\mathbf\Sigma\in\mathbb R^{k\times k},\mathbf V\in\mathbb R^{d\times k}\)</span>，则其最优解应满足： <span class="math display">\[
+\mathbf W_\text{dec}\mathbf W_\text{enc}\mathbf X^\mathsf T=\mathbf V_r\mathbf\Sigma_r\mathbf U_r^\mathsf T
+\]</span> 其中 <span class="math inline">\(\mathbf U_r\in\mathbb R^{N\times r},\mathbf\Sigma_r\in\mathbb R^{r\times r},\mathbf V_r\in\mathbb R^{d\times r}\)</span>. 易知符合条件的一族解为： <span class="math display">\[
+\mathbf W_\text{dec}=\mathbf V_r\mathbf R,\;\mathbf W_\text{enc}=\mathbf R^{-1}\mathbf V_r^\mathsf T
+\]</span> 其中 <span class="math inline">\(\mathbf R\)</span> 是任意可逆矩阵。这说明求解线性自编码器得到基与 PCA 解出的基仅差一个可逆变换，二者张成的子空间是相同的。</p>
 <h2 id="核主成分分析">核主成分分析</h2>
-<p>在 <a href="/blog-main/2024/01/03/Support-Vector-Machine/" title="Support Vector Machine">SVM</a> 和 <a href="/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/" title="Reproducing Kernel Hilbert Space">RKHS</a> 中，我们介绍了核技巧及其在 SVM 中的应用。自然地可以想到，核技巧也可以用在 PCA 中。具体而言，设有非线性映射 <span class="math inline">\(\phi\)</span> 将数据点 <span class="math inline">\(\mathbf x_n\in\mathbb R^d\)</span> 映射为特征 <span class="math inline">\(\phi(\mathbf x_n)\in\mathbb R^D\)</span>，其中 <span class="math inline">\(D\)</span> 可以是无穷。设核函数为 <span class="math inline">\(k(\cdot,\cdot)\)</span>，满足： <span class="math display">\[
-k(\mathbf x_n,\mathbf x_m)=\phi(\mathbf x_n)^\mathsf T\phi(\mathbf x_m)
-\]</span> 考虑在特征空间中实施 PCA，那么这就相当于在数据空间中做了非线性的主成分分析。</p>
-<p>我们<strong>暂时假设</strong>映射后特征的均值依旧是 <span class="math inline">\(0\)</span>，则特征空间中的样本协方差矩阵为： <span class="math display">\[
+<p>在 <a href="/blog-main/2024/01/03/Support-Vector-Machine/" title="Support Vector Machine">SVM</a> 和 <a href="/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/" title="Reproducing Kernel Hilbert Space">RKHS</a> 中，我们介绍了核技巧及其在 SVM 中的应用。自然地可以想到，核技巧也可以用在 PCA 中。具体而言，设有非线性映射 <span class="math inline">\(\phi\)</span> 将数据点 <span class="math inline">\(\mathbf x_n\in\mathbb R^d\)</span> 映射为特征 <span class="math inline">\(\phi(\mathbf x_n)\in\mathbb R^D\)</span>，其中 <span class="math inline">\(D\)</span> 可以是无穷；核函数为 <span class="math inline">\(k(\cdot,\cdot)\)</span>，满足 <span class="math inline">\(k(\mathbf x_n,\mathbf x_m)=\phi(\mathbf x_n)^\mathsf T\phi(\mathbf x_m)\)</span>. 考虑在特征空间中实施 PCA，那么这就相当于在数据空间中做了非线性的主成分分析。</p>
+<p>我们<strong>暂且假设</strong>映射后特征的均值依旧是 <span class="math inline">\(0\)</span>，则特征空间中的样本协方差矩阵为： <span class="math display">\[
 \mathbf C=\frac{1}{N}\sum_{n=1}^N\phi(\mathbf x_n)\phi(\mathbf x_n)^\mathsf T=\frac{1}{N}\begin{bmatrix}\phi(\mathbf x_1)&amp;\cdots&amp;\phi(\mathbf x_N)\end{bmatrix}\begin{bmatrix}\phi(\mathbf x_1)^\mathsf T\\\vdots\\\phi(\mathbf x_N)^\mathsf T\end{bmatrix}\in\mathbb R^{D\times D}
 \]</span> 不过，为了使用上核技巧，我们需要的是 <span class="math inline">\(\phi(\mathbf x_n)^\mathsf T\phi(\mathbf x_n)\)</span> 而非 <span class="math inline">\(\phi(\mathbf x_n)\phi(\mathbf x_n)^\mathsf T\)</span>. 好在根据前文的讨论，求解 <span class="math inline">\(\mathbf C\)</span> 的特征值与特征向量，可以转化为求解 Gram 矩阵的特征值与特征向量： <span class="math display">\[
 \begin{align}
@@ -419,14 +438,14 @@ k(\mathbf x_1,\mathbf x_1)&amp;\cdots&amp;k(\mathbf x_1,\mathbf x_N)\\
 k(\mathbf x_1,\mathbf x_1)&amp;\cdots&amp;k(\mathbf x_1,\mathbf x_N)
 \end{bmatrix}\in\mathbb R^{N\times N}
 \end{align}
-\]</span> 假设求解出 <span class="math inline">\(\mathbf K\)</span> 的特征向量为 <span class="math inline">\(\mathbf u_1,\ldots,\mathbf u_N\)</span>，则 <span class="math inline">\(\mathbf C\)</span> 的第 <span class="math inline">\(i\)</span> 个特征向量为： <span class="math display">\[
+\]</span> 假设求解出 <span class="math inline">\(\mathbf K\)</span> 的特征向量为 <span class="math inline">\(\mathbf u_1,\mathbf u_2,\ldots,\mathbf u_N\)</span>（按特征值从大到小排序），则 <span class="math inline">\(\mathbf C\)</span> 的第 <span class="math inline">\(i\)</span> 个特征向量为： <span class="math display">\[
 \mathbf v_i=\begin{bmatrix}\phi(\mathbf x_1)&amp;\cdots&amp;\phi(\mathbf x_N)\end{bmatrix}\mathbf u_i=\sum_{n=1}^Nu_{in}\phi(\mathbf x_n)
-\]</span> 其中 <span class="math inline">\(u_{in}\)</span> 表示 <span class="math inline">\(\mathbf u_i\)</span> 的第 <span class="math inline">\(n\)</span> 个维度。<span class="math inline">\(\mathbf v_i\)</span> 模长的平方为： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(u_{in}\)</span> 表示 <span class="math inline">\(\mathbf u_i\)</span> 的第 <span class="math inline">\(n\)</span> 个维度。又 <span class="math inline">\(\mathbf v_i\)</span> 模长的平方为： <span class="math display">\[
 \Vert\mathbf v_i\Vert^2=\mathbf v_i^\mathsf T\mathbf v_i=\sum_{n=1}^N\sum_{m=1}^Nu_{in}u_{im}k(\mathbf x_n,\mathbf x_m)=\mathbf u_i^\mathsf T\mathbf K\mathbf u_i
-\]</span> 于是数据点 <span class="math inline">\(\mathbf x\)</span> 在 <span class="math inline">\(\mathbf v_i\)</span> 上的投影为： <span class="math display">\[
+\]</span> 因此数据点 <span class="math inline">\(\mathbf x\)</span> 在 <span class="math inline">\(\mathbf v_i\)</span> 上的投影为： <span class="math display">\[
 y_i(\mathbf x)=\frac{\mathbf v_i^\mathsf T\phi(\mathbf x)}{\mathbf v_i^\mathsf T\mathbf v_i}=\frac{1}{\mathbf u_i^\mathsf T\mathbf K\mathbf u_i}\sum_{n=1}^Nu_{in}k(\mathbf x_n,\mathbf x)
-\]</span> 取前 <span class="math inline">\(r\)</span> 个结果，则 <span class="math inline">\(\mathbf y=[y_1(\mathbf x),y_2(\mathbf x),\ldots,y_r(\mathbf x)]^\mathsf T\)</span> 就是 <span class="math inline">\(\mathbf x\)</span> 的降维结果。</p>
-<p>现在还有一个遗留问题——我们假设映射后特征的均值依旧是 <span class="math inline">\(0\)</span>，但这并不总是正确（即便数据的均值是 <span class="math inline">\(0\)</span>）。假设中心化后的特征为： <span class="math display">\[
+\]</span> 于是 <span class="math inline">\(\mathbf y=(y_1(\mathbf x),y_2(\mathbf x),\ldots,y_r(\mathbf x))^\mathsf T\)</span> 就是 <span class="math inline">\(\mathbf x\)</span> 的降维结果。</p>
+<p>现在还有一个遗留问题——我们假设映射后特征的均值依旧是 <span class="math inline">\(0\)</span>，但这并不总是正确的（即便数据的均值是 <span class="math inline">\(0\)</span>）。假设中心化后的特征为： <span class="math display">\[
 \tilde\phi(\mathbf x_n)=\phi(\mathbf x_n)-\frac{1}{N}\sum_{l=1}^N\phi(\mathbf x_l)
 \]</span> 那么相应的 Gram 矩阵 <span class="math inline">\(\tilde{\mathbf K}\)</span> 的第 <span class="math inline">\(n\)</span> 行第 <span class="math inline">\(m\)</span> 列为： <span class="math display">\[
 \begin{align}
@@ -436,7 +455,7 @@ y_i(\mathbf x)=\frac{\mathbf v_i^\mathsf T\phi(\mathbf x)}{\mathbf v_i^\mathsf T
 \end{align}
 \]</span> 写作矩阵形式，即： <span class="math display">\[
 \tilde{\mathbf K}=\mathbf K-\mathbf 1_N\mathbf K-\mathbf K\mathbf 1_N+\mathbf 1_N\mathbf K\mathbf 1_N
-\]</span> 其中 <span class="math inline">\(\mathbf 1_N\)</span> 表示所有元素均为 <span class="math inline">\(1/N\)</span> 的 <span class="math inline">\(N\times N\)</span> 的矩阵。于是我们求解 <span class="math inline">\(\tilde{\mathbf K}\)</span> 的特征值与特征向量即可。</p>
+\]</span> 其中 <span class="math inline">\(\mathbf 1_N\in\mathbb R^{N\times N}\)</span> 表示所有元素均为 <span class="math inline">\(1/N\)</span> 的矩阵。现在只需将上文的 <span class="math inline">\(\mathbf K\)</span> 替换为 <span class="math inline">\(\tilde{\mathbf K}\)</span> 进行计算即可。</p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -446,6 +465,9 @@ y_i(\mathbf x)=\frac{\mathbf v_i^\mathsf T\phi(\mathbf x)}{\mathbf v_i^\mathsf T
 </li>
 <li>
 <span id="fn:2" class="footnote-text"><span>Bishop, Christopher M., and Nasser M. Nasrabadi. Pattern recognition and machine learning. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:3" class="footnote-text"><span>Bourlard, Hervé, and Yves Kamp. Auto-association by multilayer perceptrons and singular value decomposition. <em>Biological cybernetics</em> 59.4 (1988): 291-294. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
