@@ -28,10 +28,10 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/lipschitz.png">
 <meta property="article:published_time" content="2024-06-19T04:16:31.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:03:48.000Z">
+<meta property="article:modified_time" content="2025-08-26T08:49:08.367Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="linear algebra">
 <meta property="article:tag" content="machine learning">
+<meta property="article:tag" content="linear algebra">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/lipschitz.png">
   
@@ -278,7 +278,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.9k 字
+          4.1k 字
         
       </span>
     
@@ -289,7 +289,7 @@
         
         
         
-          33 分钟
+          35 分钟
         
       </span>
     
@@ -335,13 +335,13 @@
 <h3 id="实值函数情形">实值函数情形</h3>
 <p><strong>定义</strong>：设有函数 <span class="math inline">\(f:D\subset\mathbb R^n\to\mathbb R\)</span>，若存在常数 <span class="math inline">\(K\)</span> 使得： <span class="math display">\[
 \vert f(\mathbf x)-f(\mathbf y)\vert\leq K\Vert \mathbf x- \mathbf y\Vert,\quad\forall\ \mathbf x, \mathbf y\in D
-\]</span> 则称 <span class="math inline">\(f\)</span> 在 <span class="math inline">\(D\)</span> 上是 <span class="math inline">\(K\)</span>-Lipschitz 连续的，其中 <span class="math inline">\(\Vert\cdot\Vert\)</span> 表示欧式范数。称最小的常数 <span class="math inline">\(K\)</span> 为 Lipschitz 常数，记作 <span class="math inline">\(\Vert f\Vert_\text{Lip}\)</span>，即： <span class="math display">\[
+\]</span> 则称 <span class="math inline">\(f\)</span> 在 <span class="math inline">\(D\)</span> 上是 <span class="math inline">\(K\)</span>-Lipschitz 连续的，其中 <span class="math inline">\(\Vert\cdot\Vert\)</span> 表示欧式范数。称满足条件的最小常数 <span class="math inline">\(K\)</span> 为 Lipschitz 常数，记作 <span class="math inline">\(\Vert f\Vert_\text{Lip}\)</span>，即： <span class="math display">\[
 \Vert f\Vert_\text{Lip}=\sup_{\mathbf x,\mathbf y\in D,\,\mathbf x\neq\mathbf y}\frac{\vert f(\mathbf x)-f(\mathbf y)\vert}{\Vert\mathbf x-\mathbf y\Vert}
-\]</span> 需要注意的是，函数的定义域对 Lipschitz 连续很重要，下面几个例子说明了这一点。</p>
+\]</span> 需要注意的是，函数的定义域对 Lipschitz 连续性很重要，下面几个例子说明了这一点。</p>
 <p><strong>例</strong>：<span class="math inline">\(f(x)=|x|\)</span> 在 <span class="math inline">\(\mathbb R\)</span> 上是 1-Lipschitz 连续的。</p>
 <p><strong>例</strong>：<span class="math inline">\(f(x)=x^2\)</span> 在区间 <span class="math inline">\([-1,1]\)</span> 上是 Lipschitz 连续的，但在 <span class="math inline">\(\mathbb R\)</span> 上不是 Lipschitz 连续的。</p>
 <p><strong>例</strong>：<span class="math inline">\(f(x)=\sqrt{x}\)</span> 在区间 <span class="math inline">\([1,\infty)\)</span> 上是 Lipschitz 连续的，但在区间 <span class="math inline">\([0,\infty)\)</span>​​ 上不是 Lipschitz 连续的。</p>
-<p>下面的定理说明，Lipschitz 连续是比一致连续更强的条件。事实上，我们有 Lipschitz 连续 <span class="math inline">\(\Rightarrow\)</span> 一致连续 <span class="math inline">\(\Rightarrow\)</span> 连续。</p>
+<p>下面的定理说明，Lipschitz 连续是比一致连续更强的条件。事实上，我们有 <strong>Lipschitz 连续 <span class="math inline">\(\Rightarrow\)</span> 一致连续 <span class="math inline">\(\Rightarrow\)</span> 连续</strong>。</p>
 <p><strong>定理</strong>：Lipschitz 连续的函数是一致连续的。</p>
 <div class="note note-secondary">
             <p>证明：设 <span class="math inline">\(f:D\to\mathbb R\)</span> 是 <span class="math inline">\(K\)</span>-Lipschitz 连续的，则对任意 <span class="math inline">\(\epsilon&gt;0\)</span>，存在 <span class="math inline">\(\delta=\epsilon/K\)</span>，使得对任意 <span class="math inline">\(\mathbf x,\mathbf y\in D\)</span> 且 <span class="math inline">\(\Vert\mathbf x-\mathbf y\Vert&lt;\delta\)</span>，有： <span class="math display">\[|f(\mathbf x)-f(\mathbf y)|\leq K\Vert \mathbf x-\mathbf y\Vert&lt;\delta K=\epsilon\]</span> 故 <span class="math inline">\(f\)</span> 在 <span class="math inline">\(D\)</span> 上一致连续。证毕。</p>
@@ -349,8 +349,8 @@
 <p>在实际应用场景中，<span class="math inline">\(f\)</span> 常常是可微的，因此我们下面特别关注可微函数的 Lipschitz 连续性。为此，首先给出一个引理。</p>
 <p><strong>引理（多元实值函数的中值定理）</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(f:D\to\mathbb R\)</span> 在 <span class="math inline">\(D\)</span> 上可微，那么对 <span class="math inline">\(\forall\ \mathbf x,\mathbf y\in D\)</span>，<span class="math inline">\(\exists\ t_0\in(0,1)\)</span> 使得： <span class="math display">\[
 f(\mathbf y)=f(\mathbf x)+\nabla f((1-t_0)\mathbf x+t_0\mathbf y)^T(\mathbf y-\mathbf x)
-\]</span> 下面的定理告诉我们，对于可微函数，其 Lipschitz 连续性与梯度有界是等价的。</p>
-<p><strong>定理</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(f:D\to\mathbb R\)</span> 在 <span class="math inline">\(D\)</span> 上可微，那么: <span class="math display">\[
+\]</span> 下面的定理告诉我们，<strong>可微函数的 Lipschitz 连续性与梯度有界是等价的</strong>。</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(f:D\to\mathbb R\)</span> 在 <span class="math inline">\(D\)</span> 上可微，那么： <span class="math display">\[
 \underbrace{
 |f(\mathbf x)-f(\mathbf y)|\leq K\Vert\mathbf x-\mathbf y\Vert,\;\forall\ \mathbf x,\mathbf y\in D
 }_\text{Lipschitz continuity}
@@ -365,17 +365,18 @@ f(\mathbf y)=f(\mathbf x)+\nabla f((1-t_0)\mathbf x+t_0\mathbf y)^T(\mathbf y-\m
 <p>实值函数下对 Lipschitz 连续性的定义可以自然拓展到向量值函数下。</p>
 <p><strong>定义</strong>：设有函数 <span class="math inline">\(\mathbf f:D\subset\mathbb R^n\to\mathbb R^m\)</span>，若存在常数 <span class="math inline">\(K\)</span> 使得： <span class="math display">\[
 \Vert \mathbf f(\mathbf x)-\mathbf f(\mathbf y)\Vert\leq K\Vert \mathbf x- \mathbf y\Vert,\quad\forall\ \mathbf x, \mathbf y\in D
-\]</span> 则称 <span class="math inline">\(\mathbf f\)</span> 在 <span class="math inline">\(D\)</span> 上是 <span class="math inline">\(K\)</span>-Lipschitz 连续的，其中 <span class="math inline">\(\Vert\cdot\Vert\)</span> 表示欧式范数。称最小的常数 <span class="math inline">\(K\)</span> 为 Lipschitz 常数，记作 <span class="math inline">\(\Vert\mathbf f\Vert_\text{Lip}\)</span>​.</p>
-<p>下面的定理考虑复合函数的 Lipschitz 常数。</p>
+\]</span> 则称 <span class="math inline">\(\mathbf f\)</span> 在 <span class="math inline">\(D\)</span> 上是 <span class="math inline">\(K\)</span>-Lipschitz 连续的，其中 <span class="math inline">\(\Vert\cdot\Vert\)</span> 表示欧式范数。称满足条件的最小常数 <span class="math inline">\(K\)</span> 为 Lipschitz 常数，记作 <span class="math inline">\(\Vert\mathbf f\Vert_\text{Lip}\)</span>​.</p>
+<p>下面的定理考虑<strong>复合函数</strong>的 Lipschitz 常数。</p>
 <p><strong>定理</strong>：设有函数 <span class="math inline">\(\mathbf g:D\subset\mathbb R^n\to\mathbb R^m\)</span> 和 <span class="math inline">\(\mathbf f:R(\mathbf g)\subset\mathbb R^m\to\mathbb R^l\)</span>，则： <span class="math display">\[
 \Vert \mathbf f\circ \mathbf g\Vert_\text{Lip}\leq\Vert \mathbf f\Vert_\text{Lip}\cdot\Vert \mathbf g\Vert_\text{Lip}
 \]</span> <div class="note note-secondary">
             <p>证明： <span class="math display">\[\begin{align}\Vert \mathbf f\circ \mathbf g\Vert_\text{Lip}&amp;=\sup_{\mathbf x,\mathbf y\in D,\,\mathbf x\neq \mathbf y}\frac{\Vert \mathbf f(\mathbf g(\mathbf x))-\mathbf f(\mathbf g(\mathbf y))\Vert}{\Vert\mathbf x-\mathbf y\Vert}\\&amp;=\sup_{\mathbf x,\mathbf y\in D,\,\mathbf x\neq \mathbf y}\frac{\Vert \mathbf f(\mathbf g(\mathbf x))-\mathbf f(\mathbf g(\mathbf y))\Vert}{\Vert \mathbf g(\mathbf x)-\mathbf g(\mathbf y)\Vert}\cdot\frac{\Vert \mathbf g(\mathbf x)-\mathbf g(\mathbf y)\Vert}{\Vert\mathbf x-\mathbf y\Vert}\\&amp;\leq\sup_{\mathbf x,\mathbf y\in D,\,\mathbf x\neq \mathbf y}\frac{\Vert \mathbf f(\mathbf g(\mathbf x))-\mathbf f(\mathbf g(\mathbf y))\Vert}{\Vert \mathbf g(\mathbf x)-\mathbf g(\mathbf y)\Vert}\cdot\sup_{\mathbf x,\mathbf y\in D,\,\mathbf x\neq \mathbf y}\frac{\Vert \mathbf g(\mathbf x)-\mathbf g(\mathbf y)\Vert}{\Vert\mathbf x-\mathbf y\Vert}\\&amp;\leq\Vert \mathbf f\Vert_\text{Lip}\cdot\Vert \mathbf g\Vert_\text{Lip}\end{align}\]</span> 证毕。</p>
           </div></p>
 <p>上一小节关于实值可微函数的结论也可以拓展到向量值可微函数情形。同样我们需要先给出一个引理。</p>
-<p><strong>引理（多元向量值函数的“中值定理”）</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(\mathbf f:D\to\mathbb R^m\)</span> 在 <span class="math inline">\(D\)</span> 上可微，那么对 <span class="math inline">\(\forall\ \mathbf x,\mathbf y\in D\)</span>，<span class="math inline">\(\exists\ t_0\in(0,1)\)</span> 使得： <span class="math display">\[
+<p><strong>引理（多元向量值函数的中值定理）</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(\mathbf f:D\to\mathbb R^m\)</span> 在 <span class="math inline">\(D\)</span> 上可微，那么对 <span class="math inline">\(\forall\ \mathbf x,\mathbf y\in D\)</span>，<span class="math inline">\(\exists\ t_0\in(0,1)\)</span> 使得： <span class="math display">\[
 \Vert\mathbf f(\mathbf x)-\mathbf f(\mathbf y)\Vert\leq\Vert\nabla\mathbf f((1-t_0)\mathbf x+t_0\mathbf y)\Vert\Vert\mathbf x-\mathbf y\Vert
-\]</span> <strong>定理</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(\mathbf f:D\to\mathbb R^m\)</span> 在 <span class="math inline">\(D\)</span>​ 上可微，那么： <span class="math display">\[
+\]</span> 下面的定理告诉我们，<strong>向量值可微函数的 Lipschitz 连续性与 Jacobian 矩阵有界是等价的</strong>。</p>
+<p><strong>定理</strong>：设 <span class="math inline">\(D\subset\mathbb R^n\)</span> 是一个凸的开集，<span class="math inline">\(\mathbf f:D\to\mathbb R^m\)</span> 在 <span class="math inline">\(D\)</span>​ 上可微，那么： <span class="math display">\[
 \underbrace{\Vert\mathbf f(\mathbf x)-\mathbf f(\mathbf y)\Vert\leq K\Vert \mathbf x- \mathbf y\Vert,\;\forall\ \mathbf x, \mathbf y\in D
 }_\text{Lipschitz continuity}
 \quad\iff\quad
@@ -391,26 +392,41 @@ f(\mathbf y)=f(\mathbf x)+\nabla f((1-t_0)\mathbf x+t_0\mathbf y)^T(\mathbf y-\m
 \]</span> 又由于矩阵的谱范数等于其最大奇异值，因此上式也可写作： <span class="math display">\[
 \Vert\mathbf f\Vert_\text{Lip}=\sup_{\mathbf x\in D}\sigma_1(\nabla\mathbf f(\mathbf x))
 \]</span> 其中 <span class="math inline">\(\sigma_1(A)\)</span> 表示矩阵 <span class="math inline">\(A\)</span> 的最大奇异值。</p>
-<h3 id="一般度量空间情形">一般度量空间情形</h3>
-<p>事实上，在一般的度量空间下，我们也可以类似地定义 Lipschitz 连续性。</p>
-<p><strong>定义</strong>：设 <span class="math inline">\((X,d_X),\,(Y,d_Y)\)</span> 是两个度量空间，<span class="math inline">\(f:X\to Y\)</span>，若存在常数 <span class="math inline">\(K\)</span> 使得： <span class="math display">\[
-d_Y(f(x_1),f(x_2))\leq Kd_X(x_1,x_2),\quad\forall\ x_1,x_2\in X
-\]</span> 则称 <span class="math inline">\(f\)</span> 是 <span class="math inline">\(K\)</span>-Lipschitz 连续的。称最小的常数 <span class="math inline">\(K\)</span> 为 Lipschitz 常数，记作 <span class="math inline">\(\Vert f\Vert_\text{Lip}\)</span>.</p>
-<p>一般度量空间下 Lipschitz 连续性的性质不在本文的讨论范围之内，读者可自行参阅相关书籍。</p>
-<h3 id="神经网络的-lipschitz-常数">神经网络的 Lipschitz 常数</h3>
-<p>一个神经网络往往由多个线性层和激活函数堆叠而成（卷积层也可以视为线性层）： <span class="math display">\[
-\textbf{NN}=\mathbf g_{L+1}\circ\mathbf a_{L}\circ\mathbf g_{L}\circ\cdots\circ\mathbf a_2\circ\mathbf g_2\circ\mathbf a_1\circ\mathbf g_1
-\]</span> 其中 <span class="math inline">\(\mathbf g_l\)</span> 表示线性层，<span class="math inline">\(\mathbf a_l\)</span> 表示激活层。若假设激活层都是 1-Lipschitz 连续的（这对 ReLU, leaky ReLU 成立，而对于其他常见的激活函数，它们一般都是 <span class="math inline">\(K\)</span>-Lipschitz 连续的），那么根据上文的结论，有： <span class="math display">\[
-\Vert\textbf{NN}\Vert_\text{Lip}\leq\prod_{l=1}^{L+1}\Vert\mathbf g_l\Vert_\text{Lip}
-\]</span> 因此，只要我们能控制每一层的 Lipschitz 常数，就能控制整个神经网络的 Lipschitz 常数。</p>
-<p>考虑一个线性层 <span class="math inline">\(\mathbf g(\mathbf x)=W\mathbf x\)</span>，其中 <span class="math inline">\(W\in\mathbb R^{m\times n}\)</span>，其 Jacobian 矩阵为： <span class="math display">\[
-\nabla\mathbf g(\mathbf x)=W,\quad\forall\,\mathbf x\in\mathbb R^n
+<h2 id="神经网络的-lipschitz-常数">神经网络的 Lipschitz 常数</h2>
+<p>一个神经网络 (MLP, ConvNet, Transformer, ...) 往往由多个子模块堆叠而成： <span class="math display">\[
+\textrm{NN}=\mathbf f_{L}\circ\cdots\circ\mathbf f_2\circ\mathbf f_1
+\]</span> 其中 <span class="math inline">\(\mathbf f_l\)</span> 表示一个子模块（可以是简单的线性层，也可以是更复杂的网络模块）。那么根据上文复合函数 Lipschitz 连续性的定理，有： <span class="math display">\[
+\Vert\textrm{NN}\Vert_\text{Lip}\leq\prod_{l=1}^{L}\Vert\mathbf f_l\Vert_\text{Lip}
+\]</span> 因此，<strong>只要我们能控制每一个子模块的 Lipschitz 常数，就能控制整个神经网络的 Lipschitz 常数</strong>。</p>
+<h3 id="线性层卷积层">线性层/卷积层</h3>
+<p>考虑一个线性层 <span class="math inline">\(\mathbf f^\text{lin}(\mathbf x)=W\mathbf x\)</span>，其中 <span class="math inline">\(W\in\mathbb R^{m\times n}\)</span>，其 Jacobian 矩阵为： <span class="math display">\[
+\nabla\mathbf f^\text{lin}(\mathbf x)=W,\quad\forall\,\mathbf x\in\mathbb R^n
 \]</span> 因此根据上文的结论，线性层的 Lipschitz 常数就是权重 <span class="math inline">\(W\)</span> 的谱范数： <span class="math display">\[
-\Vert\mathbf g\Vert_\text{Lip}=\sup_{\mathbf x\in\mathbb R^n}\Vert W\Vert=\Vert W\Vert=\sigma_1(W)
+\Vert\mathbf f^\text{lin}\Vert_\text{Lip}=\sup_{\mathbf x\in\mathbb R^n}\Vert W\Vert=\Vert W\Vert=\sigma_1(W)
 \]</span></p>
-<p>下面我们介绍几种控制神经网络 Lipschitz 常数的方法，包括权重裁剪、梯度惩罚、谱范数正则和谱归一化。</p>
-<h2 id="权重裁剪">权重裁剪</h2>
-<p>WGAN<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Arjovsky, Martin, Soumith Chintala, and Léon Bottou. Wasserstein generative adversarial networks. In *International conference on machine learning*, pp. 214-223. PMLR, 2017.">[1]</span></a></sup>提出使用权重裁剪 (weight clipping) 来控制网络的 Lipschitz 常数，即在每一步更新权重后手动将其裁剪到 <span class="math inline">\([-c,c]\)</span> 之间，其中 <span class="math inline">\(c\)</span> 为超参数： <span class="math display">\[
+<p>卷积层可以视为特殊的线性层，因此有着相同的结论。</p>
+<h3 id="激活函数和归一化层">激活函数和归一化层</h3>
+<p>常用的激活函数都是 Lipschitz 连续的，例如 Sigmoid, Tanh, ReLU, leaky ReLU 等是 1-Lipschitz 连续的。</p>
+<h3 id="残差连接">残差连接</h3>
+<p>残差连接几乎是现代神经网络的必备模块，可以写作： <span class="math display">\[
+\mathbf f^\text{res}(\mathbf x)=\mathbf x+\mathbf f(\mathbf x)
+\]</span> 其中 <span class="math inline">\(\mathbf f\)</span> 表示任意形式的网络模块。于是： <span class="math display">\[
+\begin{align}
+\Vert\mathbf f^\text{res}(\mathbf x)-\mathbf f^\text{res}(\mathbf y)\Vert&amp;=\Vert(\mathbf x+\mathbf f(\mathbf x))-(\mathbf y+\mathbf f(\mathbf y))\Vert\\
+&amp;=\Vert\mathbf x-\mathbf y\Vert+\Vert\mathbf f(\mathbf x)-\mathbf f(\mathbf y)\Vert\\
+&amp;\leq\Vert\mathbf x-\mathbf y\Vert+\Vert\mathbf f\Vert_\text{Lip}\Vert\mathbf x-\mathbf y\Vert\\
+&amp;=(1+\Vert\mathbf f\Vert_\text{Lip})\Vert\mathbf x-\mathbf y\Vert
+\end{align}
+\]</span> 因此： <span class="math display">\[
+\Vert\mathbf f^\text{res}\Vert_\text{Lip}\leq 1+\Vert\mathbf f\Vert_\text{Lip}
+\]</span></p>
+<p>这说明仅仅控制 <span class="math inline">\(\mathbf f\)</span> 的 Lipschitz 常数小于 1 并不能保证整个残差块的 Lipschitz 常数小于 1.</p>
+<h3 id="注意力层">注意力层</h3>
+<p>注意力机制是现代 Transformer 网络的核心模块，遗憾的是，<strong>注意力层并不是 Lipschitz 连续的</strong>。</p>
+<h2 id="控制-lipschitz-常数的方法">控制 Lipschitz 常数的方法</h2>
+<p>本节我们介绍几种控制神经网络 Lipschitz 常数的方法，包括权重裁剪、梯度惩罚、谱范数正则和谱归一化。值得注意的是，这些方法大多是针对<strong>简单堆叠线性层/卷积层</strong>的网络提出的，对于有着更复杂结构的网络（残差连接、注意力等），还需要额外留意它们是否仍然适用。</p>
+<h3 id="权重裁剪">权重裁剪</h3>
+<p>WGAN 提出使用权重裁剪 (weight clipping) 来控制网络的 Lipschitz 常数，即在每一步更新权重后手动将其裁剪到 <span class="math inline">\([-c,c]\)</span> 之间，其中 <span class="math inline">\(c\)</span> 为超参数： <span class="math display">\[
 w:=\text{clip}(w,-c,c)=\begin{cases}c,&amp;w&gt;c\\-c,&amp;w&lt;-c\\w,&amp;\text{otherwise}\end{cases}
 \]</span> 为什么权重裁剪可以控制 Lipschitz 常数呢？考虑线性层 <span class="math inline">\(\mathbf g(\mathbf x)=W\mathbf x\)</span>，其中 <span class="math inline">\(W\in\mathbb R^{m\times n}\)</span>，容易知道权重裁剪控制了 <span class="math inline">\(W\)</span> 矩阵的 Frobenius 范数： <span class="math display">\[
 \Vert W\Vert_F=\sqrt{\sum_{i=1}^m\sum_{j=1}^n w_{ij}^2}\leq nmc^2
@@ -418,28 +434,28 @@ w:=\text{clip}(w,-c,c)=\begin{cases}c,&amp;w&gt;c\\-c,&amp;w&lt;-c\\w,&amp;\text
 nmc^2\geq\Vert W\Vert_F=\sqrt{\sum_{i=1}^{\min(n,m)}\sigma_i^2}\geq\sigma_1=\Vert W\Vert=\Vert\mathbf g\Vert_\text{Lip}
 \]</span> 因此权重裁剪可以控制网络的 Lipschitz 常数。</p>
 <p>但是权重裁剪容易导致大多数权重集中在 <span class="math inline">\(-c\)</span> 和 <span class="math inline">\(c\)</span> 处，并且裁剪超参数选取不当容易导致梯度消失或优化困难。就连 WGAN 作者都在论文里直言：“权重裁剪无疑是一种糟糕的控制 Lipschitz 常数的方式”。</p>
-<h2 id="梯度惩罚">梯度惩罚</h2>
-<p>为了解决权重裁剪的问题，WGAN-GP<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Gulrajani, Ishaan, Faruk Ahmed, Martin Arjovsky, Vincent Dumoulin, and Aaron C. Courville. Improved training of wasserstein gans. *Advances in neural information processing systems* 30 (2017).">[2]</span></a></sup>提出了梯度惩罚 (gradient penalty)，即在优化目标中加入正则项： <span class="math display">\[
-R_\text{GP}=\mathbb E_{\hat{\mathbf x}\sim \mathbb P_{\hat{\mathbf x}}}\left[(\Vert\nabla_{\hat{\mathbf x}}\textbf{NN}(\hat{\mathbf x})\Vert-1)^2\right]
-\]</span> 注意在 WGAN-GP 的背景下网络的输出是一个常数，即 <span class="math inline">\(\textbf{NN}(\cdot)\)</span> 是一个实值函数，所以上式中的 <span class="math inline">\(\nabla_{\hat{\mathbf x}}\textbf{NN}(\hat{\mathbf x})\)</span> 是梯度。</p>
+<h3 id="梯度惩罚">梯度惩罚</h3>
+<p>为了解决权重裁剪的问题，WGAN-GP 提出了梯度惩罚 (gradient penalty)，即在优化目标中加入正则项： <span class="math display">\[
+R_\text{GP}=\mathbb E_{\hat{\mathbf x}\sim \mathbb P_{\hat{\mathbf x}}}\left[(\Vert\nabla_{\hat{\mathbf x}}\textrm{NN}(\hat{\mathbf x})\Vert-1)^2\right]
+\]</span> 注意在 WGAN-GP 的背景下网络的输出是一个常数，即 <span class="math inline">\(\textrm{NN}(\cdot)\)</span> 是一个实值函数，所以上式中的 <span class="math inline">\(\nabla_{\hat{\mathbf x}}\textrm{NN}(\hat{\mathbf x})\)</span> 是梯度。</p>
 <p>梯度惩罚控制 Lipschitz 常数的原理基于上文的结论：可微函数的 Lipschitz 连续性与梯度有界是等价的，因此只要控制了梯度的界，就控制了网络的 Lipschitz 常数。另外，梯度惩罚是一种“软”的约束，即鼓励网络的梯度接近 1 而并没有硬性约束梯度必须小于 1，因此并不能保证网络是 1-Lipschitz 连续的，但在合适的超参数下能有足够好的效果。</p>
 <p>梯度惩罚也有如下形式的变种，仅在梯度大于 1 时作惩罚： <span class="math display">\[
-R_\text{GP}=\mathbb E_{\hat{\mathbf x}\sim \mathbb P_{\hat{\mathbf x}}}\left[\max(0,\Vert\nabla_{\hat{\mathbf x}}\textbf{NN}(\hat{\mathbf x})\Vert-1)\right]
+R_\text{GP}=\mathbb E_{\hat{\mathbf x}\sim \mathbb P_{\hat{\mathbf x}}}\left[\max(0,\Vert\nabla_{\hat{\mathbf x}}\textrm{NN}(\hat{\mathbf x})\Vert-1)\right]
 \]</span> 那种形式更好并没有定论，以实验效果为准。</p>
 <p>需要说明的是，原则上梯度惩罚要在整个 <span class="math inline">\(\mathbb R^n\)</span> 空间上做，这显然是不合适的。由于数据分布是 <span class="math inline">\(\mathbb R^n\)</span> 中的低维流形，所以我们只需要在数据流形上实施梯度惩罚即可。特别地，在 GAN 的问题背景下，数据流形不仅包含真实数据，还包含生成数据，所以 WGAN-GP 的做法是先随机采样真实数据和生成数据，然后在二者之间随机插值，以保证在真实数据、生成数据及二者之间的区域都有 Lipschitz 常数约束。当然，在其他只有真实数据的问题背景下，只需要从数据集中采样即可。</p>
-<h2 id="谱范数正则">谱范数正则</h2>
-<p>梯度惩罚直接考虑一整个网络，但根据第一节的结论，其实只需要考虑每一层就行了。对于线性层 <span class="math inline">\(\mathbf g_l(\mathbf x)=W_l\mathbf x\)</span>，为了限制其 Lipschitz 常数，只需要限制 <span class="math inline">\(W_l\)</span> 的谱范数，因此在优化目标中加入正则项<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Yoshida, Yuichi, and Takeru Miyato. Spectral norm regularization for improving the generalizability of deep learning. *arXiv preprint arXiv:1705.10941* (2017).">[3]</span></a></sup>： <span class="math display">\[
+<h3 id="谱范数正则">谱范数正则</h3>
+<p>梯度惩罚直接考虑一整个网络，但对于堆叠式的 MLP 或卷积网络，只需要考虑每一层就行了。对于线性层 <span class="math inline">\(\mathbf g_l(\mathbf x)=W_l\mathbf x\)</span>，为了限制其 Lipschitz 常数，只需要限制 <span class="math inline">\(W_l\)</span> 的谱范数，因此在优化目标中加入正则项 (spectral norm regularization)： <span class="math display">\[
 R_\text{SN}=\sum_{l=1}^{L+1}\Vert W_l\Vert^2=\sum_{l=1}^{L+1}\sigma_1(W_l)^2
 \]</span> 同梯度惩罚一样，谱范数正则是一种软的约束，鼓励但不能保证网络的 Lipschitz 连续性。</p>
 <p>有趣的是，谱范数正则可以看作常用的 L2 正则的弱化版本。注意 L2 正则相当于限制了矩阵的 Frobenius 范数： <span class="math display">\[
 R_\text{L2}=\sum_{l=1}^{L+1}\Vert W_l\Vert_F^2=\sum_{l=1}^{L+1}\sum_{i=1}^{\min(n,m)}\sigma_i(W_l)^2
 \]</span> 由于 Frobenius 范数能控制谱范数，所以 L2 正则也能达到控制网络 Lipschitz 常数的效果。但是相比谱范数正则，L2 正则鼓励不止是最大奇异值、而是所有奇异值都缩小，因此过分地限制了网络的表达能力。从这个角度来说，谱范数正则是比 L2 正则更好的选择。</p>
 <p>最后，与梯度惩罚相比，谱范数正则不依赖于输入数据，因此并没有梯度惩罚中只能在数据流形上限制 Lipschitz 常数的缺点。</p>
-<h2 id="谱归一化">谱归一化</h2>
-<p>谱范数正则是一种软的约束，但我们完全可以将其变成硬的约束。对于线性层 <span class="math inline">\(\mathbf g(\mathbf x)=W\mathbf x\)</span>，谱归一化<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Miyato, Takeru, Toshiki Kataoka, Masanori Koyama, and Yuichi Yoshida. Spectral normalization for generative adversarial networks. *arXiv preprint arXiv:1802.05957* (2018).">[4]</span></a></sup>在权重更新后除以其谱范数： <span class="math display">\[
+<h3 id="谱归一化">谱归一化</h3>
+<p>谱范数正则是一种软的约束，但我们完全可以将其变成硬的约束。对于线性层 <span class="math inline">\(\mathbf g(\mathbf x)=W\mathbf x\)</span>，谱归一化 (spectral normalization) 在权重更新后除以其谱范数： <span class="math display">\[
 W:=\frac{W}{\Vert W\Vert}=\frac{W}{\sigma_1(W)}
-\]</span> 根据范数的正齐次性容易知道，操作后矩阵 <span class="math inline">\(W\)</span> 的谱范数保证为 1，因此该线性层是 1-Lipschitz 连续的。于是在第一节的假设（激活层都是 1-Lipschitz 连续的）下，整个网络就是 1-Lipschitz 连续的。谱归一化既有谱范数正则的所有优点，又能保证网络的 Lipschitz 连续性，因此基本上是最好的方法。</p>
-<h2 id="如何计算谱范数">如何计算谱范数</h2>
+\]</span> 根据范数的正齐次性容易知道，操作后矩阵 <span class="math inline">\(W\)</span> 的谱范数保证为 1，因此该线性层是 1-Lipschitz 连续的。谱归一化既有谱范数正则的所有优点，又能保证网络的 Lipschitz 连续性。</p>
+<h3 id="如何计算谱范数">如何计算谱范数</h3>
 <p>对于谱范数正则和谱归一化，一个问题是如何计算谱范数。由于谱范数等于最大奇异值，所以最直接的方法就是对权重矩阵 <span class="math inline">\(W\)</span> 做奇异值分解，然后取出最大奇异值。但是奇异值分解的计算量巨大，因此这个方法并不实用。事实上，谱归一化采用的是<strong>幂迭代法 (power iteration)</strong>.</p>
 <p>根据矩阵论的知识，<span class="math inline">\(W\)</span> 的最大奇异值就是 <span class="math inline">\(W^TW\)</span> 的最大特征值的平方根，所以问题变成如何快速求解实对称矩阵 <span class="math inline">\(A\)</span> 的特征值。幂迭代法的基本思想是建立如下的迭代格式： <span class="math display">\[
 \mathbf u^{(k+1)}\gets\frac{A\mathbf u^{(k)}}{\Vert A\mathbf u^{(k)}\Vert}
@@ -448,27 +464,33 @@ W:=\frac{W}{\Vert W\Vert}=\frac{W}{\sigma_1(W)}
             <p>证明：设 <span class="math inline">\(A\in\mathbb R^{n\times n}\)</span> 为一个实对称矩阵，其特征值和对应特征向量分别为 <span class="math inline">\(\lambda_1,\lambda_2,\ldots,\lambda_n\)</span> 和 <span class="math inline">\(\mathbf q_1,\mathbf q_2,\ldots,\mathbf q_n\)</span>. 假设 <span class="math inline">\(\lambda_1\)</span> 是唯一最大的特征值，且 <span class="math inline">\(\mathbf q_1,\mathbf q_2,\ldots,\mathbf q_n\)</span> 线性无关，那么对随机初始化的向量 <span class="math inline">\(\mathbf u^{(0)}\in\mathbb R^n\)</span>，将其分解为特征向量的线性组合： <span class="math display">\[\mathbf u^{(0)}=a_1\mathbf q_1+a_2\mathbf q_2+\cdots+a_n\mathbf q_n\]</span> 由于 <span class="math inline">\(\mathbf u^{(0)}\)</span> 是随机选取的，所以几乎不可能正好与 <span class="math inline">\(\mathbf q_1\)</span> 正交。换句话说，<span class="math inline">\(a_1\)</span> 以概率 1 不为 0. 上式乘以 <span class="math inline">\(A\)</span> 得： <span class="math display">\[\begin{align}A\mathbf u^{(0)}&amp;=a_1A\mathbf q_1+a_2A\mathbf q_2+\cdots+a_nA\mathbf q_n\\&amp;=a_1\lambda_1\mathbf q_1+a_2\lambda_2\mathbf q_2+\cdots+a_n\lambda_n\mathbf q_n\end{align}\]</span> 归一化得： <span class="math display">\[\mathbf u^{(1)}=\frac{A\mathbf u^{(0)}}{\Vert A\mathbf u^{(0)}\Vert}=\frac{1}{Z_1}(a_1\lambda_1\mathbf q_1+a_2\lambda_2\mathbf q_2+\cdots+a_n\lambda_n\mathbf q_n)\]</span> 其中 <span class="math inline">\(Z_1\)</span> 为归一化系数。以此类推，有： <span class="math display">\[\begin{align}\mathbf u^{(k)}&amp;=\frac{1}{Z_k}\left(a_1\lambda_1^k\mathbf q_1+a_2\lambda_2^k\mathbf q_2+\cdots+a_n\lambda_n^k\mathbf q_n\right)\\&amp;=\frac{\lambda_1^k}{Z_k}\left(a_1\mathbf q_1+a_2\left(\frac{\lambda_2}{\lambda_1}\right)^k\mathbf q_2+\cdots+a_n\left(\frac{\lambda_n}{\lambda_1}\right)^k\mathbf q_n\right)\end{align}\]</span> 其中 <span class="math inline">\(Z_k\)</span> 为归一化系数。注意对 <span class="math inline">\(i\neq 1\)</span>，有 <span class="math inline">\(\frac{\lambda_i}{\lambda_1}&lt;1\)</span>，所以当 <span class="math inline">\(k\to\infty\)</span> 时，<span class="math inline">\(\mathbf q_2,\ldots,\mathbf q_n\)</span> 这些方向的分量就趋于 0，只留下 <span class="math inline">\(\mathbf q_1\)</span> 方向： <span class="math display">\[\mathbf u=\lim_{k\to\infty}\mathbf u^{(k)}=\lim_{k\to\infty}\frac{\lambda_1^k}{Z_k}a_1\mathbf q_1=\frac{\mathbf q_1}{\Vert\mathbf q_1\Vert}\]</span> 证毕。</p>
           </div>
 <p>事实上，幂迭代法有着非常直观的几何解释——每次迭代乘以 <span class="math inline">\(A\)</span>，就是将 <span class="math inline">\(\mathbf u\)</span> 向最大特征值对应的特征向量方向旋转一点，因此最终收敛到 <span class="math inline">\(A\)</span> 的最大特征向量。</p>
-<h2 id="references">References</h2>
+<h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
 <ol>
 <li>
-<span id="fn:1" class="footnote-text"><span>Arjovsky, Martin, Soumith Chintala, and Léon Bottou. Wasserstein generative adversarial networks. In <em>International conference on machine learning</em>, pp. 214-223. PMLR, 2017. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:1" class="footnote-text"><span>Lebl, Jiří. Basic analysis: Introduction to real analysis. https://www.jirka.org/ra/ <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:2" class="footnote-text"><span>Gulrajani, Ishaan, Faruk Ahmed, Martin Arjovsky, Vincent Dumoulin, and Aaron C. Courville. Improved training of wasserstein gans. <em>Advances in neural information processing systems</em> 30 (2017). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:2" class="footnote-text"><span>萌萌憨. Lipschitz连续性和导数有界的等价性证明（前提：函数可微）. https://blog.csdn.net/weixin_42128655/article/details/138209570 <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:3" class="footnote-text"><span>Yoshida, Yuichi, and Takeru Miyato. Spectral norm regularization for improving the generalizability of deep learning. <em>arXiv preprint arXiv:1705.10941</em> (2017). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:3" class="footnote-text"><span>Arjovsky, Martin, Soumith Chintala, and Léon Bottou. Wasserstein generative adversarial networks. In <em>International conference on machine learning</em>, pp. 214-223. PMLR, 2017. <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:4" class="footnote-text"><span>Miyato, Takeru, Toshiki Kataoka, Masanori Koyama, and Yuichi Yoshida. Spectral normalization for generative adversarial networks. <em>arXiv preprint arXiv:1802.05957</em> (2018). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:4" class="footnote-text"><span>Gulrajani, Ishaan, Faruk Ahmed, Martin Arjovsky, Vincent Dumoulin, and Aaron C. Courville. Improved training of wasserstein gans. <em>Advances in neural information processing systems</em> 30 (2017). <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:5" class="footnote-text"><span>Lebl, Jiří. Basic analysis: Introduction to real analysis. https://www.jirka.org/ra/ <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:5" class="footnote-text"><span>Yoshida, Yuichi, and Takeru Miyato. Spectral norm regularization for improving the generalizability of deep learning. <em>arXiv preprint arXiv:1705.10941</em> (2017). <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:6" class="footnote-text"><span>萌萌憨. Lipschitz连续性和导数有界的等价性证明（前提：函数可微）. https://blog.csdn.net/weixin_42128655/article/details/138209570 <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:6" class="footnote-text"><span>Miyato, Takeru, Toshiki Kataoka, Masanori Koyama, and Yuichi Yoshida. Spectral normalization for generative adversarial networks. <em>arXiv preprint arXiv:1802.05957</em> (2018). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:7" class="footnote-text"><span>Kim, Hyunjik, George Papamakarios, and Andriy Mnih. "The lipschitz constant of self-attention." In <em>International Conference on Machine Learning</em>, pp. 5562-5571. PMLR, 2021. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:8" class="footnote-text"><span>Qi, Xianbiao, Jianan Wang, Yihao Chen, Yukai Shi, and Lei Zhang. Lipsformer: Introducing lipschitz continuity to vision transformers. <em>The Eleventh International Conference on Learning Representations</em> (2023). <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
@@ -506,9 +528,9 @@ W:=\frac{W}{\Vert W\Vert}=\frac{W}{\sigma_1(W)}
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/linear-algebra/" class="print-no-link">#linear algebra</a>
-      
         <a href="/blog-main/tags/machine-learning/" class="print-no-link">#machine learning</a>
+      
+        <a href="/blog-main/tags/linear-algebra/" class="print-no-link">#linear algebra</a>
       
     </div>
   
