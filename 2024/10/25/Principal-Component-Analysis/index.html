@@ -26,13 +26,13 @@
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="主成分分析 主成分分析 (Principal Component Analysis, PCA) 是一种经典的数据降维方法。 推导：最小化近似误差 设有数据集 \(\{\mathbf x_n\}_{n&#x3D;1}^N\)，其中每个数据点 \(\mathbf x_n\in\mathbb R^d\). 不失一般性地，假设数据的均值为 \(0\)，否则可以事先进行中心化。主成分分析希望找到 \(r\;(r&amp;lt">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/pca.png">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/pca.jpeg">
 <meta property="article:published_time" content="2024-10-25T07:13:40.000Z">
-<meta property="article:modified_time" content="2025-09-05T04:10:03.080Z">
+<meta property="article:modified_time" content="2025-09-08T11:23:19.886Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/pca.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/pca.jpeg">
   
   
   
@@ -248,7 +248,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/pca.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/pca.jpeg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -404,7 +404,7 @@ L(\mathbf W,\mathbf H)=\mathrm{tr}(\mathbf W^\mathsf T\mathbf S\mathbf W)-\mathr
 \]</span> 我们将会看到，这种计算方式也让我们能够在 PCA 中用上核技巧。</p>
 <p>最后，根据特征值与奇异值的关系，求解 <span class="math inline">\(\mathbf X^\mathsf T\mathbf X\)</span> 的特征值与特征向量，等价于求解 <span class="math inline">\(\mathbf X\)</span> 的奇异值与右奇异向量。这是因为，设有奇异值分解 <span class="math inline">\(\mathbf X=\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T\)</span>，那么： <span class="math display">\[
 \mathbf X^\mathsf T\mathbf X=(\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T)^\mathsf T(\mathbf U\boldsymbol\Sigma\mathbf V^\mathsf T)=\mathbf V\boldsymbol\Sigma^2\mathbf V^\mathsf T
-\]</span> 所以我们直接求解 <span class="math inline">\(\mathbf X\)</span> 最大的 <span class="math inline">\(r\)</span> 个奇异值对应的右奇异向量即可。</p>
+\]</span> 所以我们也可直接求解 <span class="math inline">\(\mathbf X\)</span> 最大的 <span class="math inline">\(r\)</span> 个奇异值对应的右奇异向量。</p>
 <h3 id="补充线性自编码器">补充：线性自编码器</h3>
 <p>如果我们将降维过程视作编码器，重构过程视作解码器，那么先降维、再重构的过程就构成了一个自编码器 (autoencoder)： <span class="math display">\[
 \min_{\text{encode},\,\text{decode}}~\mathcal L=\frac{1}{N}\sum_{n=1}^N\left\Vert\mathbf x_n-\text{decode}(\text{encode}(\mathbf x_n))\right\Vert^2

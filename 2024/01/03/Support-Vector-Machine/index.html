@@ -26,13 +26,13 @@
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="支持向量机 (SVM) 是一种基于间隔最大化的线性分类器。  当数据线性可分时，通过硬间隔最大化，可学习硬间隔支持向量机（线性可分支持向量机）； 当数据近似线性可分时，通过软间隔最大化，可学习软间隔支持向量机（线性支持向量机）； 当数据线性不可分时，利用核技巧以及软间隔最大化，可学习一般的非线性支持向量机。  在本文中，记数据集为 \(D&#x3D;\{(\mathbf x_1,y_1),\ldots,(\">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/svm.png">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/svm.jpeg">
 <meta property="article:published_time" content="2024-01-03T09:55:22.000Z">
-<meta property="article:modified_time" content="2024-11-29T07:28:40.000Z">
+<meta property="article:modified_time" content="2025-09-08T11:28:12.995Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/svm.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/svm.jpeg">
   
   
   
@@ -248,7 +248,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/svm.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/svm.jpeg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -469,28 +469,29 @@ L(\mathbf w,b,\xi,\alpha,\mu)=\frac{1}{2}\Vert\mathbf w\Vert^2+C\sum_{i=1}^n\xi_
 <p>虽然软间隔支持向量机可以处理线性不可分的数据，但得到的依旧是一个超平面，因此只能用于处理近似线性可分的问题。如果数据本身就完全不是线性可分的，如异或问题，那么软间隔支持向量机显然也不合适。核技巧是解决非线性可分问题的常用技巧，其基本思想为将线性不可分的数据映射到高维空间中，使之线性可分，进而可以使用线性模型求解。</p>
 <p>具体而言，设 <span class="math inline">\(\mathcal X\)</span> 为输入空间，<span class="math inline">\(\mathcal H\)</span> 为映射后的特征空间，存在映射： <span class="math display">\[
 \phi(\mathbf x):\mathcal X\to\mathcal H
-\]</span> 使得对任意 <span class="math inline">\(\mathbf x,\mathbf y\in\mathcal X\)</span>，函数 <span class="math inline">\(K(\mathbf x,\mathbf y)\)</span> 满足： <span class="math display">\[
-K(\mathbf x,\mathbf y)=\phi(\mathbf x)\cdot\phi(\mathbf y)
-\]</span> 则称 <span class="math inline">\(K(\mathbf x,\mathbf y)\)</span> 为核函数，其中 <span class="math inline">\(\phi(\mathbf x)\cdot\phi(\mathbf y)\)</span> 表示向量内积。</p>
-<p>核技巧的思想是<strong>只设计核函数 <span class="math inline">\(K(\mathbf x,\mathbf y)\)</span>，而不显式定义映射函数</strong> <span class="math inline">\(\phi(\mathbf x)\)</span>. 也就是说，计算特征内积时并不是先映射、再计算，而是直接用核函数计算（事实上一些核函数对应的特征空间 <span class="math inline">\(\mathcal H\)</span> 甚至是无穷维的，无法先映射再计算）。</p>
+\]</span> 使得对任意 <span class="math inline">\(\mathbf x,\mathbf y\in\mathcal X\)</span>，函数 <span class="math inline">\(k(\mathbf x,\mathbf y)\)</span> 满足： <span class="math display">\[
+k(\mathbf x,\mathbf y)=\phi(\mathbf x)\cdot\phi(\mathbf y)
+\]</span> 则称 <span class="math inline">\(k(\cdot,\cdot)\)</span> 为核函数，其中 <span class="math inline">\(\phi(\mathbf x)\cdot\phi(\mathbf y)\)</span> 表示向量内积。</p>
+<p>核技巧的思想是<strong>只设计核函数 <span class="math inline">\(k(\mathbf x,\mathbf y)\)</span>，而不显式定义映射函数</strong> <span class="math inline">\(\phi(\mathbf x)\)</span>. 也就是说，计算特征内积时并不是先映射、再计算，而是直接用核函数计算（事实上一些核函数对应的特征空间 <span class="math inline">\(\mathcal H\)</span> 甚至是无穷维的，无法先映射再计算）。</p>
 <p>既然不显式定义映射函数，那怎么获取核函数呢？怎么判断某给定函数是不是核函数呢？这涉及到了泛函分析与再生核希尔伯特空间的知识，感兴趣的读者可以继续阅读<a href="/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/" title="Reproducing Kernel Hilbert Space">这篇文章</a>。</p>
 <h3 id="常用核函数">常用核函数</h3>
 <p>实际应用中，我们常常用如下几种核函数：</p>
 <ul>
 <li><p><strong>多项式核函数</strong>： <span class="math display">\[
-K(\mathbf x,\mathbf y)=(\mathbf x^T\mathbf y+1)^p
+k(\mathbf x,\mathbf y)=(\mathbf x^T\mathbf y+1)^p
 \]</span></p></li>
 <li><p><strong>高斯核函数</strong>： <span class="math display">\[
-K(\mathbf x,\mathbf y)=\exp\left(-\frac{\Vert\mathbf x-\mathbf y\Vert^2}{2\sigma^2}\right)
+k(\mathbf x,\mathbf y)=\exp\left(-\frac{\Vert\mathbf x-\mathbf y\Vert^2}{2\sigma^2}\right)
 \]</span></p></li>
 <li><p><strong>Sigmoid (Tanh) 核函数</strong>： <span class="math display">\[
-K(\mathbf x,\mathbf y)=\tanh(\kappa\mathbf x^T\mathbf y+\theta)
+k(\mathbf x,\mathbf y)=\tanh(\kappa\mathbf x^T\mathbf y+\theta)
 \]</span></p></li>
+<li></li>
 </ul>
 <h3 id="核函数软间隔支持向量机">核函数+软间隔支持向量机</h3>
 <p>注意到在支持向量机的对偶问题中，<strong>优化目标只需要样本之间的内积</strong>，并不需要每个样本单独的值。因此，只需要将内积替换为核函数，就相当于是在映射后的高维特征空间中做支持向量机了： <span class="math display">\[
 \begin{align}
-\min_{\alpha}\quad&amp;\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(\mathbf x_i,\mathbf x_j)-\sum_{i=1}^n\alpha_i\\
+\min_{\alpha}\quad&amp;\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jk(\mathbf x_i,\mathbf x_j)-\sum_{i=1}^n\alpha_i\\
 \text{s.t.}\quad&amp;\sum_{i=1}^n\alpha_iy_i=0\\
 &amp;0\leq\alpha_i\leq C,\quad i=1,\ldots,n\\
 \end{align}
@@ -499,7 +500,7 @@ K(\mathbf x,\mathbf y)=\tanh(\kappa\mathbf x^T\mathbf y+\theta)
 <p>我们已经看到，无论是硬间隔最大化、软间隔最大化、亦或是加入核函数的支持向量机，它们最终都建模为了一个凸二次规划问题。到这一步，我们只需要调用很多成熟的凸二次规划求解器即可。但是，当训练样本量很大时，这些算法往往会变得低效。因此，对于支持向量机而言，人们最常使用的优化方法是一种称为 SMO (Sequential Minimal Optimization) 的算法。</p>
 <p>SMO 算法要解的是对偶问题： <span class="math display">\[
 \begin{align}
-\min_{\alpha}\quad&amp;\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jK(\mathbf x_i,\mathbf x_j)-\sum_{i=1}^n\alpha_i\\
+\min_{\alpha}\quad&amp;\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_jy_iy_jk(\mathbf x_i,\mathbf x_j)-\sum_{i=1}^n\alpha_i\\
 \text{s.t.}\quad&amp;\sum_{i=1}^n\alpha_iy_i=0\\
 &amp;0\leq\alpha_i\leq C,\quad i=1,\ldots,n\\
 \end{align}
