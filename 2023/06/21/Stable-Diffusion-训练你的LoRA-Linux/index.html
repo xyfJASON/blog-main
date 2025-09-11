@@ -26,15 +26,15 @@
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="简介 LoRA 是一种参数高效微调方法（PEFT），最早由 LoRA: Low-Rank Adaptation of Large Language Models 提出并应用于微调语言大模型之中，后来由 Low-rank Adaptation for Fast Text-to-Image Diffusion Fine-tuning 引入到对 Stable Diffusion 模型的微调之中。LoRA">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/lora.png">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/stability.jpg">
 <meta property="article:published_time" content="2023-06-21T09:08:13.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:01:00.000Z">
+<meta property="article:modified_time" content="2025-09-11T04:31:30.836Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="AIGC">
 <meta property="article:tag" content="stable diffusion">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/stable-diffusion/lora.png">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/stability.jpg">
   
   
   
@@ -250,7 +250,7 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/stable-diffusion/lora.png') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/stability.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
@@ -563,7 +563,7 @@
 </ul>
 <h2 id="示例">示例</h2>
 <p>凭空讲解还是太过抽象，这一节我们用两个示例来详细阐述训练过程。两个示例分别使用前文介绍的两种数据准备方式（class+identifier 与 caption），供读者参考。</p>
-<h3 id="角色-lorajudy-zootopia">角色 LoRA：Judy-Zootopia</h3>
+<h3 id="角色-lora">角色 LoRA</h3>
 <p>我们用疯狂动物城的 Judy 来演示<strong>第一种方法（DreamBooth, class+identifier）</strong>。这种方法不需要准备文本描述，只需要在配置文件中设置 <code>class_tokens</code> 为标识符+类别即可。首先，我在网上找了 27 张 Judy 的图片放在 <code>./data/Judy-Zootopia</code> 下：</p>
 <p><img src="judy.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
 <p>这些图片的分辨率最好在 512x512 及以上，因为大部分基底模型都是在这个分辨率上训练的。图片的长宽比并不一定要保持一致，因为 sd-scripts 支持 bucketing，即会自动按照长宽比分组训练。</p>
@@ -578,11 +578,8 @@
 <p>以下展示一些挑选后的结果：</p>
 <div class="group-image-container"><div class="group-image-row"><div class="group-image-wrap"><img src="judy-1.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-2.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-3.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div><div class="group-image-row"><div class="group-image-wrap"><img src="judy-4.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-5.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div><div class="group-image-wrap"><img src="judy-6.png" srcset="/blog-main/logo/imageloading.png" lazyload /></div></div></div>
 <p><br/></p>
-<h3 id="姿态-lorasuperhero-landing">姿态 LoRA：Superhero-Landing</h3>
-<blockquote>
-<p>死侍表示很赞😎</p>
-</blockquote>
-<p>除了训练人物角色/物体，我们还可以训练一些抽象的概念，比如人物的姿态。这里我们尝试训练一个超级英雄落地式姿态。要想 LoRA 只学会姿态而不是训练集中的人物特征，我们必须把姿态与其他特征解耦开，因此<strong>选择第二种方法（Dreambooth, caption）</strong>。</p>
+<h3 id="姿态-lora">姿态 LoRA</h3>
+<p>除了训练人物角色/物体，我们还可以训练一些抽象的概念，比如人物的姿态。这里我们尝试训练一个超级英雄落地式姿态（死侍表示很赞）。要想 LoRA 只学会姿态而不是训练集中的人物特征，我们必须把姿态与其他特征解耦开，因此<strong>选择第二种方法（Dreambooth, caption）</strong>。</p>
 <p>首先还是收集数据。我在网上找了 25 张超级英雄落地图放在 <code>./data/Superhero-Landing</code> 下：</p>
 <p><img src="superhero-landing.png" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
 <p>接下来为每张图片写文本描述，可以分为三个小步：</p>
