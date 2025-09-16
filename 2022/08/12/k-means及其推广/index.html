@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="谈到聚类（clustering），k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，以至于我之前没有深究过其中的奥秘与坑点。今天就来更深入地探究一下 k-means。 1 算法描述 设我们有 \(n\) 个样本 \(X&#x3D;\{x_1,\ldots,x_n\}\)，每个样本为 \(d\) 维向量，即 \(x_i\in \mathbb R^d\). k-means 算法欲将样本分到 \(">
+    <meta name="description" content="谈到聚类（clustering），k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，以至于我之前没有深究过其中的奥秘与坑点。今天就来更深入地探究一下 k-means 算法。 1 算法描述 设有 \(n\) 个样本 \(X&#x3D;\{x_1,\ldots,x_n\}\)，每个样本为 \(d\) 维向量，即 \(x_i\in \mathbb R^d\)；又设 \(C\) 表示对样本集的一个划">
 <meta property="og:type" content="article">
 <meta property="og:title" content="K-means及其推广">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/08/12/K-means%E5%8F%8A%E5%85%B6%E6%8E%A8%E5%B9%BF/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="谈到聚类（clustering），k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，以至于我之前没有深究过其中的奥秘与坑点。今天就来更深入地探究一下 k-means。 1 算法描述 设我们有 \(n\) 个样本 \(X&#x3D;\{x_1,\ldots,x_n\}\)，每个样本为 \(d\) 维向量，即 \(x_i\in \mathbb R^d\). k-means 算法欲将样本分到 \(">
+<meta property="og:description" content="谈到聚类（clustering），k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，以至于我之前没有深究过其中的奥秘与坑点。今天就来更深入地探究一下 k-means 算法。 1 算法描述 设有 \(n\) 个样本 \(X&#x3D;\{x_1,\ldots,x_n\}\)，每个样本为 \(d\) 维向量，即 \(x_i\in \mathbb R^d\)；又设 \(C\) 表示对样本集的一个划">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/kmeans.jpeg">
 <meta property="article:published_time" content="2022-08-12T05:34:50.000Z">
-<meta property="article:modified_time" content="2025-09-11T04:13:37.564Z">
+<meta property="article:modified_time" content="2025-09-11T07:56:55.705Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -288,7 +288,7 @@
         
         
         
-          21 分钟
+          20 分钟
         
       </span>
     
@@ -330,17 +330,19 @@
             
               <div class="markdown-body">
                 
-                <p>谈到聚类（clustering），k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，以至于我之前没有深究过其中的奥秘与坑点。今天就来更深入地探究一下 k-means。</p>
+                <p>谈到聚类（clustering），k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，以至于我之前没有深究过其中的奥秘与坑点。今天就来更深入地探究一下 k-means 算法。</p>
 <h2 id="算法描述">1 算法描述</h2>
-<p>设我们有 <span class="math inline">\(n\)</span> 个样本 <span class="math inline">\(X=\{x_1,\ldots,x_n\}\)</span>，每个样本为 <span class="math inline">\(d\)</span> 维向量，即 <span class="math inline">\(x_i\in \mathbb R^d\)</span>. k-means 算法欲将样本分到 <span class="math inline">\(k\)</span> 个类 <span class="math inline">\(G_1,\ldots,G_k\)</span> 中，且这些类构成对样本集 <span class="math inline">\(X\)</span> 的一个划分，一个划分就是一个聚类结果。记 <span class="math inline">\(C\)</span> 表示划分，则 <span class="math inline">\(l=C(i)\)</span> 表示将样本 <span class="math inline">\(x_i\)</span> 分到类 <span class="math inline">\(l\)</span> 中。</p>
-<p>k-means 的优化目标是最小化所有样本到其所属类中心的距离之和： <span class="math display">\[
+<p>设有 <span class="math inline">\(n\)</span> 个样本 <span class="math inline">\(X=\{x_1,\ldots,x_n\}\)</span>，每个样本为 <span class="math inline">\(d\)</span> 维向量，即 <span class="math inline">\(x_i\in \mathbb R^d\)</span>；又设 <span class="math inline">\(C\)</span> 表示对样本集的一个划分，即 <span class="math inline">\(l=C(i)\)</span> 表示将 <span class="math inline">\(x_i\)</span> 分到类 <span class="math inline">\(l\)</span> 中，则 k-means 的优化目标是最小化所有样本到其所属类中心的距离之和：</p>
+<p><span class="math display">\[
 \min_{C,m_1,\ldots,m_k}\sum_{l=1}^k\sum_{C(i)=l}\|x_i-m_l\|^2
-\]</span> 然而这是一个组合优化问题，直接求解是 NP-hard 的，因此我们采用<strong>迭代</strong>的方式求解：</p>
+\]</span> 然而这是一个组合优化问题，直接求解是 NP-hard 的，因此我们采用<strong>迭代优化</strong>的方式求解：</p>
 <ol type="1">
 <li><p>随机选择 <span class="math inline">\(k\)</span> 个样本作为中心 <span class="math inline">\((m_1,\ldots,m_k)\)</span>.</p></li>
 <li><p>对给定的中心，求最优划分，即： <span class="math display">\[
 \min_C \sum_{l=1}^k\sum_{C(i)=l}\|x_i-m_l\|^2
-\]</span> 显然，最优划分就是将每个样本划分给距离它最近的那个中心。</p></li>
+\]</span> 显然，最优划分就是将每个样本划分给距离它最近的那个中心： <span class="math display">\[
+C(i)=\text{argmin}_{l=1}^k~\|x_i-m_l\|^2
+\]</span></p></li>
 <li><p>对于给定划分，求各类最优中心，即： <span class="math display">\[
 \min_{m_1,\ldots,m_k} \sum_{l=1}^k\sum_{C(i)=l}\|x_i-m_l\|^2
 \]</span> 求偏导并令为零，容易得到上式的最优解是： <span class="math display">\[
@@ -361,38 +363,36 @@ m_l=\frac{1}{n_l}\sum_{C(i)=l}x_i\quad l=1,\ldots,k
 <p><img src="iter.png" srcset="/blog-main/logo/imageloading.png" lazyload widht=60% /></p>
 <p>虽然 k-means 一定收敛，但<strong>可能收敛到局部最优解</strong>，这完全取决于初始化的情况。因此在实际应用中，常常用不同随机种子跑多次。</p>
 <h2 id="其他距离度量">3 其他距离度量</h2>
-<p>上述 k-means 算法是基于欧式距离的，这自然引发了我们思考——能不能采用其他的距离度量呢？</p>
-<p>答案是 k-means 的核心思想依旧适用，只不过这时候不该叫做 k-means 了——"means" 这个名称来自于第 3 步中求均值，而之所以求均值，是因为均值是以欧式距离为损失函数的最优解。改变了距离度量，就改变了最优解的形式。</p>
-<p>换句话说，如果使用其他距离确定划分（第 2 步），却依然用均值来更新类中心（第 3 步），就意味着第 2、3 步的损失函数不同，这很可能导致算法不收敛——毕竟第二节的收敛性证明依赖于第 2、3 步在优化同一个损失函数。</p>
-<p>总而言之，对于距离度量 <span class="math inline">\(\text{dist}(\cdot,\cdot)\)</span>，k-means 可以扩展为以下框架：</p>
+<p>上述 k-means 算法是基于欧式距离的，这自然引发了我们思考——能不能采用其他的距离度量呢？答案是算法的核心思想依旧适用，只不过这时候不该叫做 k-means 了——"means" 这个名称来自于第 3 步中求均值，而之所以求均值，是因为均值是以欧式距离为损失函数的最优解。改变了距离度量，就改变了最优解。换句话说，如果使用其他距离确定划分（第 2 步），却依然用均值来更新类中心（第 3 步），就会导致第 2、3 步的损失函数不同，使得算法不收敛——毕竟算法的收敛性证明依赖于第 2、3 步在优化同一个损失函数。</p>
+<p>一般而言，对于任意距离度量 <span class="math inline">\(\text{dist}(\cdot,\cdot)\)</span>，k-means 可以扩展为以下框架：</p>
 <ol type="1">
 <li><p>随机初始化 <span class="math inline">\(k\)</span> 个中心 <span class="math inline">\((m_1,\ldots,m_k)\)</span>.</p></li>
-<li><p>对给定的中心，求最优划分，即： <span class="math display">\[
-\min_C \sum_{l=1}^k\sum_{C(i)=l}\text{dist}(x_i,m_l)
-\]</span> 显然，最优划分是将每个样本划分给距离它最近的那个中心。</p></li>
+<li><p>对给定的中心，将每个样本划分给距离它最近的那个中心： <span class="math display">\[
+C(i)=\text{argmin}_{l=1}^k~\text{dist}(x_i,m_l)
+\]</span></p></li>
 <li><p>对于给定划分，求各类最优中心，即： <span class="math display">\[
 \min_{m_1,\ldots,m_k} \sum_{l=1}^k\sum_{C(i)=l}\text{dist}(x_i,m_l)
 \]</span> <strong>对于不同距离的度量，最优解的形式有所不同</strong>。</p></li>
 <li><p>迭代执行 2、3 步直至收敛。</p></li>
 </ol>
 <p>基于上述框架，我们下面探究算法在其他几种距离下的具体形式。</p>
-<h3 id="曼哈顿距离k-medians">3.1 曼哈顿距离——k-medians</h3>
+<h3 id="曼哈顿距离k-medians">3.1 曼哈顿距离：k-medians</h3>
 <p>曼哈顿距离，也即 L1 距离，定义为： <span class="math display">\[
 \text{dist}(x,y)=\|x-y\|_1=\sum_{j=1}^d |x_j-y_j|
 \]</span> 在曼哈顿距离下，第 3 步的最优解是中位数（median）。因此，该算法被称作 <strong>k-medians</strong>.</p>
 <p>中位数相比于均值的优势在于不易受到噪声点的干扰——如果有一个数据点特别离谱，它对均值的影响将是巨大的，但中位数可能根本不变。</p>
-<h3 id="汉明距离k-modes">3.2 汉明距离——k-modes</h3>
+<h3 id="汉明距离k-modes">3.2 汉明距离：k-modes</h3>
 <p>如果样本各维度都取离散值，汉明距离也是常用的一种度量： <span class="math display">\[
 \text{dist}(x,y)=\sum_{j=1}^d[x_j\neq y_j]
 \]</span> 即比较两个向量有多少维取值不同。</p>
 <p>在汉明距离下，第 3 步的最优解是众数（mode）。因此，该算法被称作 <strong>k-modes</strong>.</p>
-<h3 id="任意距离k-medoids">3.3 任意距离——k-medoids</h3>
-<p>对于任意的距离度量，第 3 步很可能没有一个像均值/中位数/众数那么好看的解，而最为暴力的求解方法就是——枚举！我们当然不可能在实值空间里枚举，但可以只在样本点中枚举——这就是 <strong>k-medoids</strong> 算法。可以看见，k-medoids 得到的中心点一定是某些样本点，这也是它与 k-means、k-medians 和 k-modes 的一个不同之处。</p>
+<h3 id="任意距离k-medoids">3.3 任意距离：k-medoids</h3>
+<p>对于任意的距离度量，第 3 步很可能没有一个像均值/中位数/众数那么好看的解，而最为暴力的求解方法就是——枚举！我们当然不可能在实值空间里枚举，但可以只在样本点中枚举——这就是 <strong>k-medoids</strong> 算法。因此，k-medoids 得到的中心点一定是某些样本点，这也是它与 k-means、k-medians 和 k-modes 的一个不同之处。</p>
 <p>k-medoids 有一个特殊的应用场景——<strong>只知道样本点两两之间的距离，但不知道样本点具体是多少</strong>。无论是 k-means, k-medians 还是 k-modes，计算均值/中位数/众数必然需要样本点具体的值，所以它们无法应用在这个特殊的场景下。但是不难发现 k-medoids 只需要样本点两两之间距离足矣。</p>
 <p>不过，k-medoids 的缺点也很显著——枚举耗时巨大。因此诸如 PAM(Partitioning Around Medoids) 等算法被提出以减小复杂度，此处按下不表。</p>
 <p><br/></p>
 <p>综上所述，我们发现<strong>想要用一个新的距离度量，只需要想办法求解第 3 步</strong>——如果没有解析解，那就枚举（k-medoids）；如果有，恭喜你，你可以把这个算法叫做 「k-some_strange_word_starting_with_the_letter_m」 了！（大雾）下面我们用余弦相似度举个例子。</p>
-<h3 id="余弦相似度spherical-k-means">3.4 余弦相似度——spherical k-means</h3>
+<h3 id="余弦相似度spherical-k-means">3.4 余弦相似度：spherical k-means</h3>
 <p>其实寻找基于余弦相似度的 k-means 算法正是本文的写作动机。最无脑的解决方案无非是用 k-medoids 算法，但为了效率考虑，我们不妨尝试一下第 3 步能否求出解析解： <span class="math display">\[
 \max_{m_1,\ldots,m_k} \sum_{l=1}^k\sum_{C(i)=l}\cos(x_i,m_l)\iff \max_{m_1,\ldots,m_k} \sum_{l=1}^k\sum_{C(i)=l}\frac{x_i\cdot m_l}{\|x_i\|\|m_l\|}
 \]</span> 由于类与类互相独立，所以只需考虑： <span class="math display">\[
