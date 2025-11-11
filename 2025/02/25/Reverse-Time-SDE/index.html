@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/reverse-time-sde.jpeg">
 <meta property="article:published_time" content="2025-02-25T08:03:37.000Z">
-<meta property="article:modified_time" content="2025-09-08T11:23:06.646Z">
+<meta property="article:modified_time" content="2025-10-30T14:16:14.119Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.9k 字
+          2k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          16 分钟
+          17 分钟
         
       </span>
     
@@ -354,7 +354,7 @@
 <h3 id="大胆猜想">大胆猜想</h3>
 <p>注意到 <span class="math inline">\(\eqref{fp-change}\)</span> 式与 FP 方程的形式还挺像的，于是我们有了一个大胆的猜想：是否真的存在一个以 <span class="math inline">\(s\)</span> 为时间参数的 SDE，其 FP 方程正好就是 <span class="math inline">\(\eqref{fp-change}\)</span> 式呢？具体而言，设有如下 SDE： <span class="math display">\[
 \mathrm dY_s=b(Y_s,s)\mathrm ds+\sigma(Y_s,s)\mathrm dW_s
-\]</span> 那么它的 FP 方程为： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(b(Y_s,s)\)</span> 是其 drift 系数，<span class="math inline">\(\sigma(Y_s,s)\)</span> 是其 diffusion 系数，那么它的 FP 方程为： <span class="math display">\[
 \frac{\partial q(x,s)}{\partial s}=-\frac{\partial}{\partial x}\left[b(x,s)q(x,s)\right]+\frac{1}{2}\frac{\partial^2}{\partial x^2}\left[\sigma^2(x,s)q(x,s)\right]\label{fp-reverse}\tag{3}
 \]</span></p>
 <p>如果猜想成立，那么 <span class="math inline">\(\eqref{fp-reverse}\)</span> 式应与 <span class="math inline">\(\eqref{fp-change}\)</span> 式相同，联立便可解出 <span class="math inline">\(b(x,s)\)</span> 与 <span class="math inline">\(\sigma(x,s)\)</span>，即找到了我们想要的 SDE.</p>
@@ -370,26 +370,29 @@
 -\int R&#39;(x)\left(\bar f(x,s)+b(x,s)\right)q(x,s)\mathrm dx=-\frac{1}{2}\int R&#39;(x)\frac{\partial}{\partial x}\left[\left(\bar g^2(x,s)+\sigma^2(x,s)\right)q(x,s)\right]\mathrm dx
 \]</span> 这里假设了 <span class="math inline">\(q(x,s)\)</span> 在无穷远处为零。根据 <span class="math inline">\(R(x)\)</span> 的任意性，应有： <span class="math display">\[
 \left(\bar f(x,s)+b(x,s)\right)q(x,s)=\frac{1}{2}\frac{\partial}{\partial x}\left[\left(\bar g^2(x,s)+\sigma^2(x,s)\right)q(x,s)\right]
-\]</span> 将右式按求导乘积法则展开，并将左边的 <span class="math inline">\(q(x,s)\)</span> 除到右边，整理得： <span class="math display">\[
-b(x,s)=-\bar f(x,s)+\frac{1}{2}\frac{\partial}{\partial x}\left[\bar g^2(x,s)+\sigma^2(x,s)\right]+\frac{1}{2}\left(\bar g^2(x,s)+\sigma^2(x,s)\right)\frac{\partial}{\partial x}\log q(x,s)
-\]</span> 因此我们要找的 SDE 为： <span class="math display">\[
-\mathrm dY_s=\left[-\bar f(Y_s,s)+\frac{1}{2}\frac{\partial}{\partial Y_s}\left[\bar g^2(Y_s,s)+\sigma^2(Y_s,s)\right]+\frac{1}{2}\left(\bar g^2(Y_s,s)+\sigma^2(Y_s,s)\right)\frac{\partial}{\partial Y_s}\log q(Y_s,s)\right]\mathrm ds+\sigma(Y_s,s)\mathrm dW_s\label{sde-reverse}\tag{4}
-\]</span> 注意这是以 <span class="math inline">\(\sigma(Y_s,s)\)</span> 为自由变量的一族 SDE，而不是一个特定的 SDE. 这是因为 SDE 与 FP 方程是多对一的关系，不同的 SDE 可以具有相同的 FP 方程。下面我们考察两个特解。</p>
+\]</span> 将右式按求导乘积法则展开，得： <span class="math display">\[
+\left(\bar f(x,s)+b(x,s)\right)q(x,s)=\frac{1}{2}\frac{\partial}{\partial x}\left[\bar g^2(x,s)+\sigma^2(x,s)\right]\cdot q(x,s)+\frac{1}{2}\left(\bar g^2(x,s)+\sigma^2(x,s)\right)\cdot\frac{\partial}{\partial x}q(x,s)
+\]</span> 左右同时除掉 <span class="math inline">\(q(x,s)\)</span>，整理得： <span class="math display">\[
+b(x,s)=-\bar f(x,s)+\frac{1}{2}\frac{\partial}{\partial x}\left[\bar g^2(x,s)+\sigma^2(x,s)\right]+\frac{1}{2}\left(\bar g^2(x,s)+\sigma^2(x,s)\right)\frac{\partial}{\partial x}\log q(x,s)\label{sde-reverse}\tag{4}
+\]</span> 如此我们得到了 drift 系数 <span class="math inline">\(b(x,s)\)</span> 和 diffusion 系数 <span class="math inline">\(\sigma(x,s)\)</span> 之间的关系。由于两个未知量只有一个方程，因此我们无法确定下具体的 <span class="math inline">\(b(x,s)\)</span> 和 <span class="math inline">\(\sigma(x,s)\)</span>，必然存在一个自由变量。换句话说，我们解得了一族以 <span class="math inline">\(\sigma\)</span> 为自由变量的 SDE，而不是一个特定的 SDE. 这样的结果恰是合理的——因为 SDE 与 FP 方程是多对一的关系，不同的 SDE 可以具有相同的 FP 方程。下面我们考察两个特解。</p>
 <h3 id="reverse-time-sde">Reverse-Time SDE</h3>
-<p>当取 <span class="math inline">\(\sigma^2(Y_s,s)=\bar g^2(Y_s,s)\)</span> 时，代入 <span class="math inline">\(\eqref{sde-reverse}\)</span> 式得到一个特解： <span class="math display">\[
+<p>当取 <span class="math inline">\(\sigma^2(Y_s,s)=\bar g^2(Y_s,s)\)</span> 时，代入 <span class="math inline">\(\eqref{sde-reverse}\)</span> 式得： <span class="math display">\[
+b(x,s)=-\bar f(x,s)+\frac{\partial}{\partial x}\bar g^2(x,s)+\bar g^2(x,s)\frac{\partial}{\partial x}\log q(x,s)
+\]</span> 由此确定了一个特解： <span class="math display">\[
 \mathrm dY_s=\left[-\bar f(Y_s,s)+\frac{\partial}{\partial Y_s}\bar g^2(Y_s,s)+\bar g^2(Y_s,s)\frac{\partial}{\partial Y_s}\log q(Y_s,s)\right]\mathrm ds+\bar g(Y_s,s)\mathrm dW_s
 \]</span> 将 <span class="math inline">\(\bar f,\bar g,q\)</span> 代换回原本的记号 <span class="math inline">\(f,g,p\)</span>，有： <span class="math display">\[
 \mathrm dY_s=\left[-f(Y_s,T-s)+\frac{\partial}{\partial Y_s}g^2(Y_s,T-s)+g^2(Y_s,T-s)\frac{\partial}{\partial Y_s}\log p(Y_s,T-s)\right]\mathrm ds+g(Y_s,T-s)\mathrm dW_s
 \]</span> 再将 <span class="math inline">\(s\)</span> 代换回 <span class="math inline">\(T-t\)</span>，有： <span class="math display">\[
 \mathrm dY_{T-t}=\left[f(Y_{T-t},t)-\frac{\partial}{\partial Y_{T-t}}g^2(Y_{T-t},t)-g^2(Y_{T-t},t)\frac{\partial}{\partial Y_{T-t}}\log p(Y_{T-t},t)\right]\mathrm dt+g(Y_{T-t},t)\mathrm dW_{T-t}
-\]</span></p>
-<p>引入记号： <span class="math display">\[
+\]</span> 引入记号： <span class="math display">\[
 \bar X_t\coloneqq Y_{T-t},\quad \bar W_t\coloneqq W_{T-t}
 \]</span> 则有： <span class="math display">\[
 \mathrm d\bar X_t=\left[f(\bar X_t,t)-\frac{\partial}{\partial \bar X_t}g^2(\bar X_t,t)-g^2(\bar X_t,t)\frac{\partial}{\partial \bar X_t}\log p(\bar X_t,t)\right]\mathrm dt+g(\bar X_t,t)\mathrm d\bar W_t
 \]</span> 这就是 reverse-time SDE.</p>
 <h3 id="probability-flow-ode">Probability Flow ODE</h3>
-<p>当取 <span class="math inline">\(\sigma^2(Y_s,s)=0\)</span> 时，代入 <span class="math inline">\(\eqref{sde-reverse}\)</span> 式得到另一个特解： <span class="math display">\[
+<p>当取 <span class="math inline">\(\sigma^2(Y_s,s)=0\)</span> 时，代入 <span class="math inline">\(\eqref{sde-reverse}\)</span> 式得： <span class="math display">\[
+b(x,s)=-\bar f(x,s)+\frac{1}{2}\frac{\partial}{\partial x}\bar g^2(x,s)+\frac{1}{2}\bar g^2(x,s)\frac{\partial}{\partial x}\log q(x,s)
+\]</span> 由此确定了另一个特解： <span class="math display">\[
 \mathrm dY_s=\left[-\bar f(Y_s,s)+\frac{1}{2}\frac{\partial}{\partial Y_s}\bar g^2(Y_s,s)+\frac{1}{2}\bar g^2(Y_s,s)\frac{\partial}{\partial Y_s}\log q(Y_s,s)\right]\mathrm ds
 \]</span> 将 <span class="math inline">\(\bar f,\bar g,q\)</span> 代换回原本的记号 <span class="math inline">\(f,g,p\)</span>，有： <span class="math display">\[
 \mathrm dY_s=\left[-f(Y_s,T-s)+\frac{1}{2}\frac{\partial}{\partial Y_s}g^2(Y_s,T-s)+\frac{1}{2}g^2(Y_s,T-s)\frac{\partial}{\partial Y_s}\log p(Y_s,T-s)\right]\mathrm ds
@@ -404,9 +407,10 @@ b(x,s)=-\bar f(x,s)+\frac{1}{2}\frac{\partial}{\partial x}\left[\bar g^2(x,s)+\s
 <p>上文推导的是一维情形，其结论可以推广到多维情形下。设有如下 <span class="math inline">\(\mathbb R^d\)</span> 空间中的 SDE： <span class="math display">\[
 \mathrm d\mathbf x_t=\mathbf f(\mathbf x_t,t)\mathrm dt+\mathbf G(\mathbf x_t,t)\mathrm d\mathbf w_t
 \]</span> 其中 <span class="math inline">\(\mathbf f(\cdot,t):\mathbb R^d\to\mathbb R^d\)</span>，<span class="math inline">\(\mathbf G(\cdot,t):\mathbb R^d\to\mathbb R^{d\times d}\)</span>，则 reverse-time SDE 为： <span class="math display">\[
-\mathrm d\bar{\mathbf x}_t=\left\{\mathbf f(\bar{\mathbf x}_t,t)-\nabla\cdot\left[\mathbf G(\bar{\mathbf x}_t,t)\mathbf G(\bar{\mathbf x}_t,t)^T\right]-\mathbf G(\bar{\mathbf x}_t,t)\mathbf G(\bar{\mathbf x}_t,t)^T\nabla_{\bar{\mathbf x}_t}\log p(\bar{\mathbf x}_t,t)\right\}\mathrm dt+\mathbf G(\bar{\mathbf x}_t,t)\mathrm d\bar{\mathbf w}_t
-\]</span> 其中对于矩阵值函数 <span class="math inline">\(\mathbf F(\mathbf x)=(\mathbf f^1(\mathbf x),\mathbf f^2(\mathbf x),\ldots,\mathbf f^d(\mathbf x))^T\)</span>，符号 <span class="math inline">\(\nabla\cdot\mathbf F(\mathbf x)\coloneqq (\nabla\cdot\mathbf f^1(\mathbf x),\nabla\cdot\mathbf f^2(\mathbf x),\ldots,\nabla\cdot\mathbf f^d(\mathbf x))^T\)</span>.</p>
-<p>特别地，倘若 <span class="math inline">\(\mathbf G(\mathbf x_t,t)\coloneqq g(t)\)</span>，即原 SDE 为： <span class="math display">\[
+\mathrm d\bar{\mathbf x}_t=\Big\{\mathbf f(\bar{\mathbf x}_t,t)-\nabla\cdot\left[\mathbf G(\bar{\mathbf x}_t,t)\mathbf G(\bar{\mathbf x}_t,t)^\mathsf T\right]-\mathbf G(\bar{\mathbf x}_t,t)\mathbf G(\bar{\mathbf x}_t,t)^\mathsf T\nabla_{\bar{\mathbf x}_t}\log p(\bar{\mathbf x}_t,t)\Big\}\mathrm dt+\mathbf G(\bar{\mathbf x}_t,t)\mathrm d\bar{\mathbf w}_t
+\]</span> 其中对于矩阵值函数 <span class="math inline">\(\mathbf F(\mathbf x)=(\mathbf f^1(\mathbf x),\mathbf f^2(\mathbf x),\ldots,\mathbf f^d(\mathbf x))^\mathsf T\)</span>，记号 <span class="math inline">\(\nabla\cdot\mathbf F(\mathbf x)\)</span> 表示： <span class="math display">\[
+\nabla\cdot\mathbf F(\mathbf x)\coloneqq (\nabla\cdot\mathbf f^1(\mathbf x),\nabla\cdot\mathbf f^2(\mathbf x),\ldots,\nabla\cdot\mathbf f^d(\mathbf x))^\mathsf T
+\]</span> 特别地，倘若 <span class="math inline">\(\mathbf G(\mathbf x_t,t)\coloneqq g(t)\mathbf I\)</span>，即原 SDE 为： <span class="math display">\[
 \mathrm d\mathbf x_t=\mathbf f(\mathbf x_t,t)\mathrm dt+g(t)\mathrm d\mathbf w_t
 \]</span> 则 reverse-time SDE 简化为： <span class="math display">\[
 \mathrm d\bar{\mathbf x}_t=\left[\mathbf f(\bar{\mathbf x}_t,t)-g^2(t)\nabla_{\bar{\mathbf x}_t}\log p(\bar{\mathbf x}_t,t)\right]\mathrm dt+g(t)\mathrm d\bar{\mathbf w}_t

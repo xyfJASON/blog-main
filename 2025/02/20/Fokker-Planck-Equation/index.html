@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="一维情形 考察如下随机微分方程 (SDE)： \[ X_t&#x3D;f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t \] 其中 \(W_t\) 是维纳过程，\(f(X_t,t)\) 是 drift 系数，\(g(X_t,t)\) 是 diffusion 系数。Fokker-Planck 方程描述了满足该 SDE 的 \(X_t\) 的概率密度 \(p(x,t)\) 随时间的">
+    <meta name="description" content="一维情形 考察如下随机微分方程 (SDE)： \[ \mathrm dX_t&#x3D;f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t \] 其中 \(W_t\) 是维纳过程，\(f(X_t,t)\) 是 drift 系数，\(g(X_t,t)\) 是 diffusion 系数。Fokker-Planck 方程描述了满足该 SDE 的 \(X_t\) 的概率密度 \(p(x,">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Fokker-Planck Equation">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2025/02/20/Fokker-Planck-Equation/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="一维情形 考察如下随机微分方程 (SDE)： \[ X_t&#x3D;f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t \] 其中 \(W_t\) 是维纳过程，\(f(X_t,t)\) 是 drift 系数，\(g(X_t,t)\) 是 diffusion 系数。Fokker-Planck 方程描述了满足该 SDE 的 \(X_t\) 的概率密度 \(p(x,t)\) 随时间的">
+<meta property="og:description" content="一维情形 考察如下随机微分方程 (SDE)： \[ \mathrm dX_t&#x3D;f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t \] 其中 \(W_t\) 是维纳过程，\(f(X_t,t)\) 是 drift 系数，\(g(X_t,t)\) 是 diffusion 系数。Fokker-Planck 方程描述了满足该 SDE 的 \(X_t\) 的概率密度 \(p(x,">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fokker-planck.jpeg">
 <meta property="article:published_time" content="2025-02-20T03:37:41.000Z">
-<meta property="article:modified_time" content="2025-09-08T11:24:07.663Z">
+<meta property="article:modified_time" content="2025-10-30T10:17:56.402Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          1.2k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          10 分钟
+          11 分钟
         
       </span>
     
@@ -332,7 +332,7 @@
                 
                 <h2 id="一维情形">一维情形</h2>
 <p>考察如下随机微分方程 (SDE)： <span class="math display">\[
-X_t=f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t
+\mathrm dX_t=f(X_t,t)\mathrm dt+g(X_t,t)\mathrm dW_t
 \]</span> 其中 <span class="math inline">\(W_t\)</span> 是维纳过程，<span class="math inline">\(f(X_t,t)\)</span> 是 drift 系数，<span class="math inline">\(g(X_t,t)\)</span> 是 diffusion 系数。Fokker-Planck 方程描述了满足该 SDE 的 <span class="math inline">\(X_t\)</span> 的概率密度 <span class="math inline">\(p(x,t)\)</span> 随时间的变化情况。</p>
 <h3 id="准备工作">准备工作</h3>
 <p>在极小的 <span class="math inline">\(\Delta t\)</span> 时间内，上述 SDE 可以离散化为： <span class="math display">\[
@@ -389,9 +389,11 @@ R(x)=R(z)+R&#39;(z)(x-z)+\frac{1}{2}R&#39;&#39;(z)(x-z)^2+o((x-z)^2)
 \mathrm d\mathbf x_t=\mathbf f(\mathbf x_t,t)\mathrm dt+\mathbf G(\mathbf x_t,t)\mathrm d\mathbf w_t
 \]</span> 其中 <span class="math inline">\(\mathbf f(\cdot,t):\mathbb R^d\to\mathbb R^d\)</span> 为 drift 系数，<span class="math inline">\(\mathbf G(\cdot,t):\mathbb R^d\to\mathbb R^{d\times d}\)</span> 为 diffusion 系数，则其 FP 方程为： <span class="math display">\[
 \frac{\partial p(\mathbf x,t)}{\partial t}=-\sum_{i=1}^d\frac{\partial}{\partial x_i}[f_i(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}\sum_{i=1}^d\sum_{j=1}^d\frac{\partial^2}{\partial x_i\partial x_j}\left[\sum_{k=1}^dG_{ik}(\mathbf x,t)G_{jk}(\mathbf x,t)p(\mathbf x,t)\right]
-\]</span> 特别地，若将 diffusion 系数简化为 <span class="math inline">\(\mathbf G(\mathbf x_t,t)=g(t)\mathbf I\)</span>，此时 FP 方程简化为： <span class="math display">\[
+\]</span> 特别地，若将 diffusion 系数简化为 <span class="math inline">\(\mathbf G(\mathbf x_t,t)=g(t)\mathbf I\)</span>，则此时 FP 方程简化为： <span class="math display">\[
+\frac{\partial p(\mathbf x,t)}{\partial t}=-\sum_{i=1}^d\frac{\partial}{\partial x_i}[f_i(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}g^2(t)\sum_{i=1}^d\frac{\partial^2}{\partial x_i^2}p(\mathbf x,t)
+\]</span> 若采用梯度算子 <span class="math inline">\(\nabla_\mathbf x\)</span> 和拉普拉斯算子 <span class="math inline">\(\Delta_{\mathbf x}=\nabla_{\mathbf x}\cdot\nabla_{\mathbf x}\)</span> 的记号，则 FP 方程写作： <span class="math display">\[
 \frac{\partial p(\mathbf x,t)}{\partial t}=-\nabla_{\mathbf x}\cdot[\mathbf f(\mathbf x,t)p(\mathbf x,t)]+\frac{1}{2}g^2(t)\Delta_{\mathbf x}p(\mathbf x,t)
-\]</span> 其中 <span class="math inline">\(\Delta_{\mathbf x}=\nabla_{\mathbf x}\cdot\nabla_{\mathbf x}\)</span> 表示拉普拉斯算子。</p>
+\]</span> 这就是在扩散模型相关文献中最常见到的形式。</p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
