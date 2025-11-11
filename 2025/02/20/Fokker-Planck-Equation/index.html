@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/fokker-planck.jpeg">
 <meta property="article:published_time" content="2025-02-20T03:37:41.000Z">
-<meta property="article:modified_time" content="2025-10-30T10:17:56.402Z">
+<meta property="article:modified_time" content="2025-11-11T07:37:31.981Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="stochastic process">
 <meta name="twitter:card" content="summary_large_image">
@@ -377,7 +377,7 @@ R(x)=R(z)+R&#39;(z)(x-z)+\frac{1}{2}R&#39;&#39;(z)(x-z)^2+o((x-z)^2)
 \end{align}
 \]</span> 因此： <span class="math display">\[
 \text{RHS}=\int R(z)p(z,t)\mathrm dz+\Delta t\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz+o(\Delta t)
-\]</span> 左右式相等，发现 <span class="math inline">\(\Delta t\)</span> 的零阶项相互抵消，再忽略高阶项，则只剩下一阶项： <span class="math display">\[
+\]</span> 左右式相等，发现 <span class="math inline">\(\Delta t\)</span> 的零阶项相互抵消，再忽略 <span class="math inline">\(o(\Delta t)\)</span> 高阶项，则只剩下一阶项： <span class="math display">\[
 \int R(x)\frac{\partial p(x,t)}{\partial t}\mathrm dx=\int R(z)\left[-\frac{\partial}{\partial z}[f(z,t)p(z,t)]+\frac{1}{2}\frac{\partial^2}{\partial z^2}[g^2(z,t)p(z,t)]\right]\mathrm dz
 \]</span> 右边积分变量改写作 <span class="math inline">\(x\)</span>，移项合并得： <span class="math display">\[
 \int R(x)\left[\frac{\partial p(x,t)}{\partial t}+\frac{\partial}{\partial x}[f(x,t)p(x,t)]-\frac{1}{2}\frac{\partial^2}{\partial x^2}[g^2(x,t)p(x,t)]\right]\mathrm dx=0

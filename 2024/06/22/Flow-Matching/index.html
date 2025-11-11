@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/flow-matching.jpg">
 <meta property="article:published_time" content="2024-06-22T13:08:11.000Z">
-<meta property="article:modified_time" content="2025-09-08T12:40:14.923Z">
+<meta property="article:modified_time" content="2025-11-11T15:49:16.215Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -288,7 +288,7 @@
         
         
         
-          30 分钟
+          31 分钟
         
       </span>
     
@@ -331,51 +331,57 @@
               <div class="markdown-body">
                 
                 <h2 id="连续归一化流">连续归一化流</h2>
-<p>想象 <span class="math inline">\(\mathbb R^d\)</span> 空间中有一系列粒子，在 <span class="math inline">\(t=0\)</span> 时服从分布 <span class="math inline">\(p_0\)</span>，随时间流逝粒子在空间中流动，直至 <span class="math inline">\(t=1\)</span> 时形成分布 <span class="math inline">\(p_1\)</span>. 于是这样的流动过程形成了从分布 <span class="math inline">\(p_0\)</span> 到分布 <span class="math inline">\(p_1\)</span> 的一个转换。如果我们能够为上述流体运动过程建立起模型，并控制 <span class="math inline">\(p_0\)</span> 为某简单易采样分布而 <span class="math inline">\(p_1\)</span> 服从数据分布，那么不就得到一个生成模型了吗？这样的生成模型称作<strong>连续归一化流 (Continuous Normalizing Flows, CNFs)</strong><sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. *Advances in neural information processing systems* 31 (2018).">[2]</span></a></sup>.</p>
+<p>想象 <span class="math inline">\(\mathbb R^d\)</span> 空间中有一系列粒子，在 <span class="math inline">\(t=0\)</span> 时服从分布 <span class="math inline">\(p_0\)</span>，随时间流逝粒子在空间中流动，直至 <span class="math inline">\(t=1\)</span> 时形成分布 <span class="math inline">\(p_1\)</span>. 于是这样的流动过程形成了从分布 <span class="math inline">\(p_0\)</span> 到分布 <span class="math inline">\(p_1\)</span> 的一个转换。如果我们能够为上述流体运动过程建立起模型，并控制 <span class="math inline">\(p_0\)</span> 为某简单易采样分布而 <span class="math inline">\(p_1\)</span> 服从数据分布，那么不就得到一个生成模型了吗？这样的生成模型称作<strong>连续归一化流 (Continuous Normalizing Flows, CNFs)</strong>.</p>
 <h3 id="概率密度路径">概率密度路径</h3>
-<p>粒子在流动的过程中，其概率分布在不断地改变。定义<strong>概率密度路径</strong> <span class="math inline">\(p:[0,1]\times \mathbb R^d\to\mathbb R_{&gt;0}\)</span>，其中 <span class="math inline">\(p_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处的概率密度。称之为“路径”是因为 <span class="math inline">\(t\mapsto p_t\)</span> 可以视作无限维概率分布空间中的流形上的一条路径。</p>
-<p>显然，对任意时刻 <span class="math inline">\(t\in[0,1]\)</span>，概率密度 <span class="math inline">\(p_t(\mathbf x)\)</span> 都应满足归一化条件：<span class="math inline">\(\int p_t(\mathbf x)\mathrm d\mathbf x=1\)</span>. 因此，区别于流体力学中一般的流（不要求密度是归一化的），我们称这种模型为归一化流；又由于时间是连续的，因此称为连续归一化流。</p>
+<p>粒子在流动的过程中，其概率分布在不断地改变。为描述各个时刻的概率分布，定义<strong>概率密度路径 (probability density path)</strong> 为： <span class="math display">\[
+p:[0,1]\times \mathbb R^d\to\mathbb R_{&gt;0},\quad(t,\mathbf x)\mapsto p_t(\mathbf x)
+\]</span> 其中 <span class="math inline">\(p_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处的概率密度。称之为“路径”是因为 <span class="math inline">\(t\mapsto p_t\)</span> 可以视作无限维概率分布空间中的流形上的一条路径。</p>
+<p>显然，对任意时刻 <span class="math inline">\(t\in[0,1]\)</span>，概率密度 <span class="math inline">\(p_t(\mathbf x)\)</span> 都应满足归一化条件：<span class="math inline">\(\int p_t(\mathbf x)\mathrm d\mathbf x=1\)</span>. 因此，区别于一般的流体，我们称这种模型为归一化流；又由于时间是连续的，因此称为连续归一化流。</p>
 <h3 id="速度场与连续性方程">速度场与连续性方程</h3>
-<p>定义<strong>速度场</strong>为 <span class="math inline">\(\mathbf u:[0,1]\times\mathbb R^d\to\mathbb R^d\)</span>，其中 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的运动速度。流体中的粒子沿着速度场 <span class="math inline">\(\mathbf u\)</span> 运动，引起概率密度的变化，因此 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 之间一定存在某种关系，这个关系式称为<strong>连续性方程</strong>： <span class="math display">\[
+<p>考虑空间中粒子在各个时刻的瞬时速度，定义<strong>速度场 (velocity field)</strong> 为： <span class="math display">\[
+\mathbf u:[0,1]\times\mathbb R^d\to\mathbb R^d,\quad (t,\mathbf x)\mapsto \mathbf u_t(\mathbf x)
+\]</span> 其中 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的运动速度。流体中的粒子沿着速度场 <span class="math inline">\(\mathbf u\)</span> 运动，引起概率密度的变化，因此 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 之间一定存在某种关系，这个关系式称为<strong>连续性方程 (continuity equation)</strong>： <span class="math display">\[
 \frac{\partial}{\partial t}p_t(\mathbf x)+\nabla\cdot(p_t(\mathbf x)\mathbf u_t(\mathbf x))=0
 \]</span> 直观上，连续性方程的第一项表示单位时间内 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的增加/减少量，第二项表示单位时间内 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的流出/流入量，显然粒子增加量就是流入量，因此连续性方程成立。熟悉随机微分方程的读者可能会发现，连续性方程其实就是 Fokker-Planck 方程在扩散项为零时的情形。</p>
 <p>值得注意的是，概率密度路径与速度场不是一一对应的关系，不同的速度场可以产生相同的概率密度路径。例如，给 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 加上散度为零的场（无源场），就得到了一个新的速度场，并且连续性方程依旧成立，所以概率密度路径不变。</p>
 <h3 id="流与变量替换">流与变量替换</h3>
-<p>粒子沿着速度场运动，得到的轨迹称为<strong>流</strong>。具体而言，流 <span class="math inline">\(\boldsymbol\phi:[0,1]\times\mathbb R^d\to\mathbb R^d\)</span> 是下述常微分方程的解： <span class="math display">\[
+<p>粒子沿着速度场运动，得到的轨迹称为<strong>流 (flow)</strong>。具体而言，记流为： <span class="math display">\[
+\boldsymbol\phi:[0,1]\times\mathbb R^d\to\mathbb R^d,\quad (t,\mathbf x)\mapsto\boldsymbol\phi_t(\mathbf x)
+\]</span> 其中 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 表示 <span class="math inline">\(0\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 处的粒子在 <span class="math inline">\(t\)</span> 时刻运动到的位置。换句话说，随着 <span class="math inline">\(t\)</span> 从 0 到 1 变化，<span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 形成了从 <span class="math inline">\(\mathbf x\)</span> 位置出发的粒子运动的轨迹。流与速度场的关系可由下述常微分方程描述： <span class="math display">\[
 \begin{align}
 \frac{\partial}{\partial t}\boldsymbol\phi_t(\mathbf x)&amp;=\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\\
 \boldsymbol\phi_0(\mathbf x)&amp;=\mathbf x
 \end{align}
-\]</span> 其中 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 表示 <span class="math inline">\(0\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 处的粒子在 <span class="math inline">\(t\)</span> 时刻运动到的位置。换句话说，随着 <span class="math inline">\(t\)</span> 从 0 到 1 变化，<span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 形成了从 <span class="math inline">\(\mathbf x\)</span> 位置出发的粒子运动的轨迹。为了看得更清楚，可以对上式左右两边同时从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(t\)</span> 积分： <span class="math display">\[
+\]</span> 为了看得更清楚，可以对上式左右两边同时从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(t\)</span> 积分： <span class="math display">\[
 \boldsymbol\phi_t(\mathbf x)-\mathbf x=\int_0^t\mathbf u_s(\boldsymbol\phi_s(\mathbf x))\mathrm ds
 \]</span> 左边表示从 <span class="math inline">\(\mathbf x\)</span> 出发的粒子在 <span class="math inline">\(t\)</span> 时间内的位移，右边是对速度的积分，自然也是位移。</p>
-<p>根据流 <span class="math inline">\(\boldsymbol\phi\)</span> 的定义，<span class="math inline">\(t\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 位置处的粒子在 <span class="math inline">\(0\)</span> 时刻的出发位置是 <span class="math inline">\(\boldsymbol\phi_t^{-1}(\mathbf x)\)</span>，因此根据随机变量的<strong>变量替换</strong>公式，可以知道 <span class="math inline">\(p_t(\mathbf x)\)</span> 与 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 之间有关系： <span class="math display">\[
-p_t(\mathbf x)=p_0(\boldsymbol\phi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial\boldsymbol\phi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|
-\]</span> 简记作 <span class="math inline">\(p_t=[\boldsymbol\phi_t]_\#(p_0)\)</span>，称作 <strong>push-forward 方程</strong>。</p>
+<p>根据流 <span class="math inline">\(\boldsymbol\phi\)</span> 的定义，<span class="math inline">\(t\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 位置处的粒子在 <span class="math inline">\(0\)</span> 时刻的出发位置是 <span class="math inline">\(\boldsymbol\phi_t^{-1}(\mathbf x)\)</span>，因此根据随机变量的<strong>变量替换 (change of variables)</strong> 公式，可以知道 <span class="math inline">\(p_t(\mathbf x)\)</span> 与 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 之间有关系： <span class="math display">\[
+p_t(\mathbf x)=p_0(\boldsymbol\phi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial}{\partial\mathbf x}\boldsymbol\phi_t^{-1}(\mathbf x)\right]\right|
+\]</span> 该式可简记作 <span class="math inline">\(p_t=[\boldsymbol\phi_t]_\#(p_0)\)</span>，称作 <strong>push-forward 方程</strong>。</p>
 <div class="note note-info">
-            <p><strong>拓展（瞬时变量替换公式）</strong>：Push-forward 方程给出了 <span class="math inline">\(0\)</span> 时刻到 <span class="math inline">\(t\)</span> 时刻概率密度的变化。进一步地，Neural ODE<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. *Advances in neural information processing systems* 31 (2018).">[2]</span></a></sup> 的作者还给出了描述概率密度变化的微分方程，称作瞬时变量替换公式： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\log p_t(\boldsymbol\phi_t(\mathbf x))+\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=0\]</span> 推导过程：计算 <span class="math inline">\(p_t(\boldsymbol\phi_t(\mathbf x))\)</span> 对 <span class="math inline">\(t\)</span> 的全导数： <span class="math display">\[\begin{align}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))&amp;=\left.\frac{\partial}{\partial t}p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\left.\nabla p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)},\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-\left.\nabla\cdot(p_t(\mathbf y)\mathbf u_t(\mathbf y))\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-\big[p_t(\mathbf y)(\nabla\cdot\mathbf u_t(\mathbf y))+\langle\nabla p_t(\mathbf y),\mathbf u_t(\mathbf y)\rangle\big]\Big|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))-\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\right\rangle+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))\end{align}\]</span> 其中第二行是代入了连续性方程，第三行是将散度展开，最后一行是根据流的定义有 <span class="math inline">\(\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=\frac{\partial}{\partial t}\boldsymbol\phi_t(\mathbf x)\)</span>. 于是我们有： <span class="math display">\[\frac{\mathrm d}{\mathrm d t}\log p_t(\boldsymbol\phi_t(\mathbf x))=\frac{1}{p_t(\boldsymbol\phi_t(\mathbf x))}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))=-\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\]</span> 这就得到了瞬时变量替换公式。</p>
+            <p><strong>拓展（瞬时变量替换公式）</strong>：push-forward 方程给出了 <span class="math inline">\(0\)</span> 时刻到 <span class="math inline">\(t\)</span> 时刻概率密度的变化。进一步地，Neural ODE 的作者还给出了描述概率密度变化的微分方程，称作瞬时变量替换公式： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\log p_t(\boldsymbol\phi_t(\mathbf x))+\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=0\]</span> 推导过程：计算 <span class="math inline">\(p_t(\boldsymbol\phi_t(\mathbf x))\)</span> 对 <span class="math inline">\(t\)</span> 的全导数： <span class="math display">\[\begin{align}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))&amp;=\left.\frac{\partial}{\partial t}p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\left.\nabla p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)},\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-\left.\nabla\cdot(p_t(\mathbf y)\mathbf u_t(\mathbf y))\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-\big[p_t(\mathbf y)(\nabla\cdot\mathbf u_t(\mathbf y))+\langle\nabla p_t(\mathbf y),\mathbf u_t(\mathbf y)\rangle\big]\Big|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))-\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\right\rangle+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))\end{align}\]</span> 其中第二行是代入了连续性方程，第三行是将散度展开，最后一行是根据流的定义有 <span class="math inline">\(\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=\frac{\partial}{\partial t}\boldsymbol\phi_t(\mathbf x)\)</span>. 于是我们有： <span class="math display">\[\frac{\mathrm d}{\mathrm d t}\log p_t(\boldsymbol\phi_t(\mathbf x))=\frac{1}{p_t(\boldsymbol\phi_t(\mathbf x))}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))=-\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\]</span> 这就得到了瞬时变量替换公式。</p>
           </div>
 <p>综上所述，概率密度路径、速度场和流之间的关系可表示为下图：</p>
 <p><img src="relation.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
 <p>现在，为了构建生成模型，我们只需要构建速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，使得对应的概率密度路径 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足 <span class="math inline">\(p_0\)</span> 为某简单分布且 <span class="math inline">\(p_1\)</span> 为数据分布即可，这就是 flow matching 要完成的事。</p>
 <h2 id="flow-matching">Flow Matching</h2>
 <h3 id="原始损失函数">原始损失函数</h3>
-<p>设 <span class="math inline">\(p_t(\mathbf x)\)</span> 是一概率密度路径，满足 <span class="math inline">\(p_0\)</span> 为某简单分布（例如标准正态分布）且 <span class="math inline">\(p_1\)</span> 为数据分布，<span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 为对应的未知速度场。Flow matching<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. *arXiv preprint arXiv:2210.02747* (2022).">[1]</span></a></sup> 使用神经网络构建速度场 <span class="math inline">\(\mathbf v_{t}^{\theta}(\mathbf x)\)</span> 去近似 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，损失函数为： <span class="math display">\[
+<p>设 <span class="math inline">\(p_t(\mathbf x)\)</span> 是一概率密度路径，满足 <span class="math inline">\(p_0\)</span> 为某简单分布（例如标准正态分布）且 <span class="math inline">\(p_1\)</span> 为数据分布，<span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 为对应的未知速度场。Flow matching 使用神经网络构建速度场 <span class="math inline">\(\mathbf v_{t}^{\theta}(\mathbf x)\)</span> 去近似 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，损失函数为： <span class="math display">\[
 \mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x)\Vert^2\right]
-\]</span> 然而式中真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 是未知的，因此无法直接使用 <span class="math inline">\(\mathcal L_\text{FM}\)</span>​ 训练，怎么办呢？聪明的读者可能已经发现了，flow matching 的训练目标和遇到的问题与 score matching 一模一样，其中速度场直接对标 score function，所以把 score matching 的解决方法搬过来即可。借鉴 denoising score matching，我们每次针对单个样本去近似条件速度场，其中样本从数据集中采样，这样均摊下来就是在近似无条件的真实速度场了。</p>
+\]</span> 然而式中真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 是未知的，因此我们无法直接使用 <span class="math inline">\(\mathcal L_\text{FM}\)</span>​ 训练，怎么办呢？聪明的读者可能已经发现了，这里遇到的问题与 score matching 一模一样，其中速度场直接对标 score function，所以把 score matching 的解决方法搬过来即可。借鉴 denoising score matching，我们每次针对单个样本去近似条件速度场，其中样本从数据集中采样，这样均摊下来就是在近似无条件的真实速度场了。</p>
 <h3 id="条件速度场">条件速度场</h3>
-<p>具体而言，给定某特定样本 <span class="math inline">\(\mathbf x_1\)</span>，称 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 为<strong>条件概率路径</strong>。那么，边缘概率路径可以通过条件概率路径对所有样本求期望得到： <span class="math display">\[
+<p>具体而言，给定某特定样本 <span class="math inline">\(\mathbf x_1\)</span>，称 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 为<strong>条件概率路径 (conditional probability path)</strong>。那么，边缘概率路径可以通过条件概率路径对所有样本求期望得到： <span class="math display">\[
 p_t(\mathbf x)=\int p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1=\mathbb E_{q(\mathbf x_1)}[p_t(\mathbf x\vert\mathbf x_1)]
-\]</span> 设上述条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 可以由<strong>条件速度场</strong> <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 得到（即二者满足连续性方程），那么可以推得，速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 有如下关系： <span class="math display">\[
+\]</span> 设上述条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 可以由<strong>条件速度场 (conditional velocity field)</strong> <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 得到（即二者满足连续性方程），那么可以推得，速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 应有如下关系： <span class="math display">\[
 \mathbf u_t(\mathbf x)=\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\mathbf u_t(\mathbf x\vert\mathbf x_1)]
 \]</span> <div class="note note-secondary">
             <p>证明：我们只需要证明基于上面的方式定义的 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足连续性方程即可。直接代入： <span class="math display">\[\begin{align}\frac{\partial p_t(\mathbf x)}{\partial t}&amp;=\int\left(\frac{\partial}{\partial t}p_t(\mathbf x\vert\mathbf x_1)\right)q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\int\nabla\cdot (p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1))q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\nabla\cdot\left(\int p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1) \mathrm d\mathbf x_1\right)\\&amp;=-\nabla\cdot (p_t(\mathbf x)\mathbf u_t(\mathbf x))\end{align}\]</span> 证毕。</p>
           </div></p>
 <div class="note note-info">
-            <p>熟悉 score function 的读者应该知道，对 score function 也有类似的关系式： <span class="math display">\[\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\]</span></p>
+            <p>注释：熟悉 score matching 的读者应该知道，对 score function 也有类似的关系式 <span class="math inline">\(\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\)</span>.</p>
           </div>
 <h3 id="cfm-损失函数">CFM 损失函数</h3>
-<p>基于条件概率路径和条件速度场，原始的 flow matching 损失函数可以改写做如下 conditional flow matching 损失函数： <span class="math display">\[
+<p>基于条件概率路径和条件速度场，原始的 flow matching 损失函数可以改写作如下 conditional flow matching 损失函数： <span class="math display">\[
 \mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]
 \]</span> 可以证明 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 与 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 只差与 <span class="math inline">\(\theta\)</span> 无关的常数，因此对优化问题而言是等价的。推导思路其实与 score matching 到 denoising score matching 如出一辙。</p>
 <div class="note note-secondary">
@@ -383,18 +389,17 @@ p_t(\mathbf x)=\int p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf
           </div>
 <p>现在，只要我们设计一个可解的条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span>，就可以基于 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 训练了。</p>
 <h2 id="条件速度场的设计">条件速度场的设计</h2>
-<h3 id="一般形式">一般形式</h3>
+<h3 id="一般高斯形式">一般高斯形式</h3>
 <p>我们从条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span>​ 入手，考虑高斯分布形式： <span class="math display">\[
 p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)
-\]</span> 其中 <span class="math inline">\(\boldsymbol\mu:[0,1]\times \mathbb R^d\to\mathbb R^d\)</span> 为与时间步有关的均值，<span class="math inline">\(\sigma:[0,1]\times\mathbb R^d\to\mathbb R_{&gt;0}\)</span> 为与时间步有关的标准差。特别地，我们规定：</p>
+\]</span> 其中 <span class="math inline">\(\boldsymbol\mu:[0,1]\times \mathbb R^d\to\mathbb R^d\)</span> 为与时间步有关的均值，<span class="math inline">\(\sigma:[0,1]\times\mathbb R^d\to\mathbb R_{&gt;0}\)</span> 为与时间步有关的标准差，并且规定：</p>
 <ul>
-<li>当 <span class="math inline">\(t=0\)</span> 时，设 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)=p(\mathbf x)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，即与 <span class="math inline">\(\mathbf x_1\)</span> 无关的标准高斯分布；</li>
-<li>当 <span class="math inline">\(t=1\)</span> 时，设 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_\min^2\mathbf I\right)\)</span>，其中标准差 <span class="math inline">\(\sigma_\min\)</span> 充分小，即大约是在 <span class="math inline">\(\mathbf x_1\)</span> 处的确定性分布。</li>
+<li>当 <span class="math inline">\(t=0\)</span> 时，应有 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，即与 <span class="math inline">\(\mathbf x_1\)</span> 无关的标准高斯分布；</li>
+<li>当 <span class="math inline">\(t=1\)</span> 时，应有 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_\min^2\mathbf I\right)\)</span>，其中 <span class="math inline">\(\sigma_\min\)</span> 充分小，使其大约是在 <span class="math inline">\(\mathbf x_1\)</span> 处的确定性分布。</li>
 </ul>
-<p>直接找到对应上述条件概率路径的条件速度场是比较困难的，但是我们可以找到对应的以 <span class="math inline">\(\mathbf x_1\)</span> 为条件的流 <span class="math inline">\(\boldsymbol\psi\)</span>： <span class="math display">\[
+<p>直接找到对应上述条件概率路径的条件速度场是比较困难的，但是我们可以先找到对应的以 <span class="math inline">\(\mathbf x_1\)</span> 为条件的流 <span class="math inline">\(\boldsymbol\psi\)</span>： <span class="math display">\[
 \boldsymbol\psi_t(\mathbf x)=\sigma_t(\mathbf x_1)\mathbf x+\boldsymbol\mu_t(\mathbf x_1)
-\]</span></p>
-<p>可以验证上述形式的条件流 <span class="math inline">\(\boldsymbol\psi_t\)</span> 与条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 的确满足变量替换公式： <span class="math display">\[
+\]</span> 可以验证上述形式的条件流 <span class="math inline">\(\boldsymbol\psi_t\)</span> 与条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 的确满足变量替换公式： <span class="math display">\[
 \begin{align}
 p_0(\boldsymbol\psi_t^{-1}(\mathbf x)\vert\mathbf x_1)\left|\det\left[\frac{\partial\boldsymbol\psi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|&amp;=
 p(\boldsymbol\psi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial\boldsymbol\psi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|\\
@@ -402,35 +407,34 @@ p(\boldsymbol\psi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial\boldsymbol\ps
 &amp;=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)\\
 &amp;=p_t(\mathbf x\vert\mathbf x_1)
 \end{align}
-\]</span> 换句话说，只要取 <span class="math inline">\(\mathbf x_0\sim p(\mathbf x)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，那么就有 <span class="math inline">\(\mathbf x=\boldsymbol\psi_t(\mathbf x_0)\sim p_t(\mathbf x\vert\mathbf x_1)\)</span>.</p>
+\]</span> 换句话说，只要取 <span class="math inline">\(\mathbf x_0\sim p(\mathbf x)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，那么就有 <span class="math inline">\(\boldsymbol\psi_t(\mathbf x_0)\sim p_t(\mathbf x\vert\mathbf x_1)\)</span>.</p>
 <p>有了条件流，就可以找到对应的条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 了。根据流的定义有： <span class="math display">\[
 \frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf x)=\mathbf u_t(\boldsymbol\psi_t(\mathbf x)\vert\mathbf x_1)
-\]</span></p>
-<p>代入 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 得： <span class="math display">\[
-\begin{align}
-\mathcal L_\text{CFM}(\theta)&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\mathbf u_t(\boldsymbol\psi_t(\mathbf x_0)\vert\mathbf x_1)\Vert^2\right]\\
-&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\left\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf x_0)\right\Vert^2\right]\\
-&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\left\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\sigma_t&#39;(\mathbf x_1)\mathbf x_0-\boldsymbol\mu_t&#39;(\mathbf x_1)\right\Vert^2\right]\\
-\end{align}
-\]</span> 其中 <span class="math inline">\(\boldsymbol\mu_t&#39;(\mathbf x_1),\,\sigma_t&#39;(\mathbf x_1)\)</span> 的求导表示对时间 <span class="math inline">\(t\)</span> 求导。这就是 flow matching 最终用于训练的损失函数形式。</p>
-<p>如果只是为了训练，我们没有必要把条件速度场显式地解出来，但是这是可以做到的： <span class="math display">\[
+\]</span> 因此条件速度场为： <span class="math display">\[
 \begin{align}
 \mathbf u_t(\mathbf x\vert\mathbf x_1)&amp;=\left.\frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\psi_t^{-1}(\mathbf x)}\\
 &amp;=\sigma_t&#39;(\mathbf x_1)\boldsymbol\psi_t^{-1}(\mathbf x)+\boldsymbol\mu_t&#39;(\mathbf x_1)\\
-&amp;=\frac{\sigma_t&#39;(\mathbf x_1)}{\sigma_t(\mathbf x)}(\mathbf x-\boldsymbol\mu_t(\mathbf x_1))+\boldsymbol\mu_t&#39;(\mathbf x_1)
+&amp;=\frac{\sigma_t&#39;(\mathbf x_1)}{\sigma_t(\mathbf x_1)}(\mathbf x-\boldsymbol\mu_t(\mathbf x_1))+\boldsymbol\mu_t&#39;(\mathbf x_1)
 \end{align}
-\]</span></p>
-<p>当 <span class="math inline">\(\mu_t(\mathbf x)\)</span> 与 <span class="math inline">\(\sigma_t(\mathbf x)\)</span> 取特殊形式时，我们可以还原出经典的扩散模型，还可以得到比扩散路径更优的最优传输路径。</p>
+\]</span> 其中 <span class="math inline">\(\boldsymbol\mu_t&#39;,\sigma_t&#39;\)</span> 分别表示 <span class="math inline">\(\boldsymbol\mu_t,\sigma_t\)</span> 对时间 <span class="math inline">\(t\)</span> 的导函数。</p>
+<p>为了计算损失函数，用条件流 <span class="math inline">\(\boldsymbol\psi_t(\mathbf x_0)\)</span> 重参数化 <span class="math inline">\(\mathbf x\)</span>，则损失函数可改写作： <span class="math display">\[
+\begin{align}
+\mathcal L_\text{CFM}(\theta)&amp;=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\\
+&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\mathbf u_t(\boldsymbol\psi_t(\mathbf x_0)\vert\mathbf x_1)\Vert^2\right]\\
+&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\left\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf x_0)\right\Vert^2\right]
+\end{align}
+\]</span> 这就是 flow matching 最终用于训练的损失函数形式。</p>
+<p>特别地，当 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x)\)</span> 与 <span class="math inline">\(\sigma_t(\mathbf x)\)</span> 取特殊形式时，我们可以还原出经典的扩散模型，还可以得到比扩散路径更优的最优传输路径。</p>
 <h3 id="特殊情形经典扩散">特殊情形：经典扩散</h3>
 <p>考虑 VE diffusion： <span class="math display">\[
 p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_{1-t}^2\mathbf I\right)
-\]</span> 这对应着 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sigma_{1-t}\)</span> 的情形。代入条件速度场得： <span class="math display">\[
+\]</span> 这对应着 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sigma_{1-t}\)</span> 的情形。根据上一小节的结论，此时条件速度场为： <span class="math display">\[
 \mathbf u_t(\mathbf x\vert\mathbf x_1)=-\frac{\sigma_{1-t}&#39;}{\sigma_{1-t}}(\mathbf x-\mathbf x_1)
 \]</span> 相应的条件流为： <span class="math display">\[
 \boldsymbol\psi_t(\mathbf x)=\sigma_{1-t}\mathbf x+\mathbf x_1
 \]</span> 考虑 VP diffusion： <span class="math display">\[
 p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\alpha_{1-t}\mathbf x_1,(1-\alpha_{1-t}^2)\mathbf I\right)
-\]</span> 这对应着 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\alpha_{1-t}\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sqrt{1-\alpha_{1-t}^2}\)</span>​ 的情形。代入条件速度场得： <span class="math display">\[
+\]</span> 这对应着 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\alpha_{1-t}\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sqrt{1-\alpha_{1-t}^2}\)</span>​ 的情形。根据上一小节的结论，此时条件速度场为： <span class="math display">\[
 \mathbf u_t(\mathbf x\vert\mathbf x_1)=-\frac{\alpha&#39;_{1-t}}{1-\alpha^2_{1-t}}(\alpha_{1-t}\mathbf x-\mathbf x_1)
 \]</span> 相应的条件流为： <span class="math display">\[
 \boldsymbol\psi_t(\mathbf x)=\sqrt{1-\alpha_{1-t}^2}\mathbf x+\alpha_{1-t}\mathbf x_1
@@ -442,14 +446,14 @@ p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\alpha_{1-t}\mathbf x_1
 \mathbf u(\mathbf x\vert\mathbf x_1)=\frac{\mathbf x_1-(1-\sigma_\min)\mathbf x}{1-(1-\sigma_\min)t}
 \]</span> 相应的条件流为： <span class="math display">\[
 \boldsymbol\psi_t(\mathbf x)=(1-(1-\sigma_\min)t)\mathbf x+t\mathbf x_1
-\]</span> 该条件流事实上是两个高斯分布 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)\)</span>​ 和 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)\)</span>​ 之间的最优传输 displacement map. 直观上，沿最优传输路径运动的粒子会在直线上均匀运动，而非像扩散路径一样拐弯，如下图所示：</p>
+\]</span> 该条件流事实上是两个高斯分布 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)\)</span>​ 和 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)\)</span>​ 之间的最优传输 displacement map. 直观上，该轨迹是一个均匀直线运动，如下图所示：</p>
 <p><img src="traj.png" srcset="/blog-main/logo/imageloading.png" lazyload width=30% /></p>
-<p>需要强调的是，“直线”路径只在给定 <span class="math inline">\(\mathbf x_1\)</span> 的条件下成立，在真正生成数据时粒子依旧走的是曲线路径。</p>
+<p>需要强调的是，“直线”路径只对于给定 <span class="math inline">\(\mathbf x_1\)</span> 的条件下成立，在真正生成数据时粒子依旧走的是曲线路径。</p>
 <h2 id="总结">总结</h2>
-<p>Flow matching 看起来蛮复杂，但是仔细想想，其实就是给已有的扩散模型框架套了个流体力学的壳，用新的体系重新说了一遍。比如条件速度场其实就是条件 score function 的线性变换，而 flow matching 的核心数学技巧也都是借用自 denoising score matching. 文章的亮点在于：</p>
+<p>Flow matching 看起来蛮复杂，但其实它的基础理论搭建在连续归一化流上，而训练的核心技巧也与 denoising score matching 如出一辙。相比传统 diffusion 模型，flow matching 的亮点在于：</p>
 <ol type="1">
-<li>不要求源分布必须是高斯分布，从而可以用来学习两个分布之间的转换。</li>
-<li>提出了基于最优传输的新的扩散路径，声称比传统的 VP 和 VE 路径更适合采样。</li>
+<li>不要求源分布必须是高斯分布，从而可以用来学习两个分布之间的转换；</li>
+<li>提出了基于最优传输的新的扩散路径，据称比传统的 VP 和 VE 路径更适合采样。</li>
 </ol>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
