@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/flow-matching.jpg">
 <meta property="article:published_time" content="2024-06-22T13:08:11.000Z">
-<meta property="article:modified_time" content="2025-11-11T15:49:16.215Z">
+<meta property="article:modified_time" content="2025-11-12T03:06:35.288Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -378,7 +378,7 @@ p_t(\mathbf x)=\int p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf
             <p>证明：我们只需要证明基于上面的方式定义的 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足连续性方程即可。直接代入： <span class="math display">\[\begin{align}\frac{\partial p_t(\mathbf x)}{\partial t}&amp;=\int\left(\frac{\partial}{\partial t}p_t(\mathbf x\vert\mathbf x_1)\right)q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\int\nabla\cdot (p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1))q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\nabla\cdot\left(\int p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1) \mathrm d\mathbf x_1\right)\\&amp;=-\nabla\cdot (p_t(\mathbf x)\mathbf u_t(\mathbf x))\end{align}\]</span> 证毕。</p>
           </div></p>
 <div class="note note-info">
-            <p>注释：熟悉 score matching 的读者应该知道，对 score function 也有类似的关系式 <span class="math inline">\(\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\)</span>.</p>
+            <p>注释：熟悉 score matching 的读者应该知道，对 score function 也有类似的关系式： <span class="math display">\[\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\]</span></p>
           </div>
 <h3 id="cfm-损失函数">CFM 损失函数</h3>
 <p>基于条件概率路径和条件速度场，原始的 flow matching 损失函数可以改写作如下 conditional flow matching 损失函数： <span class="math display">\[
@@ -407,7 +407,7 @@ p(\boldsymbol\psi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial\boldsymbol\ps
 &amp;=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)\\
 &amp;=p_t(\mathbf x\vert\mathbf x_1)
 \end{align}
-\]</span> 换句话说，只要取 <span class="math inline">\(\mathbf x_0\sim p(\mathbf x)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，那么就有 <span class="math inline">\(\boldsymbol\psi_t(\mathbf x_0)\sim p_t(\mathbf x\vert\mathbf x_1)\)</span>.</p>
+\]</span> 换句话说，只要取 <span class="math inline">\(\mathbf x_0\sim p(\mathbf x_0)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，那么就有 <span class="math inline">\(\boldsymbol\psi_t(\mathbf x_0)\sim p_t(\mathbf x\vert\mathbf x_1)\)</span>.</p>
 <p>有了条件流，就可以找到对应的条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 了。根据流的定义有： <span class="math display">\[
 \frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf x)=\mathbf u_t(\boldsymbol\psi_t(\mathbf x)\vert\mathbf x_1)
 \]</span> 因此条件速度场为： <span class="math display">\[
