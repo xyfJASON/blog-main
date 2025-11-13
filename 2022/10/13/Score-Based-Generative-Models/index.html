@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/score-based.jpg">
 <meta property="article:published_time" content="2022-10-13T09:14:18.000Z">
-<meta property="article:modified_time" content="2025-09-09T02:26:45.327Z">
+<meta property="article:modified_time" content="2025-11-13T07:17:38.477Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          6.5k 字
+          6.2k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          55 分钟
+          52 分钟
         
       </span>
     
@@ -339,15 +339,13 @@
 \newcommand{\T}{\mathsf T}
 \]</span></p>
 <h2 id="brief-introduction">Brief Introduction</h2>
-<p>在<a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">从VAE到DDPM</a>一文中，我们从 VAE 出发得到了 DDPM 的理论框架，发现 DDPM 可以看作是具有人为指定的后验分布（即前向过程）的层次化 VAE。这一角度的代表论文是 2015 年的 Sohl-Dickstein et al.<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Sohl-Dickstein, Jascha, Eric Weiss, Niru Maheswaranathan, and Surya Ganguli. Deep unsupervised learning using nonequilibrium thermodynamics. In *International Conference on Machine Learning*, pp. 2256-2265. PMLR, 2015.">[1]</span></a></sup> 和 2020 年的 DDPM<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Ho, Jonathan, Ajay Jain, and Pieter Abbeel. Denoising diffusion probabilistic models. *Advances in Neural Information Processing Systems* 33 (2020): 6840-6851.">[2]</span></a></sup>。与此同时，<a target="_blank" rel="noopener" href="https://yang-song.net/">宋飏</a>博士从 score matching + Langevin dynamics (SMLD)<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Generative modeling by estimating gradients of the data distribution. *Advances in Neural Information Processing Systems* 32 (2019).">[3]</span></a></sup> 的角度出发得到了与 DDPM 本质相同的模型，称为 score-based generative models. 两个角度出发点截然不同，但殊途同归，也是非常有意思了。</p>
+<p>在<a href="/blog-main/2022/09/29/%E4%BB%8EVAE%E5%88%B0DDPM/" title="从VAE到DDPM">从VAE到DDPM</a>一文中，我们从 VAE 出发得到了 DDPM 的理论框架，发现 DDPM 可以看作是具有人为指定的后验分布（即前向过程）的层次化 VAE。这一角度的代表论文是 2015 年的 Sohl-Dickstein et al. (2015) 和 2020 年的 DDPM。与此同时，<a target="_blank" rel="noopener" href="https://yang-song.net/">宋飏</a>等人从 score matching + Langevin dynamics (SMLD) 的角度出发得到了与 DDPM 本质相同的模型，称为 score-based generative models. 两个角度出发点截然不同，但殊途同归，也是非常有意思了。</p>
 <h2 id="score-function">Score Function</h2>
 <p>考虑一个以 <span class="math inline">\(\theta\)</span> 为参数的能量模型 (EBM) <span class="math inline">\(f_\theta:\R^d\to\R\)</span>，依以下形式定义一个概率分布： <span class="math display">\[
 p_\theta(\x)=\frac{e^{-f_\theta(\x)}}{Z_\theta}\tag{1}\label{p}
-\]</span> 其中 <span class="math inline">\(Z_\theta=\int e^{-f_\theta(\x)}\mathrm{d}\x\)</span> 是归一化因子。训练生成模型无非就是希望极大化样本的对数似然：</p>
-<p><span class="math display">\[
+\]</span> 其中 <span class="math inline">\(Z_\theta=\int e^{-f_\theta(\x)}\mathrm{d}\x\)</span> 是归一化因子。训练生成模型无非就是极大化样本的对数似然： <span class="math display">\[
 \max_\theta\quad \E_{\pdata(\x)}[\log p_\theta(\x)]=\E_{\pdata(\x)}[-f_\theta(\x)]-\log Z_\theta
-\]</span> 我们发现一个问题：<span class="math inline">\(Z_\theta\)</span> 涉及对整个数据空间的积分，因而是 intractable 的。为了解决这个问题，score-based generative models 使用 <strong>score function</strong> 巧妙地回避开了 <span class="math inline">\(Z_\theta\)</span>. 对于任意一个概率分布 <span class="math inline">\(p\)</span>，score function 定义为对数概率密度函数对数据的梯度：</p>
-<p><span class="math display">\[
+\]</span> 我们发现一个问题：<span class="math inline">\(Z_\theta\)</span> 涉及对整个数据空间的积分，因而是 intractable 的。为了解决这个问题，score-based generative models 使用 <strong>score function</strong> 巧妙地回避开了 <span class="math inline">\(Z_\theta\)</span>. 对于任意一个概率分布 <span class="math inline">\(p\)</span>，score function 定义为对数概率密度函数对数据的梯度： <span class="math display">\[
 s(\x)=\nabla_\x\log p(\x)
 \]</span> 直观上，它是一个向量场，指示了从当前点去到概率密度更大的地方的方向，如下图所示：</p>
 <p><img src="https://yang-song.net/assets/img/score/score_contour.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=40% /></p>
@@ -359,31 +357,27 @@ s_\theta(\x)\xrightarrow{\text{approximate}} s_\text{data}(\x)=\nabla_\x\log \pd
 <h2 id="score-matching">Score Matching</h2>
 <p>为了训练模型 <span class="math inline">\(s_\theta(\x)\)</span>，我们最小化它与 <span class="math inline">\(s_\text{data}(\x)\)</span> 的均方距离（也即是模型给出的分布和数据分布之间的 Fisher Divergence）： <span class="math display">\[
 \min_\theta\quad J_\text{ESM}(\theta)=\frac{1}{2}\E_{\pdata(\x)}\left[\|s_\text{data}(\x)-s_\theta(\x)\|_2^2\right]\tag{2}\label{esm}
-\]</span> 下标 ESM 是 Explicit Score Matching 的意思，explicit 是指该目标函数要求我们显式地知道 <span class="math inline">\(s_\text{data}(\x)\)</span>，但这恰恰是我们不知道的。围绕这个问题，我们下面介绍三种方法。</p>
+\]</span> 下标 ESM 是 Explicit Score Matching 的意思，explicit 是指该目标函数要求我们显式地知道 <span class="math inline">\(s_\text{data}(\x)\)</span>，但这恰恰是我们不知道的。围绕这个问题，我们下面介绍三种方法（注：如果你只关心扩散模型，只看 Denoising Score Matching 即可）。</p>
 <h3 id="implicit-score-matching">Implicit Score Matching</h3>
-<p>论文<sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Hyvärinen, Aapo, and Peter Dayan. Estimation of non-normalized statistical models by score matching. *Journal of Machine Learning Research* 6, no. 4 (2005).">[5]</span></a></sup>的作者指出，我们可以使用一个分部积分去掉 <span class="math inline">\(s_\text{data}(\x)\)</span>. 具体而言，将 <span class="math inline">\(\eqref{esm}\)</span> 式展开： <span class="math display">\[
+<p>Hyvärinen &amp; Dayan (2005) 指出，我们可以使用一个分部积分去掉 <span class="math inline">\(s_\text{data}(\x)\)</span>. 具体而言，将 <span class="math inline">\(\eqref{esm}\)</span> 式展开： <span class="math display">\[
+J_\text{ESM}(\theta)=\E_{\pdata(\x)}\left[\frac{1}{2}\|s_\text{data}(\x)\|^2-s_\text{data}(\x)^{\mathsf T} s_\theta(\x)+\frac{1}{2}\|s_\theta(\x)\|^2\right]
+\]</span> 第一项与 <span class="math inline">\(\theta\)</span> 无关可以略去，最后一项可以直接优化，因此只需处理中间项： <span class="math display">\[
 \begin{align}
-J_\text{ESM}(\theta)&amp;=\frac{1}{2}\E_{\pdata(\x)}\left[\|s_\text{data}(\x)-s_\theta(\x)\|_2^2\right]\\
-&amp;=\E_{\pdata(\x)}\left[\frac{1}{2}\|s_\text{data}(\x)\|^2-s_\text{data}(\x)^T s_\theta(\x)+\frac{1}{2}\|s_\theta(\x)\|^2\right]
-\end{align}
-\]</span> 第一项与 <span class="math inline">\(\theta\)</span> 无关可以略去，最后一项可以直接优化，而中间项还需要再处理一下： <span class="math display">\[
-\begin{align}
--\E_{\pdata(\x)}[s_\text{data}(\x)^Ts_\theta(\x)]
+-\E_{\pdata(\x)}[s_\text{data}(\x)^{\mathsf T}s_\theta(\x)]
 &amp;=-\int \pdata(\x) \sum_{i=1}^d s_\text{data}(\x)_is_\theta(\x)_i\mathrm{d}\x\\
 &amp;=-\sum_{i=1}^d \int \pdata(\x) \frac{\partial \log p_\text{data}(\x)}{\partial\x_i}s_\theta(\x)_i\mathrm{d}\x\\
-&amp;=-\sum_{i=1}^d\int \frac{\pdata(\x)}{\pdata(\x)}\frac{\partial\pdata(\x)}{\partial\x_i} s_\theta(\x)_i\mathrm{d}\x\\
 &amp;=-\sum_{i=1}^d\int \frac{\partial\pdata(\x)}{\partial\x_i} s_\theta(\x)_i \mathrm{d}\x
 \end{align}
 \]</span></p>
 <div class="note note-info">
-            <p><strong>一元函数分部积分</strong></p><p>设 <span class="math inline">\(f(x),g(x)\)</span> 是关于 <span class="math inline">\(x\)</span> 的一元函数且具有连续导数，且下文出现的积分都存在，由于： <span class="math display">\[[f(x)g(x)]&#39;=f(x)g&#39;(x)+g(x)f&#39;(x)\]</span> 两边同时在 <span class="math inline">\((-\infty,+\infty)\)</span> 上积分，得到： <span class="math display">\[\lim_{x\to+\infty}f(x)g(x)-\lim_{x\to-\infty}f(x)g(x)=\int_{-\infty}^{+\infty}f(x)g&#39;(x)\mathrm{d}x+\int_{-\infty}^{+\infty}g(x)f&#39;(x)\mathrm{d}x\]</span> 即： <span class="math display">\[\int_{-\infty}^{+\infty}f(x)g&#39;(x)\mathrm{d}x=\left.[f(x)g(x)]\right|^{+\infty}_{-\infty}-\int_{-\infty}^{+\infty}g(x)f&#39;(x)\mathrm{d}x\]</span> <strong>扩展到多元函数</strong></p><p>设 <span class="math inline">\(f(\x),g(\x)\)</span> 是关于 <span class="math inline">\(\x\)</span> 的多元标量函数，固定除 <span class="math inline">\(\x_i\)</span> 外的其他变元，所有求导均为对 <span class="math inline">\(\x_i\)</span> 的偏导，那么上述推导依旧使用，因此有结论： <span class="math display">\[\begin{align}\int_{-\infty}^{+\infty}f(\x)\frac{\partial{g(\x)}}{\partial\x_i}\mathrm{d}\x&amp;=\lim_{\x_i\to+\infty}f(\ldots,\x_i,\ldots)g(\ldots,\x_i,\ldots)\\&amp;-\lim_{\x_i\to-\infty}f(\ldots,\x_i,\ldots)g(\ldots,\x_i,\ldots)\\&amp;-\int_{-\infty}^{+\infty}g(\x)\frac{\partial{f(\x)}}{\partial\x_i}\mathrm{d}\x\end{align}\]</span></p>
+            <p><strong>复习：一元函数分部积分</strong></p><p>设 <span class="math inline">\(f(x),g(x)\)</span> 是关于 <span class="math inline">\(x\)</span> 的一元函数且具有连续导数，且下文出现的积分都存在，由于： <span class="math display">\[[f(x)g(x)]&#39;=f(x)g&#39;(x)+g(x)f&#39;(x)\]</span> 两边同时在 <span class="math inline">\((-\infty,+\infty)\)</span> 上积分，得到： <span class="math display">\[\lim_{x\to+\infty}f(x)g(x)-\lim_{x\to-\infty}f(x)g(x)=\int_{-\infty}^{+\infty}f(x)g&#39;(x)\mathrm{d}x+\int_{-\infty}^{+\infty}g(x)f&#39;(x)\mathrm{d}x\]</span> 即： <span class="math display">\[\int_{-\infty}^{+\infty}f(x)g&#39;(x)\mathrm{d}x=\left.[f(x)g(x)]\right|^{+\infty}_{-\infty}-\int_{-\infty}^{+\infty}g(x)f&#39;(x)\mathrm{d}x\]</span> <strong>扩展：多元函数分部积分</strong></p><p>设 <span class="math inline">\(f(\x),g(\x)\)</span> 是关于 <span class="math inline">\(\x\)</span> 的多元标量函数，固定除 <span class="math inline">\(\x_i\)</span> 外的其他变元，所有求导均为对 <span class="math inline">\(\x_i\)</span> 的偏导，那么上述推导依旧使用，因此有结论： <span class="math display">\[\begin{align}\int_{-\infty}^{+\infty}f(\x)\frac{\partial{g(\x)}}{\partial\x_i}\mathrm{d}\x&amp;=\lim_{\x_i\to+\infty}f(\ldots,\x_i,\ldots)g(\ldots,\x_i,\ldots)\\&amp;-\lim_{\x_i\to-\infty}f(\ldots,\x_i,\ldots)g(\ldots,\x_i,\ldots)\\&amp;-\int_{-\infty}^{+\infty}g(\x)\frac{\partial{f(\x)}}{\partial\x_i}\mathrm{d}\x\end{align}\]</span></p>
           </div>
-<p>应用分部积分，并且假设 <span class="math inline">\(\pdata(\ldots,\x_i,\ldots)s_\theta(\ldots,\x_i,\ldots)_i\to 0(\x_i\to\pm\infty)\)</span>，那么中间项变成： <span class="math display">\[
+<p>应用分部积分，并且假设 <span class="math inline">\(\pdata(\x)s_\theta(\x)\to 0\ (\Vert\x\Vert \to\infty)\)</span>，那么中间项变成： <span class="math display">\[
 \begin{align}
 -\sum_{i=1}^d\int \frac{\partial\pdata(\x)}{\partial\x_i} s_\theta(\x)_i \mathrm{d}\x
 &amp;=\sum_{i=1}^d\int \frac{\partial s_\theta(\x)_i}{\partial\x_i} \pdata(\x) \mathrm{d}\x\\
 &amp;=\int \pdata(\x) \sum_{i=1}^d \frac{\partial s_\theta(\x)_i}{\partial\x_i} \mathrm{d}\x\\
-&amp;=\E_{\x\sim\pdata}\left[\sum_{i=1}^d \frac{\partial s_\theta(\x)_i}{\partial\x_i}\right]
+&amp;=\E_{\pdata(\x)}\left[\sum_{i=1}^d \frac{\partial s_\theta(\x)_i}{\partial\x_i}\right]
 \end{align}
 \]</span> 于是最终优化目标为： <span class="math display">\[
 J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\sum_{i=1}^d \left(\frac{\partial s_\theta(\x)_i}{\partial\x_i}+\frac{1}{2}s_\theta(\x)_i^2\right)\right]\tag{3}\label{ism}
@@ -391,11 +385,10 @@ J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\sum_{i=1}^d \left(\frac{\partial s_\t
 J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\text{tr}\left({\nabla_\x s_\theta(\x)}\right)+\frac{1}{2}\|s_\theta(\x)\|^2\right]\tag{3&#39;}\label{ism&#39;}
 \]</span> 当然，由于 <span class="math inline">\(s_\theta(\x)\)</span> 本身是 <span class="math inline">\(\log p_\theta(\x)\)</span> 的梯度，所以前者的 Jacobian 矩阵，也是后者的 Hessian 矩阵，所以也可以写成： <span class="math display">\[
 J_\text{ISM}(\theta)=\E_{\pdata(\x)}\left[\text{tr}\left({\nabla^2_\x \log p_\theta(\x)}\right)+\frac{1}{2}\|\nabla_\x\log p_\theta(\x)\|^2\right]\tag{3&#39;&#39;}\label{ism&#39;&#39;}
-\]</span> 只是记号上的不同罢了。</p>
-<p>可以看见，现在的优化目标期望里面已经没有 <span class="math inline">\(\pdata(\x)\)</span> 或 <span class="math inline">\(s_\text{data}(\x)\)</span> 了，而期望本身通过训练过程的采样来近似。</p>
+\]</span> 只是记号上的不同罢了。可以看见，现在的优化目标里没有 <span class="math inline">\(s_\text{data}(\x)\)</span> 了，因而可以依此训练。</p>
 <p>当然，上述推导过程要成立也有一些条件，比如用分部积分要求 <span class="math inline">\(s_\theta(\x)\)</span> 和 <span class="math inline">\(\pdata(\x)\)</span> 可导，出现的所有期望要存在，以及上文已经提到过的 <span class="math inline">\(\pdata(\x)s_\theta(\x)\to 0\ (\Vert\x\Vert \to\infty)\)</span>. 好在这些条件都容易满足。</p>
 <h3 id="denoising-score-matching">Denoising Score Matching</h3>
-<p>上文中，我们使用分部积分巧妙地去掉了 <span class="math inline">\(s_\text{data}(\x)=\nabla_\x \log\pdata(\x)\)</span>，但是代价是引入了 <span class="math inline">\(\text{tr}\left(\nabla_\x s_\theta(\x)\right)\)</span>，意味着我们还要对 score function 求导（即求 <span class="math inline">\(\log\pdata(\x)\)</span> 的 Hessian 矩阵）。虽然这个操作可以通过 <code>torch.autograd.grad()</code> 实现，但反向传播次数增加了 <span class="math inline">\(d\)</span> 倍（<span class="math inline">\(d\)</span> 为数据维数），在深度网络和高维数据的场景下效率很差。另一种直接的想法是，既然我们不知道 <span class="math inline">\(\pdata\)</span>，那就对数据做非参估计呗。考虑使用带高斯核的 Parzen 窗做非参估计（也即核密度估计）： <span class="math display">\[
+<p>上文中，我们使用分部积分巧妙地去掉了 <span class="math inline">\(s_\text{data}(\x)=\nabla_\x \log\pdata(\x)\)</span>，但是代价是引入了 <span class="math inline">\(\text{tr}\left(\nabla_\x s_\theta(\x)\right)\)</span>，意味着我们还要对 score function 求导。虽然这个操作可以通过 <code>torch.autograd.grad()</code> 实现，但反向传播次数增加了 <span class="math inline">\(d\)</span> 倍（<span class="math inline">\(d\)</span> 为数据维数），在深度网络和高维数据的场景下效率很差。另一种直接的想法是，既然我们不知道 <span class="math inline">\(\pdata\)</span>，那就对数据做非参估计呗。考虑使用带高斯核的 Parzen 窗做非参估计（也即核密度估计）： <span class="math display">\[
 \begin{align}
 &amp;q_\sigma(\tilde\x)=\frac{1}{N}\sum_{i=1}^N K_\sigma\left(\tilde\x-\x_i\right)\\
 &amp;K_\sigma(\tilde\x-\x_i)=\frac{1}{(2\pi)^{d/2}\sigma^d}e^{-\frac{1}{2\sigma^2}\|\tilde\x-\x_i\|_2^2}
@@ -428,13 +421,11 @@ J_\text{DSM}(\theta)=\E_{q_\sigma(\tilde\x,\x)}\left[\frac{1}{2}\left\|\nabla_{\
 \]</span></p>
 <p>直观上，<span class="math inline">\(\x-\tilde\x\)</span> 指出了加噪数据 <span class="math inline">\(\tilde\x\)</span> 回到无噪声数据的移动方向，这正与 score function 的定义相符。</p>
 <h3 id="sliced-score-matching">Sliced Score Matching</h3>
-<blockquote>
-<p>本节其实与以去噪为基础的扩散模型关系不大，但为了完整性，同时考虑到它也是宋飏大佬的工作，就顺便读了读论文。</p>
-</blockquote>
-<p>Denoising score matching 虽然解决了 implicit score matching 无法 scale 到深度网络和高维数据的问题，但是本身也有两个问题：只能学习带有噪声的分布、性能对 noise level 很敏感。而宋飏等人在 2020 年提出的 sliced score matching<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, Sahaj Garg, Jiaxin Shi, and Stefano Ermon. Sliced score matching: A scalable approach to density and score estimation. In *Uncertainty in Artificial Intelligence*, pp. 574-584. PMLR, 2020.">[7]</span></a></sup> 是另一种解决方法，其思想是把 <span class="math inline">\(s_\theta(\x)\)</span> 随机投影到向量 <span class="math inline">\(\mathbf v\)</span> 上，只在投影的方向上做匹配。具体而言，<span class="math inline">\(\eqref{esm}\)</span> 式改写作：</p>
-<p><span class="math display">\[
+<p>Denoising score matching 虽然解决了 implicit score matching 无法 scale 到深度网络和高维数据的问题，但是本身也有两个问题：只能学习带有噪声的分布、性能对 noise level 很敏感。而宋飏等人在 2020 年提出的 sliced score matching 是另一种解决方法，其思想是把 <span class="math inline">\(s_\theta(\x)\)</span> 随机投影到向量 <span class="math inline">\(\mathbf v\)</span> 上，只在投影的方向上做匹配。具体而言，<span class="math inline">\(\eqref{esm}\)</span> 式改写作： <span class="math display">\[
 J_\text{SSM(explicit)}=\frac{1}{2}\E_{p_{\v}(\v)}\E_{\pdata(\x)}\left[\left(\v^\T s_\text{data}(\x)-\v^\T s_\theta(\x)\right)^2\right]
-\]</span> 并要求 <span class="math inline">\(\E_{p_\v(\v)}[\v\v^\T]\succ 0\)</span> 且 <span class="math inline">\(\E_{p_\v(\v)}\left[\Vert\v\Vert_2^2\right]&lt;\infty\)</span>. 常用的 <span class="math inline">\(p_\v(\v)\)</span> 包括标准多元正态分布 <span class="math inline">\(\mathcal N(0,\mathbf I)\)</span>、多元 Rademacher 分布（<span class="math inline">\(\{\pm 1\}^d\)</span> 上的均匀分布）、超球面 <span class="math inline">\(\mathbb S^{d-1}\)</span> 上的均匀分布等。</p>
+\]</span> 其中投影方向 <span class="math inline">\(\mathbf v\)</span> 应满足： <span class="math display">\[
+\E_{p_\v(\v)}[\v\v^\T]\succ 0,\quad\E_{p_\v(\v)}\left[\Vert\v\Vert_2^2\right]&lt;\infty
+\]</span> 常用的 <span class="math inline">\(p_\v(\v)\)</span> 包括标准多元正态分布 <span class="math inline">\(\mathcal N(0,\mathbf I)\)</span>、多元 Rademacher 分布（<span class="math inline">\(\{\pm 1\}^d\)</span> 上的均匀分布）、超球面 <span class="math inline">\(\mathbb S^{d-1}\)</span> 上的均匀分布等。</p>
 <p>与原始 score matching 类似，我们可以用分部积分去掉 <span class="math inline">\(s_\text{data}(\x)\)</span>. 同样只需着重考虑中间项： <span class="math display">\[
 \begin{align}
 -\E_{p_{\v}(\v)}\left[\E_{\pdata(\x)}\left[\left(\v^\T s_\text{data}(\x)\right)\left(\v^\T s_\theta(\x)\right)\right]\right]
@@ -452,7 +443,7 @@ J_\text{SSM(explicit)}=\frac{1}{2}\E_{p_{\v}(\v)}\E_{\pdata(\x)}\left[\left(\v^\
 =&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]+\E_{p_\v(\v)}\left[\int\pdata(\x)\left(\sum_{i=1}^d v_i\v^\T \frac{\partial s_\theta(\x))}{\partial\x_i}\right)\mathrm{d}\x\right]\\
 =&amp;-\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]+\E_{p_\v(\v)}\left[\E_{\pdata(\x)}\left[\v^\T \nabla_\x s_\theta(\x)\v\right]\right]\\
 \end{align}
-\]</span> 后面那项是我们想要的，现在需要证明前面那项等于 0. 在原始 score matching 中，我们是通过假设 <span class="math inline">\(\pdata(\x)s_\theta(\x)\to 0\ (\Vert\x\Vert\to \infty)\)</span> 完成的，但是现在多了个 <span class="math inline">\(\v\)</span> 来搅局。不过好在最后要对 <span class="math inline">\(p_\v(\v)\)</span> 求期望，所以我们依旧能够期待前项可以等于 0. 利用绝对值不等式把 <span class="math inline">\(\v\)</span> 拆出来，并利用柯西不等式，我们有： <span class="math display">\[
+\]</span> 后面那项是我们想要的，现在需要证明前面那项等于 0. 在原始 score matching 中，这是通过假设 <span class="math inline">\(\pdata(\x)s_\theta(\x)\to 0\ (\Vert\x\Vert\to \infty)\)</span> 完成的，但是现在多了个 <span class="math inline">\(\v\)</span> 来搅局。不过好在最后要对 <span class="math inline">\(p_\v(\v)\)</span> 求期望，所以我们依旧能够期待前项可以等于 0. 利用绝对值不等式把 <span class="math inline">\(\v\)</span> 拆出来，并利用柯西不等式，我们有： <span class="math display">\[
 \begin{align}
 &amp;~\left|\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)-\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]\right|\\
 \leq&amp;~\left|\E_{p_{\v}(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to+\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]\right|+\left|\E_{p_\v(\v)}\left[\sum_{i=1}^d v_i\left(\lim_{\x_i\to-\infty}\pdata(\x)\left(\v^\T s_\theta(\x)\right)\right)\right]\right|\\
@@ -484,8 +475,8 @@ J_\text{SSM-VR}=\E_{\pdata(\x)}\left[\E_{p_\v(\v)}\left[\v^\T \nabla_\x s_\theta
 <p><img src="https://yang-song.net/assets/img/score/pitfalls.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=80% /></p>
 <p>又由于我们的初始化点极有可能落在低密度区域中，所以不准确的 score function 将对采样过程产生极大的影响。</p>
 <p>其次，即便 score function 能被准确预测，但对于被低密度区域隔开的两个分布来说，Langevin dynamics 很难在有限步数内收敛到正确的分布（尽管 Langevin dynamics 在理论上能收敛到正确的分布，但可能需要很小的步长和很多的步数），如图所示：</p>
-<p><img src="fig3.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Generative modeling by estimating gradients of the data distribution." width=80% /></p>
-<p>真实情况是右上的正态分布权重更大，但中图的采样结果显示两个分布被予以了几乎相同的权重。</p>
+<p><img src="fig3.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Generative modeling by estimating gradients of the data distribution." width=60% /></p>
+<p>真实情况是右上的正态分布权重更大，但采样结果显示两个分布被予以了几乎相同的权重。</p>
 <p>宋飏等人提出解决这两个问题的办法是：<strong>给数据添加高斯噪声，并且随着 Langevin dynamics 的进行逐渐减小 noise level（退火）</strong>。添加噪声后的数据遍布整个空间，填充了低密度区域，因此模型能够得到更多的监督信号，Langevin dynamics 也能更快的收敛到高密度区域；同时，逐渐减小的噪声使得带噪分布最终收敛到真实分布，因此也能保证采样质量不受影响。</p>
 <p><img src="https://yang-song.net/assets/img/score/single_noise.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:https://yang-song.net/blog/2021/score/" width=80% /></p>
 <p>形式化地说，我们确定一个逐渐减小的噪声序列 <span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span>，那么对应 <span class="math inline">\(\sigma_i\)</span> 的噪声扰动后的数据分布为： <span class="math display">\[
@@ -494,8 +485,7 @@ q_{\sigma_i}(\x)=\int\pdata(\mathbf t) \mathcal N\left(\x;\mathbf t,\sigma_i^2\m
 s_\theta(\x, \sigma_i)\xrightarrow{\text{approximate}} \nabla_\x\log q_{\sigma_i}(\x)
 \]</span> 于是训练目标就是对每一个 noise level 做 score matching： <span class="math display">\[
 \mathcal L\left(\theta,\{\sigma_i\}_{i=1}^L\right)=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{q_{\sigma_i}(\x)}\left[\|\nabla_\x\log q_{\sigma_i}(\x)-s_\theta(\x,\sigma_i) \|^2\right]
-\]</span> 其中 <span class="math inline">\(\lambda(\sigma_i)\)</span> 是给不同 noise level 加的权重。考虑到 denoising score matching 正好符合现在的加噪去噪设定，所以我们选择它而非 sliced score matching. 根据前文的叙述，训练目标变换为：</p>
-<p><span class="math display">\[
+\]</span> 其中 <span class="math inline">\(\lambda(\sigma_i)\)</span> 是给不同 noise level 加的权重。考虑到 denoising score matching 正好符合现在的加噪去噪设定，所以我们选择它而非 sliced score matching. 根据前文的推导，训练目标变换为： <span class="math display">\[
 \begin{align}
 \mathcal L\left(\theta,\{\sigma_i\}_{i=1}^L\right)&amp;=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\nabla_{\tilde\x}\log q_{\sigma_i}(\tilde \x\vert\x) -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]\\
 &amp;=\frac{1}{L}\sum_{i=1}^L \lambda(\sigma_i)\E_{\pdata(\x)}\E_{q_{\sigma_i}(\tilde\x\vert\x)}\left[\frac{1}{2}\left\|\frac{\x-\tilde\x}{\sigma_i^2} -s_\theta(\tilde\x,\sigma_i)\right\|^2 \right]
@@ -505,18 +495,6 @@ s_\theta(\x, \sigma_i)\xrightarrow{\text{approximate}} \nabla_\x\log q_{\sigma_i
 <p>训练完成后，我们就可以随机初始化采样点，逐渐减小 noise level，在每个 level 下通过 Langevin dynamics 以步长 <span class="math inline">\(\alpha_i\)</span> 更新若干步，最终生成新的数据。算法流程图如下所示：</p>
 <p><img src="alg.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="source:Generative modeling by estimating gradients of the data distribution." width=40% /></p>
 <p>其中步长设置为 <span class="math inline">\(\alpha_i=\epsilon\cdot\sigma_i^2/\sigma_L^2\propto \sigma_i^2\)</span> 的动机是保证不同 noise level 下 Langevin dynamics 的信噪比 <span class="math inline">\(\frac{\alpha_i s_\theta(\x,\sigma_i)}{2\sqrt{\alpha_i}\mathbf z}\)</span> 的模长固定。</p>
-<p><br/></p>
-<p>这一代的 NCSN 已然能与 GAN 媲美，但局限在 32x32 的大小。在后续的工作<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Song, Yang, and Stefano Ermon. Improved techniques for training score-based generative models. *Advances in neural information processing systems* 33 (2020): 12438-12448.">[4]</span></a></sup>中，宋飏等人探索了更多的技巧，进一步地提升了图像生成质量，并能稳定生成 256x256 的图片。这些技巧包括：</p>
-<ul>
-<li><p>选择 <span class="math inline">\(\sigma_1\)</span> 与训练数据中两两之间的最大欧氏距离差不多大。</p></li>
-<li><p>选择 <span class="math inline">\(\{\sigma_i\}_{i=1}^L\)</span> 为公比为 <span class="math inline">\(\gamma\)</span> 的等比序列，且 <span class="math display">\[
-\Phi\left(\sqrt{2d}(\gamma-1)+3\gamma\right)-\Phi\left(\sqrt{2d}(\gamma-1)-3\gamma\right)\approx 0.5
-\]</span></p></li>
-<li><p>将 NCSN 参数化为 <span class="math inline">\(s_\theta(\x,\sigma)=s_\theta(\x)/\sigma\)</span>，其中 <span class="math inline">\(s_\theta(\x)\)</span> 是一个无条件的网络。</p></li>
-<li><p>选择 <span class="math inline">\(T\)</span>（每个 noise level 下 Langevin dynamics 的步数）在可承受范围尽可能大，并选择 <span class="math inline">\(\epsilon\)</span>（Langevin dynamics 里与步长有关的参数）使得一个复杂的式子（懒得抄了）约等于 <span class="math inline">\(1\)</span>.</p></li>
-<li><p>在采样的时候使用 EMA model.</p></li>
-</ul>
-<p>具体内容和分析本文不再叙述，感兴趣的读者可以去看论文。</p>
 <h2 id="connection-to-ddpm">Connection to DDPM</h2>
 <p>在引言里，我们说 SMLD 和 DDPM 本质是相同的，现在来看看为什么。</p>
 <h3 id="forward-process">Forward Process</h3>
@@ -587,25 +565,25 @@ s_\theta(\x_t,t)=-\frac{1}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(\x_t,t)\tag{10}
 <span id="fn:7" class="footnote-text"><span>Song, Yang, Sahaj Garg, Jiaxin Shi, and Stefano Ermon. Sliced score matching: A scalable approach to density and score estimation. In <em>Uncertainty in Artificial Intelligence</em>, pp. 574-584. PMLR, 2020. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:8" class="footnote-text"><span>Yang Song. Generative Modeling by Estimating Gradients of the Data Distribution. https://yang-song.net/blog/2021/score/ <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:8" class="footnote-text"><span>Yang Song. Sliced Score Matching: A Scalable Approach to Density and Score Estimation. <a target="_blank" rel="noopener" href="https://yang-song.net/blog/2019/ssm/" class="uri">https://yang-song.net/blog/2019/ssm/</a> <a href="#fnref:8" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:9" class="footnote-text"><span>Denoising Diffusion-based Generative Modeling: Foundations and Applications. https://cvpr2022-tutorial-diffusion-models.github.io <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:9" class="footnote-text"><span>Yang Song. Generative Modeling by Estimating Gradients of the Data Distribution. <a target="_blank" rel="noopener" href="https://yang-song.net/blog/2021/score/" class="uri">https://yang-song.net/blog/2021/score/</a> <a href="#fnref:9" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:10" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (一) Non-normalized 模型估計. https://bobondemon.github.io/2022/01/08/Estimation-of-Non-Normalized-Statistical-Models-by-Score-Matching/ <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:10" class="footnote-text"><span>Denoising Diffusion-based Generative Modeling: Foundations and Applications. <a target="_blank" rel="noopener" href="https://cvpr2022-tutorial-diffusion-models.github.io" class="uri">https://cvpr2022-tutorial-diffusion-models.github.io</a> <a href="#fnref:10" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:11" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (二) Denoising Score Matching (DSM) 改善效率並可 Scalable. https://bobondemon.github.io/2022/03/06/A-Connection-Between-Score-Matching-and-Denoising-Autoencoders/ <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:11" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (一) Non-normalized 模型估計. <a target="_blank" rel="noopener" href="https://bobondemon.github.io/2022/01/08/Estimation-of-Non-Normalized-Statistical-Models-by-Score-Matching/" class="uri">https://bobondemon.github.io/2022/01/08/Estimation-of-Non-Normalized-Statistical-Models-by-Score-Matching/</a> <a href="#fnref:11" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:12" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (三) Sliced Score Matching (SSM) 同時保持效率和效果. https://bobondemon.github.io/2022/03/06/Sliced-Score-Matching-A-Scalable-Approach-to-Density-and-Score-Estimation/ <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:12" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (二) Denoising Score Matching (DSM) 改善效率並可 Scalable. <a target="_blank" rel="noopener" href="https://bobondemon.github.io/2022/03/06/A-Connection-Between-Score-Matching-and-Denoising-Autoencoders/" class="uri">https://bobondemon.github.io/2022/03/06/A-Connection-Between-Score-Matching-and-Denoising-Autoencoders/</a> <a href="#fnref:12" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:13" class="footnote-text"><span>扩散模型与能量模型，Score-Matching和SDE，ODE的关系 - 中森的文章 - 知乎 https://zhuanlan.zhihu.com/p/576779879 <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:13" class="footnote-text"><span>Chih-Sheng Chen. Score Matching 系列 (三) Sliced Score Matching (SSM) 同時保持效率和效果. <a target="_blank" rel="noopener" href="https://bobondemon.github.io/2022/03/06/Sliced-Score-Matching-A-Scalable-Approach-to-Density-and-Score-Estimation/" class="uri">https://bobondemon.github.io/2022/03/06/Sliced-Score-Matching-A-Scalable-Approach-to-Density-and-Score-Estimation/</a> <a href="#fnref:13" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 <li>
-<span id="fn:14" class="footnote-text"><span>Yang Song. Sliced Score Matching: A Scalable Approach to Density and Score Estimation. https://yang-song.net/blog/2019/ssm/ <a href="#fnref:14" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+<span id="fn:14" class="footnote-text"><span>扩散模型与能量模型，Score-Matching和SDE，ODE的关系 - 中森的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/576779879" class="uri">https://zhuanlan.zhihu.com/p/576779879</a> <a href="#fnref:14" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
