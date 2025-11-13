@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>One/Few-step Flow Models</title>
+    <link href="/blog-main/2025/11/13/One-Few-step-Flow-Models/"/>
+    <url>/blog-main/2025/11/13/One-Few-step-Flow-Models/</url>
+    
+    <content type="html"><![CDATA[<h2 id="meanflow">MeanFlow</h2><p>Shortcut Models 人为确定时间步的做法略显笨拙，而 Kaiming 组的 MeanFlow 则给出了一个更优雅的解决方案。直观上，可以认为 MeanFlow 是 Shortcut Models 的连续时间版本，它将后者在离散时间步上的一致性约束推广到了连续时间上用微分方程描述，并利用深度学习框架（PyTorch/JAX）中的 <code>jvp</code> 算子予以实现。</p><h3 id="平均速度">平均速度</h3><p>MeanFlow 的思想依旧是用一个双时间步模型学习 ODE 轨迹的平均速度。形式化地说，设 <span class="math inline">\(t\in[0,1]\)</span> 表示时间步，<span class="math inline">\(\mathbf x_t\)</span> 为 <span class="math inline">\(t\)</span> 的函数，表示一条轨迹。记 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x_t\)</span> 处的瞬时速度，则从 <span class="math inline">\(r\)</span> 时刻到 <span class="math inline">\(t\)</span> 时刻的平均速度定义为： <span class="math display">\[\mathbf u(\mathbf x_t,r,t){\;\mathrel{\vcenter{:}}=\;}\frac{1}{t-r}\int_r^t\mathbf v(\mathbf x_\tau,\tau)\mathrm d\tau\]</span> 根据定义，平均速度场自然满足 Shortcut Models 中提到的两条性质：</p><ol type="1"><li>极限性：当 <span class="math inline">\(r\to t\)</span> 时，<span class="math inline">\(\mathbf u(\mathbf x_t,r,t)\to\mathbf v(\mathbf x_t,t)\)</span>.</li><li>一致性：设 <span class="math inline">\(r&lt;s&lt;t\)</span>，则 <span class="math inline">\((t-r)\mathbf u(\mathbf x_t,r,t)=(s-r)\mathbf u(\mathbf x_s,r,s)+(t-s)\mathbf u(\mathbf x_t,s,t)\)</span>.</li></ol><p>我们的目标就是学习一个模型 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,r,t)\)</span> 去近似平均速度： <span class="math display">\[\mathbf u_\theta(\mathbf x_t,r,t)\xrightarrow{\text{approximate}}\mathbf u(\mathbf x_t,r,t)\]</span> 如果可以做到这一点，那么推理时就可以跨任意步长采样了，包括一步采样。</p><h3 id="meanflow-identity">MeanFlow Identity</h3><p>由于平均速度的定义包含积分，我们无法直接回归它。为此，作者巧妙地将积分等式转换为了微分等式。首先移项得： <span class="math display">\[(t-r)\mathbf u(\mathbf x_t,r,t)=\int_r^t\mathbf v(\mathbf x_\tau,\tau)\mathrm d\tau\]</span> 视 <span class="math inline">\(r\)</span> 与 <span class="math inline">\(t\)</span> 无关，两边对 <span class="math inline">\(t\)</span> 求偏导得： <span class="math display">\[\mathbf u(\mathbf x_t,r,t)+(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\mathbf v(\mathbf x_t,t)\]</span> 整理有： <span class="math display">\[\underbrace{\mathbf u(\mathbf x_t,r,t)}_\text{average vel.}=\underbrace{\mathbf v(\mathbf x_t,t)}_\text{instant. vel.}-(t-r)\underbrace{\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)}_\text{time derivative}\]</span> 称作 <strong>MeanFlow Identity</strong>. 其中，对时间求导一项可进一步展开如下： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\partial_\mathbf x\mathbf u\cdot\frac{\mathrm d\mathbf x_t}{\mathrm dt}+\partial_r\mathbf u\cdot\frac{\mathrm dr}{\mathrm dt}+\partial_t\mathbf u\cdot\frac{\mathrm dt}{\mathrm dt}=\partial_\mathbf x\mathbf u\cdot\mathbf v(\mathbf x_t,t)+\partial_t\mathbf u\]</span> 若写作矩阵的形式，则为： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\underbrace{\bigg[\begin{matrix}\partial_\mathbf x\mathbf u&amp;\partial_r\mathbf u&amp;\partial_t\mathbf u\end{matrix}\bigg]}_{\text{Jacobian of }\mathbf u}\begin{bmatrix}\mathbf v(\mathbf x_t,t)\\0\\1\end{bmatrix}\]</span> 即 <span class="math inline">\(\mathbf u\)</span> 的 Jacobian 矩阵与一个向量的乘积，这可通过深度学习框架中封装好的 <code>jvp</code> (Jacobian-vector product) 算子实现。</p><p>现在，我们只需训练一个模型 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,r,t)\)</span> 使其满足 MeanFlow Identity 即可。构造如下损失函数： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{\mathbf x_t,r,t}\left[\Vert\mathbf u_\theta(\mathbf x_t,r,t)-\text{sg}(\mathbf u_\text{tgt})\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v(\mathbf x_t,t)-(t-r)(\partial_\mathbf x\mathbf u_\theta\cdot\mathbf v(\mathbf x_t,t)+\partial_t\mathbf u_\theta)\end{align}\]</span> 其中 <span class="math inline">\(\text{sg}(\cdot)\)</span> 是停止梯度操作，防止计算 Jacobian 矩阵后还需对网络二次求导，提升训练效率。综上，MeanFlow 模型的训练算法流程如下：</p><p><img src="alg.png" width=40% /></p><p>实践中，我们不一定采用 L2 度量，可以根据实验效果更改。作者采取了 <span class="math inline">\(\Vert\Delta\Vert_2^{2\gamma}\)</span> 的形式，并设置权重 <span class="math inline">\(w=1/(\Vert\Delta\Vert_2^2+c)^{1-\gamma}\)</span>.</p><h3 id="条件生成与-guidance">条件生成与 Guidance</h3><p>传统上，CFG 是用在采样过程中的，代价是让推理时延变成了原来的两倍。MeanFlow 作者指出，我们其实可以在训练时就引入 CFG，让模型学习 CFG 后的速度场，即可在保持推理时延的同时享受 CFG 的好处。</p><p>具体而言，施加 CFG 后的速度场为： <span class="math display">\[\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t)\]</span> 依照上一节的推导，MeanFlow Identity 相应更改为： <span class="math display">\[\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)\]</span> 其中： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)=\partial_\mathbf x\mathbf u^\text{cfg}\cdot\frac{\mathrm d\mathbf x_t}{\mathrm dt}+\partial_r\mathbf u^\text{cfg}\cdot\frac{\mathrm dr}{\mathrm dt}+\partial_t\mathbf u^\text{cfg}\cdot\frac{\mathrm dt}{\mathrm dt}=\partial_\mathbf x\mathbf u^\text{cfg}\cdot\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+\partial_t\mathbf u^\text{cfg}\]</span> 于是损失函数更改为： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_t,\mathbf c),r,t}\left[\left\Vert\mathbf u^\text{cfg}_\theta(\mathbf x_t,r,t\vert\mathbf c)-\text{sg}(\mathbf u_\text{tgt})\right\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\left(\partial_\mathbf x\mathbf u^\text{cfg}_\theta\cdot\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+\partial_t\mathbf u^\text{cfg}_\theta\right)\end{align}\]</span> 看似与无条件情形没有什么区别，但这里其实有一个问题：我们在训练过程中只能得到 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\mathbf c)\)</span>，无法得到 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，因此无法计算 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span>. 不过作者注意到： <span class="math display">\[\begin{align}\mathbf v^\text{cfg}(\mathbf x_t,t)&amp;=\mathbb E_\mathbf c[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)]\\&amp;=\mathbb E_\mathbf c[\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t)]\\&amp;=\omega\mathbb E_\mathbf c[\mathbf v(\mathbf x_t,t\vert\mathbf c)]+(1-\omega)\mathbf v(\mathbf x_t,t)\\&amp;=\mathbf v(\mathbf x_t,t)\end{align}\]</span> 也就是说，在施加 CFG 前后，无条件速度场并不会改变。又 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t)\)</span> 也可以写作 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t)\)</span>，因此我们直接用无条件模型去近似之： <span class="math display">\[\mathbf u_\theta^\text{cfg}(\mathbf x_t,t,t)\xrightarrow{\text{approximate}}\mathbf u^\text{cfg}(\mathbf x_t,t,t)=\mathbf v(\mathbf x_t,t)\]</span> 综合起来，训练损失为： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_t,\mathbf c),r,t}\left[\left\Vert\mathbf u^\text{cfg}_\theta(\mathbf x_t,r,t\vert\mathbf c)-\text{sg}(\mathbf u_\text{tgt})\right\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\left(\partial_\mathbf x\mathbf u^\text{cfg}_\theta\cdot\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+\partial_t\mathbf u^\text{cfg}_\theta\right)\\&amp;\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf u_\theta^\text{cfg}(\mathbf x_t,t,t)\end{align}\]</span> 同时在训练过程中以 10% 的概率丢弃条件以训练无条件模型。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>生成模型</category>
+      
+      <category>Diffusion Models</category>
+      
+      <category>Normalizing Flows</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>generative models</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Shortcut Models</title>
     <link href="/blog-main/2025/02/28/Shortcut-Models/"/>
     <url>/blog-main/2025/02/28/Shortcut-Models/</url>
@@ -255,9 +284,9 @@
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>linear algebra</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -600,9 +629,9 @@
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>linear algebra</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -2364,9 +2393,9 @@
     
     <categories>
       
-      <category>图像处理</category>
-      
       <category>计算机视觉</category>
+      
+      <category>图像处理</category>
       
     </categories>
     
