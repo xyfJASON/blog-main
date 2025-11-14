@@ -293,7 +293,7 @@
       
       <a class="index-excerpt " href="/blog-main/2025/11/13/One-Few-step-Flow-Models/" target="_self">
         <div>
-          MeanFlow Shortcut Models 人为确定时间步的做法略显笨拙，而 Kaiming 组的 MeanFlow 则给出了一个更优雅的解决方案。直观上，可以认为 MeanFlow 是 Shortcut Models 的连续时间版本，它将后者在离散时间步上的一致性约束推广到了连续时间上用微分方程描述，并利用深度学习框架（PyTorch/JAX）中的 jvp 算子予以实现。 平均速度 Mea
+          扩散/流模型最明显的短板就是迭代式生成的效率太低，为此人们做出了非常多的努力，大致可以分为以下三类：  改进采样器：提出 DDIM, Euler, Heun, DPM-Solver 等一阶或高阶 ODE/SDE 求解器。这类方法的优点在于无需训练，但是很难在 10 步采样以内保持图像质量。 模型蒸馏：以预训练扩散模型作为老师，蒸馏一个采样步数更少的学生模型，代表工作包括 Progressive D
         </div>
       </a>
 
@@ -303,80 +303,6 @@
             <i class="iconfont icon-date"></i>
             <time datetime="2025-11-13 16:25" pubdate>
               2025-11-13
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
-  
-  
-    <span>></span>
-    
-  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
-  
-  
-
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/blog-main/tags/generative-models/">#generative models</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/blog-main/2025/02/28/Shortcut-Models/" target="_self">
-          <img src="/blog-main/gallery/cover/shortcut-models.jpg" srcset="/blog-main/logo/imageloading.png" lazyload alt="Shortcut Models">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h2 class="index-header">
-        
-        <a href="/blog-main/2025/02/28/Shortcut-Models/" target="_self">
-          Shortcut Models
-        </a>
-      </h2>
-
-      
-      <a class="index-excerpt " href="/blog-main/2025/02/28/Shortcut-Models/" target="_self">
-        <div>
-          背景知识 扩散模型最明显的短板就是迭代式生成的效率太低，为此人们做出了非常多的努力，大致可以概括如下：  改进采样器：提出 DDIM, Euler, Heun, DPM-Solver 等一阶或高阶 ODE 求解器。这类方法的优点在于无需训练，但是很难在 10 步采样以内保持图像质量。 模型蒸馏：预训练扩散模型作为老师，蒸馏一个采样步数更少的学生模型，代表工作包括 Progressive Disti
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2025-02-28 11:03" pubdate>
-              2025-02-28
             </time>
           </div>
         
@@ -1661,6 +1587,77 @@
         
           <div class="post-meta">
             <i class="iconfont icon-tags"></i>
+            
+              <a href="/blog-main/tags/machine-learning/">#machine learning</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/blog-main/2024/03/02/%E5%AD%90%E7%A9%BA%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB/" target="_self">
+          <img src="/blog-main/gallery/cover/distance-subspace.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload alt="子空间的距离">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/blog-main/2024/03/02/%E5%AD%90%E7%A9%BA%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB/" target="_self">
+          子空间的距离
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/blog-main/2024/03/02/%E5%AD%90%E7%A9%BA%E9%97%B4%E7%9A%84%E8%B7%9D%E7%A6%BB/" target="_self">
+        <div>
+          在机器学习研究中，我们有时会遇到以“一个集合的向量”而非“一个向量”为基本元素的问题，为此需要定义这些向量集合之间的距离。特别地，如果允许我们直接考虑每个向量集合张成的线性子空间，那么问题就变成了如何度量两个线性子空间之间的距离。 具体而言，设 \(a_1,\ldots,a_k\in\mathbb R^n\) 和 \(b_1,\ldots,b_k\in\mathbb R^n\) 是两个线性无关向量
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2024-03-02 20:30" pubdate>
+              2024-03-02
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="category-chain-item">机器学习</a>
+  
+  
+
+      </span>
+    
+  
+    
+  
+</span>
+
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/blog-main/tags/linear-algebra/">#linear algebra</a>
             
               <a href="/blog-main/tags/machine-learning/">#machine learning</a>
             
