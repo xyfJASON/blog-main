@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/positional-encoding.jpg">
 <meta property="article:published_time" content="2024-06-10T07:35:40.000Z">
-<meta property="article:modified_time" content="2025-09-10T04:07:16.920Z">
+<meta property="article:modified_time" content="2025-12-08T05:25:19.571Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="deep learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -398,9 +398,9 @@ p_{i, 2j} = \sin\left(\frac{i}{10000^{2j/d}}\right),\quad p_{i, 2j+1} = \cos\lef
 \]</span> 其中 <span class="math inline">\(\mathcal R_m\)</span> 是一个旋转矩阵，将 <span class="math inline">\(\mathbf x\)</span> 逆时针旋转 <span class="math inline">\(m\theta\)</span> 的角度，其中 <span class="math inline">\(\theta\)</span> 是一个超参数。在计算 attention 时，取位置 <span class="math inline">\(m,n\)</span> 上的 <span class="math inline">\(\mathbf q,\mathbf k\)</span>，分别实施 RoPE 操作，再做内积得： <span class="math display">\[
 \begin{align}
 \Big\langle\text{RoPE}(\mathbf q,m),\text{RoPE}(\mathbf k,n)\Big\rangle
-&amp;=\mathbf q^T\mathcal R_m^T\mathcal R_n\mathbf k=\mathbf q^T\mathcal R_{n-m}\mathbf k
+&amp;=\mathbf q^{\mathsf T}\mathcal R_m^{\mathsf T}\mathcal R_n\mathbf k=\mathbf q^{\mathsf T}\mathcal R_{n-m}\mathbf k
 \end{align}
-\]</span> 基于旋转矩阵的良好性质 <span class="math inline">\(\mathcal R_m^T\mathcal R_n=\mathcal R_{n-m}\)</span>，可以看见内积结果只与相对位置 <span class="math inline">\(n-m\)</span> 有关，这体现出了 RoPE 的相对性。</p>
+\]</span> 基于旋转矩阵的良好性质 <span class="math inline">\(\mathcal R_m^{\mathsf T}\mathcal R_n=\mathcal R_{n-m}\)</span>，可以看见内积结果只与相对位置 <span class="math inline">\(n-m\)</span> 有关，这体现出了 RoPE 的相对性。</p>
 <p>对于 <strong><span class="math inline">\(d\)</span> 维情形</strong>（<span class="math inline">\(d\)</span> 是偶数），与 sinusoidal 类似，只需将二维情形拼接起来即可： <span class="math display">\[
 \text{RoPE}(\mathbf x,m)=\begin{equation}\begin{bmatrix} 
 \cos(m\theta_0) &amp; -\sin(m\theta_0) &amp;&amp;\\ 

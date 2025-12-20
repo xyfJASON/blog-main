@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="基础知识 在信息论中，随机变量 \(X\) 的（微分）熵定义为 \(-\log p(x)\) 的期望： \[ H(X)&#x3D;-\int_xp(x)\log p(x)\mathrm dx&#x3D;-\mathbb E_X[\log p(X)] \] 当涉及两个随机变量 \(X,Y\) 时，对它们的联合分布求熵也就得到了联合熵： \[ H(X,Y)&#x3D;-\int_x\int_yp(x,y)\log p(x,y)\m">
+    <meta name="description" content="基础知识 在信息论中，随机变量 \(X\) 的（微分）熵定义为： \[ H(X)&#x3D;-\int p(x)\log p(x)\mathrm dx&#x3D;-\mathbb E_X[\log p(X)] \] 当涉及两个随机变量 \(X,Y\) 时，对它们的联合分布求熵也就得到了联合熵： \[ H(X,Y)&#x3D;-\iint p(x,y)\log p(x,y)\mathrm dx\mathrm dy&#x3D;-\mathb">
 <meta property="og:type" content="article">
 <meta property="og:title" content="生成模型中的互信息">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/09/15/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B%E4%B8%AD%E7%9A%84%E4%BA%92%E4%BF%A1%E6%81%AF/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="基础知识 在信息论中，随机变量 \(X\) 的（微分）熵定义为 \(-\log p(x)\) 的期望： \[ H(X)&#x3D;-\int_xp(x)\log p(x)\mathrm dx&#x3D;-\mathbb E_X[\log p(X)] \] 当涉及两个随机变量 \(X,Y\) 时，对它们的联合分布求熵也就得到了联合熵： \[ H(X,Y)&#x3D;-\int_x\int_yp(x,y)\log p(x,y)\m">
+<meta property="og:description" content="基础知识 在信息论中，随机变量 \(X\) 的（微分）熵定义为： \[ H(X)&#x3D;-\int p(x)\log p(x)\mathrm dx&#x3D;-\mathbb E_X[\log p(X)] \] 当涉及两个随机变量 \(X,Y\) 时，对它们的联合分布求熵也就得到了联合熵： \[ H(X,Y)&#x3D;-\iint p(x,y)\log p(x,y)\mathrm dx\mathrm dy&#x3D;-\mathb">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mutual-information.png">
 <meta property="article:published_time" content="2023-09-15T02:48:19.000Z">
-<meta property="article:modified_time" content="2024-08-26T12:03:40.000Z">
+<meta property="article:modified_time" content="2025-12-18T07:29:18.345Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta property="article:tag" content="information theory">
@@ -289,7 +289,7 @@
         
         
         
-          25 分钟
+          24 分钟
         
       </span>
     
@@ -332,36 +332,31 @@
               <div class="markdown-body">
                 
                 <h2 id="基础知识">基础知识</h2>
-<p>在信息论中，随机变量 <span class="math inline">\(X\)</span> 的<strong>（微分）熵</strong>定义为 <span class="math inline">\(-\log p(x)\)</span> 的期望： <span class="math display">\[
-H(X)=-\int_xp(x)\log p(x)\mathrm dx=-\mathbb E_X[\log p(X)]
+<p>在信息论中，随机变量 <span class="math inline">\(X\)</span> 的<strong>（微分）熵</strong>定义为： <span class="math display">\[
+H(X)=-\int p(x)\log p(x)\mathrm dx=-\mathbb E_X[\log p(X)]
 \]</span> 当涉及两个随机变量 <span class="math inline">\(X,Y\)</span> 时，对它们的联合分布求熵也就得到了<strong>联合熵</strong>： <span class="math display">\[
-H(X,Y)=-\int_x\int_yp(x,y)\log p(x,y)\mathrm dx\mathrm dy=-\mathbb E_{X,Y}[\log p(X,Y)]
+H(X,Y)=-\iint p(x,y)\log p(x,y)\mathrm dx\mathrm dy=-\mathbb E_{X,Y}[\log p(X,Y)]
 \]</span> 当其中一个随机变量给定时，例如 <span class="math inline">\(X=x\)</span>，我们可以对条件概率分布 <span class="math inline">\(p(Y\vert X=x)\)</span> 求它的熵： <span class="math display">\[
-H(Y\vert X=x)=-\int_y p(y\vert x)\log p(y\vert x)\mathrm dy=-\mathbb E_{Y\vert X=x}[\log p(Y\vert X=x)]
+H(Y\vert X=x)=-\int p(y\vert x)\log p(y\vert x)\mathrm dy=-\mathbb E_{Y\vert X=x}[\log p(Y\vert X=x)]
 \]</span> 值得注意的是，<span class="math inline">\(H(Y\vert X=x)\)</span> 建立在已知 <span class="math inline">\(X\)</span> 取值为 <span class="math inline">\(x\)</span> 的情况下。那么在平均意义下，继续对 <span class="math inline">\(X\)</span> 取期望，就得到了<strong>条件熵</strong>： <span class="math display">\[
-\begin{align}
-H(Y\vert X)&amp;=-\int_xp(x)\int_y p(y\vert x)\log p(y\vert x)\mathrm dx\mathrm dy\\
-&amp;=-\int_x\int_y p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
-&amp;=-\mathbb E_{X,Y}[\log p(Y\vert X)]
-\end{align}
+H(Y\vert X)=-\int p(x)\int p(y\vert x)\log p(y\vert x)\mathrm dy\mathrm dx=-\iint p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy=-\mathbb E_{X,Y}[\log p(Y\vert X)]
 \]</span> 不难证明，条件熵加上作为条件的那个随机变量的熵（也许可以称作边缘熵？），正好就是联合熵： <span class="math display">\[
 \begin{align}
-H(Y\vert X)+H(X)&amp;=-\int_x\int_y p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy-\int_xp(x)\log p(x)\mathrm dx\\
-&amp;=-\int_x\int_y p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy-\int_x\int_yp(x,y)\log p(x)\mathrm dx\mathrm dy\\
-&amp;=-\int_x\int_yp(x,y)\log\big(p(y\vert x)p(x)\big)\mathrm dx\mathrm dy\\
-&amp;=-\int_x\int_yp(x,y)\log p(x,y)\mathrm dx\mathrm dy\\
+H(Y\vert X)+H(X)&amp;=-\iint p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy-\int p(x)\log p(x)\mathrm dx\\
+&amp;=-\iint p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy-\iint p(x,y)\log p(x)\mathrm dx\mathrm dy\\
+&amp;=-\iint p(x,y)\log p(x,y)\mathrm dx\mathrm dy\\
 &amp;=H(X,Y)
 \end{align}
 \]</span> 这个关系式可以类比 <span class="math inline">\(p(y\vert x)p(x)=p(x,y)\)</span> 来记忆。</p>
-<p>条件熵 <span class="math inline">\(H(Y\vert X)\)</span> 可以理解为在给定 <span class="math inline">\(X\)</span> 的条件下，<span class="math inline">\(Y\)</span> 还剩下的不确定性。例如，当 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Y\)</span> 独立时，<span class="math inline">\(X\)</span> 不能给 <span class="math inline">\(Y\)</span> 带来任何新的信息，即 <span class="math inline">\(H(Y\vert X)=H(Y)\)</span>，<span class="math inline">\(Y\)</span> 的不确定性不变；当 <span class="math inline">\(X\)</span> 完全决定了 <span class="math inline">\(Y\)</span> 时，给定 <span class="math inline">\(X\)</span> 的条件下 <span class="math inline">\(Y\)</span> 没有任何的不确定性，即 <span class="math inline">\(H(Y\vert X)=0\)</span>. 因此，我们用熵减去条件熵来表示 <span class="math inline">\(X\)</span> 带给 <span class="math inline">\(Y\)</span> 的不确定性，即<strong>互信息</strong>： <span class="math display">\[
+<p>我们知道熵表示不确定性。例如 <span class="math inline">\(H(Y)\)</span> 表示随机变量 <span class="math inline">\(Y\)</span> 的不确定性，而条件熵 <span class="math inline">\(H(Y\vert X)\)</span> 则表示在给定 <span class="math inline">\(X\)</span> 的条件下，<span class="math inline">\(Y\)</span> 还剩下的不确定性。例如，当 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Y\)</span> 独立时，<span class="math inline">\(X\)</span> 不能给 <span class="math inline">\(Y\)</span> 带来任何新的信息，因此 <span class="math inline">\(H(Y\vert X)=H(Y)\)</span>，即 <span class="math inline">\(Y\)</span> 的不确定性不变；而当 <span class="math inline">\(X\)</span> 完全决定了 <span class="math inline">\(Y\)</span> 时，给定 <span class="math inline">\(X\)</span> 的条件下 <span class="math inline">\(Y\)</span> 没有任何的不确定性，即 <span class="math inline">\(H(Y\vert X)=0\)</span>. 因此，我们用熵减去条件熵来表示 <span class="math inline">\(X\)</span> 带给 <span class="math inline">\(Y\)</span> 的不确定性，即<strong>互信息</strong>： <span class="math display">\[
 I(X;Y)=H(Y)-H(Y\vert X)
 \]</span> 如果把互信息的表达式展开： <span class="math display">\[
 \begin{align}
 I(X;Y)&amp;=H(Y)-H(Y\vert X)\\
-&amp;=-\int_yp(y)\log p(y)\mathrm dy+\int_x\int_yp(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
-&amp;=-\int_x\int_yp(x,y)\log p(y)\mathrm dx\mathrm dy+\int_x\int_yp(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
-&amp;=\int_x\int_y p(x,y)\log\frac{p(y\vert x)}{p(y)}\mathrm dx\mathrm dy\\
-&amp;=\int_x\int_y p(x,y)\log\frac{p(x,y)}{p(x)p(y)}\mathrm dx\mathrm dy\\
+&amp;=-\int p(y)\log p(y)\mathrm dy+\iint p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
+&amp;=-\iint p(x,y)\log p(y)\mathrm dx\mathrm dy+\iint p(x,y)\log p(y\vert x)\mathrm dx\mathrm dy\\
+&amp;=\iint p(x,y)\log\frac{p(y\vert x)}{p(y)}\mathrm dx\mathrm dy\\
+&amp;=\iint p(x,y)\log\frac{p(x,y)}{p(x)p(y)}\mathrm dx\mathrm dy\\
 &amp;=\text{KL}\big(p(x,y)\Vert p(x)p(y)\big)
 \end{align}
 \]</span> 我们发现互信息其实就是 <span class="math inline">\(p(x,y)\)</span> 与 <span class="math inline">\(p(x)p(y)\)</span> 之间的 KL 散度。由于 KL 散度衡量了两个分布之间的差异，所以从这个角度看，互信息在衡量 <span class="math inline">\(p(x,y)\)</span> 与 <span class="math inline">\(p(x)p(y)\)</span> 之间的差异（注意 <span class="math inline">\(p(x)p(y)\)</span> 确实是一个合法的概率分布）。当 <span class="math inline">\(X\)</span> 与 <span class="math inline">\(Y\)</span> 独立时，<span class="math inline">\(p(x,y)=p(x)p(y)\)</span>，KL 散度为 0，也即互信息为 0；否则，<span class="math inline">\(p(x,y)\)</span> 不能拆成 <span class="math inline">\(p(x)p(y)\)</span>，这两个分布存在差异，KL 散度非零，即互信息非零。</p>
@@ -371,24 +366,24 @@ I(X;Y)=H(Y)-H(Y\vert X)=H(X)-H(X\vert Y)
 <p><img src="relation-diagram.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
 <h2 id="infogan-infovae">InfoGAN &amp; InfoVAE</h2>
 <p>在生成模型的研究中，我们常常认为观测到的数据 <span class="math inline">\(\mathbf x\)</span> 背后是由维度更低的隐变量 <span class="math inline">\(\mathbf z\)</span> 控制的。记数据的真实分布为 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span>，我们无法直接写出它的形式，只能从中采样若干样本构成训练集。因此，为了对未知的 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span> 进行建模，我们可以构建一个解码器（生成器） <span class="math inline">\(p_\theta(\mathbf x\vert\mathbf z)\)</span>，并预定义一个隐变量的先验分布 <span class="math inline">\(p(\mathbf z)\)</span>（例如标准正态分布），那么就能够生成如下的数据分布： <span class="math display">\[
-p_\theta(\mathbf x)=\int_{\mathbf z}p_\theta(\mathbf x\vert\mathbf z)p(\mathbf z)\mathrm d\mathbf z
+p_\theta(\mathbf x)=\int p_\theta(\mathbf x\vert\mathbf z)p(\mathbf z)\mathrm d\mathbf z
 \]</span> 训练生成模型的目标就是学习参数 <span class="math inline">\(\theta\)</span> 使得 <span class="math inline">\(p_\theta(\mathbf x)\)</span> 近似于 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span>. 然而，直接计算或遍历隐空间近似 <span class="math inline">\(p_\theta(\mathbf x)\)</span> 是不可行的，因此不同生成模型采用了不同的方法来解决这个问题。</p>
 <p>对于 GANs 一类生成模型，我们使用一个判别器与生成器做对抗，促使生成器的数据分布尽可能接近真实的数据分布。可以证明，GANs 在隐式地最小化 <span class="math inline">\(p_\theta(\mathbf x)\)</span> 与 <span class="math inline">\(p_\text{data}(\mathbf x)\)</span> 之间的 JS 散度（或 F 散度、Wasserstein 距离等）。在这个情形下，为了避免<strong>生成器</strong>忽略掉隐变量 <span class="math inline">\(\mathbf z\)</span>，我们可以最大化互信息 <span class="math inline">\(I_{p_\theta}(\mathbf x;\mathbf z)\)</span>，这就是 InfoGAN 的核心思想。</p>
-<p>对于 VAEs 一类生成模型，我们引入了变分后验 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 推导出对数似然 <span class="math inline">\(\log p_\theta(\mathbf x)\)</span> 的变分下界 ELBO. 其中，<span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 实现为一个神经网络编码器。在这个情形下，为了避免<strong>编码器</strong>将不同的 <span class="math inline">\(\mathbf x\)</span> 都映射到没有差别的 <span class="math inline">\(\mathbf z\)</span> 中，即隐变量不包含输入的任何信息，我们可以最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span>，这就是 InfoVAE 的核心思想。</p>
+<p>对于 VAEs 一类生成模型，我们引入了变分后验 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 推导出变分下界 ELBO. 其中，<span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 实现为一个神经网络编码器。在这个情形下，为了避免<strong>编码器</strong>将不同的 <span class="math inline">\(\mathbf x\)</span> 都映射到没有差别的 <span class="math inline">\(\mathbf z\)</span> 中，即隐变量不包含输入的任何信息，我们可以最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span>，这就是 InfoVAE 的核心思想。</p>
 <p>可以看见，InfoGAN 和 InfoVAE 优化的互信息其实是不同的——前者是为了保留生成器（也就是解码器）的输入和输出之间的信息传递，而后者是为了保留编码器的输入和输出之间的信息传递。</p>
 <h3 id="infogan">InfoGAN</h3>
 <p>前文提到，InfoGAN 希望最大化互信息 <span class="math inline">\(I_{p_\theta}(\mathbf x;\mathbf z)\)</span>. 然而，<span class="math inline">\(I_{p_\theta}(\mathbf x;\mathbf z)\)</span> 本身是 intractable 的，这是因为： <span class="math display">\[
 I_{p_\theta}(\mathbf x;\mathbf z)=H(\mathbf z)-H(\mathbf z\vert\mathbf x)=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log p_\theta(\mathbf z\vert\mathbf x)\right]
 \]</span> 其中涉及到了后验分布的计算： <span class="math display">\[
 \begin{align}
-p_\theta(\mathbf z\vert\mathbf x)=\frac{p(\mathbf z)p_\theta(\mathbf x\vert\mathbf z)}{p_\theta(\mathbf x)}=\frac{p(\mathbf z)p_\theta(\mathbf x\vert\mathbf z)}{\int_{\mathbf z&#39;}p(\mathbf z&#39;)p_\theta(\mathbf x\vert\mathbf z&#39;)}
+p_\theta(\mathbf z\vert\mathbf x)=\frac{p(\mathbf z)p_\theta(\mathbf x\vert\mathbf z)}{p_\theta(\mathbf x)}=\frac{p(\mathbf z)p_\theta(\mathbf x\vert\mathbf z)}{\int p(\mathbf z&#39;)p_\theta(\mathbf x\vert\mathbf z&#39;)\mathrm d{\mathbf z&#39;}}
 \end{align}
-\]</span> 分母部分需要遍历隐空间——这在绝大多数情况下是不可行的。InfoGAN 的解决方案类似于 VAE——引入变分后验 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 去近似不可解的真实后验 <span class="math inline">\(p_\theta(\mathbf z\vert\mathbf x)\)</span>： <span class="math display">\[
+\]</span> 分母部分需要遍历隐空间——这在绝大多数情况下是不可行的。InfoGAN 的解决方案类似于 VAE，引入变分后验 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 去近似不可解的真实后验 <span class="math inline">\(p_\theta(\mathbf z\vert\mathbf x)\)</span>： <span class="math display">\[
 \begin{align}
 I_{p_\theta}(\mathbf x;\mathbf z)
 &amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log p_\theta(\mathbf z\vert\mathbf x)\right]\\
 &amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log\frac{p_\theta(\mathbf z\vert\mathbf x)}{q_\phi(\mathbf z\vert\mathbf x)}+\log q_\phi(\mathbf z\vert\mathbf x)\right]\\
-&amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x)}\Big[\underbrace{\text{KL}(p_\theta(\mathbf z\vert\mathbf x)\Vert q_\phi(\mathbf z\vert\mathbf x))}_{\geq 0}+\mathbb E_{p_\theta(\mathbf z\vert\mathbf x)}[\log q_\phi(\mathbf z\vert\mathbf x)]\Big]\\
+&amp;=H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x)}\Big[\underbrace{\text{KL}(p_\theta(\mathbf z\vert\mathbf x)\Vert q_\phi(\mathbf z\vert\mathbf x))}_{\geq 0}\Big]+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}[\log q_\phi(\mathbf z\vert\mathbf x)]\\
 &amp;\geq H(\mathbf z)+\mathbb E_{p_\theta(\mathbf x,\mathbf z)}\left[\log q_\phi(\mathbf z\vert\mathbf x)\right]\\
 &amp;=H(\mathbf z)+\mathbb E_{p(\mathbf z)}\left[\mathbb E_{p_\theta(\mathbf x\vert\mathbf z)}\left[\log q_\phi(\mathbf z\vert\mathbf x)\right]\right]
 \end{align}
@@ -396,7 +391,7 @@ I_{p_\theta}(\mathbf x;\mathbf z)
 <p>具体而言，InfoGAN 引入互信息的动机是希望在 GAN 的学习过程中鼓励隐变量的解耦。作者其实并没有直接最大化 <span class="math inline">\(I(\mathbf x;\mathbf z)\)</span>，而是将隐变量分为两部分：<span class="math inline">\(\mathbf z\)</span> 是无法解耦的部分，<span class="math inline">\(\mathbf c\)</span> 是可解耦的部分，并只最大化 <span class="math inline">\(I(\mathbf x;\mathbf c)\)</span>. 根据上面的讨论，引入变分后验 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span>： <span class="math display">\[
 I(\mathbf x;\mathbf c)\geq \mathcal L_I=H(\mathbf c)+\mathbb E_{p(\mathbf c)}\left[\mathbb E_{p_\theta(\mathbf x\vert\mathbf z,\mathbf c)}\left[\log q_\phi(\mathbf c\vert\mathbf x)\right]\right],\quad\mathbf z\sim p(\mathbf z)
 \]</span> 在实现上，<span class="math inline">\(\mathbf c\)</span> 可以是离散的，也可以是连续的。为了简便起见，我们将离散 <span class="math inline">\(\mathbf c\)</span> 的先验分布设为均匀类别分布，连续 <span class="math inline">\(\mathbf c\)</span> 的先验分布设为标准正态分布，那么上式中的 <span class="math inline">\(H(\mathbf c)\)</span> 也变成了常数。</p>
-<p><span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 使用一个神经网络解码器实现——特别地，这个网络可以与已有的判别器共用浅层部分，只需要最后拉出一个新的 head，因而 InfoGAN 新引入的计算量非常小。对于离散的 <span class="math inline">\(\mathbf c\)</span>，取 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 为 softmax 分布，那么容易推出 <span class="math inline">\(\mathcal L_I\)</span> 就是一个交叉熵损失；对于连续的 <span class="math inline">\(\mathbf c\)</span>，取 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 为高斯分布，那么 <span class="math inline">\(\mathcal L_I\)</span> 就是一个 MSE 损失函数。</p>
+<p>对于新引入的 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span>，我们使用一个神经网络解码器实现。特别地，这个网络可以与已有的判别器共用浅层部分，只需要最后拉出一个新的 head，因而 InfoGAN 新引入的计算量非常小。对于离散的 <span class="math inline">\(\mathbf c\)</span>，取 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 为 softmax 分布，那么容易推出 <span class="math inline">\(\mathcal L_I\)</span> 就是一个交叉熵损失；对于连续的 <span class="math inline">\(\mathbf c\)</span>，取 <span class="math inline">\(q_\phi(\mathbf c\vert\mathbf x)\)</span> 为高斯分布，那么 <span class="math inline">\(\mathcal L_I\)</span> 就是一个 MSE 损失函数。</p>
 <h3 id="infovae">InfoVAE</h3>
 <p>如前文所述，InfoVAE 希望最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span>. 在已有的编码器 <span class="math inline">\(q_\phi(\mathbf z\vert\mathbf x)\)</span> 下，可以推出 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span> 由两部分组成： <span class="math display">\[
 \begin{align}
@@ -408,17 +403,13 @@ I_{q_\phi}(\mathbf x;\mathbf z)&amp;=\mathbb E_{p_\text{data}(\mathbf x)}\left[\
 <p>我们发现第一项正好是原 VAE 的 ELBO 中的正则项： <span class="math display">\[
 \mathcal L_\text{ELBO}=\mathbb E_{p_\text{data}(\mathbf x)}\big[\underbrace{\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]}_\text{reconstruction}-\underbrace{\text{KL}\big(q_\phi(\mathbf z\vert\mathbf x)\Vert p(\mathbf z)\big)}_\text{regularization}\big]
 \]</span> 如果将 ELBO 与 <span class="math inline">\(I_{q_\phi}(\mathbf x;\mathbf z)\)</span> 相加（相当于为原 VAE 新添加一个最大化互信息的目标），这一正则项就被抵消了： <span class="math display">\[
-\mathcal L_\text{ELBO}+I_{q_\phi}(\mathbf x;\mathbf z)=\mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]\right]-\text{KL}\big(q_\phi(\mathbf z)\Vert p(\mathbf z)\big) \tag{1}\label{1}
+\mathcal L_\text{ELBO}+I_{q_\phi}(\mathbf x;\mathbf z)=\mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]\right]-\text{KL}\big(q_\phi(\mathbf z)\Vert p(\mathbf z)\big)
 \]</span> 或者我们也可以理解为，保留重构项不变，将原来的正则项替换成了现在的先验匹配项。直观上，原正则项让不同 <span class="math inline">\(\mathbf x\)</span> 编码出来的 <span class="math inline">\(\mathbf z\)</span> 都趋向于同一个先验分布 <span class="math inline">\(p(\mathbf x)\)</span>，这显然与最大化互信息 <span class="math inline">\(I_{q_\phi}(\mathbf x,\mathbf z)\)</span> 是矛盾的。而新的先验匹配项只要求<strong>整体意义下</strong>编码出的 <span class="math inline">\(\mathbf z\)</span> 与先验分布 <span class="math inline">\(p(\mathbf x)\)</span> 相近即可，不同的 <span class="math inline">\(\mathbf x\)</span> 编码出的 <span class="math inline">\(\mathbf z\)</span> 依旧可以不同，因此有助于保留 <span class="math inline">\(\mathbf x\)</span> 与 <span class="math inline">\(\mathbf z\)</span> 之间的互信息。</p>
-<p>然而，<span class="math inline">\(q_\phi(\mathbf z)\)</span> 是 intractable 的，为此，我们可以把 KL 散度换成其他衡量两个分布差异的指标 <span class="math inline">\(D\)</span>，使得 <span class="math inline">\(D(q_\phi(\mathbf z)\Vert p(\mathbf z))\)</span>​ 可解。例如，取 <span class="math inline">\(D\)</span> 为 JS 散度，那么我们可以通过对抗训练的方式（GANs）来隐式地实现 JS 散度，这就是 Adversarial Autoencoders<sup id="fnref:7" class="footnote-ref"><a href="#fn:7" rel="footnote"><span class="hint--top hint--rounded" aria-label="Makhzani, Alireza, Jonathon Shlens, Navdeep Jaitly, Ian Goodfellow, and Brendan Frey. Adversarial autoencoders. *arXiv preprint arXiv:1511.05644* (2015).">[7]</span></a></sup>；而取 <span class="math inline">\(D\)</span> 为 MMD，则可以按如下方式计算： <span class="math display">\[
+<p>然而，<span class="math inline">\(q_\phi(\mathbf z)\)</span> 是 intractable 的。为此，我们可以把 KL 散度换成其他衡量两个分布差异的指标 <span class="math inline">\(D\)</span>，使得 <span class="math inline">\(D(q_\phi(\mathbf z)\Vert p(\mathbf z))\)</span>​ 可解。例如，若取 <span class="math inline">\(D\)</span> 为 JS 散度，那么我们可以通过对抗训练的方式来隐式地实现 JS 散度，这等价于 Adversarial Autoencoders (AAE)；而若取 <span class="math inline">\(D\)</span> 为 MMD，则可以按如下公式计算： <span class="math display">\[
 D_\text{MMD}\big(q_\phi(\mathbf z)\Vert p(\mathbf z)\big)=\mathbb E_{p(\mathbf z),p(\mathbf z&#39;)}[k(\mathbf z,\mathbf z&#39;)]-2\mathbb E_{q_\phi(\mathbf z),p(\mathbf z&#39;)}[k(\mathbf z,\mathbf z&#39;)]+\mathbb E_{q_\phi(\mathbf z),q_\phi(\mathbf z&#39;)}[k(\mathbf z,\mathbf z&#39;)]
 \]</span> 其中 <span class="math inline">\(k(\cdot,\cdot)\)</span> 是任一正定核，例如高斯核。作者称这样的模型为 MMD-VAE.</p>
-<p>进一步地，为了更好的通用性，作者在 <span class="math inline">\(\eqref{1}\)</span> 式的基础上引入了两个超参数 <span class="math inline">\(\alpha,\lambda\)</span> 来调节原 VAE 正则项与新先验匹配项的权重系数。因此，InfoVAE 最终的目标函数为： <span class="math display">\[
-\begin{align}
-\mathcal L_\text{InfoVAE}=&amp;\ \mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]\right]-\\
-&amp;\ (1-\alpha)\mathbb E_{p_\text{data}(\mathbf x)}\big[\text{KL}\big(q_\phi(\mathbf z\vert\mathbf x)\Vert p(\mathbf z)\big)\big]-\\
-&amp;\ (\alpha+\lambda-1) D(q_\phi(\mathbf z)\Vert p(\mathbf z))
-\end{align}
+<p>进一步地，为了更好的灵活性，我们可以引入两个超参数 <span class="math inline">\(\alpha,\lambda\)</span> 来调节原 VAE 正则项与新先验匹配项的权重系数： <span class="math display">\[
+\mathcal L_\text{InfoVAE}=\mathbb E_{p_\text{data}(\mathbf x)}\left[\mathbb E_{q_\phi(\mathbf z\vert\mathbf x)}\left[\log p_\theta(\mathbf x\vert\mathbf z)\right]\right]-(1-\alpha)\mathbb E_{p_\text{data}(\mathbf x)}\big[\text{KL}\big(q_\phi(\mathbf z\vert\mathbf x)\Vert p(\mathbf z)\big)\big]-(\alpha+\lambda-1) D(q_\phi(\mathbf z)\Vert p(\mathbf z))
 \]</span> 作者在 MNIST 实验中取 <span class="math inline">\(\lambda=1000,\alpha=0\)</span>.</p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
