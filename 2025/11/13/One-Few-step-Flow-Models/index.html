@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/one-few-step-flow-models.jpg">
 <meta property="article:published_time" content="2025-11-13T08:25:05.000Z">
-<meta property="article:modified_time" content="2025-12-20T09:09:16.340Z">
+<meta property="article:modified_time" content="2025-12-21T09:42:03.980Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          4.5k 字
+          6.2k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          38 分钟
+          52 分钟
         
       </span>
     
@@ -400,16 +400,16 @@
 \mathbf u_\theta(\mathbf x_t,r,t)\xrightarrow{\text{approximate}}\mathbf u(\mathbf x_t,r,t)
 \]</span> 如果可以做到这一点，那么推理时就可以跨任意步长采样了，包括一步采样。</p>
 <h3 id="meanflow-identity">MeanFlow Identity</h3>
-<p>由于平均速度的定义包含积分，我们无法直接回归它。为此，作者巧妙地将积分等式转换为了微分等式。首先移项得： <span class="math display">\[
+<p>由于平均速度的定义包含积分，我们难以直接回归它。为此，作者巧妙地将积分等式转换为了微分等式。首先移项得： <span class="math display">\[
 (t-r)\mathbf u(\mathbf x_t,r,t)=\int_r^t\mathbf v(\mathbf x_\tau,\tau)\mathrm d\tau
 \]</span> 视 <span class="math inline">\(r\)</span> 与 <span class="math inline">\(t\)</span> 无关，两边对 <span class="math inline">\(t\)</span> 求导得： <span class="math display">\[
 \mathbf u(\mathbf x_t,r,t)+(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\mathbf v(\mathbf x_t,t)
 \]</span> 整理有： <span class="math display">\[
 \underbrace{\mathbf u(\mathbf x_t,r,t)}_\text{average vel.}=\underbrace{\mathbf v(\mathbf x_t,t)}_\text{instant. vel.}-(t-r)\underbrace{\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)}_\text{time derivative}
 \]</span> 称此式为 <strong>MeanFlow Identity</strong>. 其中，对时间求导一项可进一步展开如下： <span class="math display">\[
-\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\partial_\mathbf x\mathbf u\cdot\frac{\mathrm d\mathbf x_t}{\mathrm dt}+\partial_r\mathbf u\cdot\frac{\mathrm dr}{\mathrm dt}+\partial_t\mathbf u\cdot\frac{\mathrm dt}{\mathrm dt}=\partial_\mathbf x\mathbf u\cdot\mathbf v(\mathbf x_t,t)+\partial_t\mathbf u
+\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\partial_1\mathbf u\cdot\frac{\mathrm d\mathbf x_t}{\mathrm dt}+\partial_2\mathbf u\cdot\frac{\mathrm dr}{\mathrm dt}+\partial_3\mathbf u\cdot\frac{\mathrm dt}{\mathrm dt}=\partial_1\mathbf u\cdot\mathbf v(\mathbf x_t,t)+\partial_3\mathbf u
 \]</span> 若写作矩阵形式，则为： <span class="math display">\[
-\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\underbrace{\bigg[\begin{matrix}\partial_\mathbf x\mathbf u&amp;\partial_r\mathbf u&amp;\partial_t\mathbf u\end{matrix}\bigg]}_{\text{Jacobian of }\mathbf u}\begin{bmatrix}\mathbf v(\mathbf x_t,t)\\0\\1\end{bmatrix}=\texttt{JVP}(\mathbf u,\mathbf v(\mathbf x_t,t))
+\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\underbrace{\bigg[\begin{matrix}\partial_1\mathbf u&amp;\partial_2\mathbf u&amp;\partial_3\mathbf u\end{matrix}\bigg]}_{\text{Jacobian of }\mathbf u}\begin{bmatrix}\mathbf v(\mathbf x_t,t)\\0\\1\end{bmatrix}=\texttt{JVP}(\mathbf u,\mathbf v(\mathbf x_t,t))
 \]</span> 即 <span class="math inline">\(\mathbf u\)</span> 的 Jacobian 矩阵与一个向量的乘积，这可通过深度学习框架 (PyTorch/JAX) 中封装好的 <code>jvp</code> (Jacobian-vector product) 算子高效实现，我们用记号 <span class="math inline">\(\texttt{JVP}(\mathbf u,\mathbf v(\mathbf x_t,t))\)</span> 表示这一操作。</p>
 <p>现在，我们只需训练一个模型 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,r,t)\)</span> 使其满足 MeanFlow Identity 即可。根据 MeanFlow Identity 的形式，自然可以构造如下损失函数： <span class="math display">\[
 \begin{align}
@@ -427,7 +427,7 @@
 <h3 id="guidance">Guidance</h3>
 <p>传统上，CFG 是用在采样过程中的，代价是让推理时延变成了原来的两倍。MeanFlow 作者指出，我们其实可以在训练时就引入 CFG，让模型学习 CFG 后的速度场，即可在保持推理时延的同时享受 CFG 的好处。</p>
 <p>具体而言，施加 CFG 后的速度场为： <span class="math display">\[
-\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t)
+\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)
 \]</span> 相应的平均速度场记为 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)\)</span>. 依照上一节的推导，MeanFlow Identity 相应更改为： <span class="math display">\[
 \mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)
 \]</span> 其中对时间求导一项可进一步展开为： <span class="math display">\[
@@ -437,29 +437,30 @@
 &amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1,\mathbf c),r,t}\left[\left\Vert\mathbf u^\text{cfg}_\theta(\mathbf x_t,r,t\vert\mathbf c)-\text{sg}(\mathbf u_\text{tgt})\right\Vert_2^2\right]\\
 \text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\texttt{JVP}(\mathbf u_\theta^\text{cfg},\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c))
 \end{align}
-\]</span> 同样的道理，这里 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span> 是未知的，需要替换为已知的量。注意 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span> 是由两部分 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 线性组合构成的，第一部分依旧用单次采样的速度 <span class="math inline">\(\mathbf v_t=\dot{\mathbf x}_t=\mathbf x_1-\mathbf x_0\)</span> 替代即可，所以问题主要在于第二部分如何处理。针对这一问题，作者敏锐地发现施加 CFG 并不影响无条件速度场： <span class="math display">\[
-\mathbf v^\text{cfg}(\mathbf x_t,t)=\mathbb E_\mathbf c[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)]=\omega\mathbb E_\mathbf c[\mathbf v(\mathbf x_t,t\vert\mathbf c)]+(1-\omega)\mathbf v(\mathbf x_t,t)=\mathbf v(\mathbf x_t,t)
-\]</span> 又 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t)\)</span> 也可以写作 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t)\)</span>，因此 CFG 速度场可以改写作： <span class="math display">\[
-\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf u^\text{cfg}(\mathbf x_t,t,t)
-\]</span> 更进一步地，作者还讨论了用 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t)\)</span> 按 <span class="math inline">\(\kappa\)</span> 比例混合作为 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 的近似： <span class="math display">\[
-\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+\kappa\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)+(1-\omega-\kappa)\mathbf u^\text{cfg}(\mathbf x_t,t,t)
+\]</span> 同样的道理，这里 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span> 是未知的，需要替换为已知的量。注意 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span> 是由两部分 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 线性组合构成的，第一部分依旧用单次采样的速度 <span class="math inline">\(\mathbf v_t=\dot{\mathbf x}_t=\mathbf x_1-\mathbf x_0\)</span> 替代即可，所以问题主要在于第二部分如何处理。针对这一问题，作者敏锐地发现施加 CFG 并不影响无条件速度场： <span class="math display">\[
+\mathbf v^\text{cfg}(\mathbf x_t,t\vert\varnothing)=\mathbb E_\mathbf c[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)]=\omega\mathbb E_\mathbf c[\mathbf v(\mathbf x_t,t\vert\mathbf c)]+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)=\mathbf v(\mathbf x_t,t\vert\varnothing)
+\]</span> 又 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\varnothing)\)</span> 也可以写作 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\)</span>，因此 CFG 速度场可以改写作： <span class="math display">\[
+\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)
+\]</span> 更进一步地，作者还讨论了用 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\)</span> 按 <span class="math inline">\(\kappa\)</span> 比例混合作为 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 的近似： <span class="math display">\[
+\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+\kappa\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)+(1-\omega-\kappa)\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)
 \]</span> 由于 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)\)</span> 就是 <span class="math inline">\(\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)\)</span>，因此上式其实等价于用 <span class="math inline">\(\omega&#39;=\frac{\omega}{1-\kappa}\)</span> 作为 CFG： <span class="math display">\[
-\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\frac{\omega}{1-\kappa}\mathbf v(\mathbf x_t,t\vert\mathbf c)+\frac{1-\omega-\kappa}{1-\kappa}\mathbf u^\text{cfg}(\mathbf x_t,t,t)
+\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\frac{\omega}{1-\kappa}\mathbf v(\mathbf x_t,t\vert\mathbf c)+\frac{1-\omega-\kappa}{1-\kappa}\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)
 \]</span> 现在，我们只需用 <span class="math inline">\(\mathbf v_t\)</span> 替代 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\mathbf c)\)</span>、用模型 <span class="math inline">\(\mathbf u_\theta^\text{cfg}\)</span> 替代 <span class="math inline">\(\mathbf u^\text{cfg}\)</span> 即可： <span class="math display">\[
 \begin{align}
 &amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1,\mathbf c),r,t}\left[\left\Vert\mathbf u^\text{cfg}_\theta(\mathbf x_t,r,t\vert\mathbf c)-\text{sg}(\mathbf u_\text{tgt})\right\Vert_2^2\right]\\
 \text{where}\quad&amp;\mathbf u_\text{tgt}=\tilde{\mathbf v}_t-(t-r)\texttt{JVP}(\mathbf u_\theta^\text{cfg},\tilde{\mathbf v}_t)\\
-&amp;\tilde{\mathbf v}_t=\omega\mathbf v_t+\kappa\mathbf u^\text{cfg}_\theta(\mathbf x_t,t,t\vert\mathbf c)+(1-\omega-\kappa)\mathbf u_\theta^\text{cfg}(\mathbf x_t,t,t)
+&amp;\tilde{\mathbf v}_t=\omega\mathbf v_t+\kappa\mathbf u^\text{cfg}_\theta(\mathbf x_t,t,t\vert\mathbf c)+(1-\omega-\kappa)\mathbf u_\theta^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)
 \end{align}
 \]</span> 为训练无条件模型，在训练过程中以 10% 的概率丢弃条件。</p>
 <h2 id="improved-meanflow-imf">Improved MeanFlow (iMF)</h2>
+<p>MeanFlow 虽然效果不错，但是存在两个问题：1. 其训练目标不是一个标准的回归问题；2. 其训练依赖于预先固定的 CFG，缺乏灵活性。为此作者提出了 improved MeanFlow (iMF).</p>
 <h3 id="reformulation">Reformulation</h3>
 <p>回顾一下 MeanFlow 的训练损失函数： <span class="math display">\[
 \begin{align}
 &amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),r,t}\left[\Vert\mathbf u_\theta(\mathbf x_t,r,t)-\text{sg}(\mathbf u_\text{tgt})\Vert_2^2\right]\\
 \text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v_t-(t-r)\texttt{JVP}(\mathbf u_\theta,\mathbf v_t)
 \end{align}
-\]</span> 在回归目标 <span class="math inline">\(\mathbf u_\text{tgt}\)</span> 中，我们进行了两种近似：</p>
+\]</span> 在计算 JVP 时，我们进行了两种近似：</p>
 <ol type="1">
 <li>用条件瞬时速度 <span class="math inline">\(\mathbf v_t\)</span> 代替了真实瞬时速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，这引入了较大的方差，影响训练的稳定性；</li>
 <li>用平均速度模型 <span class="math inline">\(\mathbf u_\theta\)</span> 代替了真实平均速度 <span class="math inline">\(\mathbf u(\mathbf x_t,r,t)\)</span>，这使得 MeanFlow 并不是一个标准的回归问题，因为回归目标里包含模型本身。</li>
@@ -486,20 +487,20 @@
 <h3 id="flexible-guidance">Flexible Guidance</h3>
 <p>在 MeanFlow 中，CFG 需要在训练前固定下来，这影响了推理时的灵活性。更重要的是，更强的模型（如更多参数量、更长的训练、更多的推理 NFE）往往需要更小的 CFG. 因此，MeanFlow 中固定 CFG 的做法并不够好。为此，iMF 将 CFG 作为条件给到模型，从而在推理时可以选择不同的 CFG. 事实上，这一做法在扩散蒸馏（如 FLUX schnell）中已有应用。</p>
 <p>具体而言，在 <span class="math inline">\(\omega\)</span> 的 CFG 下真实速度场为： <span class="math display">\[
-\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t)
+\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)
 \]</span> 相应的平均速度场记为 <span class="math inline">\(\mathbf u(\mathbf x_t,r,t\vert\mathbf c,\omega)\)</span>. 则改写后的 MeanFlow Identity 为： <span class="math display">\[
 \mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)=\mathbf u(\mathbf x_t,r,t\vert\mathbf c,\omega)+(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t\vert\mathbf c,\omega)
 \]</span> 左侧是我们的回归目标，可以写作： <span class="math display">\[
 \begin{align}
-\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+(\omega-1)\big(\mathbf v(\mathbf x_t,t\vert\mathbf c)-\mathbf v(\mathbf x_t,t)\big)\\
-&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+(\omega-1)\left[\frac{1}{\omega}\Big(\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)-(1-\omega)\mathbf v(\mathbf x_t,t)\Big)-\mathbf v(\mathbf x_t,t)\right]\\
-&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+\left(1-\frac{1}{\omega}\right)\big(\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)-\mathbf v(\mathbf x_t,t)\big)\\
-&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+\left(1-\frac{1}{\omega}\right)\big(\mathbf u(\mathbf x_t,t,t\vert\mathbf c,\omega)-\mathbf u(\mathbf x_t,t,t)\big)
+\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+(\omega-1)\big(\mathbf v(\mathbf x_t,t\vert\mathbf c)-\mathbf v(\mathbf x_t,t\vert\varnothing)\big)\\
+&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+(\omega-1)\left[\frac{1}{\omega}\Big(\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)-(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)\Big)-\mathbf v(\mathbf x_t,t\vert\varnothing)\right]\\
+&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+\left(1-\frac{1}{\omega}\right)\big(\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)-\mathbf v(\mathbf x_t,t\vert\varnothing)\big)\\
+&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+\left(1-\frac{1}{\omega}\right)\big(\mathbf u(\mathbf x_t,t,t\vert\mathbf c,\omega)-\mathbf u(\mathbf x_t,t,t\vert\varnothing)\big)
 \end{align}
 \]</span> 基于此，第一部分用单次采样的速度 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span> 替代，第二部分用模型 <span class="math inline">\(\mathbf u_\theta\)</span> 替代 <span class="math inline">\(\mathbf u\)</span>，于是最终损失函数为： <span class="math display">\[
 \begin{align}
 &amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1,\mathbf c),r,t,\omega}\left[\left\Vert V_\theta(\mathbf x_t,r,t\vert\mathbf c,\omega)-V_\text{tgt}\right\Vert^2_2\right]\\
-\text{where}\quad&amp;V_\text{tgt}=\mathbf x_1-\mathbf x_0+\left(1-\frac{1}{\omega}\right)\big(\mathbf u_\theta(\mathbf x_t,t,t\vert\mathbf c,\omega)-\mathbf u_\theta(\mathbf x_t,t,t)\big)\\
+\text{where}\quad&amp;V_\text{tgt}=\mathbf x_1-\mathbf x_0+\left(1-\frac{1}{\omega}\right)\big(\mathbf u_\theta(\mathbf x_t,t,t\vert\mathbf c,\omega)-\mathbf u_\theta(\mathbf x_t,t,t\vert\varnothing)\big)\\
 &amp;V_\theta(\mathbf x_t,r,t\vert\mathbf c,\omega)=\mathbf u_\theta(\mathbf x_t,r,t\vert\mathbf c,\omega)+(t-r)\texttt{JVP}_\text{sg}(\mathbf u_\theta,\mathbf v_\theta)
 \end{align}
 \]</span></p>
@@ -508,6 +509,80 @@
 <p>进一步地，我们还可以将 CFG interval 也作为条件加入模型，即只在 <span class="math inline">\([t_\min,t_\max]\)</span> 时间内施加 CFG. 此时模型的 guidance 条件为 <span class="math inline">\(\Omega=\{\omega,t_\min,t_\max\}\)</span>，而训练过程中计算回归目标时，对于 <span class="math inline">\(t\notin[t_\min,t_\max]\)</span>，设置 <span class="math inline">\(\omega=1\)</span> 即可。</p>
 <h3 id="in-context-conditioning">In-context Conditioning</h3>
 <p>可以看到，iMF 涉及到非常多的条件：双时间步 <span class="math inline">\((r,t)\)</span>、条件 <span class="math inline">\(\mathbf c\)</span>、guidance <span class="math inline">\(\Omega\)</span>. 在传统的 DiT 架构中，这些条件是被全部加起来后通过 adaLN-zero 引入网络的。但是当条件数量多起来后，把它们全部加起来似乎不那么合理了。作者发现，尽管 DiT 中 in-context conditioning 方式（即按 sequence 维度拼接 token）不如 adaLN-zero，但是如果每种条件多复制几个 token，效果还是不错的。这一做法也在 MAGE, JiT 等模型中使用过。更重要的是，DiT 的逐层 adaLN-zero 会消耗非常多的参数，这其实是一个设计缺陷。In-context conditioning 反而节约不少参数量，有利于进一步扩大模型规模。</p>
+<h2 id="soflow">SoFlow</h2>
+<p>MeanFlow 最大的问题是依赖于 JVP 操作，导致训练需要更多的时间和显存。为了解决这个问题，SoFlow 采用一阶导近似绕过了 JVP 操作。</p>
+<h3 id="formulation">Formulation</h3>
+<p>SoFlow 同样是基于双时间步模型，但它不是预测平均速度，而是预测 ODE 的解。具体而言，设 <span class="math inline">\(\mathbf f(\mathbf x_t,t,s)\)</span> 表示已知初值 <span class="math inline">\(\mathbf x_t\)</span> 下，ODE <span class="math inline">\(\mathrm d\mathbf x_s=\mathbf v(\mathbf x_s,s)\mathrm ds\)</span> 的解（换句话说，随着 <span class="math inline">\(s\)</span> 改变，<span class="math inline">\(\mathbf f(\mathbf x_t,t,s)\)</span> 形成该 ODE 的一条轨迹），那么有： <span class="math display">\[
+\begin{gather}
+\mathbf f(\mathbf x_t,t,t)=\mathbf x_t\\
+\partial_3\mathbf f(\mathbf x_t,t,s)=\mathbf v(\mathbf f(\mathbf x_t,t,s),s)
+\end{gather}
+\]</span> 等价地，这两个式子可以用如下一个式子描述： <span class="math display">\[
+\mathbf f(\mathbf x_t,t,s)=\mathbf x_t+\int_t^s\mathbf v(\mathbf f(\mathbf x_t,t,u),u)\mathrm du
+\]</span> 如果两边同时对 <span class="math inline">\(t\)</span> 求导，可得： <span class="math display">\[
+\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf v(\mathbf x_t,t)-\mathbf v(\mathbf f(\mathbf x_t,t,t),t)=\mathbf 0
+\]</span> 我们希望训练一个模型 <span class="math inline">\(\mathbf f_\theta\)</span> 去近似 <span class="math inline">\(\mathbf f\)</span>： <span class="math display">\[
+\mathbf f_\theta(\mathbf x_t,t,s)\xrightarrow{\text{approximate}}\mathbf f(\mathbf x_t,t,s)
+\]</span> 那么根据上文描述，只需让 <span class="math inline">\(\mathbf f_\theta\)</span> 满足下述两个条件即可： <span class="math display">\[
+\begin{gather}
+\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf x_t\\
+\partial_1\mathbf f_\theta(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf 0
+\end{gather}
+\]</span> <div class="note note-secondary">
+            <p><strong>附（与 MeanFlow 的联系）</strong>：可以看到，SoFlow 的 <span class="math inline">\(\mathbf f\)</span> 表示从 <span class="math inline">\(t\)</span> 到 <span class="math inline">\(s\)</span> 轨迹的“终点”，而 MeanFlow 的 <span class="math inline">\(\mathbf u\)</span> 表示这一段轨迹的平均速度，因此二者其实有如下关系： <span class="math display">\[\mathbf x_t-\mathbf f(\mathbf x_t,t,s)=(t-s)\mathbf u(\mathbf x_t,s,t)\]</span> 两边同时对 <span class="math inline">\(t\)</span> 求导有： <span class="math display">\[\mathbf v(\mathbf x_t,t)-\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)-\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf u(\mathbf x_t,s,t)+(t-s)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,s,t)\]</span> 回顾 MeanFlow Identity： <span class="math display">\[\mathbf v(\mathbf x_t,t)=\mathbf u(\mathbf x_t,s,t)+(t-s)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,s,t)\]</span> 联立可知： <span class="math display">\[\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf 0\]</span> 如此我们借助 MeanFlow 的结论推出了同样的约束条件。这也说明了 SoFlow 和 MeanFlow 本质上是一回事，因此我认为本文的重点不在于形式化，而在于如何绕开 JVP 操作，见下一节。</p>
+          </div></p>
+<h3 id="objectives">Objectives</h3>
+<p><strong>Reparameterization</strong>：首先，作者对模型做了重参数化： <span class="math display">\[
+\mathbf f_\theta(\mathbf x_t,t,s)=a(t,s)\mathbf x_t+b(t,s)F_\theta(\mathbf x_t,t,s)
+\]</span> 其中 <span class="math inline">\(F_\theta\)</span> 是真正的网络，系数 <span class="math inline">\(a,b\)</span> 满足 <span class="math inline">\(a(t,t)=1,\,b(t,t)=0\)</span> 以使得边界条件 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf x_t\)</span> 恒成立。作者主要考虑如下两种形式：</p>
+<ul>
+<li>Euler: <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf x_t+(s-t)F_\theta(\mathbf x_t,t,s)\)</span>. 根据上一节的注释，此时 <span class="math inline">\(F_\theta\)</span> 其实就是 MeanFlow 的 <span class="math inline">\(\mathbf u_\theta\)</span>.</li>
+<li>Trigonometric: <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,s)=\cos\left(\frac{\pi}{2}(s-t)\right)\mathbf x_t+\sin\left(\frac{\pi}{2}(s-t)\right)F_\theta(\mathbf x_t,t,s)\)</span>.</li>
+</ul>
+<p><strong>Flow Matching Loss</strong>：当 <span class="math inline">\(s=t\)</span> 时，对任意 <span class="math inline">\(\mathbf x_t\)</span> 都有 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf x_t\)</span> 恒成立，因此： <span class="math display">\[
+\partial_1\mathbf f_\theta(\mathbf x_t,t,t)=I,\quad\frac{\partial\,\mathbf f_\theta(\mathbf x_t,l,l)}{\partial l}\Big|_{l=t}=\partial_2\mathbf f_\theta(\mathbf x_t,t,t)+\partial_3\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf 0
+\]</span> 结合约束条件 <span class="math inline">\(\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf 0\)</span>，可知： <span class="math display">\[
+\begin{align}
+\partial_3\mathbf f_\theta(\mathbf x_t,t,t)&amp;=\mathbf v(\mathbf f_\theta(\mathbf x_t,t,t),t)=\mathbf v(\mathbf x_t,t)\\
+&amp;=\partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta(\mathbf x_t,t,s)+\underbrace{b(t,t)}_0\partial_3F_\theta(\mathbf x_t,t,t)
+\end{align}
+\]</span> 这说明我们要训练一个 Flow Matching: <span class="math display">\[
+\mathcal L_\text{FM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_1}\left[\left\Vert \partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta(\mathbf x_t,t,t)-\mathbf v(\mathbf x_t,t)\right\Vert^2_2\right]
+\]</span> 用单次采样速度 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span> 替换未知的真实速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，得： <span class="math display">\[
+\mathcal L_\text{FM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_1}\left[\left\Vert \partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta(\mathbf x_t,t,t)-(\mathbf x_1-\mathbf x_0)\right\Vert^2_2\right]
+\]</span> 为与前文保持一致，这里默认为线性插值，实际上作者试了不同的插值方式以及动态权重，详见论文。</p>
+<p><strong>Solution Consistency Loss</strong>：对于 <span class="math inline">\(s&lt;t\)</span>，回顾我们需要满足的约束条件： <span class="math display">\[
+\partial_1\mathbf f_\theta(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf 0
+\]</span> 在 MeanFlow 中，这直接实现为 JVP 操作。为了避免 JVP，SoFlow 考虑用<strong>一阶导去近似</strong>真正的导数。具体而言，将 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,s)\)</span> 在 <span class="math inline">\(t=l\)</span> 处做泰勒展开： <span class="math display">\[
+\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf f_\theta(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)+(t-l)\big(\partial_1\mathbf f_\theta(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f_\theta(\mathbf x_t,t,s)\big)+o(t-l)
+\]</span> 其中 <span class="math inline">\(l\in(s,t)\)</span> 充分接近 <span class="math inline">\(t\)</span>. 丢弃高阶项，代入约束条件得： <span class="math display">\[
+\frac{\mathbf f_\theta(\mathbf x_t,t,s)-\mathbf f_\theta(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)}{t-l}=\mathbf 0
+\]</span> 因此我们只需满足： <span class="math display">\[
+\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf f_\theta(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)
+\]</span> 据此构造损失函数： <span class="math display">\[
+\mathcal L_\text{SCM}(\theta)=\mathbb E_{t,l,s,\mathbf x_0,\mathbf x_1}\left[\left\Vert \mathbf f_\theta(\mathbf x_t,t,s)-\mathbf f_{\theta^-}(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)\right\Vert_2^2\right]
+\]</span> 其中 <span class="math inline">\(\theta^-\)</span> 表示 stop gradient. 由于真实速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 是未知的，我们用单次采样的速度 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span> 替代之，因此损失函数化作： <span class="math display">\[
+\mathcal L_\text{SCM}(\theta)=\mathbb E_{t,l,s,\mathbf x_0,\mathbf x_1}\left[\left\Vert \mathbf f_\theta(\mathbf x_t,t,s)-\mathbf f_{\theta^-}(\mathbf x_t+(\mathbf x_1-\mathbf x_0)(l-t),l,s)\right\Vert_2^2\right]
+\]</span> 该损失可以直观可视化为下图。</p>
+<p><img src="soflow.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
+<div class="note note-secondary">
+            <p><strong>附（与 Consistency Models 的联系）</strong>：可以看见，如果固定 <span class="math inline">\(s=0\)</span>，则 SoFlow 就变成了 Consistency Models.</p>
+          </div>
+<h3 id="guidance-1">Guidance</h3>
+<p>SoFlow 对 CFG 的处理和 MeanFlow 是类似的。具体而言，FM 和 SCM 损失都被修改为 CFG 版本： <span class="math display">\[
+\begin{gather}
+\mathcal L^\text{cfg}_\text{FM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_1}\left[\left\Vert \partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)-\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\right\Vert^2_2\right]\\
+\mathcal L^\text{cfg}_\text{SCM}(\theta)=\mathbb E_{t,l,s,\mathbf x_0,\mathbf x_1}\left[\left\Vert \mathbf f_\theta^\text{cfg}(\mathbf x_t,t,s\vert\mathbf c)-\mathbf f_{\theta^-}^\text{cfg}(\mathbf x_t+\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)(l-t),l,s\vert\mathbf c)\right\Vert_2^2\right]
+\end{gather}
+\]</span> 其中真实速度 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 未知，且 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 不可由采样近似。同 MeanFlow 类似，我们按比例丢弃条件训练一个无条件模型 <span class="math inline">\(F_\theta^\text{cfg}(\mathbf x_t,t,s\vert\varnothing)\)</span>，则无条件部分 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 可近似为： <span class="math display">\[
+\mathbf v(\mathbf x_t,t\vert\varnothing)\approx\mathbf v_\text{uncond}=\partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_{\theta^-}^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)
+\]</span> 条件部分按正常的采样 <span class="math inline">\(\mathbf v_t\)</span> 近似，则有： <span class="math display">\[
+\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\approx\omega\mathbf v_t+(1-\omega)\mathbf v_\text{uncond}
+\]</span> 另外，它也可用模型近似为： <span class="math display">\[
+\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\approx\mathbf v_\text{guided}=\partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_{\theta^-}^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)
+\]</span> 二者相比，前者方差大、偏差小，后者方差小、偏差大，因此我们引入一个权重 <span class="math inline">\(m\)</span> 做方差-偏差 trade-off: <span class="math display">\[
+\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\approx\mathbf v_\text{mix}=m(\omega\mathbf v_t+(1-\omega)\mathbf v_\text{uncond})+(1-m)\mathbf v_\text{guided}
+\]</span> 实验的确发现较小的 <span class="math inline">\(m\)</span> (0.25) 降低了方差，有助于模型的训练。</p>
 
                 
               </div>
