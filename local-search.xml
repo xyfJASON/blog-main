@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>Training-Time CFG</title>
+    <link href="/blog-main/2025/12/25/Training-Time-CFG/"/>
+    <url>/blog-main/2025/12/25/Training-Time-CFG/</url>
+    
+    <content type="html"><![CDATA[<h2 id="background">Background</h2><p>Classifier-Free Guidance (CFG) 能极大提升图像生成的质量，已成为了当下扩散与自回归图像生成的标准技术。</p><p>对扩散模型而言，设 <span class="math inline">\(\mathbf f_\theta\)</span> 表示网络，可以是预测原图、噪声、分数或速度的任意一种参数化，其 CFG 实现为： <span class="math display">\[\mathbf f_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\mathbf f_\theta(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf f_\theta(\mathbf x_t,t\vert\varnothing)\]</span> 其中 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t\vert\mathbf c),\mathbf f_\theta(\mathbf x_t,t\vert\varnothing)\)</span> 分别表示条件和无条件模型。由于扩散模型的各种参数化都是 <span class="math inline">\(\mathbf x_t\)</span> 与 score function 插值的形式，所以无论何种参数化，上述操作都等价于对 score function 做如下操作： <span class="math display">\[\nabla_{\mathbf x_t}\log p_\theta^\text{cfg}({\mathbf x_t}\vert\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\nabla_{\mathbf x_t}\log p_\theta({\mathbf x_t}\vert\mathbf c)+(1-\omega)\nabla_{\mathbf x_t}\log p_\theta({\mathbf x_t}\vert\varnothing)\]</span> 简单变换可知，施加 CFG 后 <span class="math inline">\(t\)</span> 时刻的概率分布被修改为： <span class="math display">\[p_\theta^\text{cfg}({\mathbf x_t}\vert\mathbf c)\propto p_\theta({\mathbf x_t}\vert\varnothing)\left[\frac{p_\theta({\mathbf x_t}\vert\mathbf c)}{p_\theta({\mathbf x_t}\vert\varnothing)}\right]^\omega\]</span> 当 <span class="math inline">\(\omega=1\)</span> 时，这保持原本的条件分布不变；当 <span class="math inline">\(\omega&gt;1\)</span> 时，修改后的分布向条件更为集中。</p><p>对自回归模型而言， 网络 <span class="math inline">\(\mathbf f_\theta\)</span> 预测当前 token 的 logits，其 CFG 实现为： <span class="math display">\[\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)+(1-\omega)\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)\]</span> 其中 <span class="math inline">\(\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c),\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)\)</span> 分别表示条件和无条件模型。由于 <span class="math inline">\(\mathbf f_\theta\propto\log p_\theta\)</span>，所以这等价于： <span class="math display">\[\log p_\theta^\text{cfg}(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\log p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)+(1-\omega)\log p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)\]</span> 我们得到了类似的结论： <span class="math display">\[p_\theta^\text{cfg}(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)\propto p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)\left[\frac{p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)}{p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)}\right]^\omega\]</span> 虽然 CFG 效果显著，但其代价是推理时延翻倍，因为我们需要在有条件和无条件下分别做两次推理。因此，一些工作考虑在训练阶段就直接让网络学习 CFG 后的结果，从而保持推理时延与无 CFG 的生成无异。</p><h2 id="derivations">Derivations</h2><p>这一节我们以当下最主流的速度预测流（扩散）模型为例，推导训练 CFG 模型的方法，主要参考论文 <a href="http://arxiv.org/abs/2501.15420">GFT</a> 和 <a href="http://arxiv.org/abs/2502.12154">MG</a>.</p><h3 id="derivation-1">Derivation #1</h3><p>对于预测速度的流（扩散）模型，设 noise schedule 为 <span class="math inline">\(\alpha_t,\sigma_t\)</span>，则其条件优化目标为： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c)-\mathbf v_t\right\Vert_2^2\right]\]</span> 其中 <span class="math inline">\(\mathbf x_t=\alpha_t\mathbf x+\sigma_t\boldsymbol\epsilon,\,\mathbf v_t={\dot\alpha}_t\mathbf x+\dot{\sigma}_t\boldsymbol\epsilon\)</span>. 现在我们想直接学习 CFG 模型 <span class="math inline">\(\mathbf v_\theta^\text{cfg}\)</span>，而非 <span class="math inline">\(\mathbf v_\theta\)</span>. 为此，只需用 <span class="math inline">\(\mathbf v_\theta^\text{cfg}\)</span> 将 <span class="math inline">\(\mathbf v_\theta\)</span> 表示出来，代入上式训练即可。具体而言，根据 CFG 的定义式： <span class="math display">\[\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)\]</span> 移项并做变量代换 <span class="math inline">\(\beta=1/\omega\in(0,1]\)</span>，得： <span class="math display">\[\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c)=\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+(1-\beta)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)\]</span> 代入条件优化目标得： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+(1-\beta)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)-\mathbf v_t\right\Vert_2^2\right]\]</span> 如此我们用 CFG 模型与无条件模型的线性组合表示出了原本的条件模型，解决了训练问题。特别地，训练过程中只需以一定概率丢弃条件，则可训练无条件模型。</p><p>目前为止，我们只针对一个 CFG scale 进行训练，这使得推理时无法调整 CFG scale，丧失了灵活性。解决方法很简单，只需将 CFG scale 作为条件给到模型即可： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,{\color{dodgerblue}\beta}}\left[\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,{\color{dodgerblue}{\beta}})+(1-\beta)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)-\mathbf v_t\right\Vert_2^2\right]\]</span> 进一步地，可以引入停止梯度 (stop-gradient) 操作： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,\beta}\left[\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,\beta)+(1-\beta){\color{violet}\text{sg}}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]-\mathbf v_t\right\Vert_2^2\right]\]</span> 这有利于提升训练稳定性和计算效率。</p><h3 id="derivation-2">Derivation #2</h3><p>假设我们已经有了预训练模型 <span class="math inline">\(\mathbf v_\phi\)</span>，那么可以通过如下优化目标蒸馏出一个 CFG 模型： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-\big(\omega\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v_\phi(\mathbf x_t,t\vert\varnothing)\big)\right\Vert_2^2\right]\]</span></p><p>但我们希望不依赖预训练模型从头训练 CFG 模型，为此需要将上式中的 <span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\varnothing)\)</span> 替换掉：</p><ul><li><span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)\)</span> 表示 <span class="math inline">\(\mathbf c\)</span> 条件下的真实速度场，依照流模型中的经典做法，我们可以用单次采样的 <span class="math inline">\(\mathbf v_t\)</span> 作为其无偏估计代替之；</li><li><span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\varnothing)\)</span> 表示无条件下的真实速度场，即所有条件速度场的期望 <span class="math inline">\(\mathbb E_{\mathbf c}[\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)]\)</span>，无法通过采样代替。不过，由于我们在训练过程中会以一定概率丢弃条件来学习无条件模型 <span class="math inline">\(\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)\)</span>，因此直接用学习到的模型代替即可。</li></ul><p>综上，优化目标转化为： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-\big(\omega\mathbf v_t+(1-\omega)\text{sg}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]\big)\right\Vert_2^2\right]\]</span> 同样的，我们可以将 CFG scale 作为条件给到模型，使其同时学习不同 CFG scale 下的速度场： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,{\color{limegreen}\omega}}\left[\left\Vert\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,{\color{limegreen}\omega})-\big(\omega\mathbf v_t+(1-\omega)\text{sg}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]\big)\right\Vert_2^2\right]\]</span> 事实上，容易证明该目标与上一小节的目标是等价的：做变量代换 <span class="math inline">\(\beta=1/\omega\)</span>，则上式变为： <span class="math display">\[\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,{\color{dodgerblue}\beta}}\left[\frac{1}{\beta^2}\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,{\color{dodgerblue}\beta})+(1-\beta)\text{sg}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]-\mathbf v_t\right\Vert_2^2\right]\]</span> 可以看见二式仅差一个缩放倍数，因而有相同的最优解。</p><h2 id="references">References</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Chen, Huayu, Kai Jiang, Kaiwen Zheng, Jianfei Chen, Hang Su, and Jun Zhu. Visual Generation Without Guidance. In <em>Forty-second International Conference on Machine Learning</em>. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>Tang, Zhicong, Jianmin Bao, Dong Chen, and Baining Guo. Diffusion models without classifier-free guidance. <em>arXiv preprint arXiv:2502.12154</em> (2025). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
+    
+    
+    <categories>
+      
+      <category>生成模型</category>
+      
+      <category>Diffusion Models</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>generative models</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>One/Few-step Flow Models</title>
     <link href="/blog-main/2025/11/13/One-Few-step-Flow-Models/"/>
     <url>/blog-main/2025/11/13/One-Few-step-Flow-Models/</url>
@@ -284,9 +311,9 @@
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>linear algebra</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -602,9 +629,9 @@
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>linear algebra</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -2366,9 +2393,9 @@
     
     <categories>
       
-      <category>图像处理</category>
-      
       <category>计算机视觉</category>
+      
+      <category>图像处理</category>
       
     </categories>
     

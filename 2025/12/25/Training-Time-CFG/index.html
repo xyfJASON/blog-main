@@ -19,24 +19,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="像素坐标 一张图片是一个高 \(H\)、宽 \(W\) 的像素矩阵，其大小简称作 \(W\times H\)。 在图片上建立坐标系，是以左上角为原点，\(x\) 轴正半轴向右延伸、\(y\) 轴正半轴向下延伸，如图所示：  图像上一个像素点的坐标就是指某像素点在上述坐标系中的坐标，如下图所示，图片大小 \(5120\times 2880\)，狐狸耳朵尖的坐标是 \((1206,948)\)。 在目">
+    <meta name="description" content="Background Classifier-Free Guidance (CFG) 能极大提升图像生成的质量，已成为了当下扩散与自回归图像生成的标准技术。 对扩散模型而言，设 \(\mathbf f_\theta\) 表示网络，可以是预测原图、噪声、分数或速度的任意一种参数化，其 CFG 实现为： \[ \mathbf f_\theta^\text{cfg}(\mathbf x_t,t\vert\">
 <meta property="og:type" content="article">
-<meta property="og:title" content="什么是图像">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2021/07/03/%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E5%83%8F/index.html">
+<meta property="og:title" content="Training-Time CFG">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2025/12/25/Training-Time-CFG/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="像素坐标 一张图片是一个高 \(H\)、宽 \(W\) 的像素矩阵，其大小简称作 \(W\times H\)。 在图片上建立坐标系，是以左上角为原点，\(x\) 轴正半轴向右延伸、\(y\) 轴正半轴向下延伸，如图所示：  图像上一个像素点的坐标就是指某像素点在上述坐标系中的坐标，如下图所示，图片大小 \(5120\times 2880\)，狐狸耳朵尖的坐标是 \((1206,948)\)。 在目">
+<meta property="og:description" content="Background Classifier-Free Guidance (CFG) 能极大提升图像生成的质量，已成为了当下扩散与自回归图像生成的标准技术。 对扩散模型而言，设 \(\mathbf f_\theta\) 表示网络，可以是预测原图、噪声、分数或速度的任意一种参数化，其 CFG 实现为： \[ \mathbf f_\theta^\text{cfg}(\mathbf x_t,t\vert\">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/images.jpg">
-<meta property="article:published_time" content="2021-07-03T05:50:25.000Z">
-<meta property="article:modified_time" content="2025-09-11T06:35:23.848Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/training-time-cfg.jpg">
+<meta property="article:published_time" content="2025-12-25T12:53:28.000Z">
+<meta property="article:modified_time" content="2025-12-26T12:39:05.441Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="computer vision">
+<meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/images.jpg">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/training-time-cfg.jpg">
   
   
   
-  <title>什么是图像 - xyfJASON</title>
+  <title>Training-Time CFG - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -248,13 +248,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/images.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/training-time-cfg.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="什么是图像"></span>
+            <span id="subtitle" data-typed-text="Training-Time CFG"></span>
           
         </div>
 
@@ -265,8 +265,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2021-07-03 13:50" pubdate>
-          2021年7月3日 下午
+        <time datetime="2025-12-25 20:53" pubdate>
+          2025年12月25日 晚上
         </time>
       </span>
     
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          838 字
+          1.5k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          7 分钟
+          13 分钟
         
       </span>
     
@@ -325,45 +325,73 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">什么是图像</h1>
+            <h1 id="seo-header">Training-Time CFG</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="像素坐标">像素坐标</h2>
-<p>一张图片是一个高 <span class="math inline">\(H\)</span>、宽 <span class="math inline">\(W\)</span> 的像素矩阵，其大小简称作 <span class="math inline">\(W\times H\)</span>。</p>
-<p>在图片上建立坐标系，是以<strong>左上角</strong>为原点，<span class="math inline">\(x\)</span> 轴正半轴向<strong>右</strong>延伸、<span class="math inline">\(y\)</span> 轴正半轴向<strong>下</strong>延伸，如图所示：</p>
-<p><img src="coord.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="图源：https://interfacelift.com/wallpaper/details/3852/red_demons.html" style="zoom:40%;" /></p>
-<p>图像上一个像素点的坐标就是指某像素点在上述坐标系中的坐标，如下图所示，图片大小 <span class="math inline">\(5120\times 2880\)</span>，狐狸耳朵尖的坐标是 <span class="math inline">\((1206,948)\)</span>。</p>
-<p>在目标检测任务中，经常与检测框打交道。检测框一般有两种表示方式：<span class="math inline">\((x_\min,y_\min,x_\max,y_\max)\)</span> 和 <span class="math inline">\((x_\min,y_\min,w,h)\)</span>，均是相对上述坐标系而言的，例如下图中，检测框的两种表示方式分别是 <span class="math inline">\((3444,435,4771,2332)\)</span> 和 <span class="math inline">\((3444,435,1327,1897)\)</span>。</p>
-<p><img src="coord2.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="图源：https://interfacelift.com/wallpaper/details/3852/red_demons.html" style="zoom:40%;" /></p>
-<h2 id="图像的加载">图像的加载</h2>
-<h3 id="概述">概述</h3>
-<p>众所周知，一张图片就是一个像素矩阵，且对于 RGB 格式而言，每个像素点都有 3 个值：R、G、B，它们的取值范围都是 <span class="math inline">\([0,255]\)</span>，分别可以用 1 个字节存储。因而，一个高 <span class="math inline">\(H\)</span> 宽 <span class="math inline">\(W\)</span> 通道数 <span class="math inline">\(C\)</span> 的图片，就需要 <span class="math inline">\(C\times H\times W\)</span> 个字节表示出来。这个 <span class="math inline">\(CHW\)</span> 矩阵通常就是我们神经网络的输入。</p>
-<p>但是在磁盘上，一张图片的存在形式并不一定是这个 <span class="math inline">\(CHW\)</span> 矩阵，而是被编码（encode）成了各种格式，例如 <code>jpeg</code>、<code>png</code>、<code>bmp</code> 等等。<code>jpeg</code> 和 <code>png</code> 都是会压缩图片的，所以它们实际占的存储空间会比 <span class="math inline">\(C\times H\times W\)</span> 小。从被编码的格式恢复到 <span class="math inline">\(CHW\)</span> 矩阵的过程称作解码（decode）。</p>
-<p>举个例子，这张图是图像处理领域最经典的图了：</p>
-<figure>
-<img src="lena.jpeg" srcset="/blog-main/logo/imageloading.png" lazyload alt="lena.jpeg" />
-<figcaption aria-hidden="true">lena.jpeg</figcaption>
-</figure>
-<p>查看图片信息，可以看到它的尺寸是 <span class="math inline">\(200\times 200\)</span>，色彩空间是 <span class="math inline">\(\text{RGB}\)</span>，那么它解码之后应占用 <span class="math inline">\(200\times200\times3=120\text{KB}\)</span> 的空间，但它在磁盘上只占用了 <span class="math inline">\(11\text{KB}\)</span>；类似地，这张图片的 png 格式占用磁盘空间为 <span class="math inline">\(91\text{KB}\)</span>。</p>
-<h3 id="torchvision.io"><code>torchvision.io</code></h3>
-<p><code>torchvision.io</code>（<a target="_blank" rel="noopener" href="https://pytorch.org/vision/stable/io.html#image">文档</a>）提供了许多图片加载和存储的函数，它们的作用就是让我们能够对图像编码、解码以及对图像文件读写。我画了一个图直观理解：</p>
-<p><img src="torchvision.png" srcset="/blog-main/logo/imageloading.png" lazyload alt="" style="zoom:40%;" /></p>
-<p>注意到文档里 <code>decode_jpeg</code> 有一个与众不同的参数：</p>
-<blockquote>
-<p><strong>device</strong> (<em>str</em> <em>or</em> <em>torch.device</em>) – The device on which the decoded image will be stored. If a cuda device is specified, the image will be decoded with <a target="_blank" rel="noopener" href="https://developer.nvidia.com/nvjpeg">nvjpeg</a>. This is only supported for CUDA version &gt;= 10.1</p>
-</blockquote>
-<p><code>nvjpeg</code> 是 nvidia 的 gpu 上加速 jpeg 图像解码、编码和转码的库。所以我们在写 <code>DataSet</code> 时用这个库，可能会加快数据的读取，因而加快训练。</p>
-<h3 id="实验">实验</h3>
-<p>用几个常用的库：<code>cv2</code>、<code>matplotlib.pylot</code>、<code>PIL</code>、<code>skimage</code> 和 <code>torchvision.io</code>，读取图像文件为矩阵形式。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python">st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = cv2.imread(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tcv2&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = plt.imread(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tplt&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = np.array(Image.<span class="hljs-built_in">open</span>(paths[i]))<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tPIL&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = skimage.io.imread(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tskimage&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = torchvision.io.read_image(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\ttorchvision&#x27;</span>)<br></code></pre></td></tr></table></figure>
-<p>本地（cpu）运行结果如下：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">1</span>.<span class="hljs-number">4684679508209229</span> 	cv2<br><span class="hljs-attribute">2</span>.<span class="hljs-number">0799291133880615</span> 	plt<br><span class="hljs-attribute">2</span>.<span class="hljs-number">2181248664855957</span> 	PIL<br><span class="hljs-attribute">2</span>.<span class="hljs-number">2203478813171387</span> 	skimage<br><span class="hljs-attribute">1</span>.<span class="hljs-number">4794716835021973</span> 	torchvision<br></code></pre></td></tr></table></figure>
-<p>可以看到，<code>plt</code>、<code>PIL</code> 和 <code>skimage</code> 落后 <code>cv2</code> 和 <code>torchvision</code> 很多，而后两者之间 <code>cv2</code> 略胜一筹。我反复运行了多次均是类似的结果。</p>
-<p>有趣的是，这段代码在服务器上的运行结果是：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">1</span>.<span class="hljs-number">348557472229004</span> 	cv2<br><span class="hljs-attribute">1</span>.<span class="hljs-number">6608097553253174</span> 	plt<br><span class="hljs-attribute">1</span>.<span class="hljs-number">7273526191711426</span> 	PIL<br><span class="hljs-attribute">1</span>.<span class="hljs-number">660323143005371</span> 	skimage<br><span class="hljs-attribute">0</span>.<span class="hljs-number">5512754917144775</span> 	torchvision<br></code></pre></td></tr></table></figure>
-<p><code>torchvision</code> 完胜其他方式。</p>
+                <h2 id="background">Background</h2>
+<p>Classifier-Free Guidance (CFG) 能极大提升图像生成的质量，已成为了当下扩散与自回归图像生成的标准技术。</p>
+<p>对扩散模型而言，设 <span class="math inline">\(\mathbf f_\theta\)</span> 表示网络，可以是预测原图、噪声、分数或速度的任意一种参数化，其 CFG 实现为： <span class="math display">\[
+\mathbf f_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\mathbf f_\theta(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf f_\theta(\mathbf x_t,t\vert\varnothing)
+\]</span> 其中 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t\vert\mathbf c),\mathbf f_\theta(\mathbf x_t,t\vert\varnothing)\)</span> 分别表示条件和无条件模型。由于扩散模型的各种参数化都是 <span class="math inline">\(\mathbf x_t\)</span> 与 score function 插值的形式，所以无论何种参数化，上述操作都等价于对 score function 做如下操作： <span class="math display">\[
+\nabla_{\mathbf x_t}\log p_\theta^\text{cfg}({\mathbf x_t}\vert\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\nabla_{\mathbf x_t}\log p_\theta({\mathbf x_t}\vert\mathbf c)+(1-\omega)\nabla_{\mathbf x_t}\log p_\theta({\mathbf x_t}\vert\varnothing)
+\]</span> 简单变换可知，施加 CFG 后 <span class="math inline">\(t\)</span> 时刻的概率分布被修改为： <span class="math display">\[
+p_\theta^\text{cfg}({\mathbf x_t}\vert\mathbf c)\propto p_\theta({\mathbf x_t}\vert\varnothing)\left[\frac{p_\theta({\mathbf x_t}\vert\mathbf c)}{p_\theta({\mathbf x_t}\vert\varnothing)}\right]^\omega
+\]</span> 当 <span class="math inline">\(\omega=1\)</span> 时，这保持原本的条件分布不变；当 <span class="math inline">\(\omega&gt;1\)</span> 时，修改后的分布向条件更为集中。</p>
+<p>对自回归模型而言， 网络 <span class="math inline">\(\mathbf f_\theta\)</span> 预测当前 token 的 logits，其 CFG 实现为： <span class="math display">\[
+\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)+(1-\omega)\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)
+\]</span> 其中 <span class="math inline">\(\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c),\mathbf f_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)\)</span> 分别表示条件和无条件模型。由于 <span class="math inline">\(\mathbf f_\theta\propto\log p_\theta\)</span>，所以这等价于： <span class="math display">\[
+\log p_\theta^\text{cfg}(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c){\;{\mathrel{\vcenter{:}}=\;}}\omega\log p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)+(1-\omega)\log p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)
+\]</span> 我们得到了类似的结论： <span class="math display">\[
+p_\theta^\text{cfg}(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)\propto p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)\left[\frac{p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\mathbf c)}{p_\theta(\mathbf x_n\vert\mathbf x_{&lt;n},\varnothing)}\right]^\omega
+\]</span> 虽然 CFG 效果显著，但其代价是推理时延翻倍，因为我们需要在有条件和无条件下分别做两次推理。因此，一些工作考虑在训练阶段就直接让网络学习 CFG 后的结果，从而保持推理时延与无 CFG 的生成无异。</p>
+<h2 id="derivations">Derivations</h2>
+<p>这一节我们以当下最主流的速度预测流（扩散）模型为例，推导训练 CFG 模型的方法，主要参考论文 <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2501.15420">GFT</a> 和 <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2502.12154">MG</a>.</p>
+<h3 id="derivation-1">Derivation #1</h3>
+<p>对于预测速度的流（扩散）模型，设 noise schedule 为 <span class="math inline">\(\alpha_t,\sigma_t\)</span>，则其条件优化目标为： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c)-\mathbf v_t\right\Vert_2^2\right]
+\]</span> 其中 <span class="math inline">\(\mathbf x_t=\alpha_t\mathbf x+\sigma_t\boldsymbol\epsilon,\,\mathbf v_t={\dot\alpha}_t\mathbf x+\dot{\sigma}_t\boldsymbol\epsilon\)</span>. 现在我们想直接学习 CFG 模型 <span class="math inline">\(\mathbf v_\theta^\text{cfg}\)</span>，而非 <span class="math inline">\(\mathbf v_\theta\)</span>. 为此，只需用 <span class="math inline">\(\mathbf v_\theta^\text{cfg}\)</span> 将 <span class="math inline">\(\mathbf v_\theta\)</span> 表示出来，代入上式训练即可。具体而言，根据 CFG 的定义式： <span class="math display">\[
+\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)
+\]</span> 移项并做变量代换 <span class="math inline">\(\beta=1/\omega\in(0,1]\)</span>，得： <span class="math display">\[
+\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c)=\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+(1-\beta)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)
+\]</span> 代入条件优化目标得： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)+(1-\beta)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)-\mathbf v_t\right\Vert_2^2\right]
+\]</span> 如此我们用 CFG 模型与无条件模型的线性组合表示出了原本的条件模型，解决了训练问题。特别地，训练过程中只需以一定概率丢弃条件，则可训练无条件模型。</p>
+<p>目前为止，我们只针对一个 CFG scale 进行训练，这使得推理时无法调整 CFG scale，丧失了灵活性。解决方法很简单，只需将 CFG scale 作为条件给到模型即可： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,{\color{dodgerblue}\beta}}\left[\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,{\color{dodgerblue}{\beta}})+(1-\beta)\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)-\mathbf v_t\right\Vert_2^2\right]
+\]</span> 进一步地，可以引入停止梯度 (stop-gradient) 操作： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,\beta}\left[\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,\beta)+(1-\beta){\color{violet}\text{sg}}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]-\mathbf v_t\right\Vert_2^2\right]
+\]</span> 这有利于提升训练稳定性和计算效率。</p>
+<h3 id="derivation-2">Derivation #2</h3>
+<p>假设我们已经有了预训练模型 <span class="math inline">\(\mathbf v_\phi\)</span>，那么可以通过如下优化目标蒸馏出一个 CFG 模型： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-\big(\omega\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v_\phi(\mathbf x_t,t\vert\varnothing)\big)\right\Vert_2^2\right]
+\]</span></p>
+<p>但我们希望不依赖预训练模型从头训练 CFG 模型，为此需要将上式中的 <span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\varnothing)\)</span> 替换掉：</p>
+<ul>
+<li><span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)\)</span> 表示 <span class="math inline">\(\mathbf c\)</span> 条件下的真实速度场，依照流模型中的经典做法，我们可以用单次采样的 <span class="math inline">\(\mathbf v_t\)</span> 作为其无偏估计代替之；</li>
+<li><span class="math inline">\(\mathbf v_\phi(\mathbf x_t,t\vert\varnothing)\)</span> 表示无条件下的真实速度场，即所有条件速度场的期望 <span class="math inline">\(\mathbb E_{\mathbf c}[\mathbf v_\phi(\mathbf x_t,t\vert\mathbf c)]\)</span>，无法通过采样代替。不过，由于我们在训练过程中会以一定概率丢弃条件来学习无条件模型 <span class="math inline">\(\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)\)</span>，因此直接用学习到的模型代替即可。</li>
+</ul>
+<p>综上，优化目标转化为： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t}\left[\left\Vert\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-\big(\omega\mathbf v_t+(1-\omega)\text{sg}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]\big)\right\Vert_2^2\right]
+\]</span> 同样的，我们可以将 CFG scale 作为条件给到模型，使其同时学习不同 CFG scale 下的速度场： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,{\color{limegreen}\omega}}\left[\left\Vert\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,{\color{limegreen}\omega})-\big(\omega\mathbf v_t+(1-\omega)\text{sg}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]\big)\right\Vert_2^2\right]
+\]</span> 事实上，容易证明该目标与上一小节的目标是等价的：做变量代换 <span class="math inline">\(\beta=1/\omega\)</span>，则上式变为： <span class="math display">\[
+\min_\theta~\mathbb E_{(\mathbf x,\mathbf c),\boldsymbol\epsilon,t,{\color{dodgerblue}\beta}}\left[\frac{1}{\beta^2}\left\Vert\beta\mathbf v_\theta^\text{cfg}(\mathbf x_t,t\vert\mathbf c,{\color{dodgerblue}\beta})+(1-\beta)\text{sg}[\mathbf v_\theta(\mathbf x_t,t\vert\varnothing)]-\mathbf v_t\right\Vert_2^2\right]
+\]</span> 可以看见二式仅差一个缩放倍数，因而有相同的最优解。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Chen, Huayu, Kai Jiang, Kaiwen Zheng, Jianfei Chen, Hang Su, and Jun Zhu. Visual Generation Without Guidance. In <em>Forty-second International Conference on Machine Learning</em>. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Tang, Zhicong, Jianmin Bao, Dong Chen, and Baining Guo. Diffusion models without classifier-free guidance. <em>arXiv preprint arXiv:2502.12154</em> (2025). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
 
                 
               </div>
@@ -382,18 +410,15 @@
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" class="category-chain-item">计算机视觉</a>
+  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
   
   
 
-      </span>
-    
-  
-    
-      <span class="category-chain">
-        
-  <a href="/blog-main/categories/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" class="category-chain-item">图像处理</a>
-  
   
 
       </span>
@@ -407,7 +432,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/blog-main/tags/computer-vision/" class="print-no-link">#computer vision</a>
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
       
     </div>
   
@@ -419,8 +444,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>什么是图像</div>
-      <div>https://xyfjason.github.io/blog-main/2021/07/03/什么是图像/</div>
+      <div>Training-Time CFG</div>
+      <div>https://xyfjason.github.io/blog-main/2025/12/25/Training-Time-CFG/</div>
     </div>
     <div class="license-meta">
       
@@ -432,7 +457,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2021年7月3日</div>
+          <div>2025年12月25日</div>
         </div>
       
       
@@ -464,18 +489,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2021/08/20/%E4%BA%A4%E5%8F%89%E7%86%B5%E4%B8%8E%E6%9E%81%E5%A4%A7%E4%BC%BC%E7%84%B6/" title="交叉熵与极大似然">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">交叉熵与极大似然</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2021/04/06/CS231n-9%C2%B7Deep-Reinforcement-Learning/" title="[CS231n]9·Deep Reinforcement Learning">
-                        <span class="hidden-mobile">[CS231n]9·Deep Reinforcement Learning</span>
+                      <a href="/blog-main/2025/11/13/One-Few-step-Flow-Models/" title="One/Few-step Flow Models">
+                        <span class="hidden-mobile">One/Few-step Flow Models</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
