@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-distillation.jpg">
 <meta property="article:published_time" content="2025-12-31T07:25:48.000Z">
-<meta property="article:modified_time" content="2025-12-31T02:43:16.831Z">
+<meta property="article:modified_time" content="2026-01-04T07:13:40.350Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3k 字
+          3.4k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          26 分钟
+          29 分钟
         
       </span>
     
@@ -364,7 +364,7 @@ w_t\left\Vert\mathbf x_\theta(\mathbf x_t)-\frac{\mathbf x_{t&#39;&#39;}-(\sigma
 <h2 id="consistency-distillation">Consistency Distillation</h2>
 <p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2303.01469">Consistency Distillation (CD)</a> 是训练 consistency model 的一种方式，详见 <a href="/blog-main/2025/05/05/Consistency-Models/" title="Consistency Models">Consistency Models</a> 一文。</p>
 <h2 id="adversarial-diffusion-distillation">Adversarial Diffusion Distillation</h2>
-<p>对抗训练作为一种通用的数据分布建模方法，非常适合一步/少步生成的需求。然而，从头训练一个大规模 GAN 是臭名昭著的困难与不稳定。不过，把对抗训练作为蒸馏扩散模型的一项辅助损失却是非常不错的选择——一方面，蒸馏损失可以保证训练的稳定性；另一方面，对抗损失可以提高一步生成的分布匹配能力。基于这种思想，<a target="_blank" rel="noopener" href="https://stability.ai/research/adversarial-diffusion-distillation">Adversarial Diffusion Distillation (ADD)</a> 一文成功将对抗训练融入了扩散模型蒸馏中，实现了 1-4 步生成高质量的 T2I 图像。</p>
+<p>对抗训练作为一种通用的数据分布建模方法，非常适合一步/少步生成的需求。然而，从头训练一个大规模 GAN 是臭名昭著的困难与不稳定。不过，把对抗训练作为蒸馏扩散模型的一项辅助损失却是非常不错的选择——一方面，蒸馏损失可以保证训练的稳定性；另一方面，对抗损失可以提高一步生成的分布匹配能力。基于这种思想，<a target="_blank" rel="noopener" href="https://stability.ai/research/adversarial-diffusion-distillation">Adversarial Diffusion Distillation (ADD)</a> 一文将对抗训练融入了扩散模型蒸馏中，实现了 1-4 步生成高质量的 T2I 图像。</p>
 <p><img src="add.png" srcset="/blog-main/logo/imageloading.png" lazyload width=60% /></p>
 <p>如图所示，在训练过程中，ADD 的 student 模型由带噪数据 <span class="math inline">\(\mathbf x_s\)</span> 一步生成样本 <span class="math inline">\(\hat{\mathbf x}_\theta(\mathbf x_s,s)\)</span>，该生成样本与真实样本给到判别器进行对抗训练；同时，生成的样本将被重新加噪至 <span class="math inline">\(\hat{\mathbf x}_{\theta,t}\)</span> 并与 teacher 模型的去噪结果 <span class="math inline">\(\hat{\mathbf x}_\psi(\hat{\mathbf x}_{\theta,t},t)\)</span> 做重构训练。具体而言，判别器由一个冻结的预训练 ViT 和若干判别头 <span class="math inline">\(D_{\phi,k}\)</span> 组成，其中第 <span class="math inline">\(k\)</span> 个判别头接在 ViT 的第 <span class="math inline">\(k\)</span> 层特征 <span class="math inline">\(F_k\)</span> 上。生成器采用 hinge loss 作为对抗损失： <span class="math display">\[
 \mathcal L_\text{adv}^\text{G}(\hat{\mathbf x}_\theta(\mathbf x_s,s))=-\sum_k D_{\phi,k}(F_k(\hat{\mathbf x}_\theta(\mathbf x_s,s)))
@@ -405,37 +405,14 @@ D_\text{KL}(p_\text{fake}\Vert p_\text{real})=\mathbb E_{p_\text{fake}(\mathbf x
 \mathcal L(\theta)=\mathcal L_\text{KL}(\theta)+\lambda_\text{reg}\mathcal L_\text{reg}(\theta)
 \]</span> 同时用 <span class="math inline">\(\mathcal L_\text{denoise}(\phi)\)</span> 训练估计 fake 样本 score function 的扩散模型。方法示意图如下：</p>
 <p><img src="dmd.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
-<h2 id="trajectory-consistency-distillation">Trajectory Consistency Distillation</h2>
-<p><span class="math inline">\({\color{red}\text{TODO}}\)</span></p>
 <h2 id="improved-distribution-matching-distillation">Improved Distribution Matching Distillation</h2>
-<h2 id="references">References</h2>
-<section class="footnotes">
-<div class="footnote-list">
-<ol>
-<li>
-<span id="fn:1" class="footnote-text"><span>Salimans, Tim, and Jonathan Ho. Progressive distillation for fast sampling of diffusion models. <em>arXiv preprint arXiv:2202.00512</em> (2022). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:2" class="footnote-text"><span>Meng, Chenlin, Robin Rombach, Ruiqi Gao, Diederik Kingma, Stefano Ermon, Jonathan Ho, and Tim Salimans. On distillation of guided diffusion models. In <em>Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition</em>, pp. 14297-14306. 2023. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:3" class="footnote-text"><span>Song, Yang, Prafulla Dhariwal, Mark Chen, and Ilya Sutskever. Consistency models. <em>arXiv preprint arXiv:2303.01469</em> (2023). <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:4" class="footnote-text"><span>Sauer, Axel, Dominik Lorenz, Andreas Blattmann, and Robin Rombach. Adversarial diffusion distillation. In <em>European Conference on Computer Vision</em>, pp. 87-103. Cham: Springer Nature Switzerland, 2024. <a href="#fnref:4" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:5" class="footnote-text"><span>Yin, Tianwei, Michaël Gharbi, Richard Zhang, Eli Shechtman, Fredo Durand, William T. Freeman, and Taesung Park. One-step diffusion with distribution matching distillation. In <em>Proceedings of the IEEE/CVF conference on computer vision and pattern recognition</em>, pp. 6613-6623. 2024. <a href="#fnref:5" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:6" class="footnote-text"><span>Zheng, Jianbin, Minghui Hu, Zhongyi Fan, Chaoyue Wang, Changxing Ding, Dacheng Tao, and Tat-Jen Cham. Trajectory Consistency Distillation. <em>arXiv preprint arXiv:2402.19159</em> (2024). <a href="#fnref:6" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:7" class="footnote-text"><span>Yin, Tianwei, Michaël Gharbi, Taesung Park, Richard Zhang, Eli Shechtman, Fredo Durand, and Bill Freeman. Improved distribution matching distillation for fast image synthesis. <em>Advances in neural information processing systems</em> 37 (2024): 47455-47487. <a href="#fnref:7" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-</ol>
-</div>
-</section>
+<p>在 DMD 中的回归损失需要事先用预训练扩散模型生成一批噪声-样本对作为数据，这对于大规模文生图模型而言是相当昂贵的。因此，作者在改进工作 <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2405.14867">DMD2</a> 中希望摒弃这个回归损失。但直接丢弃该损失会使得生成样本的统计量（例如平均亮度）剧烈震荡。作者认为这是同步学习的 <span class="math inline">\(\boldsymbol\mu_\text{fake}\)</span> 不够精确导致的。为此，作者借鉴 GANs 中的常用技巧，每更新 5 次 <span class="math inline">\(\boldsymbol\mu_\text{fake}\)</span> 才更新 1 次 <span class="math inline">\(G_\theta\)</span>. 实验证明这样做即可稳定训练，且效果与原 DMD 持平。</p>
+<p>进一步地，由于 DMD 不使用真实数据，因此其效果的上限永远无法超过 teacher 模型。为此，作者引入了一个额外的 GAN 损失，其中判别器 <span class="math inline">\(D\)</span> 实现为在 fake 扩散模型的 bottleneck 处引出一个分类头。GAN 损失采用经典的 non-saturing 目标： <span class="math display">\[
+\mathcal L_\text{GAN}=\mathbb E_{\mathbf x,t}[\log D(F(\mathbf x,t))]+\mathbb E_{\mathbf z,t}[-\log D(F(G_\theta(\mathbf z),t))]
+\]</span> 其中 <span class="math inline">\(F\)</span> 表示扩散模型的前向加噪操作。相比回归损失，GAN 损失的引入也与 DMD 的分布匹配理念更加贴合。</p>
+<p>另外，对于较大规模的文生图模型，将其蒸馏为一步生成模型依旧存在困难，因此作者将 DMD 扩展到多步采样场景下。具体而言，其多步采样的做法与 Consistency Models 相同，即去噪、加噪反复交替执行。特别地，在带噪图像上训练时，输入的带噪图像来自于生成器自身的多步采样过程、而非真实图像加噪，这样能弥补 train-test gap，提升效果。</p>
+<p>综上，DMD2 的方法示意图如下：</p>
+<p><img src="dmd2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=100% /></p>
 
                 
               </div>
