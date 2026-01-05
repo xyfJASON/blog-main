@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-distillation.jpg">
 <meta property="article:published_time" content="2025-12-31T07:25:48.000Z">
-<meta property="article:modified_time" content="2026-01-04T07:13:40.350Z">
+<meta property="article:modified_time" content="2026-01-05T05:29:08.861Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -392,13 +392,13 @@ D_\text{KL}(p_\text{fake}\Vert p_\text{real})=\mathbb E_{p_\text{fake}(\mathbf x
 \end{gather}
 \]</span> 其中 <span class="math inline">\(\boldsymbol\mu_\text{fake}^\phi(\mathbf x_t,t)\)</span> 是与一步生成模型同步学习的扩散模型。于是，对于 <span class="math inline">\(t\)</span> 时刻的带噪分布，有： <span class="math display">\[
 \begin{align}
-\nabla_\theta D_\text{KL}(p_\text{fake}\Vert p_\text{real})&amp;=\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm d\theta}\right]\\
-&amp;=\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm dG_\theta(\mathbf z)}\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\
-&amp;=\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\
-&amp;\simeq\,\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\
+\nabla_\theta D_\text{KL}(p_\text{fake}\Vert p_\text{real})&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm d\theta}\right]\\
+&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm dG_\theta(\mathbf z)}\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\
+&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\
+&amp;\simeq\,\mathbb E_{\mathbf z,t,\mathbf x_t}\left[w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\
 \end{align}
-\]</span> 其中 <span class="math inline">\(w_t\)</span> 是不改变最优解的权重，用于平衡不同时间步下的梯度大小，设置为 <span class="math inline">\(w_t=\frac{\sigma_t^2}{\alpha_t}\frac{CS}{\Vert\boldsymbol\mu_\text{base}(\mathbf x_t,t)-\mathbf x\Vert_1}\)</span>，其中 <span class="math inline">\(C,S\)</span> 分别表示 channels 数量与空间位置数量。实践中我们利用自动微分机制求梯度即可，因此损失函数为： <span class="math display">\[
-\mathcal L_\text{KL}(\theta)=\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))G_\theta(\mathbf z)\right]\\
+\]</span> 其中 <span class="math inline">\(w_t\)</span> 是不改变最优解的权重，用于平衡不同时间步下的梯度大小，设置为 <span class="math inline">\(w_t=\frac{\sigma_t^2}{\alpha_t}\frac{CS}{\Vert\boldsymbol\mu_\text{base}(\mathbf x_t,t)-\mathbf x\Vert_1}\)</span>，其中 <span class="math inline">\(C,S\)</span> 分别表示 channels 数量与空间位置数量。作者构造了如下损失，使其梯度为上式： <span class="math display">\[
+\mathcal L_\text{KL}(\theta)=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[\frac{1}{2}\Big\Vert G_\theta(\mathbf z)-\text{sg}\big[G_\theta(\mathbf z)-(w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t)))\big]\Big\Vert_2^2\right]\\
 \]</span> 然而，仅仅依靠 KL 散度依旧不够：当 <span class="math inline">\(t\)</span> 接近 0 时，<span class="math inline">\(p_\text{real}(\mathbf x_t,t)\)</span> 接近 0，导致 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x_t,t)\)</span> 的估计误差很大；另外，作者发现优化结果容易发生 mode collapse/dropping. 为了解决这个问题，作者进一步引入了回归损失：利用预训练的扩散模型生成若干噪声-样本对 <span class="math inline">\(\mathcal D=\{\mathbf z,\mathbf y\}\)</span> 作为标签去训练一步生成模型： <span class="math display">\[
 \mathcal L_\text{reg}(\theta)=\mathbb E_{(\mathbf z,\mathbf y)\sim\mathcal D}[\text{LPIPS}(G_\theta(\mathbf z),\mathbf y)]
 \]</span> 综上，一步生成模型的总损失为： <span class="math display">\[
