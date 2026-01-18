@@ -1,0 +1,815 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Overview      Denoising MIM CL SD     Classic SSL DAE BEIT, MAE, SimMIM SimCLR, MoCo DINO, iBOT   + Diffusion l-DAE MDT, MaskDiT Disperse SD-DiT, SRA    Denoising Classic SSL: DAE + Diffusion: l-DAE M">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Diffusion meets Self-Supervised Learning">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="Overview      Denoising MIM CL SD     Classic SSL DAE BEIT, MAE, SimMIM SimCLR, MoCo DINO, iBOT   + Diffusion l-DAE MDT, MaskDiT Disperse SD-DiT, SRA    Denoising Classic SSL: DAE + Diffusion: l-DAE M">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-meets-ssl.jpg">
+<meta property="article:published_time" content="2026-01-15T07:57:02.000Z">
+<meta property="article:modified_time" content="2026-01-18T09:44:42.973Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="generative models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-meets-ssl.jpg">
+  
+  
+  
+  <title>Diffusion meets Self-Supervised Learning - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/diffusion-meets-ssl.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Diffusion meets Self-Supervised Learning"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-01-15 15:57" pubdate>
+          2026年1月15日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          744 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          7 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Diffusion meets Self-Supervised Learning</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="overview">Overview</h2>
+<table>
+
+<thead>
+<tr>
+<th></th>
+<th>Denoising</th>
+<th>MIM</th>
+<th>CL</th>
+<th>SD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Classic SSL</td>
+<td><a target="_blank" rel="noopener" href="https://dl.acm.org/doi/10.1145/1390156.1390294">DAE</a></td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.08254">BEIT</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2111.06377">MAE</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2111.09886">SimMIM</a></td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.05709">SimCLR</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.05722">MoCo</a></td>
+<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2104.14294">DINO</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2111.07832">iBOT</a></td>
+</tr>
+<tr>
+<td>+ Diffusion</td>
+<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2401.14404">l-DAE</a></td>
+<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2303.14389">MDT</a>, <a target="_blank" rel="noopener" href="https://openreview.net/forum?id=vTBjBtGioE">MaskDiT</a></td>
+<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2506.09027">Disperse</a></td>
+<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2403.17004">SD-DiT</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2505.02831">SRA</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="denoising">Denoising</h2>
+<h3 id="classic-ssl-dae">Classic SSL: DAE</h3>
+<h3 id="diffusion-l-dae">+ Diffusion: l-DAE</h3>
+<h2 id="masked-image-modeling">Masked Image Modeling</h2>
+<h3 id="classic-ssl-mae">Classic SSL: MAE</h3>
+<h3 id="diffusion-mdt">+ Diffusion: MDT</h3>
+<h3 id="diffusion-maskdit">+ Diffusion: MaskDiT</h3>
+<h2 id="contrastive-learning">Contrastive Learning</h2>
+<h3 id="classic-ssl-simclr">Classic SSL: SimCLR</h3>
+<h3 id="diffusion-disperse">+ Diffusion: Disperse</h3>
+<h2 id="self-distillation">Self Distillation</h2>
+<h3 id="classic-ssl-dino">Classic SSL: DINO</h3>
+<p>DINO 与对比学习的一些方法有相似之处，但它更适合从知识蒸馏 (knowledge distillation) 的角度理解。在知识蒸馏中，设有 teacher 和 student 网络 <span class="math inline">\(g_{\theta_t}(x),g_{\theta_s}(x)\)</span>，它们经过 softmax 后分别形成类别分布： <span class="math display">\[
+P_t(x)^{(k)}=\frac{\exp(g_{\theta_t}(x)^{(k)}/\tau_t)}{\sum_{k=1}^K\exp(g_{\theta_t}(x)^{(k)}/\tau_t)}
+,\quad
+P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}
+\]</span> 其中 <span class="math inline">\(\tau_t,\tau_s\)</span> 为温度系数。我们的训练目标是让 student 分布 <span class="math inline">\(P_s\)</span> 逼近 teacher 分布 <span class="math inline">\(P_t\)</span>，即： <span class="math display">\[
+\min_{\theta_s}~\mathbb E_{p_\text{data}(x)}\left[-\sum_{k=1}^KP_t(x)^{(k)}\log P_s(x)^{(k)}\right]
+\]</span> 为了将上述知识蒸馏框架适配到自监督学习中，DINO 采用了 multi-crop 的策略：给定图像 <span class="math inline">\(x\)</span>，构造 2 个分辨率为 224 的 global views <span class="math inline">\(x_1^g,x_2^g\)</span>，以及若干分辨率为 96 的 local views. Teacher 网络总是接收 global views，而 student 网络两种都接收，于是训练目标为： <span class="math display">\[
+\min_{\theta_s}~\mathbb E_{p_\text{data}(x)}\left[\sum_{x^g\in\{x_1^g,x_2^g\}}\sum_{x&#39;\in V(x),\,x&#39;\neq x}\left(-\sum_{k=1}^KP_t(x^g)^{(k)}\log P_s(x&#39;)^{(k)}\right)\right]
+\]</span> 其中 <span class="math inline">\(V(x)\)</span> 表示对图像 <span class="math inline">\(x\)</span> 构造的所有 global views 和 local views 的集合。另外，在自监督学习中我们并没有一个训练好的 teacher 网络，因此 DINO 采用 student 网络的 EMA 版本作为 teacher： <span class="math display">\[
+\theta_t\gets\lambda\theta_t+(1-\lambda)\theta_s
+\]</span> 其中 <span class="math inline">\(\lambda\)</span> 为 EMA decay 系数，在训练过程中依 cosine schedule 从 0.996 增长到 1. 进一步地，为避免崩塌，DINO 在 teacher 网络末端接入了 centering 和 sharpening 操作。DINO 的整体示意图如下所示：</p>
+<p><img src="dino.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<h3 id="diffusion-sd-dit">+ Diffusion: SD-DiT</h3>
+<p>如图所示，SD-DiT 建立在 MDT/MaskDiT 的基础上，因此扩散网络包含两部分——只接收可见 token 的 encoder 和拼接上 mask token 的 decoder. SD-DiT 视 encoder 部分为 student，通过 EMA 的方式引入了一个 teacher encoder 做自蒸馏。对于扩散模型而言，加噪本身就是一种自然的数据增强方式。SD-DiT 实验发现，teacher 网络应始终接收最低程度 <span class="math inline">\(\sigma_\min\)</span> 的加噪，以达到最好的蒸馏效果。</p>
+<p><img src="sd-dit.png" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
+<p>另外，与 DINO 只蒸馏 <span class="math inline">\(\texttt{[CLS]}\)</span> token 不同，SD-DiT 会蒸馏所有 token. 具体而言，设 <span class="math inline">\(\mathbf e_\text{T},\mathbf e_\text{S}\)</span> 分别为 teacher 和 student encoder 的输出，<span class="math inline">\(j_\theta\)</span> 为一个三层的 projection head，则对第 <span class="math inline">\(i\)</span> 个可见 token 有 teacher 和 student 分布： <span class="math display">\[
+{P_\text{T}}_i^{(k)}=\frac{\exp(j_\theta({\mathbf e_\text{T}}_i)/\tau_\text{T})^{(k)}}{\sum_{k=1}^K\exp(j_\theta({\mathbf e_\text{T}}_i)/\tau_\text{T})^{(k)}},\quad {P_\text{S}}_i^{(k)}=\frac{\exp(j_\theta({\mathbf e_\text{S}}_i)/\tau_\text{S})^{(k)}}{\sum_{k=1}^K\exp(j_\theta({\mathbf e_\text{S}}_i)/\tau_\text{S})^{(k)}}
+\]</span> 那么自蒸馏损失为： <span class="math display">\[
+\mathcal L_\text{D}(i)=-\sum_{k=1}^K{P_\text{T}}_i^{(k)}\log{P_\text{S}}_i^{(k)}
+\]</span> 总自蒸馏损失为所有可见 token 的自蒸馏损失与 <span class="math inline">\(\texttt{[CLS]}\)</span> token 的自蒸馏损失之和： <span class="math display">\[
+\mathcal L_\text{D}=\frac{1}{|\bar{\mathcal M}|}\sum_{i\in \bar{\mathcal M}}\mathcal L_\text{D}(i)+\mathcal L_\text{D}(\texttt{[CLS]})
+\]</span> 为避免坍塌，SD-DiT 同样采用了 DINO 中的 centering 和 sharpening 技巧。</p>
+<h3 id="diffusion-sra">+ Diffusion: SRA</h3>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  
+  
+    <span>></span>
+    
+  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Diffusion meets Self-Supervised Learning</div>
+      <div>https://xyfjason.github.io/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年1月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2025/12/31/Diffusion-Distillation/" title="Diffusion Distillation">
+                        <span class="hidden-mobile">Diffusion Distillation</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
