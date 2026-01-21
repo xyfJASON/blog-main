@@ -19,24 +19,23 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Overview      Denoising MIM CL SD     Classic SSL DAE BEIT, MAE, SimMIM SimCLR, MoCo DINO, iBOT   + Diffusion l-DAE MDT, MaskDiT Disperse SD-DiT, SRA    Denoising Classic SSL: DAE + Diffusion: l-DAE M">
+    <meta name="description" content="VQ (STE)  [NeurIPS 2017] [arXiv:1711.00937] Neural Discrete Representation Learning [CVPR 2021] [arXiv:2012.09841] Taming Transformers for High-Resolution Image Synthesis  VQ (Gumbel Softmax)  [ICLR 2">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Diffusion meets Self-Supervised Learning">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/index.html">
+<meta property="og:title" content="Vector Quantization">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/01/21/Vector-Quantization/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="Overview      Denoising MIM CL SD     Classic SSL DAE BEIT, MAE, SimMIM SimCLR, MoCo DINO, iBOT   + Diffusion l-DAE MDT, MaskDiT Disperse SD-DiT, SRA    Denoising Classic SSL: DAE + Diffusion: l-DAE M">
+<meta property="og:description" content="VQ (STE)  [NeurIPS 2017] [arXiv:1711.00937] Neural Discrete Representation Learning [CVPR 2021] [arXiv:2012.09841] Taming Transformers for High-Resolution Image Synthesis  VQ (Gumbel Softmax)  [ICLR 2">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-meets-ssl.jpg">
-<meta property="article:published_time" content="2026-01-15T07:57:02.000Z">
-<meta property="article:modified_time" content="2026-01-21T04:58:00.945Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vector-quantization.jpg">
+<meta property="article:published_time" content="2026-01-21T08:15:11.000Z">
+<meta property="article:modified_time" content="2026-01-21T09:14:47.507Z">
 <meta property="article:author" content="xyfJASON">
-<meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/diffusion-meets-ssl.jpg">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vector-quantization.jpg">
   
   
   
-  <title>Diffusion meets Self-Supervised Learning - xyfJASON</title>
+  <title>Vector Quantization - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -248,13 +247,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/diffusion-meets-ssl.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/vector-quantization.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Diffusion meets Self-Supervised Learning"></span>
+            <span id="subtitle" data-typed-text="Vector Quantization"></span>
           
         </div>
 
@@ -265,8 +264,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-15 15:57" pubdate>
-          2026年1月15日 下午
+        <time datetime="2026-01-21 16:15" pubdate>
+          2026年1月21日 下午
         </time>
       </span>
     
@@ -277,7 +276,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.3k 字
+          77 字
         
       </span>
     
@@ -288,7 +287,7 @@
         
         
         
-          11 分钟
+          1 分钟
         
       </span>
     
@@ -325,86 +324,60 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Diffusion meets Self-Supervised Learning</h1>
+            <h1 id="seo-header">Vector Quantization</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="overview">Overview</h2>
-<table>
-
-<thead>
-<tr>
-<th></th>
-<th>Denoising</th>
-<th>MIM</th>
-<th>CL</th>
-<th>SD</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Classic SSL</td>
-<td><a target="_blank" rel="noopener" href="https://dl.acm.org/doi/10.1145/1390156.1390294">DAE</a></td>
-<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2106.08254">BEIT</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2111.06377">MAE</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2111.09886">SimMIM</a></td>
-<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.05709">SimCLR</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.05722">MoCo</a></td>
-<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2104.14294">DINO</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2111.07832">iBOT</a></td>
-</tr>
-<tr>
-<td>+ Diffusion</td>
-<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2401.14404">l-DAE</a></td>
-<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2303.14389">MDT</a>, <a target="_blank" rel="noopener" href="https://openreview.net/forum?id=vTBjBtGioE">MaskDiT</a></td>
-<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2506.09027">Disperse</a></td>
-<td><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2403.17004">SD-DiT</a>, <a target="_blank" rel="noopener" href="http://arxiv.org/abs/2505.02831">SRA</a></td>
-</tr>
-</tbody>
-</table>
-<h2 id="denoising">Denoising</h2>
-<h3 id="classic-ssl-dae">Classic SSL: DAE</h3>
-<h3 id="diffusion-l-dae">+ Diffusion: l-DAE</h3>
-<h2 id="masked-image-modeling">Masked Image Modeling</h2>
-<h3 id="classic-ssl-mae">Classic SSL: MAE</h3>
-<h3 id="diffusion-mdt">+ Diffusion: MDT</h3>
-<p><img src="mdt.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
-<p>整体上看，MDT 在标准 DiT 的基础上增加了掩码操作：网络仅接收未被掩码的带噪 latent 而非全部带噪 latent，但仍然要求预测全部的干净 latent. 这一训练目标结合了去噪与掩码预测，乍一看增加了训练难度，但实际上迫使网络更加着重学习图像语义，反而有利于模型的收敛。</p>
-<p>MDT 的网络参考了 MAE 的非对称设计：较大的 encoder 仅接收未被掩码的 token，而较小的 decoder 接收补全后的 token. 与 MAE 不同的是，由于扩散模型在推理时不会施加掩码，因此 decoder 在推理时总是见到非掩码 token；倘若训练时仍然直接补上 mask token，这就会形成一个训练-推理的不匹配。为了解决这个问题，作者设计了一个 side-interpolater 来补充被掩码的 token. 具体而言，side-interpolater 的输入为未被掩码的 token 和补充的可学习 mask token，经过一个 Transformer block 后输出预测的被掩码的 token. Decoder 在训练时接收 side-interpolater 预测的被掩码 token 而非 mask token，因此在一定程度上缓解了不匹配问题。Side-interpolater 仅在训练中使用，推理时不需要。</p>
-<p>实践中，作者按照 DiT 的标准设置 MDT 的网络，但 decoder 的层数始终保持为 2，这延续了 MAE 的非对称思想。训练时的掩码比例固定为 30%，远小于 MAE 的 75%. 这可能是因为扩散模型本身的加噪已经是一种破坏，再采用大比例的掩码会让问题变得过于困难，对生成任务来说并不合适。</p>
-<p>基于 MDT 的成功，作者进一步提出了 MDTv2，做了以下改进：</p>
-<ol type="1">
-<li>网络架构：给 encoder 增加 long-shortcuts，即 UNet style 的跳跃连接；给 decoder 增加 dense input-shortcuts，即从输入到 decoder 每一个 block 的跳跃连接；将 decoder 层数从 2 增加到 6；</li>
-<li>模型优化：将 Adam 优化器替换为 Adan 优化器；采用 min-SNR weighting；</li>
-<li>掩码策略改进：将掩码比例从固定的 30% 更改为 30%~50% 随机。</li>
-</ol>
-<p>更多细节请参阅论文。</p>
-<h3 id="diffusion-maskdit">+ Diffusion: MaskDiT</h3>
-<h2 id="contrastive-learning">Contrastive Learning</h2>
-<h3 id="classic-ssl-simclr">Classic SSL: SimCLR</h3>
-<h3 id="diffusion-disperse">+ Diffusion: Disperse</h3>
-<h2 id="self-distillation">Self Distillation</h2>
-<h3 id="classic-ssl-dino">Classic SSL: DINO</h3>
-<p><img src="dino.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
-<p>DINO 与对比学习的一些方法有相似之处，但它更适合从知识蒸馏 (knowledge distillation) 的角度理解。在知识蒸馏中，设有 teacher 和 student 网络 <span class="math inline">\(g_{\theta_t}(x),g_{\theta_s}(x)\)</span>，它们经过 softmax 后分别形成类别分布： <span class="math display">\[
-P_t(x)^{(k)}=\frac{\exp(g_{\theta_t}(x)^{(k)}/\tau_t)}{\sum_{k=1}^K\exp(g_{\theta_t}(x)^{(k)}/\tau_t)}
-,\quad
-P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}
-\]</span> 其中 <span class="math inline">\(\tau_t,\tau_s\)</span> 为温度系数。我们的训练目标是让 student 分布 <span class="math inline">\(P_s\)</span> 逼近 teacher 分布 <span class="math inline">\(P_t\)</span>，即： <span class="math display">\[
-\min_{\theta_s}~\mathbb E_{p_\text{data}(x)}\left[-\sum_{k=1}^KP_t(x)^{(k)}\log P_s(x)^{(k)}\right]
-\]</span> 为了将上述知识蒸馏框架适配到自监督学习中，DINO 采用了 multi-crop 的策略：给定图像 <span class="math inline">\(x\)</span>，构造 2 个分辨率为 224 的 global views <span class="math inline">\(x_1^g,x_2^g\)</span>，以及若干分辨率为 96 的 local views. Teacher 网络总是接收 global views，而 student 网络两种都接收，于是训练目标为： <span class="math display">\[
-\min_{\theta_s}~\mathbb E_{p_\text{data}(x)}\left[\sum_{x^g\in\{x_1^g,x_2^g\}}\sum_{x&#39;\in V(x),\,x&#39;\neq x}\left(-\sum_{k=1}^KP_t(x^g)^{(k)}\log P_s(x&#39;)^{(k)}\right)\right]
-\]</span> 其中 <span class="math inline">\(V(x)\)</span> 表示对图像 <span class="math inline">\(x\)</span> 构造的所有 global views 和 local views 的集合。另外，在自监督学习中我们并没有一个训练好的 teacher 网络，因此 DINO 采用 student 网络的 EMA 版本作为 teacher： <span class="math display">\[
-\theta_t\gets\lambda\theta_t+(1-\lambda)\theta_s
-\]</span> 其中 <span class="math inline">\(\lambda\)</span> 为 EMA decay 系数，在训练过程中依 cosine schedule 从 0.996 增长到 1. 进一步地，为避免崩塌，DINO 在 teacher 网络末端接入了 centering 和 sharpening 操作。</p>
-<h3 id="diffusion-sd-dit">+ Diffusion: SD-DiT</h3>
-<p><img src="sd-dit.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=40% /></p>
-<p>如图所示，SD-DiT 建立在 MaskDiT 的基础上，因此扩散网络包含两部分——只接收可见 token 的 encoder 和拼接上 mask token 的 decoder. SD-DiT 视 encoder 部分为 student，通过 EMA 的方式引入了一个 teacher encoder 做自蒸馏。对于扩散模型而言，加噪本身就是一种自然的数据增强方式。SD-DiT 实验发现，teacher 网络应始终接收最低程度 <span class="math inline">\(\sigma_\min\)</span> 的加噪，以达到最好的蒸馏效果。</p>
-<p>另外，与 DINO 只蒸馏 <span class="math inline">\(\texttt{[CLS]}\)</span> token 不同，SD-DiT 会蒸馏所有 token. 具体而言，设 <span class="math inline">\(\mathbf e_\text{T},\mathbf e_\text{S}\)</span> 分别为 teacher 和 student encoder 的输出，<span class="math inline">\(j_\theta\)</span> 为一个三层的 projection head，则对第 <span class="math inline">\(i\)</span> 个可见 token 有 teacher 和 student 分布： <span class="math display">\[
-{P_\text{T}}_i^{(k)}=\frac{\exp(j_\theta({\mathbf e_\text{T}}_i)/\tau_\text{T})^{(k)}}{\sum_{k=1}^K\exp(j_\theta({\mathbf e_\text{T}}_i)/\tau_\text{T})^{(k)}},\quad {P_\text{S}}_i^{(k)}=\frac{\exp(j_\theta({\mathbf e_\text{S}}_i)/\tau_\text{S})^{(k)}}{\sum_{k=1}^K\exp(j_\theta({\mathbf e_\text{S}}_i)/\tau_\text{S})^{(k)}}
-\]</span> 那么自蒸馏损失为： <span class="math display">\[
-\mathcal L_\text{D}(i)=-\sum_{k=1}^K{P_\text{T}}_i^{(k)}\log{P_\text{S}}_i^{(k)}
-\]</span> 总自蒸馏损失为所有可见 token 的自蒸馏损失与 <span class="math inline">\(\texttt{[CLS]}\)</span> token 的自蒸馏损失之和： <span class="math display">\[
-\mathcal L_\text{D}=\frac{1}{|\bar{\mathcal M}|}\sum_{i\in \bar{\mathcal M}}\mathcal L_\text{D}(i)+\mathcal L_\text{D}(\texttt{[CLS]})
-\]</span> 为避免坍塌，SD-DiT 同样采用了 DINO 中的 centering 和 sharpening 技巧。</p>
-<h3 id="diffusion-sra">+ Diffusion: SRA</h3>
+                <h2 id="vq-ste">VQ (STE)</h2>
+<blockquote>
+<p><strong>[NeurIPS 2017]</strong> [arXiv:1711.00937] Neural Discrete Representation Learning</p>
+<p><strong>[CVPR 2021]</strong> [arXiv:2012.09841] Taming Transformers for High-Resolution Image Synthesis</p>
+</blockquote>
+<h2 id="vq-gumbel-softmax">VQ (Gumbel Softmax)</h2>
+<blockquote>
+<p><strong>[ICLR 2020]</strong> [arXiv:1910.05453] vq-wav2vec: Self-Supervised Learning of Discrete Speech Representations</p>
+</blockquote>
+<h2 id="improved-vq">Improved VQ</h2>
+<blockquote>
+<p><strong>[ICLR 2022]</strong> [arXiv:2110.04627] Vector-quantized Image Modeling with Improved VQGAN</p>
+</blockquote>
+<h2 id="fsq">FSQ</h2>
+<blockquote>
+<p><strong>[ICLR 2024]</strong> [arXiv:2309.15505] Finite Scalar Quantization: VQ-VAE Made Simple</p>
+</blockquote>
+<h2 id="lfq">LFQ</h2>
+<blockquote>
+<p><strong>[ICLR 2024]</strong> [arXiv:2310.05737] Language Model Beats Diffusion: Tokenizer is Key to Visual Generation</p>
+</blockquote>
+<h2 id="bsq">BSQ</h2>
+<blockquote>
+<p><strong>[ICLR 2025]</strong> [arXiv:2406.07548] Image and Video Tokenization with Binary Spherical Quantization</p>
+</blockquote>
+<h2 id="rotation-trick">Rotation Trick</h2>
+<blockquote>
+<p><strong>[ICLR 2025]</strong> [ arXiv:2410.06424] Restructuring Vector Quantization with the Rotation Trick</p>
+</blockquote>
+<h2 id="simvq">SimVQ</h2>
+<blockquote>
+<p><strong>[ICCV 2025]</strong> [arXiv:2411.02038] Addressing Representation Collapse in Vector Quantized Models with One Linear Layer</p>
+</blockquote>
+<h2 id="gsq">GSQ</h2>
+<blockquote>
+<p>[arXiv:2412.02632] Scaling Image Tokenizers with Grouped Spherical Quantization</p>
+</blockquote>
+<h2 id="ibq">IBQ</h2>
+<blockquote>
+<p><strong>[ICCV 2025]</strong> [arXiv:2412.02692] Taming Scalable Visual Tokenizer for Autoregressive Image Generation</p>
+</blockquote>
+<h2 id="softvq">SoftVQ</h2>
+<blockquote>
+<p><strong>[CVPR 2025]</strong> [arXiv:2412.10958] SoftVQ-VAE: Efficient 1-Dimensional Continuous Tokenizer</p>
+</blockquote>
+<h2 id="optvq">OptVQ</h2>
+<blockquote>
+<p>[arXiv:2412.15195] Preventing Local Pitfalls in Vector Quantization via Optimal Transport</p>
+</blockquote>
 
                 
               </div>
@@ -423,15 +396,8 @@ P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\thet
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" class="category-chain-item">生成模型</a>
+  <a href="/blog-main/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" class="category-chain-item">计算机视觉</a>
   
-  
-    <span>></span>
-    
-  <a href="/blog-main/categories/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/Diffusion-Models/" class="category-chain-item">Diffusion Models</a>
-  
-  
-
   
 
       </span>
@@ -442,13 +408,6 @@ P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\thet
     </div>
   
   
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/blog-main/tags/generative-models/" class="print-no-link">#generative models</a>
-      
-    </div>
-  
 </div>
 
 
@@ -457,8 +416,8 @@ P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\thet
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Diffusion meets Self-Supervised Learning</div>
-      <div>https://xyfjason.github.io/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/</div>
+      <div>Vector Quantization</div>
+      <div>https://xyfjason.github.io/blog-main/2026/01/21/Vector-Quantization/</div>
     </div>
     <div class="license-meta">
       
@@ -470,7 +429,7 @@ P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\thet
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年1月15日</div>
+          <div>2026年1月21日</div>
         </div>
       
       
@@ -502,18 +461,12 @@ P_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\thet
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2026/01/21/Vector-Quantization/" title="Vector Quantization">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Vector Quantization</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2025/12/31/Diffusion-Distillation/" title="Diffusion Distillation">
-                        <span class="hidden-mobile">Diffusion Distillation</span>
+                      <a href="/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/" title="Diffusion meets Self-Supervised Learning">
+                        <span class="hidden-mobile">Diffusion meets Self-Supervised Learning</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/consistency.jpg">
 <meta property="article:published_time" content="2025-05-05T11:02:57.000Z">
-<meta property="article:modified_time" content="2026-01-09T07:12:40.498Z">
+<meta property="article:modified_time" content="2026-01-21T12:58:04.144Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.7k 字
+          3.1k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          23 分钟
+          27 分钟
         
       </span>
     
@@ -421,7 +421,7 @@ s_\phi(\mathbf x,t)\approx\nabla\log p_t(\mathbf x_t)=-\mathbb E\left[\frac{\mat
 \]</span> 这正是扩散模型的训练目标。这说明，随着 <span class="math inline">\(\Delta t\to0\)</span>，模型逐渐地从扩散模型平滑演变为 Consistency Models. 受此启发，ECT 提出从一个预训练扩散模型出发，将其逐渐微调为一个 Consistency Models，从而减小训练成本。</p>
 <p>具体而言，我们在训练过程中依 <span class="math inline">\(r\sim p(r\vert t,\text{iters})\)</span> 采样时间步 <span class="math inline">\(r\)</span>，使其在训练开始时取 <span class="math inline">\(r=0\)</span>（等价于扩散模型），结束时 <span class="math inline">\(r\to t\)</span>（等价于 Consistency Models）. 作者的设计为： <span class="math display">\[
 \frac{r}{t}=1-\frac{1}{q^{\lfloor\text{iters}/d\rfloor}}\left(1+\frac{k}{1+e^{bt}}\right)
-\]</span> 其中超参数 <span class="math inline">\(k=8,b=1\)</span>，在 CIFAR-10 上 <span class="math inline">\(d=\lfloor\text{iters}/8\rfloor\)</span>. 至于度量函数，参考 iCT 采用的 Pseudo-Huber 距离： <span class="math display">\[
+\]</span> 其中 <span class="math inline">\(k,b,d\)</span> 均为超参数。至于度量函数，参考 iCT 采用的 Pseudo-Huber 距离： <span class="math display">\[
 L(\Delta)=\sqrt{\Vert\Delta\Vert_2^2+c^2}-c^2,\quad c&gt;0
 \]</span> 考虑对 <span class="math inline">\(\Delta\)</span> 求导，有： <span class="math display">\[
 \mathrm d L=\frac{1}{\sqrt{\Vert\Delta\Vert_2^2+c^2}}\mathrm d\left(\frac{1}{2}\Vert\Delta\Vert_2^2\right)
@@ -430,18 +430,21 @@ w(t)=\bar w(t)\cdot w(\Delta)=\bar w(t)\cdot\frac{1}{\sqrt{\Vert\Delta\Vert_2^2+
 \]</span> 该权重由人为设计的权重项 <span class="math inline">\(\bar w(t)\)</span> 和自适应权重项 <span class="math inline">\(w(\Delta)\)</span> 组成。当 <span class="math inline">\(\Delta\to0\)</span> 时，自适应权重项 <span class="math inline">\(w(\Delta)\)</span> 增大，可以避免梯度消失。综上所述，ECT 的训练算法流程如下图所示：</p>
 <p><img src="ect-training-alg.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
 <h2 id="ctm">CTM</h2>
-<p>Consistency Model 学习的是一条 PF ODE 轨迹上任意点 <span class="math inline">\(\mathbf x_t\)</span> 到该轨迹的终点 <span class="math inline">\(\mathbf x_0\)</span> 的映射，而 Consistency Trajectory Model (CTM) 则将其扩展为一条 PF ODE 轨迹上任意两个点 <span class="math inline">\(\mathbf x_t,\mathbf x_s\,(s\leq t)\)</span> 之间的映射。</p>
+<p>Consistency Model 学习的是一条 PF ODE 轨迹上任意点 <span class="math inline">\(\mathbf x_t\)</span> 到该轨迹的终点 <span class="math inline">\(\mathbf x_0\)</span> 的映射（下图中间），而 Consistency Trajectory Model (CTM) 则将其扩展为一条 PF ODE 轨迹上任意两个点 <span class="math inline">\(\mathbf x_t,\mathbf x_s\,(s\leq t)\)</span> 之间的映射（下图右边）。</p>
+<p><img src="ctm.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <h3 id="consistency-trajectory">Consistency Trajectory</h3>
-<p>对于一条 PF ODE 的轨迹 <span class="math inline">\(\{\mathbf x_t\}_{t\in[0,1]}\)</span>，定义 <span class="math inline">\(G(\mathbf x_t,t,s)\)</span> 为从 <span class="math inline">\(\mathbf x_t\)</span> 出发，求解 PF ODE 至时间步 <span class="math inline">\(s\)</span> 的解： <span class="math display">\[
+<p>对于一条 PF ODE 的轨迹 <span class="math inline">\(\{\mathbf x_t\}_{t\in[0,1]}\)</span>： <span class="math display">\[
+\frac{\mathrm d\mathbf x_t}{\mathrm dt}=-t\nabla\log p_t(\mathbf x_t)=\frac{\mathbf x_t-\mathbb E[\mathbf x\vert\mathbf x_t]}{t}
+\]</span> 定义 <span class="math inline">\(G(\mathbf x_t,t,s)\)</span> 为从 <span class="math inline">\(\mathbf x_t\)</span> 出发，求解 PF ODE 至时间步 <span class="math inline">\(s\)</span> 的解： <span class="math display">\[
 G(\mathbf x_t,t,s)=\mathbf x_t+\int_t^s\frac{\mathbf x_u-\mathbb E[\mathbf x\vert\mathbf x_u]}{u}\mathrm du
-\]</span> 受 Euler solver 的启发，假若实施一步 Euler，则有： <span class="math display">\[
+\]</span> 假若实施一步 Euler solver 近似求解，则有： <span class="math display">\[
 G^\text{Euler}(\mathbf x_t,t,s)=\mathbf x_t+(s-t)\frac{\mathbf x_t-\mathbb E[\mathbf x\vert\mathbf x_t]}{t}=\frac{s}{t}\mathbf x_t+\left(1-\frac{t}{s}\right)\mathbb E[\mathbf x\vert\mathbf x_t]
 \]</span> 进一步分析表明 Heun solver 也会导致相同的形式，因此作者决定将 <span class="math inline">\(G\)</span> 重新表达为： <span class="math display">\[
-G(\mathbf x_t,t,s)=\frac{s}{t}\mathbf x_t+\left(1-\frac{t}{s}\right)g(\mathbf x_t,t,s)
+G(\mathbf x_t,t,s)=\frac{s}{t}\mathbf x_t+\left(1-\frac{s}{t}\right)g(\mathbf x_t,t,s)
 \]</span> 其中： <span class="math display">\[
 g(\mathbf x_t,t,s)=\mathbf x_t+\frac{t}{t-s}\int_t^s\frac{\mathbf x_u-\mathbb E[\mathbf x\vert\mathbf x_u]}{u}\mathrm du
 \]</span> 据此，我们要学习的模型 <span class="math inline">\(G_\theta\)</span> 由 <span class="math inline">\(g_\theta\)</span> 重参数化为： <span class="math display">\[
-G_\theta(\mathbf x_t,t,s)=\frac{s}{t}\mathbf x_t+\left(1-\frac{t}{s}\right)g_\theta(\mathbf x_t,t,s)
+G_\theta(\mathbf x_t,t,s)=\frac{s}{t}\mathbf x_t+\left(1-\frac{s}{t}\right)g_\theta(\mathbf x_t,t,s)
 \]</span> 该定义自动满足了初始条件 <span class="math inline">\(G_\theta(\mathbf x_t,t,t)=\mathbf x_t\)</span>. 值得注意的是，当 <span class="math inline">\(s\to t\)</span> 时，有： <span class="math display">\[
 \lim_{s\to t}g(\mathbf x_t,t,s)=\mathbf x_t+t\lim_{s\to t}\frac{1}{t-s}\int_t^s\frac{\mathbf x_u-\mathbb E[\mathbf x\vert\mathbf x_u]}{u}\mathrm du=\mathbb E[\mathbf x\vert\mathbf x_t]
 \]</span> 这说明 <span class="math inline">\(g\)</span> 此时就是 "x-prediction" 扩散模型。</p>
@@ -450,11 +453,20 @@ G_\theta(\mathbf x_t,t,s)=\frac{s}{t}\mathbf x_t+\left(1-\frac{t}{s}\right)g_\th
 G_\theta(\mathbf x_t,t,s)\approx G_{\text{sg}(\theta)}(\texttt{Solver}(\mathbf x_t,t,u;\phi),u,s)
 \]</span> 其中 <span class="math inline">\(\texttt{Solver}\)</span> 表示任意一种 ODE Solver，<span class="math inline">\(\phi\)</span> 表示预训练扩散模型。为了衡量二者的差异，作者将它们继续求解到 0 时刻对比干净数据的距离，即： <span class="math display">\[
 \begin{align}
-&amp;\mathcal L_\text{CTM}(\theta)=\mathbb E_{t,s,u,\mathbf x_0,\mathbf x_t}\left[d\left(\mathbf x_\text{target}(\mathbf x_t,t,u,s),\mathbf x_\text{est}(\mathbf x_t,t,s)\right)\right]\\
+&amp;\mathcal L_\text{CTM}(\theta;\phi)=\mathbb E_{t,s,u,\mathbf x_0,\mathbf x_t}\left[d\left(\mathbf x_\text{target}(\mathbf x_t,t,u,s),\mathbf x_\text{est}(\mathbf x_t,t,s)\right)\right]\\
 \text{where}\quad&amp;\mathbf x_\text{target}(\mathbf x_t,t,u,s)=G_{\text{sg}(\theta)}\big(G_{\text{sg}(\theta)}(\texttt{Solver}(\mathbf x_t,t,u;\phi),u,s),s,0\big)\\
 &amp;\mathbf x_\text{est}(\mathbf x_t,t,s)=G_{\text{sg}(\theta)}\big(G_\theta(\mathbf x_t,t,s),s,0\big)
 \end{align}
-\]</span> 进一步地，</p>
+\]</span> 然而，如果依赖蒸馏，那么 student 模型永远也无法超越预训练模型。为此，我们需要将真实数据引入训练过程。首先，当取 <span class="math inline">\(s=t\)</span> 时，我们直接按标准扩散模型训练即可： <span class="math display">\[
+\mathcal L_\text{DSM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_t}[\Vert\mathbf x_0-g_\theta(\mathbf x_t,t,t)\Vert_2^2]
+\]</span> 其次，对于 <span class="math inline">\(s\neq t\)</span> 的一般情况，作者引入对抗损失： <span class="math display">\[
+\mathcal L_\text{GAN}(\theta,\eta)=\mathbb E_{\mathbf x_0}[\log d_\eta(\mathbf x_0)]+\mathbb E_{t,s,\mathbf x_0,\mathbf x_t}[\log (1-d_\eta(\mathbf x_\text{est}(\mathbf x_t,t,s)))]
+\]</span> 其中 <span class="math inline">\(d_\eta\)</span> 表示判别器。最终的损失由上述三项损失构成： <span class="math display">\[
+\mathcal L(\theta,\eta)=\mathcal L_\text{CTM}(\theta;\phi)+\lambda_\text{DSM}\mathcal L_\text{DSM}(\theta)+\lambda_\text{GAN}\mathcal L_\text{GAN}(\theta,\eta)
+\]</span> 权重 <span class="math inline">\(\lambda_\text{DSM},\lambda_\text{GAN}\)</span> 由各项梯度的大小自适应调整。</p>
+<h3 id="gamma-sampling"><span class="math inline">\(\gamma\)</span>-sampling</h3>
+<p>由于 CTM 学习了 PF ODE 轨迹上任意两个时间步之间的映射，因此我们在采样时可以做一些灵活的操作。作者提出了 <span class="math inline">\(\gamma\)</span>-sampling：设有 <span class="math inline">\(N\)</span> 个时间步 <span class="math inline">\(T=t_0&gt;\cdots&gt;t_N=0\)</span>，采样初始噪声 <span class="math inline">\(\mathbf x_{t_0}\sim\pi\)</span> 后，首先用 <span class="math inline">\(G_\theta(\mathbf x_{t_0},t_0,\sqrt{1-\gamma^2}t_1)\)</span> 去噪到 <span class="math inline">\(\sqrt{1-\gamma^2}t_1\)</span> 时间步，然后加噪到 <span class="math inline">\(t_1\)</span> 时间步——以此类推直至到达 <span class="math inline">\(t_N=0\)</span>.</p>
+<p>可以看到，当 <span class="math inline">\(\gamma=1\)</span> 时，<span class="math inline">\(\gamma\)</span>-sampling 与 Consistency Model 中的多步采样算法相同，此时采样是高度随机的；当 <span class="math inline">\(\gamma=0\)</span> 时，<span class="math inline">\(\gamma\)</span>-sampling 变成沿着 PF ODE 的逐步确定性采样；而当 <span class="math inline">\(0&lt;\gamma&lt;1\)</span> 时，<span class="math inline">\(\gamma\)</span>-sampling 可以视作 EDM 中随机采样器的推广版本。<span class="math inline">\(\gamma\)</span> 的具体取值由实践确定。</p>
 <h2 id="scm">sCM</h2>
 <p>TODO</p>
 
