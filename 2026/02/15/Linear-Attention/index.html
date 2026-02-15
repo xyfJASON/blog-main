@@ -19,23 +19,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="VQ (STE)  [NeurIPS 2017] [arXiv:1711.00937] Neural Discrete Representation Learning [CVPR 2021] [arXiv:2012.09841] Taming Transformers for High-Resolution Image Synthesis  VQ (Gumbel Softmax)  [ICLR 2">
+    <meta name="description" content="Softmax Attention 设有 \(\mathbf Q,\mathbf K,\mathbf V\in\mathbb R^{n\times d}\)，其中 \(n\) 表示序列长度，\(d\) 表示 token 维度。标准 softmax attention 的计算机制为： \[ \mathbf O&#x3D;\text{softmax}\left(\frac{\mathbf Q\mathbf K^">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Vector Quantization">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/01/21/Vector-Quantization/index.html">
+<meta property="og:title" content="Linear Attention">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/02/15/Linear-Attention/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="VQ (STE)  [NeurIPS 2017] [arXiv:1711.00937] Neural Discrete Representation Learning [CVPR 2021] [arXiv:2012.09841] Taming Transformers for High-Resolution Image Synthesis  VQ (Gumbel Softmax)  [ICLR 2">
+<meta property="og:description" content="Softmax Attention 设有 \(\mathbf Q,\mathbf K,\mathbf V\in\mathbb R^{n\times d}\)，其中 \(n\) 表示序列长度，\(d\) 表示 token 维度。标准 softmax attention 的计算机制为： \[ \mathbf O&#x3D;\text{softmax}\left(\frac{\mathbf Q\mathbf K^">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vector-quantization.jpg">
-<meta property="article:published_time" content="2026-01-21T08:15:11.000Z">
-<meta property="article:modified_time" content="2026-01-21T09:14:47.507Z">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/linattn.jpeg">
+<meta property="article:published_time" content="2026-02-15T02:17:38.000Z">
+<meta property="article:modified_time" content="2026-02-15T09:23:23.190Z">
 <meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="deep learning">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vector-quantization.jpg">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/linattn.jpeg">
   
   
   
-  <title>Vector Quantization - xyfJASON</title>
+  <title>Linear Attention - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -247,13 +248,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/vector-quantization.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/linattn.jpeg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Vector Quantization"></span>
+            <span id="subtitle" data-typed-text="Linear Attention"></span>
           
         </div>
 
@@ -264,8 +265,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-01-21 16:15" pubdate>
-          2026年1月21日 下午
+        <time datetime="2026-02-15 10:17" pubdate>
+          2026年2月15日 上午
         </time>
       </span>
     
@@ -276,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          77 字
+          979 字
         
       </span>
     
@@ -287,7 +288,7 @@
         
         
         
-          1 分钟
+          9 分钟
         
       </span>
     
@@ -324,60 +325,49 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Vector Quantization</h1>
+            <h1 id="seo-header">Linear Attention</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="vq-ste">VQ (STE)</h2>
-<blockquote>
-<p><strong>[NeurIPS 2017]</strong> [arXiv:1711.00937] Neural Discrete Representation Learning</p>
-<p><strong>[CVPR 2021]</strong> [arXiv:2012.09841] Taming Transformers for High-Resolution Image Synthesis</p>
-</blockquote>
-<h2 id="vq-gumbel-softmax">VQ (Gumbel Softmax)</h2>
-<blockquote>
-<p><strong>[ICLR 2020]</strong> [arXiv:1910.05453] vq-wav2vec: Self-Supervised Learning of Discrete Speech Representations</p>
-</blockquote>
-<h2 id="improved-vq">Improved VQ</h2>
-<blockquote>
-<p><strong>[ICLR 2022]</strong> [arXiv:2110.04627] Vector-quantized Image Modeling with Improved VQGAN</p>
-</blockquote>
-<h2 id="fsq">FSQ</h2>
-<blockquote>
-<p><strong>[ICLR 2024]</strong> [arXiv:2309.15505] Finite Scalar Quantization: VQ-VAE Made Simple</p>
-</blockquote>
-<h2 id="lfq">LFQ</h2>
-<blockquote>
-<p><strong>[ICLR 2024]</strong> [arXiv:2310.05737] Language Model Beats Diffusion: Tokenizer is Key to Visual Generation</p>
-</blockquote>
-<h2 id="bsq">BSQ</h2>
-<blockquote>
-<p><strong>[ICLR 2025]</strong> [arXiv:2406.07548] Image and Video Tokenization with Binary Spherical Quantization</p>
-</blockquote>
-<h2 id="rotation-trick">Rotation Trick</h2>
-<blockquote>
-<p><strong>[ICLR 2025]</strong> [ arXiv:2410.06424] Restructuring Vector Quantization with the Rotation Trick</p>
-</blockquote>
-<h2 id="simvq">SimVQ</h2>
-<blockquote>
-<p><strong>[ICCV 2025]</strong> [arXiv:2411.02038] Addressing Representation Collapse in Vector Quantized Models with One Linear Layer</p>
-</blockquote>
-<h2 id="gsq">GSQ</h2>
-<blockquote>
-<p>[arXiv:2412.02632] Scaling Image Tokenizers with Grouped Spherical Quantization</p>
-</blockquote>
-<h2 id="ibq">IBQ</h2>
-<blockquote>
-<p><strong>[ICCV 2025]</strong> [arXiv:2412.02692] Taming Scalable Visual Tokenizer for Autoregressive Image Generation</p>
-</blockquote>
-<h2 id="softvq">SoftVQ</h2>
-<blockquote>
-<p><strong>[CVPR 2025]</strong> [arXiv:2412.10958] SoftVQ-VAE: Efficient 1-Dimensional Continuous Tokenizer</p>
-</blockquote>
-<h2 id="optvq">OptVQ</h2>
-<blockquote>
-<p>[arXiv:2412.15195] Preventing Local Pitfalls in Vector Quantization via Optimal Transport</p>
-</blockquote>
+                <h2 id="softmax-attention">Softmax Attention</h2>
+<p>设有 <span class="math inline">\(\mathbf Q,\mathbf K,\mathbf V\in\mathbb R^{n\times d}\)</span>，其中 <span class="math inline">\(n\)</span> 表示序列长度，<span class="math inline">\(d\)</span> 表示 token 维度。标准 softmax attention 的计算机制为： <span class="math display">\[
+\mathbf O=\text{softmax}\left(\frac{\mathbf Q\mathbf K^{\mathsf T}}{\sqrt{d}}\right)\mathbf V\in\mathbb R^{n\times d}
+\]</span> 由该式可以清晰地计算 softmax attention 的时间复杂度：<span class="math inline">\(\mathbf Q\mathbf K^\mathsf T\)</span> 的复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>，结果为 <span class="math inline">\(n\times n\)</span> 矩阵；softmax 运算将矩阵的每一行做归一化，复杂度为 <span class="math inline">\(\mathcal O(n^2)\)</span>；最后与 <span class="math inline">\(\mathbf V\)</span> 相乘，复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>. 综上，softmax attention 的时间复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>，与 token 数量呈平方增长关系。</p>
+<p>当采用多头注意力时，模型维度 <span class="math inline">\(D\)</span> 会被切分成 <span class="math inline">\(h\)</span> 个 head，每个 head 的维度为 <span class="math inline">\(d=D/h\)</span>. 由于各个 head 是独立计算的，因此总复杂度为 <span class="math inline">\(\mathcal O(n^2d\cdot h)=\mathcal O(n^2D)\)</span>. 也就是说，softmax attention 的复杂度与 head 的数量无关。</p>
+<h2 id="linear-attention">Linear Attention</h2>
+<p>首先，我们将 softmax attention 的矩阵形式展开为分量形式。记 <span class="math inline">\(\mathbf q_i,\mathbf k_i,\mathbf v_i\in\mathbb R^d\)</span> 表示第 <span class="math inline">\(i\)</span> 个 token 对应的 query, key 和 value，那么它的输出是各个 <span class="math inline">\(\mathbf v_j\)</span> 的线性组合，组合系数是 <span class="math inline">\(\mathbf q_i\)</span> 与各个 <span class="math inline">\(\mathbf k_j\)</span> 的缩放点积相似度，并经由 softmax 归一化： <span class="math display">\[
+\mathbf o_i=\frac{\sum_{j=1}^n\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)\mathbf v_j}{\sum_{j=1}^n\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)}\in\mathbb R^d
+\]</span> 如若将 <span class="math inline">\(\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)\)</span> 视作 <span class="math inline">\(\mathbf q_i,\mathbf k_j\)</span> 的核函数，则上式可以推广为： <span class="math display">\[
+\mathbf o_i=\frac{\sum_{j=1}^nk(\mathbf q_i,\mathbf k_j)\mathbf v_j}{\sum_{j=1}^nk(\mathbf q_i,\mathbf k_j)}
+\]</span> 因此，我们更换不同的核函数，即可得到不同的 attention 机制。进一步地，设核函数 <span class="math inline">\(k(\cdot,\cdot)\)</span> 对应的特征映射函数为 <span class="math inline">\(\phi(\cdot)\)</span>，也即 <span class="math inline">\(k(\mathbf x,\mathbf y)=\phi(\mathbf x)^\mathsf T\phi(\mathbf y)\)</span>，那么有： <span class="math display">\[
+\mathbf o_i=\frac{\sum_{j=1}^n\left(\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)\right)\mathbf v_j}{\sum_{j=1}^n\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)}
+\]</span> 对于分子部分，注意括号中为标量，因此可以作如下变形： <span class="math display">\[
+\sum_{j=1}^n\left(\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)\right)\mathbf v_j=\sum_{j=1}^n\mathbf v_j\left(\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)\right)=\sum_{j=1}^n\mathbf v_j\left(\phi(\mathbf k_j)^\mathsf T\phi(\mathbf q_i)\right)=\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)
+\]</span> 分母可作类似变形，代回得： <span class="math display">\[
+\mathbf o_i=\frac{\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)}{\left(\sum_{j=1}^n\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)}
+\]</span> 由此可见，不同的 <span class="math inline">\(\mathbf q_i\)</span> 共享 <span class="math inline">\(\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\)</span> 和 <span class="math inline">\(\left(\sum_{j=1}^n\phi(\mathbf k_j)^\mathsf T\right)\)</span>，因此这两部分可以只计算一次，它们的时间复杂度分别为 <span class="math inline">\(\mathcal O(nd^2)\)</span> 和 <span class="math inline">\(\mathcal O(nd)\)</span>. 计算结果与各个 <span class="math inline">\(\phi(\mathbf q_i)\)</span> 相乘，总时间复杂度为 <span class="math inline">\(\mathcal O(nd^2)\)</span>. 因此，上述 attention 机制的时间复杂度就是 <span class="math inline">\(\mathcal O(nd^2)\)</span>，与 token 数量呈线性增长关系，故称为 linear attention.</p>
+<p>当采用多头注意力时，仍设模型维度为 <span class="math inline">\(D\)</span>，head 数量为 <span class="math inline">\(h\)</span>，各个 head 的维度为 <span class="math inline">\(d=D/h\)</span>，那么总复杂度为 <span class="math inline">\(\mathcal O(nd^2\cdot h)=\mathcal O(nD^2/h)\)</span>. 可见与 softmax attention 不同，linear attention 的复杂度与 head 的数量相关，且 head 数越多，复杂度越低。</p>
+<p>上文中我们用分量形式进行推导，但实践中需要用矩阵形式进行计算。记 <span class="math inline">\(\phi(\mathbf Q),\phi(\mathbf K)\)</span> 表示对 <span class="math inline">\(\mathbf Q,\mathbf K\)</span> 的各行施加特征映射函数，则上式的分子分母部分可以分别转换为： <span class="math display">\[
+\begin{gather}
+\text{numerator}(\mathbf O)=\phi(\mathbf Q)\left(\phi(\mathbf K)^\mathsf T\mathbf V\right)\in\mathbb R^{n\times d}\\
+\text{denominator}(\mathbf O)=\phi(\mathbf Q)\left(\phi(\mathbf K)^\mathsf T\mathbf 1_n\right)\in\mathbb R^n
+\end{gather}
+\]</span> 其中 <span class="math inline">\(\mathbf 1_n\in\mathbb R^n\)</span> 是一个全 1 向量。最后利用 <code>torch</code> 的广播机制将分子分母相除即可。</p>
+<p>值得注意的是，linear attention 虽然对 token 数量 <span class="math inline">\(n\)</span> 呈线性复杂度，但对维度 <span class="math inline">\(d\)</span> 呈平方复杂度。通常情况下我们有 <span class="math inline">\(d\ll n\)</span>，因此 linear attention 才比 softmax attention 更高效；倘若在特殊情况下 <span class="math inline">\(d\approx n\)</span> 或 <span class="math inline">\(d&gt;n\)</span>，那么 linear attention 则不能带来效率提升。</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Katharopoulos, Angelos, Apoorv Vyas, Nikolaos Pappas, and François Fleuret. Transformers are rnns: Fast autoregressive transformers with linear attention. In <em>International conference on machine learning</em>, pp. 5156-5165. PMLR, 2020. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Wang, Jiahao, Ning Kang, Lewei Yao, Mengzhao Chen, Chengyue Wu, Songyang Zhang, Shuchen Xue et al. LiT: Delving into a Simple Linear Diffusion Transformer for Image Generation. In <em>Proceedings of the IEEE/CVF International Conference on Computer Vision</em>, pp. 16068-16078. 2025. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
 
                 
               </div>
@@ -396,7 +386,7 @@
     
       <span class="category-chain">
         
-  <a href="/blog-main/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" class="category-chain-item">计算机视觉</a>
+  <a href="/blog-main/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" class="category-chain-item">深度学习</a>
   
   
 
@@ -408,6 +398,13 @@
     </div>
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/deep-learning/" class="print-no-link">#deep learning</a>
+      
+    </div>
+  
 </div>
 
 
@@ -416,8 +413,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Vector Quantization</div>
-      <div>https://xyfjason.github.io/blog-main/2026/01/21/Vector-Quantization/</div>
+      <div>Linear Attention</div>
+      <div>https://xyfjason.github.io/blog-main/2026/02/15/Linear-Attention/</div>
     </div>
     <div class="license-meta">
       
@@ -429,7 +426,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年1月21日</div>
+          <div>2026年2月15日</div>
         </div>
       
       
@@ -461,18 +458,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2026/02/15/Linear-Attention/" title="Linear Attention">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Linear Attention</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/" title="Diffusion meets Self-Supervised Learning">
-                        <span class="hidden-mobile">Diffusion meets Self-Supervised Learning</span>
+                      <a href="/blog-main/2026/01/21/Vector-Quantization/" title="Vector Quantization">
+                        <span class="hidden-mobile">Vector Quantization</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
