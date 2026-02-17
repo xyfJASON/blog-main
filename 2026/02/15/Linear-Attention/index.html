@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/linattn.jpeg">
 <meta property="article:published_time" content="2026-02-15T02:17:38.000Z">
-<meta property="article:modified_time" content="2026-02-15T09:23:23.190Z">
+<meta property="article:modified_time" content="2026-02-17T05:04:33.177Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="deep learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          979 字
+          1.4k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          9 分钟
+          12 分钟
         
       </span>
     
@@ -333,28 +333,47 @@
                 <h2 id="softmax-attention">Softmax Attention</h2>
 <p>设有 <span class="math inline">\(\mathbf Q,\mathbf K,\mathbf V\in\mathbb R^{n\times d}\)</span>，其中 <span class="math inline">\(n\)</span> 表示序列长度，<span class="math inline">\(d\)</span> 表示 token 维度。标准 softmax attention 的计算机制为： <span class="math display">\[
 \mathbf O=\text{softmax}\left(\frac{\mathbf Q\mathbf K^{\mathsf T}}{\sqrt{d}}\right)\mathbf V\in\mathbb R^{n\times d}
-\]</span> 由该式可以清晰地计算 softmax attention 的时间复杂度：<span class="math inline">\(\mathbf Q\mathbf K^\mathsf T\)</span> 的复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>，结果为 <span class="math inline">\(n\times n\)</span> 矩阵；softmax 运算将矩阵的每一行做归一化，复杂度为 <span class="math inline">\(\mathcal O(n^2)\)</span>；最后与 <span class="math inline">\(\mathbf V\)</span> 相乘，复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>. 综上，softmax attention 的时间复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>，与 token 数量呈平方增长关系。</p>
-<p>当采用多头注意力时，模型维度 <span class="math inline">\(D\)</span> 会被切分成 <span class="math inline">\(h\)</span> 个 head，每个 head 的维度为 <span class="math inline">\(d=D/h\)</span>. 由于各个 head 是独立计算的，因此总复杂度为 <span class="math inline">\(\mathcal O(n^2d\cdot h)=\mathcal O(n^2D)\)</span>. 也就是说，softmax attention 的复杂度与 head 的数量无关。</p>
-<h2 id="linear-attention">Linear Attention</h2>
-<p>首先，我们将 softmax attention 的矩阵形式展开为分量形式。记 <span class="math inline">\(\mathbf q_i,\mathbf k_i,\mathbf v_i\in\mathbb R^d\)</span> 表示第 <span class="math inline">\(i\)</span> 个 token 对应的 query, key 和 value，那么它的输出是各个 <span class="math inline">\(\mathbf v_j\)</span> 的线性组合，组合系数是 <span class="math inline">\(\mathbf q_i\)</span> 与各个 <span class="math inline">\(\mathbf k_j\)</span> 的缩放点积相似度，并经由 softmax 归一化： <span class="math display">\[
+\]</span> 由该式可以清晰地计算 softmax attention 的时间复杂度：<span class="math inline">\(\mathbf Q\mathbf K^\mathsf T\)</span> 的复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>，结果为 <span class="math inline">\(n\times n\)</span> 矩阵；softmax 运算将矩阵的每一行做归一化，复杂度为 <span class="math inline">\(\mathcal O(n^2)\)</span>；最后与 <span class="math inline">\(\mathbf V\)</span> 相乘，复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>. 综上，softmax attention 的时间复杂度为 <span class="math inline">\(\mathcal O(n^2d)\)</span>，<strong>与 token 数量呈平方增长关系</strong>。当采用多头注意力时，模型维度 <span class="math inline">\(D\)</span> 会被切分成 <span class="math inline">\(h\)</span> 个 head，每个 head 的维度为 <span class="math inline">\(d=D/h\)</span>. 由于各个 head 是独立计算的，因此总复杂度为 <span class="math inline">\(\mathcal O(n^2d\cdot h)=\mathcal O(n^2D)\)</span>. 也就是说，<strong>softmax attention 的复杂度与 head 的数量无关</strong>。</p>
+<p>我们可以将上述矩阵形式可以展开为分量形式。记 <span class="math inline">\(\mathbf q_i,\mathbf k_i,\mathbf v_i\in\mathbb R^d\)</span> 表示第 <span class="math inline">\(i\)</span> 个 token 对应的 query, key 和 value，那么它的输出是各个 <span class="math inline">\(\mathbf v_j\)</span> 的线性组合，组合系数是 <span class="math inline">\(\mathbf q_i\)</span> 与各个 <span class="math inline">\(\mathbf k_j\)</span> 的缩放点积相似度，并经由 softmax 归一化： <span class="math display">\[
 \mathbf o_i=\frac{\sum_{j=1}^n\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)\mathbf v_j}{\sum_{j=1}^n\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)}\in\mathbb R^d
-\]</span> 如若将 <span class="math inline">\(\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)\)</span> 视作 <span class="math inline">\(\mathbf q_i,\mathbf k_j\)</span> 的核函数，则上式可以推广为： <span class="math display">\[
+\]</span> 如若将 <span class="math inline">\(\exp\left(\frac{\mathbf q_i^\mathsf T\mathbf k_j}{\sqrt{d}}\right)\)</span> 视作 <span class="math inline">\(\mathbf q_i,\mathbf k_j\)</span> 之间的一种相似度函数，那么上式可以推广为： <span class="math display">\[
+\mathbf o_i=\frac{\sum_{j=1}^n\text{sim}(\mathbf q_i,\mathbf k_j)\mathbf v_j}{\sum_{j=1}^n\text{sim}(\mathbf q_i,\mathbf k_j)}
+\]</span> 因此，我们更换不同的相似度函数，即可得到不同的 attention 机制。</p>
+<h2 id="linear-attention">Linear Attention</h2>
+<p>Linear attention 的关键在于将相似度函数 <span class="math inline">\(\text{sim}(\cdot,\cdot)\)</span> 约束为某种核函数 <span class="math inline">\(k(\cdot,\cdot)\)</span>： <span class="math display">\[
 \mathbf o_i=\frac{\sum_{j=1}^nk(\mathbf q_i,\mathbf k_j)\mathbf v_j}{\sum_{j=1}^nk(\mathbf q_i,\mathbf k_j)}
-\]</span> 因此，我们更换不同的核函数，即可得到不同的 attention 机制。进一步地，设核函数 <span class="math inline">\(k(\cdot,\cdot)\)</span> 对应的特征映射函数为 <span class="math inline">\(\phi(\cdot)\)</span>，也即 <span class="math inline">\(k(\mathbf x,\mathbf y)=\phi(\mathbf x)^\mathsf T\phi(\mathbf y)\)</span>，那么有： <span class="math display">\[
+\]</span> 于是，若设核函数对应的特征映射函数为 <span class="math inline">\(\phi(\cdot)\)</span>，也即 <span class="math inline">\(k(\mathbf x,\mathbf y)=\phi(\mathbf x)^\mathsf T\phi(\mathbf y)\)</span>，那么有： <span class="math display">\[
 \mathbf o_i=\frac{\sum_{j=1}^n\left(\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)\right)\mathbf v_j}{\sum_{j=1}^n\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)}
 \]</span> 对于分子部分，注意括号中为标量，因此可以作如下变形： <span class="math display">\[
 \sum_{j=1}^n\left(\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)\right)\mathbf v_j=\sum_{j=1}^n\mathbf v_j\left(\phi(\mathbf q_i)^\mathsf T\phi(\mathbf k_j)\right)=\sum_{j=1}^n\mathbf v_j\left(\phi(\mathbf k_j)^\mathsf T\phi(\mathbf q_i)\right)=\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)
 \]</span> 分母可作类似变形，代回得： <span class="math display">\[
 \mathbf o_i=\frac{\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)}{\left(\sum_{j=1}^n\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)}
-\]</span> 由此可见，不同的 <span class="math inline">\(\mathbf q_i\)</span> 共享 <span class="math inline">\(\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\)</span> 和 <span class="math inline">\(\left(\sum_{j=1}^n\phi(\mathbf k_j)^\mathsf T\right)\)</span>，因此这两部分可以只计算一次，它们的时间复杂度分别为 <span class="math inline">\(\mathcal O(nd^2)\)</span> 和 <span class="math inline">\(\mathcal O(nd)\)</span>. 计算结果与各个 <span class="math inline">\(\phi(\mathbf q_i)\)</span> 相乘，总时间复杂度为 <span class="math inline">\(\mathcal O(nd^2)\)</span>. 因此，上述 attention 机制的时间复杂度就是 <span class="math inline">\(\mathcal O(nd^2)\)</span>，与 token 数量呈线性增长关系，故称为 linear attention.</p>
-<p>当采用多头注意力时，仍设模型维度为 <span class="math inline">\(D\)</span>，head 数量为 <span class="math inline">\(h\)</span>，各个 head 的维度为 <span class="math inline">\(d=D/h\)</span>，那么总复杂度为 <span class="math inline">\(\mathcal O(nd^2\cdot h)=\mathcal O(nD^2/h)\)</span>. 可见与 softmax attention 不同，linear attention 的复杂度与 head 的数量相关，且 head 数越多，复杂度越低。</p>
+\]</span> 由此可见，不同的 <span class="math inline">\(\mathbf q_i\)</span> 共享 <span class="math inline">\(\left(\sum_{j=1}^n\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\)</span> 和 <span class="math inline">\(\left(\sum_{j=1}^n\phi(\mathbf k_j)^\mathsf T\right)\)</span>，因此这两部分可以只计算一次，它们的时间复杂度分别为 <span class="math inline">\(\mathcal O(nd^2)\)</span> 和 <span class="math inline">\(\mathcal O(nd)\)</span>. 计算结果与各个 <span class="math inline">\(\phi(\mathbf q_i)\)</span> 相乘，总时间复杂度为 <span class="math inline">\(\mathcal O(nd^2)\)</span>. 因此，linear attention 机制的时间复杂度就是 <span class="math inline">\(\mathcal O(nd^2)\)</span>，<strong>与 token 数量呈线性增长关系</strong>。当采用多头注意力时，仍设模型维度为 <span class="math inline">\(D\)</span>，head 数量为 <span class="math inline">\(h\)</span>，各个 head 的维度为 <span class="math inline">\(d=D/h\)</span>，那么总复杂度为 <span class="math inline">\(\mathcal O(nd^2\cdot h)=\mathcal O(nD^2/h)\)</span>. 可见与 softmax attention 不同，<strong>linear attention 的复杂度与 head 的数量相关</strong>，且 head 数越多，复杂度越低。</p>
 <p>上文中我们用分量形式进行推导，但实践中需要用矩阵形式进行计算。记 <span class="math inline">\(\phi(\mathbf Q),\phi(\mathbf K)\)</span> 表示对 <span class="math inline">\(\mathbf Q,\mathbf K\)</span> 的各行施加特征映射函数，则上式的分子分母部分可以分别转换为： <span class="math display">\[
 \begin{gather}
 \text{numerator}(\mathbf O)=\phi(\mathbf Q)\left(\phi(\mathbf K)^\mathsf T\mathbf V\right)\in\mathbb R^{n\times d}\\
 \text{denominator}(\mathbf O)=\phi(\mathbf Q)\left(\phi(\mathbf K)^\mathsf T\mathbf 1_n\right)\in\mathbb R^n
 \end{gather}
 \]</span> 其中 <span class="math inline">\(\mathbf 1_n\in\mathbb R^n\)</span> 是一个全 1 向量。最后利用 <code>torch</code> 的广播机制将分子分母相除即可。</p>
-<p>值得注意的是，linear attention 虽然对 token 数量 <span class="math inline">\(n\)</span> 呈线性复杂度，但对维度 <span class="math inline">\(d\)</span> 呈平方复杂度。通常情况下我们有 <span class="math inline">\(d\ll n\)</span>，因此 linear attention 才比 softmax attention 更高效；倘若在特殊情况下 <span class="math inline">\(d\approx n\)</span> 或 <span class="math inline">\(d&gt;n\)</span>，那么 linear attention 则不能带来效率提升。</p>
+<p>值得注意的是，linear attention 虽然对 token 数量 <span class="math inline">\(n\)</span> 呈线性复杂度，但对维度 <span class="math inline">\(d\)</span> 呈平方复杂度。通常情况下我们有 <span class="math inline">\(d\ll n\)</span>，因此 linear attention 才比 softmax attention 更高效；倘若 <span class="math inline">\(d\approx n\)</span> 或 <span class="math inline">\(d&gt;n\)</span>，那么 linear attention 则不能带来效率提升。</p>
+<h2 id="causal-attention-and-rnns">Causal Attention and RNNs</h2>
+<p>上文我们讨论的 softmax / linear attention 都是双向的，而在自回归生成中，我们需要因果注意力。对于 softmax attention，这是通过给 attention map 加 causal mask 实现的： <span class="math display">\[
+\mathbf O=\text{softmax}\left(\frac{\mathbf Q\mathbf K^{\mathsf T}}{\sqrt{d}}+\log\mathbf M\right)\mathbf V
+\]</span> 其中 <span class="math inline">\(\mathbf M\in\{0,1\}^{n\times n}\)</span> 是一个下三角取 <span class="math inline">\(1\)</span>，上三角取 <span class="math inline">\(0\)</span> 的矩阵，并定义 <span class="math inline">\(\log 0=-\infty\)</span>. 加上负无穷的元素在经过 softmax 后变成了 <span class="math inline">\(0\)</span>，因此不参与后续计算。在分量形式中，加 causal mask 只需将从 <span class="math inline">\(1\)</span> 到 <span class="math inline">\(n\)</span> 的求和改为从 <span class="math inline">\(1\)</span> 到 <span class="math inline">\(i\)</span> 的求和即可： <span class="math display">\[
+\mathbf o_i=\frac{\sum_{j=1}^i\text{sim}(\mathbf q_i,\mathbf k_j)\mathbf v_j}{\sum_{j=1}^i\text{sim}(\mathbf q_i,\mathbf k_j)}
+\]</span> 基于同样的道理，我们修改求和上限即可将 linear attention 改造为 causal 形式： <span class="math display">\[
+\mathbf o_i=\frac{\left(\sum_{j=1}^i\mathbf v_j\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)}{\left(\sum_{j=1}^i\phi(\mathbf k_j)^\mathsf T\right)\phi(\mathbf q_i)}
+\]</span> 回忆 linear attention 达成线性复杂度的关键是括号中的两部分可以只计算一次，而在 causal 形式中，尽管这两部分不能一次性计算出来，但它们可以在常数复杂度内递推出来。具体而言，记 <span class="math inline">\(S_i=\sum_{j=1}^i\phi(\mathbf k_j)\mathbf v_j^\mathsf T,\,Z_i=\sum_{j=1}^i\phi(\mathbf k_j)\)</span>，则有： <span class="math display">\[
+\begin{cases}
+S_i=S_{i-1}+\phi(\mathbf k_i)\mathbf v_i^\mathsf T\\
+S_0=0
+\end{cases},\quad
+\begin{cases}
+Z_i=Z_{i-1}+\phi(\mathbf k_i)\\
+Z_0=0
+\end{cases},\quad
+\mathbf o_i=\frac{S_i^{\mathsf T}\phi(\mathbf q_i)}{Z_i^{\mathsf T}\phi(\mathbf q_i)}
+\]</span> 由于递推复杂度是 <span class="math inline">\(\mathcal O(d^2)\)</span>，因此总时间复杂度仍为 <span class="math inline">\(\mathcal O(nd^2)\)</span>. 特别注意到，这种递推形式满足 RNN 的思想：给定一个输入（<span class="math inline">\(\mathbf q_i,\mathbf k_i,\mathbf v_i\)</span>），修改内在状态（<span class="math inline">\(S_{i-1}\to S_i,\,Z_{i-1}\to Z_i\)</span>），预测一个输出（<span class="math inline">\(\mathbf o_i\)</span>），因此 linear attention 的论文标题直言到 "Transformers are RNNs".</p>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
