@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="MMD Maximum Mean Discrepancy (MMD) 是一个衡量两个分布差异的指标。具体而言，设 \(p,q\) 是 \(\mathcal X\) 上的概率分布，给定从 \(p\) 采样出的独立同分布样本 \(X&#x3D;\{x_1,\ldots,x_m\}\) 以及从 \(q\) 采样出的独立同分布样本 \(Y&#x3D;\{y_1,\ldots,y_n\}\)，我们询问 \(p\) 是否等于 \">
+    <meta name="description" content="启发与定义 Maximum Mean Discrepancy (MMD) 是一个衡量两个分布差异的指标。具体而言，设 \(p,q\) 是 \(\mathcal X\) 上的概率分布，给定从 \(p\) 采样出的独立同分布样本 \(X&#x3D;\{x_1,\ldots,x_m\}\) 以及从 \(q\) 采样出的独立同分布样本 \(Y&#x3D;\{y_1,\ldots,y_n\}\)，我们如何判断二者是否采样自同一">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Maximum Mean Discrepancy">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2024/07/08/Maximum-Mean-Discrepancy/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="MMD Maximum Mean Discrepancy (MMD) 是一个衡量两个分布差异的指标。具体而言，设 \(p,q\) 是 \(\mathcal X\) 上的概率分布，给定从 \(p\) 采样出的独立同分布样本 \(X&#x3D;\{x_1,\ldots,x_m\}\) 以及从 \(q\) 采样出的独立同分布样本 \(Y&#x3D;\{y_1,\ldots,y_n\}\)，我们询问 \(p\) 是否等于 \">
+<meta property="og:description" content="启发与定义 Maximum Mean Discrepancy (MMD) 是一个衡量两个分布差异的指标。具体而言，设 \(p,q\) 是 \(\mathcal X\) 上的概率分布，给定从 \(p\) 采样出的独立同分布样本 \(X&#x3D;\{x_1,\ldots,x_m\}\) 以及从 \(q\) 采样出的独立同分布样本 \(Y&#x3D;\{y_1,\ldots,y_n\}\)，我们如何判断二者是否采样自同一">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mmd.jpeg">
 <meta property="article:published_time" content="2024-07-08T08:24:58.000Z">
-<meta property="article:modified_time" content="2026-03-16T04:26:20.470Z">
+<meta property="article:modified_time" content="2026-03-17T04:13:21.718Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1k 字
+          1.1k 字
         
       </span>
     
@@ -288,7 +288,7 @@
         
         
         
-          9 分钟
+          10 分钟
         
       </span>
     
@@ -330,21 +330,22 @@
             
               <div class="markdown-body">
                 
-                <h2 id="mmd">MMD</h2>
-<p>Maximum Mean Discrepancy (MMD) 是一个衡量两个分布差异的指标。具体而言，设 <span class="math inline">\(p,q\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的概率分布，给定从 <span class="math inline">\(p\)</span> 采样出的独立同分布样本 <span class="math inline">\(X=\{x_1,\ldots,x_m\}\)</span> 以及从 <span class="math inline">\(q\)</span> 采样出的独立同分布样本 <span class="math inline">\(Y=\{y_1,\ldots,y_n\}\)</span>，我们询问 <span class="math inline">\(p\)</span> 是否等于 <span class="math inline">\(q\)</span> ？</p>
+                <h2 id="启发与定义">启发与定义</h2>
+<p>Maximum Mean Discrepancy (MMD) 是一个衡量两个分布差异的指标。具体而言，设 <span class="math inline">\(p,q\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的概率分布，给定从 <span class="math inline">\(p\)</span> 采样出的独立同分布样本 <span class="math inline">\(X=\{x_1,\ldots,x_m\}\)</span> 以及从 <span class="math inline">\(q\)</span> 采样出的独立同分布样本 <span class="math inline">\(Y=\{y_1,\ldots,y_n\}\)</span>，我们如何判断二者是否采样自同一个分布？（即询问 <span class="math inline">\(p\)</span> 是否等于 <span class="math inline">\(q\)</span> ？）</p>
 <p>MMD 启发自如下定理。</p>
 <p><strong>定理 1</strong>：设 <span class="math inline">\((\mathcal X,d)\)</span> 是一个可分的度量空间，<span class="math inline">\(p,q\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的两个 Borel 概率测度，则： <span class="math display">\[
-p=q\quad\iff\quad\mathbb E_p[f(x)]=\mathbb E_q[f(x)],\;\forall f\in C(\mathcal X)
+p=q\iff\mathbb E_p[f(x)]=\mathbb E_q[f(x)],\;\forall f\in C(\mathcal X)
 \]</span> 其中 <span class="math inline">\(C(\mathcal X)\)</span> 表示 <span class="math inline">\(\mathcal X\)</span> 上所有连续有界函数。</p>
-<p>基于上述定理，当 <span class="math inline">\(p=q\)</span> 时总有 <span class="math inline">\(\mathbb E_{p}[f(x)]-\mathbb E_{q}[f(x)]=0\)</span>，因此用这个差值作为衡量指标似乎是一个不错的选择。不过这个差值还依赖于 <span class="math inline">\(f\)</span> 的选取，一个自然的想法是选择使得差值最大的那个 <span class="math inline">\(f\)</span>. 于是，我们得到了 MMD 的定义。</p>
-<p><strong>定义 (MMD)</strong>：设 <span class="math inline">\(\mathcal F\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上函数的集合，<span class="math inline">\(p,q,X,Y\)</span> 如上文所定义。定义 MMD 为： <span class="math display">\[
+<p>基于上述定理，当 <span class="math inline">\(p=q\)</span> 时总有 <span class="math inline">\(\mathbb E_{p}[f(x)]-\mathbb E_{q}[f(x)]=0\)</span>，因此用这个差值作为衡量指标似乎是一个不错的选择。不过这个差值还依赖于 <span class="math inline">\(f\)</span> 的选取，因此一个自然的想法是选择使得差值最大的那个 <span class="math inline">\(f\)</span>. 于是，我们得到了 MMD 的定义。</p>
+<p><strong>定义 (MMD)</strong>：设 <span class="math inline">\(\mathcal F\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上某些函数的集合，<span class="math inline">\(p,q,X,Y\)</span> 如上文所定义。定义 MMD 为： <span class="math display">\[
 \text{MMD}[\mathcal F,p,q]\mathrel{\mathrel{\vcenter{:}}=}\sup_{f\in\mathcal F}\Big(\mathbb E_{p}[f(x)]-\mathbb E_{q}[f(x)]\Big)
-\]</span> 当取 <span class="math inline">\(\mathcal F=C(\mathcal X)\)</span> 我们就回到了定理 1 的情形，但是对于实际求解而言，<span class="math inline">\(C(\mathcal X)\)</span> 的范围太大了。因此，MMD 作者将 <span class="math inline">\(\mathcal F\)</span> 限制为 universal <a href="/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/" title="Reproducing Kernel Hilbert Space">再生核希尔伯特空间 (RKHS)</a> 中的单位球。若加入 <span class="math inline">\(\mathcal X\)</span> 是紧的这一条件，那么 universal RKHS 在 <span class="math inline">\(C(\mathcal X)\)</span> 中在 <span class="math inline">\(L_\infty\)</span> 范数下是稠密的。这引出了下面的定理，表明限制 <span class="math inline">\(\mathcal F\)</span> 为 universal RKHS 中的单位球是可行的。</p>
-<p><strong>定理 2</strong>：设 <span class="math inline">\(\mathcal X\)</span> 是一个紧的度量空间，<span class="math inline">\(\mathcal H\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的泛函构成的 universal RKHS，相应的再生核为 <span class="math inline">\(k(\cdot,\cdot)\)</span>. 设 <span class="math inline">\(\mathcal F\)</span> 为 <span class="math inline">\(\mathcal H\)</span> 中的单位球，则： <span class="math display">\[
- p=q\quad\iff\quad\text{MMD}[\mathcal F,p,q]=0
-\]</span> 选择 RKHS 的好处在于，利用再生核的再生性，我们能很方便地计算 MMD. 具体而言，设 <span class="math inline">\(\phi(x)=k(\cdot,x)\in\mathcal H\)</span>，则根据再生性有： <span class="math display">\[
-f(x)=\langle f,\phi(x)\rangle_\mathcal H
-\]</span> 因此 MMD 可以写作： <span class="math display">\[
+\]</span> 当取 <span class="math inline">\(\mathcal F=C(\mathcal X)\)</span> 时我们就得到了定理 1 的情形。</p>
+<h2 id="引入-rkhs">引入 RKHS</h2>
+<p>在实际求解中，<span class="math inline">\(C(\mathcal X)\)</span> 的范围太大了，需要将其限制在一个更小的范围。为此，MMD 作者将 <span class="math inline">\(\mathcal F\)</span> 限制为 universal <a href="/blog-main/2024/04/30/Reproducing-Kernel-Hilbert-Space/" title="Reproducing Kernel Hilbert Space">RKHS</a> 中的单位球。简要回顾一下，一个 RKHS <span class="math inline">\(\mathcal H\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的函数构成的希尔伯特空间 <span class="math inline">\(\mathcal H=\{f\mid f:\mathcal X\to\mathbb R\}\)</span>，并且唯一对应一个再生核 <span class="math inline">\(k:\mathcal X\times \mathcal X\to\mathbb R\)</span>，满足 <span class="math inline">\(k(\cdot,x)\in\mathcal H\)</span> 且具有再生性质 <span class="math inline">\(\langle f,k(\cdot,x)\rangle_\mathcal H=f(x)\)</span>.</p>
+<p>若加入 <span class="math inline">\(\mathcal X\)</span> 是紧的这一条件，那么下面的定理表明限制 <span class="math inline">\(\mathcal F\)</span> 为 universal RKHS 中的单位球是可行的。</p>
+<p><strong>定理 2</strong>：设 <span class="math inline">\(\mathcal X\)</span> 是一个紧的度量空间，<span class="math inline">\(\mathcal H\)</span> 是 <span class="math inline">\(\mathcal X\)</span> 上的 universal RKHS，相应的再生核为 <span class="math inline">\(k(\cdot,\cdot)\)</span>. 设 <span class="math inline">\(\mathcal F\)</span> 为 <span class="math inline">\(\mathcal H\)</span> 中的单位球，则： <span class="math display">\[
+p=q\iff\text{MMD}[\mathcal F,p,q]=0
+\]</span> 选择 RKHS 的好处在于，利用再生核的再生性质，我们能很方便地计算 MMD. 具体而言，设 <span class="math inline">\(\phi(x)=k(\cdot,x)\in\mathcal H\)</span>，则根据再生性质有 <span class="math inline">\(f(x)=\langle f,\phi(x)\rangle_\mathcal H\)</span>，因此 MMD 可以写作： <span class="math display">\[
 \begin{align}
 \text{MMD}[\mathcal F,p,q]&amp;=\sup_{\Vert f\Vert_\mathcal H\leq 1}\Big(\mathbb E_{p}[f(x)]-\mathbb E_{q}[f(x)]\Big)\\
 &amp;=\sup_{\Vert f\Vert_\mathcal H\leq 1}\Big(\mathbb E_{p}\langle f,\phi(x)\rangle_{\mathcal H}-\mathbb E_{q}\langle f,\phi(x)\rangle_{\mathcal H}\Big)\\
@@ -352,22 +353,23 @@ f(x)=\langle f,\phi(x)\rangle_\mathcal H
 &amp;=\sup_{\Vert f\Vert_\mathcal H\leq 1}\big\langle f,\mathbb E_{p}[\phi(x)]-\mathbb E_{q}[\phi(x)]\big\rangle_{\mathcal H}\\
 &amp;=\big\Vert\mathbb E_{p}[\phi(x)]-\mathbb E_{q}[\phi(x)]\big\Vert_{\mathcal H}
 \end{align}
-\]</span> 其中 <span class="math inline">\(\mathbb E_{p}[\phi(x)]\in\mathcal H\)</span> 称作分布 <span class="math inline">\(p\)</span> 的核均值嵌入 (kernel mean embedding). 可以看见，MMD 本质上就是 RKHS 中两个点的距离。</p>
+\]</span> 其中 <span class="math inline">\(\mathbb E_{p}[\phi(x)]\in\mathcal H\)</span> 称作分布 <span class="math inline">\(p\)</span> 的核均值嵌入 (kernel mean embedding). 可以看见，MMD 本质上就是 RKHS 中，分布 <span class="math inline">\(p\)</span> 的核均值嵌入和分布 <span class="math inline">\(q\)</span> 的核均值嵌入之间的距离，如下图所示。</p>
 <p><img src="embedding.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
+<h2 id="经验估计">经验估计</h2>
 <p>使用样本近似期望，得到 MMD 的经验估计： <span class="math display">\[
 \text{MMD}[\mathcal F,X,Y]=\left\Vert\frac{1}{m}\sum_{i=1}^m\phi(x_i)-\frac{1}{n}\sum_{i=1}^n\phi(y_i)\right\Vert_{\mathcal H}
 \]</span></p>
-<p>值得注意的是这个估计其实是有偏的。进一步地，取平方得： <span class="math display">\[
+<p>值得注意的是这个估计其实是有偏的。为继续化简，取平方得： <span class="math display">\[
 \begin{align}
-\text{MMD}[\mathcal F,X,Y]^2&amp;=\left\Vert\frac{1}{m}\sum_{i=1}^m\phi(x_i)-\frac{1}{n}\sum_{i=1}^n\phi(y_i)\right\Vert_{\mathcal H}^2\\
-&amp;=\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^m\langle\phi(x_i),\phi(x_j)\rangle+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^n\langle\phi(y_i),\phi(y_j)\rangle-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^n\langle\phi(x_i),\phi(y_j)\rangle\\
-&amp;=\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)
+\text{MMD}^2[\mathcal F,X,Y]&amp;=\left\Vert\frac{1}{m}\sum_{i=1}^m\phi(x_i)-\frac{1}{n}\sum_{i=1}^n\phi(y_i)\right\Vert_{\mathcal H}^2\\
+&amp;=\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^m\langle\phi(x_i),\phi(x_j)\rangle-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^n\langle\phi(x_i),\phi(y_j)\rangle+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^n\langle\phi(y_i),\phi(y_j)\rangle\\
+&amp;=\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)
 \end{align}
 \]</span></p>
 <p>因此： <span class="math display">\[
-\text{MMD}[\mathcal F,X,Y]=\left[\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)\right]^{\frac{1}{2}}
+\text{MMD}[\mathcal F,X,Y]=\left[\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)\right]^{\frac{1}{2}}
 \]</span> 这就是我们在实际应用中使用的 MMD 计算公式，其中再生核一般取高斯核或者拉普拉斯核。</p>
-<h2 id="references">References</h2>
+<h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
 <ol>
@@ -376,9 +378,6 @@ f(x)=\langle f,\phi(x)\rangle_\mathcal H
 </li>
 <li>
 <span id="fn:2" class="footnote-text"><span>Gretton, Arthur, Karsten M. Borgwardt, Malte J. Rasch, Bernhard Schölkopf, and Alexander Smola. A kernel two-sample test. <em>The Journal of Machine Learning Research</em> 13, no. 1 (2012): 723-773. <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
-</li>
-<li>
-<span id="fn:3" class="footnote-text"><span>迁移学习简介之最大均值差异（Maximum Mean Discrepancy） - 姚远的文章 - 知乎. https://zhuanlan.zhihu.com/p/679276071 <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
 </li>
 </ol>
 </div>
