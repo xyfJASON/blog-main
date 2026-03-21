@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/mmd.jpeg">
 <meta property="article:published_time" content="2024-07-08T08:24:58.000Z">
-<meta property="article:modified_time" content="2026-03-17T04:13:21.718Z">
+<meta property="article:modified_time" content="2026-03-17T12:34:32.714Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -277,7 +277,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.1k 字
+          1.2k 字
         
       </span>
     
@@ -356,19 +356,18 @@ p=q\iff\text{MMD}[\mathcal F,p,q]=0
 \]</span> 其中 <span class="math inline">\(\mathbb E_{p}[\phi(x)]\in\mathcal H\)</span> 称作分布 <span class="math inline">\(p\)</span> 的核均值嵌入 (kernel mean embedding). 可以看见，MMD 本质上就是 RKHS 中，分布 <span class="math inline">\(p\)</span> 的核均值嵌入和分布 <span class="math inline">\(q\)</span> 的核均值嵌入之间的距离，如下图所示。</p>
 <p><img src="embedding.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
 <h2 id="经验估计">经验估计</h2>
-<p>使用样本近似期望，得到 MMD 的经验估计： <span class="math display">\[
-\text{MMD}[\mathcal F,X,Y]=\left\Vert\frac{1}{m}\sum_{i=1}^m\phi(x_i)-\frac{1}{n}\sum_{i=1}^n\phi(y_i)\right\Vert_{\mathcal H}
-\]</span></p>
-<p>值得注意的是这个估计其实是有偏的。为继续化简，取平方得： <span class="math display">\[
+<p>实践中，设有从 <span class="math inline">\(p\)</span> 中采样的独立同分布样本 <span class="math inline">\(X=\{x_1,\ldots,x_m\}\)</span> 以及从 <span class="math inline">\(q\)</span> 中采样的独立同分布样本 <span class="math inline">\(Y=\{y_1,\ldots,y_n\}\)</span>，则用样本近似期望，取平方得： <span class="math display">\[
 \begin{align}
-\text{MMD}^2[\mathcal F,X,Y]&amp;=\left\Vert\frac{1}{m}\sum_{i=1}^m\phi(x_i)-\frac{1}{n}\sum_{i=1}^n\phi(y_i)\right\Vert_{\mathcal H}^2\\
+\text{MMD}_b^2[\mathcal F,X,Y]&amp;=\left\Vert\frac{1}{m}\sum_{i=1}^m\phi(x_i)-\frac{1}{n}\sum_{i=1}^n\phi(y_i)\right\Vert_{\mathcal H}^2\\
 &amp;=\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^m\langle\phi(x_i),\phi(x_j)\rangle-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^n\langle\phi(x_i),\phi(y_j)\rangle+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^n\langle\phi(y_i),\phi(y_j)\rangle\\
 &amp;=\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)
 \end{align}
 \]</span></p>
 <p>因此： <span class="math display">\[
-\text{MMD}[\mathcal F,X,Y]=\left[\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)\right]^{\frac{1}{2}}
-\]</span> 这就是我们在实际应用中使用的 MMD 计算公式，其中再生核一般取高斯核或者拉普拉斯核。</p>
+\text{MMD}_b[\mathcal F,X,Y]=\left[\frac{1}{m^2}\sum_{i=1}^{m}\sum_{j=1}^mk(x_i,x_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)+\frac{1}{n^2}\sum_{i=1}^{n}\sum_{j=1}^nk(y_i,y_j)\right]^{\frac{1}{2}}
+\]</span> 值得注意的是这个估计其实是有偏的。类似地，另一个关于 <span class="math inline">\(\text{MMD}^2\)</span> 的无偏估计为： <span class="math display">\[
+\text{MMD}_u^2[\mathcal F,X,Y]=\frac{1}{m(m-1)}\sum_{i=1}^m\sum_{j\neq i}^mk(x_i,x_j)+\frac{1}{n(n-1)}\sum_{i=1}^n\sum_{j\neq i}^nk(y_i,y_j)-\frac{2}{mn}\sum_{i=1}^m\sum_{j=1}^nk(x_i,y_j)
+\]</span> 这两个估计量这就是我们在实际应用中使用的 MMD 计算公式，其中再生核一般取高斯核或者拉普拉斯核。</p>
 <h2 id="参考资料">参考资料</h2>
 <section class="footnotes">
 <div class="footnote-list">
@@ -472,9 +471,9 @@ p=q\iff\text{MMD}[\mathcal F,p,q]=0
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/blog-main/2024/10/13/%E9%A1%BA%E5%BA%8F%E7%BB%9F%E8%AE%A1%E9%87%8F/" title="顺序统计量">
+                      <a href="/blog-main/2024/10/13/Order-Statistic/" title="Order Statistic">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">顺序统计量</span>
+                        <span class="hidden-mobile">Order Statistic</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     

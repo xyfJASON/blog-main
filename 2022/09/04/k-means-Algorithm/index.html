@@ -21,14 +21,14 @@
   
     <meta name="description" content="谈到聚类，k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，但隐藏着许多值得深入探究的奥秘。 k-means 理论推导 设有样本集 \(\{\mathbf x_1,\ldots,\mathbf x_N\}\)，其中 \(\mathbf x_n\in \mathbb R^d\)；又设 \(C:\mathbb N\to\mathbb N\) 表示对样本集的一个划分，\(C(n)&#x3D;k\)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="k-means算法及其推广">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/04/k-means%E7%AE%97%E6%B3%95%E5%8F%8A%E5%85%B6%E6%8E%A8%E5%B9%BF/index.html">
+<meta property="og:title" content="k-means Algorithm">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2022/09/04/k-means-Algorithm/index.html">
 <meta property="og:site_name" content="xyfJASON">
 <meta property="og:description" content="谈到聚类，k-means 无疑是最先想到的算法之一了。其思想异常的简单有效，但隐藏着许多值得深入探究的奥秘。 k-means 理论推导 设有样本集 \(\{\mathbf x_1,\ldots,\mathbf x_N\}\)，其中 \(\mathbf x_n\in \mathbb R^d\)；又设 \(C:\mathbb N\to\mathbb N\) 表示对样本集的一个划分，\(C(n)&#x3D;k\)">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/kmeans.jpeg">
 <meta property="article:published_time" content="2022-09-04T08:34:45.000Z">
-<meta property="article:modified_time" content="2025-09-17T11:31:54.021Z">
+<meta property="article:modified_time" content="2026-03-21T03:45:49.205Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="machine learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -36,7 +36,7 @@
   
   
   
-  <title>k-means算法及其推广 - xyfJASON</title>
+  <title>k-means Algorithm - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -254,7 +254,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="k-means算法及其推广"></span>
+            <span id="subtitle" data-typed-text="k-means Algorithm"></span>
           
         </div>
 
@@ -325,7 +325,7 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">k-means算法及其推广</h1>
+            <h1 id="seo-header">k-means Algorithm</h1>
             
             
               <div class="markdown-body">
@@ -398,7 +398,7 @@ L(\mathbf m_k,\lambda)=\sum_{C(n)=k}\frac{\mathbf x_n^\mathsf T\mathbf m_k}{\|\m
 \]</span> 其中 <span class="math inline">\(1/2\lambda\)</span> 是归一化系数，以使得 <span class="math inline">\(\mathbf m_k\)</span> 是单位向量。不过鉴于余弦相似度与 <span class="math inline">\(\mathbf m_k\)</span> 模长无关，所以是否归一化也不重要。综上所述，对于类 <span class="math inline">\(k\)</span>，其类中心 <span class="math inline">\(\mathbf m_k\)</span> 应更新为所有属于类 <span class="math inline">\(k\)</span> 的样本<strong>归一化后</strong>的和。该算法被称作 <strong>spherical k-means</strong>，因为归一化操作意味着样本始终在单位球面上。</p>
 <p>特别地，倘若样本 <span class="math inline">\(\mathbf x_n\)</span> 本来就是归一化的，由于两个<strong>单位向量</strong>的余弦相似度与欧氏距离是等价的： <span class="math display">\[
 \|\mathbf x-\mathbf y\|_2^2=\mathbf x^\mathsf T \mathbf x+\mathbf y^\mathsf T \mathbf y-2\mathbf x^\mathsf T\mathbf y=2(1-\mathbf x^\mathsf T\mathbf y)=2(1-\cos\langle\mathbf x,\mathbf y\rangle)
-\]</span> 所以<strong>在这个特殊情况下，根据余弦相似度做 spherical k-means，和根据欧式距离做 k-means 是等价的</strong>。</p>
+\]</span> 所以在这个特殊情况下，根据余弦相似度做 spherical k-means，和根据欧式距离做 k-means 是等价的。</p>
 <h3 id="任意距离">任意距离</h3>
 <p>对于任意的距离度量，第 3 步很可能没有一个像均值/中位数/众数那么好看的解，而最为暴力的求解方法就是——枚举！我们当然不可能在实值空间里枚举，但可以只在样本点中枚举——这就是 <strong>k-medoids</strong> 算法。可见，k-medoids 得到的中心点一定是样本点，这是它与 k-means、k-medians 和 k-modes 的不同之处。k-medoids 有一个特殊的应用场景——<strong>只知道样本点两两之间的距离，但不知道样本点具体是多少</strong>。注意到无论是 k-means, k-medians 还是 k-modes，计算均值/中位数/众数必然需要样本点具体的值，所以它们无法应用在这个特殊的场景下。</p>
 <p>综上所述，我们发现<strong>想要用一个新的距离度量，只需要想办法求解第 3 步</strong>——如果没有解析解，那就枚举（k-medoids）；如果有，恭喜你，你可以把这个算法叫做 「k-some_strange_word_starting_with_the_letter_m」 了！（大雾）</p>
@@ -415,9 +415,9 @@ L(\mathbf m_k,\lambda)=\sum_{C(n)=k}\frac{\mathbf x_n^\mathsf T\mathbf m_k}{\|\m
 k=\text{argmin}_{j=1}^K\|\mathbf x_n-\mathbf m_j\|^2
 \]</span> 于是 <span class="math inline">\(\gamma_{nk}\)</span> 可以写作： <span class="math display">\[
 \gamma_{nk}=\text{onehot}\left(\text{argmin}_{j=1}^K\|\mathbf x_n-\mathbf m_j\|^2\right)_k=\text{onehot}\left(\text{argmax}_{j=1}^K(-\|\mathbf x_n-\mathbf m_j\|^2)\right)_k
-\]</span> 根据<a href="/blog-main/2022/07/25/%E5%90%84%E7%A7%8D%E5%87%BD%E6%95%B0%E7%9A%84hard%E4%B8%8Esoft%E5%BD%A2%E5%BC%8F/" title="各种函数的hard与soft形式">各种函数的hard与soft形式</a>一文可知，<span class="math inline">\(\text{onehot}(\text{argmax})\)</span> 的平滑近似是 <span class="math inline">\(\text{softmax}\)</span>，所以： <span class="math display">\[
+\]</span> 用 <span class="math inline">\(\text{softmax}\)</span> 作为 <span class="math inline">\(\text{onehot}(\text{argmax})\)</span> 的平滑近似： <span class="math display">\[
 \gamma_{nk}\approx\hat\gamma_{nk}=\text{softmax}\left(-\|\mathbf x_n-\mathbf m_j\|^2;\tau\right)_k=\frac{e^{-\|\mathbf x_n-\mathbf m_k\|^2/\tau}}{\sum_{j=1}^Ke^{-\|\mathbf x_n-\mathbf m_j\|^2/\tau}}
-\]</span> 并且 <span class="math inline">\(\hat\gamma_{nk}\)</span> 还可以解释为 <span class="math inline">\(\mathbf x_n\)</span> 属于类 <span class="math inline">\(k\)</span> 的概率。用 <span class="math inline">\(\hat\gamma_{nk}\)</span> 替换 <span class="math inline">\(\gamma_{nk}\)</span>，即得到 soft k-means 的优化目标： <span class="math display">\[
+\]</span> 此时 <span class="math inline">\(\hat\gamma_{nk}\)</span> 还可以解释为 <span class="math inline">\(\mathbf x_n\)</span> 属于类 <span class="math inline">\(k\)</span> 的概率。用 <span class="math inline">\(\hat\gamma_{nk}\)</span> 替换 <span class="math inline">\(\gamma_{nk}\)</span>，即得到 soft k-means 的优化目标： <span class="math display">\[
 \sum_{k=1}^K\sum_{n=1}^N\hat\gamma_{nk}\|\mathbf x_n-\mathbf m_k\|^2
 \]</span> 和 hard k-means 一样，我们用迭代的方式来求解。不过在第 3 步中，优化问题变成了：</p>
 <p><span class="math display">\[
@@ -511,8 +511,8 @@ q_{nk}=\frac{e^{-\|\mathbf x_n-\boldsymbol\mu_k\|^2/\tau}}{\sum_{j=1}^Ke^{-\|\ma
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>k-means算法及其推广</div>
-      <div>https://xyfjason.github.io/blog-main/2022/09/04/k-means算法及其推广/</div>
+      <div>k-means Algorithm</div>
+      <div>https://xyfjason.github.io/blog-main/2022/09/04/k-means-Algorithm/</div>
     </div>
     <div class="license-meta">
       

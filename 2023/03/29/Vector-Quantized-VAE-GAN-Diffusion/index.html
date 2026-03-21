@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="VQ-VAE VQ-VAE[1] 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规">
+    <meta name="description" content="VQ-VAE VQ-VAE 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言，而由于图像也能在一定程度上用语言描述，因此使用离散表征并非不可">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vector-Quantized VAE&#x2F;GAN&#x2F;Diffusion">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2023/03/29/Vector-Quantized-VAE-GAN-Diffusion/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="VQ-VAE VQ-VAE[1] 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规">
+<meta property="og:description" content="VQ-VAE VQ-VAE 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：  隐空间是离散的，通过 VQ (Vector Quantization) 操作实现； 先验分布是学习出来的。  为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言，而由于图像也能在一定程度上用语言描述，因此使用离散表征并非不可">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vq.jpg">
 <meta property="article:published_time" content="2023-03-29T07:26:12.000Z">
-<meta property="article:modified_time" content="2026-01-21T08:09:53.822Z">
+<meta property="article:modified_time" content="2026-03-21T04:40:00.333Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="generative models">
 <meta name="twitter:card" content="summary_large_image">
@@ -331,17 +331,17 @@
               <div class="markdown-body">
                 
                 <h2 id="vq-vae">VQ-VAE</h2>
-<p>VQ-VAE<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Van Den Oord, Aaron, and Oriol Vinyals. Neural discrete representation learning. *Advances in neural information processing systems* 30 (2017).">[1]</span></a></sup> 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：</p>
+<p>VQ-VAE 是 Google DeepMind 在 2017 年提出的一个类 VAE 生成模型，相比普通的 VAE，它有两点不同：</p>
 <ol type="1">
 <li>隐空间是<strong>离散</strong>的，通过 VQ (Vector Quantization) 操作实现；</li>
 <li>先验分布是学习出来的。</li>
 </ol>
-<p>为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言、语音，而图像也能用语言描述；其次，离散表征更适合推理、规划等复杂任务。后来 OpenAI 的 DALL·E 正是使用了 VQ-VAE (discrete VAE)，证明了它强大的能力。</p>
+<p>为什么要用离散的隐空间呢？首先，离散的表征更符合一些模态的自然属性，比如语言，而由于图像也能在一定程度上用语言描述，因此使用离散表征并非不可能；其次，离散表征容易与语言模型相结合，更适合推理、规划等复杂任务。后来 OpenAI 的 DALL·E 正是使用了 VQ-VAE (discrete VAE)，证明了它强大的能力。</p>
 <h3 id="vector-quantization">Vector Quantization</h3>
 <p><img src="vqvae.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <p>神经网络的输出一般是连续值，如何得到离散的表征呢？这就是 VQ (Vector Quantization) 技术。如上图所示，我们设置一个 codebook (embedding space) <span class="math inline">\(e\in\mathbb R^{K\times D}\)</span>，包含 <span class="math inline">\(K\)</span> 个 <span class="math inline">\(D\)</span> 维向量 <span class="math inline">\(e_1,e_2,\ldots,e_K\)</span>. 设编码器的输出为 <span class="math inline">\(z_e(x)\)</span>，那么在 codebook 里寻找一个与 <span class="math inline">\(z_e(x)\)</span> <strong>距离最近</strong>的向量 <span class="math inline">\(e_k\)</span> 代替 <span class="math inline">\(z_e(x)\)</span> 给到解码器，记作 <span class="math inline">\(z_q(x)\)</span>： <span class="math display">\[
 z_q(x)=e_k,\quad \text{where } k=\arg\min_j\Vert z_e(x)-e_j\Vert_2
-\]</span> 换句话说，VQ-VAE 的后验分布 <span class="math inline">\(q(z\vert x)\)</span> 是离散的 onehot 类别分布： <span class="math display">\[
+\]</span> 用 VAE 的术语来说，VQ-VAE 的后验分布 <span class="math inline">\(q(z\vert x)\)</span> 是离散的 onehot 类别分布： <span class="math display">\[
 q(z=k\vert x)=\begin{cases}1&amp;\text{for }k=\arg\min_j\Vert z_e(x)-e_j\Vert_2\\0&amp;\text{otherwise}\end{cases}
 \]</span> 这里，<strong>隐变量 <span class="math inline">\(z\)</span> 的取值范围为整数索引，相应隐空间为所有索引构成的空间</strong>，因此是离散的。</p>
 <p>在 VQ-VAE 中，codebook 里的 codes 是可学习的，随着训练过程自适应地调整。所以可学习的参数一共包含编码器、解码器和 codebook 三个部分。如果我们简单地取先验分布 <span class="math inline">\(p(z)\)</span> 为离散的均匀类别分布，那么一件有趣的事情是 ELBO 中 KL 正则项变成了常数： <span class="math display">\[
@@ -353,13 +353,13 @@ q(z=k\vert x)=\begin{cases}1&amp;\text{for }k=\arg\min_j\Vert z_e(x)-e_j\Vert_2\
 \end{align}
 \]</span> 于是 ELBO 只剩下了重构项 <span class="math inline">\(\log p(x\vert z_q(x))\)</span>. 然而重构项并不能训练到 codebook，所以最终的损失函数其实是这样的： <span class="math display">\[
 \mathcal L=\underbrace{\log p(x\vert z_q(x))}_\text{reconstruction}+\underbrace{\Vert\text{sg}[z_e(x)]-e\Vert_2}_\text{vq}+\underbrace{\beta\Vert z_e(x)-\text{sg}[e]\Vert_2}_\text{commitment}
-\]</span> 其中 <span class="math inline">\(\text{sg}[\bullet]\)</span> 表示 stop gradient，即停止梯度的传播，在 pytorch 中可以用 <code>detach()</code> 操作实现。vq 项（或称作 embedding 项、codebook 项）让 codebook 里的 codes 接近编码器的输出，以此来训练 codebook；commitment 项反过来，让编码器的输出接近对应的 codes，避免输出波动太大在 codes 之间乱跳，影响训练。</p>
-<p>至此事情还没完，由于 VQ 操作引入了不可导的 argmin 算子，梯度无法从解码器流向编码器，所以现在编码器根本得不到训练。为此，作者引入了 <strong>Straight-Through Estimator</strong>——直接把 <span class="math inline">\(z_q(x)\)</span> 的梯度复制给 <span class="math inline">\(z_e(x)\)</span>，如上图中红色箭头所示. 毕竟 VQ 是靠查询最近邻实现的，二者实际的梯度应该也相差不大。</p>
+\]</span> 其中 <span class="math inline">\(\text{sg}[\cdot]\)</span> 表示 stop gradient，即停止梯度的传播，在 pytorch 中可以用 <code>detach()</code> 操作实现。vq 项（或称作 embedding 项、codebook 项）让 codebook 里的 codes 接近编码器的输出，以此来训练 codebook；commitment 项反过来，让编码器的输出接近对应的 codes，避免输出波动太大在 codes 之间乱跳，影响训练。</p>
+<p>至此事情还没完，由于 VQ 操作引入了不可导的 argmin 算子，梯度无法从解码器流向编码器，所以现在编码器根本得不到训练。为此，作者引入了 <strong>Straight-Through Estimator</strong>——直接把 <span class="math inline">\(z_q(x)\)</span> 的梯度复制给 <span class="math inline">\(z_e(x)\)</span>，如上图中红色箭头所示. 这是因为 VQ 是靠查询最近邻实现的，因此二者实际的梯度相差不大。</p>
 <div class="note note-info">
             <p><strong>关于损失函数的一点理解</strong></p><p>初读 VQ-VAE 论文的时候难免会对损失函数的后两项产生疑惑——一个对 <span class="math inline">\(z_e(x)\)</span> stop gradient，另一个又对 <span class="math inline">\(e\)</span> stop gradient，这是想干嘛？不要 stop gradient 不就行了吗？我在此分享一下我的理解。</p><p>话还得从 VAE 中的 KL 正则项说起。回想一下 KL 正则项的作用是什么——把后验拉向一个预定义的分布，防止 VAE 退化成 AE. 但是现在，由于 <span class="math inline">\(q(z\vert x)\)</span> 一定是一个 onehot 类别分布，它无论如何也不可能接近一个均匀类别分布，所以 KL 项就失效了。但是 VQ-VAE 的 codebook 是可学习的，只要 codes 最后分布在合理的位置上，那没有这个 KL 项也罢。</p><p>我们现在来回答这个问题——为什么 vq 项中要对 <span class="math inline">\(z_e(x)\)</span> 停止梯度传播？站在「让 codes 分布合理」的角度，可以给出如下解释：随机初始化的 codes 并不一定是合理的，如果不停止梯度，那么它会对 <span class="math inline">\(z_e(x)\)</span> 产生负面的影响，让训练更加困难。相反，重构本身是一个还不错的寻找隐变量的手段（毕竟 autoencoder 就是这么干的），所以通过重构项来找到比较好的 <span class="math inline">\(z_e(x)\)</span>，然后只让 <span class="math inline">\(e\)</span> 去接近 <span class="math inline">\(z_e(x)\)</span>（而不是反过来），能让 codes 收敛到还不错的分布。</p><p>如此说来，commitment 项的存在就有点违背我们的解释了。的确，这一项更多地是经验性的举措，有人实验发现即使 <span class="math inline">\(\beta=0\)</span> 也没啥问题。</p><p>所以，就轻重缓急而言，重构项最重要，它直接决定了 <span class="math inline">\(z_e(x)\)</span> 和 <span class="math inline">\(e\)</span> 的分布大体应该如何；vq 项次之，但也不能省，毕竟解码器的输入终究是量化之后的向量，要和重构项打好配合才行；commitment 项最不重要，仅仅是一个稳定训练的经验性手段，不宜占据主导。因此我们应该把 vq 和 commitment 分开写，就变成损失函数里那让人困惑的样子了！</p><p>然而，论文称 <span class="math inline">\(\beta\in[0.1, 2.0]\)</span> 都有差不多的表现，这与我的理解中 commitment 项不宜占据主导又相矛盾了😓。唉，着实玄乎～</p>
           </div>
 <div class="note note-info">
-            <p><strong>VAE 名不副实？</strong></p><p>假设我们现在完成了训练，考察用 VQ-VAE 重构输入的过程——<span class="math inline">\(x\)</span> 经过编码器得到 <span class="math inline">\(z_e(x)\)</span>，在 codebook 里做最近邻查找得到 <span class="math inline">\(z_q(x)\)</span>，解码器输出 <span class="math inline">\(\hat x\)</span> 来重构 <span class="math inline">\(x\)</span>——整个过程没有一点随机性！<strong>VQ-VAE 更像是一个在 bottleneck 处做了量化的 AE，而不是 VAE</strong>. 作者将其冠以 VAE 的名号，可能是他们确实是从 VAE 开始思考的吧。</p>
+            <p><strong>VQ-VAE 不是 VAE？</strong></p><p>假设我们现在完成了训练，考察用 VQ-VAE 重构输入的过程——<span class="math inline">\(x\)</span> 经过编码器得到 <span class="math inline">\(z_e(x)\)</span>，在 codebook 里做最近邻查找得到 <span class="math inline">\(z_q(x)\)</span>，解码器输出 <span class="math inline">\(\hat x\)</span> 来重构 <span class="math inline">\(x\)</span>——整个过程没有一点随机性！<strong>VQ-VAE 更像是一个在 bottleneck 处做了量化的 AE，而不是 VAE</strong>. 作者将其冠以 VAE 的名号，可能是他们确实是从 VAE 开始思考的吧。</p>
           </div>
 <h3 id="ema-codebook">EMA Codebook</h3>
 <p>上一节我们介绍了，VQ 操作是一个最近邻查找的过程，产生的效果是把编码器输出的特征向量替换为距离它最近的 code，这不就是在做<strong>聚类</strong>嘛，聚类中心就是 codebook 里面的 codes. 所以我们其实不必使用 vq 项来训练 codebook，而是直接像 <strong>K-Means</strong> 那样更新聚类中心： <span class="math display">\[
@@ -383,7 +383,7 @@ e_i=\frac{1}{n_i}\sum_{j=1}^{n_i} z_{i,j}
 <p>虽然作者声称 VQ-VAE 不会遭遇 VAE 的 posterior collapse 问题，但我在实践中发现，它很容易遭遇 index collapse——编码器输出的所有特征向量全部被量化到一个或少数几个 codes 上。从某种意义上说，这也算是一种 posterior collapse 吧。起初我以为自己的实现有误，但一番搜索发现连 <a target="_blank" rel="noopener" href="https://github.com/karpathy/deep-vector-quantization">Andrej Karpathy</a> 也受其困扰。一个常见的解决方案是用 K-Means 初始化 codebook，但我实测发现用处不大😅，而<strong>调小学习率</strong>会有帮助。</p>
 <p>在代码实现中有一个 trick 是输出 perplexity 来监视是否发生了 index collapse. 当发生 index collapse 时，所有特征向量被量化到一个或少数几个 codes 上，这意味着熵很低；而理想情况是各个索引被均匀地选到，意味着熵很高。因此，索引的熵是能够监视训练是否发生了 index collapse 的指标，而 perplexity 就定义为这个熵的指数。Perplexity 的值域是 <span class="math inline">\([1,K]\)</span>：假设所有特征向量都量化到唯一一个 code 上，那么熵为 0，perplexity 就是 1；反之，如果各个索引的选择概率是完全均匀的，那么熵达到最大 <span class="math inline">\(\log K\)</span>，perplexity 就是 <span class="math inline">\(K\)</span>. 因此，perplexity 可以视作平均有多少个索引会被选择。如果训练时发现 perplexity 太小，甚至是 1，那就要赶紧处理 index collapse 问题了。</p>
 <h2 id="vq-vae-2">VQ-VAE-2</h2>
-<p>VQ-VAE-2<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Razavi, Ali, Aaron Van den Oord, and Oriol Vinyals. Generating diverse high-fidelity images with vq-vae-2. *Advances in neural information processing systems* 32 (2019).">[2]</span></a></sup> 依旧是 DeepMind 提出的，作者团队只换了一个人。也许他们也意识到了 VQ-VAE 更像是一个 AE 而不是 VAE，论文全程没有用 VAE 的那套概率术语，而是从信息压缩的角度做了更自然的描述。我们知道自回归模型的一大缺点是生成速度慢，这是因为一张高清图像的像素成千上万，而自回归模型只能串行生成一个个像素。为了解决这个问题，我们可以把自回归模型放到隐空间去，这样不仅速度成倍加快，信息密度也更高——像素空间中冗余繁杂的细节信息被压缩掉了，模型只需要考虑真正重要的语义信息。在这个视角下，VQ-VAE 训练 Encoder + VQ + Decoder 其实就是在寻找隐空间，找到隐空间之后，在隐空间上训练 PixelCNN 自回归模型做生成。这样梳理 VQ-VAE 的思路就显得顺畅直观了很多。事实上，这个思路后来被用到了 Stable Diffusion (Latent Diffusion) 上——在隐空间学习扩散模型，就像 VQ-VAE 在隐空间学习自回归模型一样（注意：这两个隐空间其实并不相同，一个是量化后的，一个是量化前的，只是说它们的思路与动机一样）。</p>
+<p>VQ-VAE-2 依旧是 DeepMind 提出的，作者团队只换了一个人。也许他们也意识到了 VQ-VAE 更像是一个 AE 而不是 VAE，论文全程没有用 VAE 的那套概率术语，而是从信息压缩的角度做了更自然的描述。我们知道自回归模型的一大缺点是生成速度慢，这是因为一张高清图像的像素成千上万，而自回归模型只能串行生成一个个像素。为了解决这个问题，我们可以把自回归模型放到隐空间去，这样不仅速度成倍加快，信息密度也更高——像素空间中冗余繁杂的细节信息被压缩掉了，模型只需要考虑真正重要的语义信息。在这个视角下，VQ-VAE 训练 Encoder + VQ + Decoder 其实就是在寻找隐空间，找到隐空间之后，在隐空间上训练 PixelCNN 自回归模型做生成。这样梳理 VQ-VAE 的思路就显得顺畅直观了很多。事实上，这个思路后来被用到了 Stable Diffusion (Latent Diffusion) 上——在隐空间学习扩散模型，就像 VQ-VAE 在隐空间学习自回归模型一样（注意：这两个隐空间其实并不相同，一个是量化后的，一个是量化前的，只是说它们的思路与动机一样）。</p>
 <p>VQ-VAE-2 相比 VQ-VAE 没有太多理论上的创新，主要的改变是以下三点：</p>
 <ol type="1">
 <li><p>层次化地堆叠多层 VQ-VAE，使得 top-level 关注更多的高层语义，而 bottom-level 关注低层细节，如下图所示：</p>
@@ -393,7 +393,7 @@ e_i=\frac{1}{n_i}\sum_{j=1}^{n_i} z_{i,j}
 </ol>
 <p>VQ-VAE-2 能够达到和 BigGAN comparable 的水平，算是在 GANs 风头十足的时候给 VAEs 争了一口气吧。</p>
 <h2 id="vqgan">VQGAN</h2>
-<p>由于我是 2023 年才来读 VQGAN<sup id="fnref:3" class="footnote-ref"><a href="#fn:3" rel="footnote"><span class="hint--top hint--rounded" aria-label="Esser, Patrick, Robin Rombach, and Bjorn Ommer. Taming transformers for high-resolution image synthesis. In *Proceedings of the IEEE/CVF conference on computer vision and pattern recognition*, pp. 12873-12883. 2021.">[3]</span></a></sup> 的，所以看到作者和单位的时候愣了一下——这不就是 Latent Diffusion 的作者吗！怪不得 Latent Diffusion 用的是 VQGAN 来得到隐空间呢！这说明一个优秀的工作真得能催生下一个优秀的工作，形成良性循环。</p>
+<p>由于我是 2023 年才来读 VQGAN 的，所以看到作者和单位的时候愣了一下——这不就是 Latent Diffusion 的作者吗！怪不得 Latent Diffusion 用的是 VQGAN 来得到隐空间呢！这说明一个优秀的工作真得能催生下一个优秀的工作，形成良性循环。</p>
 <p><img src="vqgan.png" srcset="/blog-main/logo/imageloading.png" lazyload width=80% /></p>
 <p>话说回来，从上面这个概览图可以看出，VQGAN 和 VQ-VAE 的流程完全一致——先学习 codebook、再学习 prior. 学习 codebook 的部分与 VQ-VAE 大同小异，不同之处在于：加了一个 Patch Discriminator 做对抗训练，以及把重构损失的 L2 loss 换成了 perceptual loss. 实验证明 VQ-VAE 的重构非常模糊，而 VQGAN 能保留很多细节。为了实现无条件生成， VQ-VAE 使用 PixelCNN 学习 latent prior，能力比较弱，而 VQGAN 采用了 Transformer (GPT-2 架构)，依旧用自回归的方式训练和推断。</p>
 <p>除了无条件生成之外，VQGAN 也可以做有条件的生成。如果条件是类别标签，只需要把它融入 Transformer 的架构之中即可；如果条件是语义分割图、深度图、图像填充掩膜这种 2D 图像式的，那么作者对这些条件训练一个新的 VQGAN，把条件的隐变量表示同原图像的隐变量表示一并给到 Transformer 即可（因为 Transformer 是对 token 集合进行操作，所以直接给过去就行）。</p>
@@ -401,7 +401,7 @@ e_i=\frac{1}{n_i}\sum_{j=1}^{n_i} z_{i,j}
 <p><img src="vqgan2.png" srcset="/blog-main/logo/imageloading.png" lazyload width=50% /></p>
 <p>依靠这些改进，VQGAN 能够生成百万像素的高清图像。论文开头第一页就放了一个风景全景图，十分惊艳。</p>
 <h2 id="vq-diffusion">VQ-Diffusion</h2>
-<p>2022 是扩散模型井喷的一年，我盲猜有人会拿扩散模型做 prior learning，一搜果然有—— VQ-Diffusion<sup id="fnref:4" class="footnote-ref"><a href="#fn:4" rel="footnote"><span class="hint--top hint--rounded" aria-label="Gu, Shuyang, Dong Chen, Jianmin Bao, Fang Wen, Bo Zhang, Dongdong Chen, Lu Yuan, and Baining Guo. Vector quantized diffusion model for text-to-image synthesis. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 10696-10706. 2022.">[4]</span></a></sup><sup id="fnref:5" class="footnote-ref"><a href="#fn:5" rel="footnote"><span class="hint--top hint--rounded" aria-label="Tang, Zhicong, Shuyang Gu, Jianmin Bao, Dong Chen, and Fang Wen. Improved vector quantized diffusion models. *arXiv preprint arXiv:2205.16007* (2022).">[5]</span></a></sup>.</p>
+<p>2022 是扩散模型井喷的一年，我盲猜有人会拿扩散模型做 prior learning，一搜果然有—— VQ-Diffusion.</p>
 <p><img src="vqdiff.png" srcset="/blog-main/logo/imageloading.png" lazyload width=65% /></p>
 <p>如上图所示，Step 1 毫不意外的就是训一个 VQ-VAE，所以本篇工作的重点在于 Step 2——怎么在<strong>离散</strong>的隐空间中训练扩散模型来学习 prior.</p>
 <p><strong>由于本文的主题是 Vector Quantization，而 VQ-Diffusion 的主要贡献是在离散扩散模型方面，VQ 只是获取离散隐空间的手段，所以接下来的部分只稍微阐述一下离散扩散模型的设计思路，至于训练细节和模型改进（Improved VQ-Diffusion）就暂且略过，以免喧宾夺主。</strong></p>
@@ -433,7 +433,7 @@ q(x_{t-1}\vert x_t,x_0)=\frac{q(x_t\vert x_{t-1},x_0)q(x_{t-1}\vert x_0)}{q(x_t\
 \]</span> 每个 token 都有 <span class="math inline">\(\gamma_t\)</span> 的概率变成 <span class="math inline">\(\text{[MASK]}\)</span>，<span class="math inline">\(K\beta_t\)</span> 的概率重新采样，以及 <span class="math inline">\(\alpha_t=1-K\beta_t-\gamma_t\)</span> 的概率保持不变。由于模型能够在训练中认识到 <span class="math inline">\(\text{[MASK]}\)</span> 这个特殊 token，从而知道哪里被修改了，所以这种转移的破坏程度温和了许多，更容易训练了。</p>
 <p>如本节开头所言，为避免喧宾夺主，本文对 VQ-Diffusion 的介绍到此做个截断。如果以后有机会，我再去专门调研一下离散扩散模型的方法（挖坑😂）。</p>
 <h2 id="latent-diffusion-stable-diffusion">Latent Diffusion (Stable Diffusion)</h2>
-<p>既然前面已经提到了 Latent Diffusion<sup id="fnref:6" class="footnote-ref"><a href="#fn:6" rel="footnote"><span class="hint--top hint--rounded" aria-label="Rombach, Robin, Andreas Blattmann, Dominik Lorenz, Patrick Esser, and Björn Ommer. High-resolution image synthesis with latent diffusion models. In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition*, pp. 10684-10695. 2022.">[6]</span></a></sup>，那就简单说一下，并与 VQ Diffusion 做个对比。</p>
+<p>既然前面已经提到了 Latent Diffusion，那就简单说一下，并与 VQ Diffusion 做个对比。</p>
 <p><img src="latentdiff.png" srcset="/blog-main/logo/imageloading.png" lazyload width=70% /></p>
 <p>顾名思义，Latent Diffusion 就是在隐空间上建立扩散模型，而这个隐空间正是通过训练 VAE 或 VQGAN 得到的——前者被作者称为 KL-reg，因为 VAE 可视为用 KL 作为正则项的 autoencoder；后者被称为 VQ-reg，即通过 VQ 操作做正则的 autoencoder.</p>
 <p>值得注意的是，对于 VQ-reg，VQ 操作被算进了 Decoder 之中，即扩散模型<strong>之后</strong>，所以扩散模型仍然是在连续（而非量化后）的特征空间上执行的。这也是 Latent Diffusion 和 VQ-Diffusion 的不同之处。</p>
