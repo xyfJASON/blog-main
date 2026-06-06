@@ -13,7 +13,7 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
       
     </categories>
     
@@ -38,7 +38,7 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
       
     </categories>
     
@@ -63,37 +63,10 @@
     
     <categories>
       
-      <category>计算机视觉</category>
+      <category>Computer Vision</category>
       
     </categories>
     
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>Diffusion meets Self-Supervised Learning</title>
-    <link href="/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/"/>
-    <url>/blog-main/2026/01/15/Diffusion-meets-Self-Supervised-Learning/</url>
-    
-    <content type="html"><![CDATA[<h2 id="overview">Overview</h2><table><thead><tr><th></th><th>Denoising</th><th>MIM</th><th>CL</th><th>SD</th></tr></thead><tbody><tr><td>Classic SSL</td><td><a href="https://dl.acm.org/doi/10.1145/1390156.1390294">DAE</a></td><td><a href="https://arxiv.org/abs/2106.08254">BEIT</a>, <a href="http://arxiv.org/abs/2111.06377">MAE</a>, <a href="http://arxiv.org/abs/2111.09886">SimMIM</a></td><td><a href="https://arxiv.org/abs/2002.05709">SimCLR</a>, <a href="https://arxiv.org/abs/1911.05722">MoCo</a></td><td><a href="http://arxiv.org/abs/2104.14294">DINO</a>, <a href="http://arxiv.org/abs/2111.07832">iBOT</a></td></tr><tr><td>+ Diffusion</td><td><a href="http://arxiv.org/abs/2401.14404">l-DAE</a></td><td><a href="http://arxiv.org/abs/2303.14389">MDT</a>, <a href="https://openreview.net/forum?id=vTBjBtGioE">MaskDiT</a></td><td><a href="http://arxiv.org/abs/2506.09027">Disperse</a></td><td><a href="http://arxiv.org/abs/2403.17004">SD-DiT</a>, <a href="http://arxiv.org/abs/2505.02831">SRA</a></td></tr></tbody></table><h2 id="denoising">Denoising</h2><h3 id="classic-ssl-dae">Classic SSL: DAE</h3><h3 id="diffusion-l-dae">+ Diffusion: l-DAE</h3><h2 id="masked-image-modeling">Masked Image Modeling</h2><h3 id="classic-ssl-mae">Classic SSL: MAE</h3><h3 id="diffusion-mdt">+ Diffusion: MDT</h3><p><img src="mdt.jpg" width=40% /></p><p>整体上看，MDT 在标准 DiT 的基础上增加了掩码操作：网络仅接收未被掩码的带噪 latent 而非全部带噪 latent，但仍然要求预测全部的干净 latent. 这一训练目标结合了去噪与掩码预测，乍一看增加了训练难度，但实际上迫使网络更加着重学习图像语义，反而有利于模型的收敛。</p><p>MDT 的网络参考了 MAE 的非对称设计：较大的 encoder 仅接收未被掩码的 token，而较小的 decoder 接收补全后的 token. 与 MAE 不同的是，由于扩散模型在推理时不会施加掩码，因此 decoder 在推理时总是见到非掩码 token；倘若训练时仍然直接补上 mask token，这就会形成一个训练-推理的不匹配。为了解决这个问题，作者设计了一个 side-interpolater 来补充被掩码的 token. 具体而言，side-interpolater 的输入为未被掩码的 token 和补充的可学习 mask token，经过一个 Transformer block 后输出预测的被掩码的 token. Decoder 在训练时接收 side-interpolater 预测的被掩码 token 而非 mask token，因此在一定程度上缓解了不匹配问题。Side-interpolater 仅在训练中使用，推理时不需要。</p><p>实践中，作者按照 DiT 的标准设置 MDT 的网络，但 decoder 的层数始终保持为 2，这延续了 MAE 的非对称思想。训练时的掩码比例固定为 30%，远小于 MAE 的 75%. 这可能是因为扩散模型本身的加噪已经是一种破坏，再采用大比例的掩码会让问题变得过于困难，对生成任务来说并不合适。</p><p>基于 MDT 的成功，作者进一步提出了 MDTv2，做了以下改进：</p><ol type="1"><li>网络架构：给 encoder 增加 long-shortcuts，即 UNet style 的跳跃连接；给 decoder 增加 dense input-shortcuts，即从输入到 decoder 每一个 block 的跳跃连接；将 decoder 层数从 2 增加到 6；</li><li>模型优化：将 Adam 优化器替换为 Adan 优化器；采用 min-SNR weighting；</li><li>掩码策略改进：将掩码比例从固定的 30% 更改为 30%~50% 随机。</li></ol><p>更多细节请参阅论文。</p><h3 id="diffusion-maskdit">+ Diffusion: MaskDiT</h3><h2 id="contrastive-learning">Contrastive Learning</h2><h3 id="classic-ssl-simclr">Classic SSL: SimCLR</h3><h3 id="diffusion-disperse">+ Diffusion: Disperse</h3><h2 id="self-distillation">Self Distillation</h2><h3 id="classic-ssl-dino">Classic SSL: DINO</h3><p><img src="dino.jpg" width=40% /></p><p>DINO 与对比学习的一些方法有相似之处，但它更适合从知识蒸馏 (knowledge distillation) 的角度理解。在知识蒸馏中，设有 teacher 和 student 网络 <span class="math inline">\(g_{\theta_t}(x),g_{\theta_s}(x)\)</span>，它们经过 softmax 后分别形成类别分布： <span class="math display">\[P_t(x)^{(k)}=\frac{\exp(g_{\theta_t}(x)^{(k)}/\tau_t)}{\sum_{k=1}^K\exp(g_{\theta_t}(x)^{(k)}/\tau_t)},\quadP_s(x)^{(k)}=\frac{\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}{\sum_{k=1}^K\exp(g_{\theta_s}(x)^{(k)}/\tau_s)}\]</span> 其中 <span class="math inline">\(\tau_t,\tau_s\)</span> 为温度系数。我们的训练目标是让 student 分布 <span class="math inline">\(P_s\)</span> 逼近 teacher 分布 <span class="math inline">\(P_t\)</span>，即： <span class="math display">\[\min_{\theta_s}~\mathbb E_{p_\text{data}(x)}\left[-\sum_{k=1}^KP_t(x)^{(k)}\log P_s(x)^{(k)}\right]\]</span> 为了将上述知识蒸馏框架适配到自监督学习中，DINO 采用了 multi-crop 的策略：给定图像 <span class="math inline">\(x\)</span>，构造 2 个分辨率为 224 的 global views <span class="math inline">\(x_1^g,x_2^g\)</span>，以及若干分辨率为 96 的 local views. Teacher 网络总是接收 global views，而 student 网络两种都接收，于是训练目标为： <span class="math display">\[\min_{\theta_s}~\mathbb E_{p_\text{data}(x)}\left[\sum_{x^g\in\{x_1^g,x_2^g\}}\sum_{x&#39;\in V(x),\,x&#39;\neq x}\left(-\sum_{k=1}^KP_t(x^g)^{(k)}\log P_s(x&#39;)^{(k)}\right)\right]\]</span> 其中 <span class="math inline">\(V(x)\)</span> 表示对图像 <span class="math inline">\(x\)</span> 构造的所有 global views 和 local views 的集合。另外，在自监督学习中我们并没有一个训练好的 teacher 网络，因此 DINO 采用 student 网络的 EMA 版本作为 teacher： <span class="math display">\[\theta_t\gets\lambda\theta_t+(1-\lambda)\theta_s\]</span> 其中 <span class="math inline">\(\lambda\)</span> 为 EMA decay 系数，在训练过程中依 cosine schedule 从 0.996 增长到 1. 进一步地，为避免崩塌，DINO 在 teacher 网络末端接入了 centering 和 sharpening 操作。</p><h3 id="diffusion-sd-dit">+ Diffusion: SD-DiT</h3><p><img src="sd-dit.jpg" width=40% /></p><p>如图所示，SD-DiT 建立在 MaskDiT 的基础上，因此扩散网络包含两部分——只接收可见 token 的 encoder 和拼接上 mask token 的 decoder. SD-DiT 视 encoder 部分为 student，通过 EMA 的方式引入了一个 teacher encoder 做自蒸馏。对于扩散模型而言，加噪本身就是一种自然的数据增强方式。SD-DiT 实验发现，teacher 网络应始终接收最低程度 <span class="math inline">\(\sigma_\min\)</span> 的加噪，以达到最好的蒸馏效果。</p><p>另外，与 DINO 只蒸馏 <span class="math inline">\(\texttt{[CLS]}\)</span> token 不同，SD-DiT 会蒸馏所有 token. 具体而言，设 <span class="math inline">\(\mathbf e_\text{T},\mathbf e_\text{S}\)</span> 分别为 teacher 和 student encoder 的输出，<span class="math inline">\(j_\theta\)</span> 为一个三层的 projection head，则对第 <span class="math inline">\(i\)</span> 个可见 token 有 teacher 和 student 分布： <span class="math display">\[{P_\text{T}}_i^{(k)}=\frac{\exp(j_\theta({\mathbf e_\text{T}}_i)/\tau_\text{T})^{(k)}}{\sum_{k=1}^K\exp(j_\theta({\mathbf e_\text{T}}_i)/\tau_\text{T})^{(k)}},\quad {P_\text{S}}_i^{(k)}=\frac{\exp(j_\theta({\mathbf e_\text{S}}_i)/\tau_\text{S})^{(k)}}{\sum_{k=1}^K\exp(j_\theta({\mathbf e_\text{S}}_i)/\tau_\text{S})^{(k)}}\]</span> 那么自蒸馏损失为： <span class="math display">\[\mathcal L_\text{D}(i)=-\sum_{k=1}^K{P_\text{T}}_i^{(k)}\log{P_\text{S}}_i^{(k)}\]</span> 总自蒸馏损失为所有可见 token 的自蒸馏损失与 <span class="math inline">\(\texttt{[CLS]}\)</span> token 的自蒸馏损失之和： <span class="math display">\[\mathcal L_\text{D}=\frac{1}{|\bar{\mathcal M}|}\sum_{i\in \bar{\mathcal M}}\mathcal L_\text{D}(i)+\mathcal L_\text{D}(\texttt{[CLS]})\]</span> 为避免坍塌，SD-DiT 同样采用了 DINO 中的 centering 和 sharpening 技巧。</p><h3 id="diffusion-sra">+ Diffusion: SRA</h3>]]></content>
-    
-    
-    <categories>
-      
-      <category>生成模型</category>
-      
-      <category>Diffusion Models</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>generative models</tag>
-      
-    </tags>
     
   </entry>
   
@@ -104,12 +77,12 @@
     <link href="/blog-main/2025/12/31/Diffusion-Distillation/"/>
     <url>/blog-main/2025/12/31/Diffusion-Distillation/</url>
     
-    <content type="html"><![CDATA[<h2 id="introduction">Introduction</h2><p>尽管扩散模型在生成质量、似然估计和训练稳定性上表现出卓越的性能，但其最大的缺点就是采样耗时。为此，许多采样器被提出以加速采样过程，例如 DDIM, Analytic-DPM, PNDM, DPM-Solver 等等，它们着眼于更精确地求解扩散 ODE，例如采用高阶的求解器并充分利用扩散 ODE 的特殊结构。然而，受制于模型本身的误差，此类 training-free 的方法再精确也难以做到 10 步以内的高质量生成。</p><p>随着领域的发展，如今开源/闭源界已经训练了许多高质量的扩散模型，这使得在已有模型的基础上蒸馏一个新的模型成为了不错的方案。所谓蒸馏，即训练一个 student 模型，其一步去噪的效果相当于原 teacher 模型多步去噪的效果。相比优化采样器的方法，基于蒸馏的方法往往能够实现 4 步、2 步甚至 1 步采样，彻底解决扩散模型采样耗时的问题。</p><p>一个自然的问题是，为什么蒸馏可以 work？换句话说，为什么我们不直接在较少步数上训练模型，偏偏要在较多步数上训练之后再蒸馏，这难道不是多此一举吗？这是因为，扩散模型的训练流程是依靠不断采样、每次拟合一个 <span class="math inline">\(\mathbf x_0\)</span> 的方式来拟合 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span>，这种训练方式的方差很大，直观上 loss 曲线非常振荡。而蒸馏时 teacher 模型给出的监督信号本就是对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的近似，所以蒸馏损失的方差显著降低，训练过程更平稳，模型更容易收敛。当然，蒸馏虽然减少了方差，但 teacher 模型对 <span class="math inline">\(\mathbb E[\mathbf x_0\vert\mathbf x_t]\)</span> 的估计是有偏差的，所以这里存在 bias-variance trade-off.</p><h2 id="progressive-distillation">Progressive Distillation</h2><p><a href="https://arxiv.org/abs/2202.00512">Progressive Distillation (PD)</a> 的基本思想是每次蒸馏将采样步数缩短到原来的一半，如此进行 <span class="math inline">\(\log_2 N\)</span> 次迭代，就可以把 <span class="math inline">\(N\)</span> 步采样模型蒸馏为一步采样模型，如下图所示。</p><p><img src="pd.png" width=60% /></p><p>具体而言，假设有一个 teacher 扩散模型 <span class="math inline">\(\mathbf x_\eta(\cdot)\)</span>，我们希望从中蒸馏一个 student 模型 <span class="math inline">\(\mathbf x_\theta(\cdot)\)</span>，使其一步去噪相当于 teacher 模型两步去噪的效果。为此，首先采样 <span class="math inline">\(\mathbf x\sim\mathcal D,\,\mathbf x_t\sim q_{t\vert0}(\mathbf x_t\vert\mathbf x)\)</span>，然后用 teacher 模型实施两步 DDIM 去噪，得： <span class="math display">\[\begin{gather}\mathbf x_{t&#39;}=\alpha_{t&#39;}\mathbf x_\eta(\mathbf x_t)+\frac{\sigma_{t&#39;}}{\sigma_t}(\mathbf x_t-\alpha_t\mathbf x_\eta(\mathbf x_t))\\\mathbf x_{t&#39;&#39;}=\alpha_{t&#39;&#39;}\mathbf x_\eta(\mathbf x_{t&#39;})+\frac{\sigma_{t&#39;&#39;}}{\sigma_{t&#39;}}(\mathbf x_{t&#39;}-\alpha_{t&#39;}\mathbf x_\eta(\mathbf x_{t&#39;}))\end{gather}\]</span> 对于 student 模型，我们希望它一步去噪就能得到 <span class="math inline">\(\mathbf x_{t&#39;&#39;}\)</span>，即： <span class="math display">\[\mathbf x_{t&#39;&#39;}=\alpha_{t&#39;&#39;}\mathbf x_\theta(\mathbf x_t)+\frac{\sigma_{t&#39;&#39;}}{\sigma_t}(\mathbf x_t-\alpha_t\mathbf x_\theta(\mathbf x_t))\]</span> 整理得： <span class="math display">\[\mathbf x_\theta(\mathbf x_t)=\frac{\mathbf x_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\mathbf x_t}{\alpha_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\alpha_t}\]</span> 因此右边就是 student 模型的拟合目标，故可构造损失函数： <span class="math display">\[\mathcal L(\theta)=\mathbb E_{\mathbf x,\boldsymbol\epsilon,t,t&#39;,t&#39;&#39;}\left[w_t\left\Vert\mathbf x_\theta(\mathbf x_t)-\frac{\mathbf x_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\mathbf x_t}{\alpha_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\alpha_t}\right\Vert_2^2\right]\]</span> 待 student 模型收敛后就完成了一轮蒸馏。我们选择 <span class="math inline">\(t&#39;,t&#39;&#39;\)</span> 使得每轮蒸馏减少一半的采样步数，那么迭代执行多轮蒸馏即可指数式地减少采样步数，算法流程图如下所示（符号略有不同，左侧是扩散模型的训练流程，右侧是 Progressive Distillation 的训练流程）：</p><p><img src="pd-alg.png" width=70% /></p><h2 id="guided-diffusion-distillation">Guided Diffusion Distillation</h2><p>Classifier-Free Guidance (CFG) 是提升扩散模型采样质量的重要技术，因此我们希望蒸馏时不仅仅是蒸馏原扩散模型，而是蒸馏施加 CFG 之后的结果。<a href="https://arxiv.org/abs/2210.03142">Guided Diffusion Distillation</a> 一文提出了两阶段的解决方案：首先训练一个多步扩散模型学习 Guidance 之后的结果，然后用 Progressive Distillation 将其蒸馏为一步/少步模型。</p><p>在第一阶段中，设有 teacher 模型 <span class="math inline">\(\mathbf x^\text{u}_\theta(\cdot),\,\mathbf x^\text{c}_\theta(\cdot)\)</span>，其中上标 <span class="math inline">\(\text{u},\text{c}\)</span> 分别表示无条件模型和有条件模型，则施加 CFG 后的模型为： <span class="math display">\[\mathbf x_\theta^\omega(\mathbf x_t){\;\mathrel{\vcenter{:}}=\;}(1-\omega)\mathbf x_\theta^\text{u}(\mathbf x_t)+\omega\mathbf x_\theta^\text{c}(\mathbf x_t)\]</span> 其中 <span class="math inline">\(\omega\)</span> 是 CFG scale. 我们训练一个 student 模型 <span class="math inline">\(\mathbf x_{\eta_1}(\cdot,\omega)\)</span> 去拟合 CFG 后的结果： <span class="math display">\[\mathcal L(\eta_1)=\mathbb E_{\mathbf x,\boldsymbol\epsilon,t,\omega}\left[w_t\left\Vert\mathbf x_{\eta_1}(\mathbf x_t,\omega)-\mathbf x_\theta^\omega(\mathbf x_t)\right\Vert_2^2\right]\]</span> 注意我们将 CFG scale 作为条件给到 student 模型，并在训练时采样一定范围内 <span class="math inline">\([\omega_\min,\omega_\max]\)</span> 的各种 scale，使得 student 模型同时学习多种 CFG scale 下的结果。实现上，CFG scale 经由 Fourier embedding 编码，与时间步合并输入给模型；另外，student 模型以 teacher 模型的权重初始化，有利于快速收敛。</p><p>第一阶段结束后，采用 Progressive Distillation 技术将多步扩散模型 <span class="math inline">\(\mathbf x_{\eta_1}(\cdot,\omega)\)</span> 渐进式蒸馏为少步模型 <span class="math inline">\(\mathbf x_{\eta_2}(\cdot,\omega)\)</span> 即可。两阶段的算法流程图如下所示（符号略有不同，尤其是论文的 CFG scale 与本文的 CFG scale 相差 1，请读者仔细甄别）：</p><p><img src="gdd-alg.png" width=100% /></p><h2 id="consistency-distillation">Consistency Distillation</h2><p><a href="https://arxiv.org/abs/2303.01469">Consistency Distillation (CD)</a> 是训练 consistency model 的一种方式，详见 <a href="/blog-main/2025/05/05/Consistency-Models/" title="Consistency Models">Consistency Models</a> 一文。</p><h2 id="adversarial-diffusion-distillation">Adversarial Diffusion Distillation</h2><p>对抗训练作为一种通用的数据分布建模方法，非常适合一步/少步生成的需求。然而，从头训练一个大规模 GAN 是臭名昭著的困难与不稳定。不过，把对抗训练作为蒸馏扩散模型的一项辅助损失却是非常不错的选择——一方面，蒸馏损失可以保证训练的稳定性；另一方面，对抗损失可以提高一步生成的分布匹配能力。基于这种思想，<a href="https://stability.ai/research/adversarial-diffusion-distillation">Adversarial Diffusion Distillation (ADD)</a> 一文将对抗训练融入了扩散模型蒸馏中，实现了 1-4 步生成高质量的 T2I 图像。</p><p><img src="add.png" width=60% /></p><p>如图所示，在训练过程中，ADD 的 student 模型由带噪数据 <span class="math inline">\(\mathbf x_s\)</span> 一步生成样本 <span class="math inline">\(\hat{\mathbf x}_\theta(\mathbf x_s,s)\)</span>，该生成样本与真实样本给到判别器进行对抗训练；同时，生成的样本将被重新加噪至 <span class="math inline">\(\hat{\mathbf x}_{\theta,t}\)</span> 并与 teacher 模型的去噪结果 <span class="math inline">\(\hat{\mathbf x}_\psi(\hat{\mathbf x}_{\theta,t},t)\)</span> 做重构训练。具体而言，判别器由一个冻结的预训练 ViT 和若干判别头 <span class="math inline">\(D_{\phi,k}\)</span> 组成，其中第 <span class="math inline">\(k\)</span> 个判别头接在 ViT 的第 <span class="math inline">\(k\)</span> 层特征 <span class="math inline">\(F_k\)</span> 上。生成器采用 hinge loss 作为对抗损失： <span class="math display">\[\mathcal L_\text{adv}^\text{G}(\hat{\mathbf x}_\theta(\mathbf x_s,s))=-\sum_k D_{\phi,k}(F_k(\hat{\mathbf x}_\theta(\mathbf x_s,s)))\]</span> 而判别器的损失为： <span class="math display">\[\begin{align}\mathcal L_\text{adv}^\text{D}(\mathbf x,\hat{\mathbf x}_\theta(\mathbf x_s,s))&amp;=\sum_k\max(0,1-D_{\phi,k}(F_k(\mathbf x)))+\gamma\text{R1}(\phi)\\&amp;+\sum_k\max(0,1+D_{\phi,k}(F_k(\hat{\mathbf x}_\theta(\mathbf x_s,s))))\end{align}\]</span> 其中 <span class="math inline">\(\text{R1}(\phi)\)</span> 表示 R1 梯度惩罚项。蒸馏损失为： <span class="math display">\[\mathcal L_\text{distill}(\hat{\mathbf x}_\theta(\mathbf x_s,s))=\mathbb E_{\boldsymbol\epsilon&#39;,t}\left[c(t)d(\hat{\mathbf x}_{\theta,t},\hat{\mathbf x}_\psi(\hat{\mathbf x}_{\theta,t},t))\right]\]</span> 其中 <span class="math inline">\(\hat{\mathbf x}_{\theta,t}=\alpha_t\hat{\mathbf x}_\theta(\mathbf x_s,s)+\sigma_t\boldsymbol\epsilon&#39;\)</span>，<span class="math inline">\(d(\cdot,\cdot)\)</span> 为度量函数。二者加权构成最终损失： <span class="math display">\[\mathcal L(\theta)=\mathbb E_{\mathbf x,\boldsymbol\epsilon,s}\left[\mathcal L_\text{adv}^\text{G}(\hat{\mathbf x}_\theta(\mathbf x_s,s))+\lambda\mathcal L_\text{distill}(\hat{\mathbf x}_\theta(\mathbf x_s,s))\right]\]</span> 特别地，对于隐空间模型，蒸馏损失既可以施加在 latent 上，也可以施加在 pixel 上，实验发现后者更加稳定。</p><h2 id="distribution-matching-distillation">Distribution Matching Distillation</h2><p><a href="https://arxiv.org/abs/2311.18828">Distribution Matching Distillation (DMD)</a> 的基本思想是：当我们蒸馏一个多步扩散模型到一个一步生成模型时，不必要求一步模型的起始噪声与终点样本与多步模型的相同，只需要一步模型生成的样本在分布层面与多步模型的相同即可。具体而言，借用 GANs 的术语，将一步模型生成的样本称作 fake 样本，多步模型生成的样本称作 real 样本，那么我们的目标是最小化二者分布的 KL 散度： <span class="math display">\[D_\text{KL}(p_\text{fake}\Vert p_\text{real})=\mathbb E_{p_\text{fake}(\mathbf x)}\left[\log\frac{p_\text{fake}(\mathbf x)}{p_\text{real}(\mathbf x)}\right]=\mathbb E_{\mathbf z\sim\mathcal N(\mathbf0,\mathbf I),\\\mathbf x=G_\theta(\mathbf z)}[\log p_\text{fake}(\mathbf x)-\log p_\text{real}(\mathbf x)]\]</span> 其中 <span class="math inline">\(G_\theta\)</span> 表示我们要训练的一步生成模型。计算对数概率密度一般不现实，但我们只需要求上式关于 <span class="math inline">\(\theta\)</span> 的梯度： <span class="math display">\[\nabla_\theta D_\text{KL}(p_\text{fake}\Vert p_\text{real})=\mathbb E_{\mathbf z\sim\mathcal N(\mathbf0,\mathbf I),\mathbf x=G_\theta(\mathbf z)}\left[\left(\mathbf s_\text{fake}(\mathbf x)-\mathbf s_\text{real}(\mathbf x)\right)\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\]</span> 其中 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x)=\nabla_{\mathbf x}\log p_\text{real}(\mathbf x),\,\mathbf s_\text{fake}(\mathbf x)=\nabla_{\mathbf x}\log p_\text{fake}(\mathbf x)\)</span> 表示 score function. 直观上，<span class="math inline">\(\mathbf s_\text{real}(\mathbf x)\)</span> 一项让模型生成的样本朝 <span class="math inline">\(p_\text{real}\)</span> 更高的地方移动，而 <span class="math inline">\(-\mathbf s_\text{fake}(\mathbf x)\)</span> 一项让生成样本远离 <span class="math inline">\(p_\text{fake}\)</span> 高的地方，当 fake 样本越来越真时，二者逐渐抵消，模型收敛。这与 Contrastive Divergence 有着异曲同工之妙。</p><p>现在我们只需估计 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x)\)</span> 与 <span class="math inline">\(\mathbf s_\text{fake}(\mathbf x)\)</span> 即可。对于 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x)\)</span>，我们希望用预训练的扩散模型去估计。然而，由于 <span class="math inline">\(\mathbf x\)</span> 采样自 <span class="math inline">\(p_\text{fake}\)</span>，预训练扩散模型无法给出一个准确的估计。借鉴 ScoreSDE 的做法，我们对其加以噪声扰动 <span class="math inline">\(\mathbf x_t=\alpha_t\mathbf x+\sigma_t\boldsymbol\epsilon\)</span>，并估计扰动后的 score： <span class="math display">\[\mathbf s_\text{real}(\mathbf x_t,t)=-\frac{\mathbf x_t-\alpha_t\boldsymbol\mu_\text{base}(\mathbf x_t,t)}{\sigma_t^2}\]</span> 其中 <span class="math inline">\(\boldsymbol\mu_\text{base}(\mathbf x_t,t)\)</span> 表示预训练的扩散模型。对于 <span class="math inline">\(\mathbf s_\text{fake}(\mathbf x)\)</span>，由于一步生成模型在不断更新，我们同步学习其 score function： <span class="math display">\[\begin{gather}\mathbf s_\text{fake}(\mathbf x_t,t)=-\frac{\mathbf x_t-\alpha_t\boldsymbol\mu_\text{fake}^\phi(\mathbf x_t,t)}{\sigma_t^2}\\\mathcal L_\text{denoise}(\phi)=\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[\Vert\boldsymbol\mu_\text{fake}^\phi(\mathbf x_t,t)-\mathbf x\Vert_2^2\right]\end{gather}\]</span> 其中 <span class="math inline">\(\boldsymbol\mu_\text{fake}^\phi(\mathbf x_t,t)\)</span> 是与一步生成模型同步学习的扩散模型。于是，对于 <span class="math inline">\(t\)</span> 时刻的带噪分布，有： <span class="math display">\[\begin{align}\nabla_\theta D_\text{KL}(p_\text{fake}\Vert p_\text{real})&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm d\theta}\right]\\&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm dG_\theta(\mathbf z)}\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\&amp;\simeq\,\mathbb E_{\mathbf z,t,\mathbf x_t}\left[w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\\end{align}\]</span> 其中 <span class="math inline">\(w_t\)</span> 是不改变最优解的权重，用于平衡不同时间步下的梯度大小，设置为 <span class="math inline">\(w_t=\frac{\sigma_t^2}{\alpha_t}\frac{CS}{\Vert\boldsymbol\mu_\text{base}(\mathbf x_t,t)-\mathbf x\Vert_1}\)</span>，其中 <span class="math inline">\(C,S\)</span> 分别表示 channels 数量与空间位置数量。作者构造了如下损失，使其梯度为上式： <span class="math display">\[\mathcal L_\text{KL}(\theta)=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[\frac{1}{2}\Big\Vert G_\theta(\mathbf z)-\text{sg}\big[G_\theta(\mathbf z)-(w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t)))\big]\Big\Vert_2^2\right]\\\]</span> 然而，仅仅依靠 KL 散度依旧不够：当 <span class="math inline">\(t\)</span> 接近 0 时，<span class="math inline">\(p_\text{real}(\mathbf x_t,t)\)</span> 接近 0，导致 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x_t,t)\)</span> 的估计误差很大；另外，作者发现优化结果容易发生 mode collapse/dropping. 为了解决这个问题，作者进一步引入了回归损失：利用预训练的扩散模型生成若干噪声-样本对 <span class="math inline">\(\mathcal D=\{\mathbf z,\mathbf y\}\)</span> 作为标签去训练一步生成模型： <span class="math display">\[\mathcal L_\text{reg}(\theta)=\mathbb E_{(\mathbf z,\mathbf y)\sim\mathcal D}[\text{LPIPS}(G_\theta(\mathbf z),\mathbf y)]\]</span> 综上，一步生成模型的总损失为： <span class="math display">\[\mathcal L(\theta)=\mathcal L_\text{KL}(\theta)+\lambda_\text{reg}\mathcal L_\text{reg}(\theta)\]</span> 同时用 <span class="math inline">\(\mathcal L_\text{denoise}(\phi)\)</span> 训练估计 fake 样本 score function 的扩散模型。方法示意图如下：</p><p><img src="dmd.png" width=100% /></p><h2 id="improved-distribution-matching-distillation">Improved Distribution Matching Distillation</h2><p>在 DMD 中的回归损失需要事先用预训练扩散模型生成一批噪声-样本对作为数据，这对于大规模文生图模型而言是相当昂贵的。因此，作者在改进工作 <a href="http://arxiv.org/abs/2405.14867">DMD2</a> 中希望摒弃这个回归损失。但直接丢弃该损失会使得生成样本的统计量（例如平均亮度）剧烈震荡。作者认为这是同步学习的 <span class="math inline">\(\boldsymbol\mu_\text{fake}\)</span> 不够精确导致的。为此，作者借鉴 GANs 中的常用技巧，每更新 5 次 <span class="math inline">\(\boldsymbol\mu_\text{fake}\)</span> 才更新 1 次 <span class="math inline">\(G_\theta\)</span>. 实验证明这样做即可稳定训练，且效果与原 DMD 持平。</p><p>进一步地，由于 DMD 不使用真实数据，因此其效果的上限永远无法超过 teacher 模型。为此，作者引入了一个额外的 GAN 损失，其中判别器 <span class="math inline">\(D\)</span> 实现为在 fake 扩散模型的 bottleneck 处引出一个分类头。GAN 损失采用经典的 non-saturing 目标： <span class="math display">\[\mathcal L_\text{GAN}=\mathbb E_{\mathbf x,t}[\log D(F(\mathbf x,t))]+\mathbb E_{\mathbf z,t}[-\log D(F(G_\theta(\mathbf z),t))]\]</span> 其中 <span class="math inline">\(F\)</span> 表示扩散模型的前向加噪操作。相比回归损失，GAN 损失的引入也与 DMD 的分布匹配理念更加贴合。</p><p>另外，对于较大规模的文生图模型，将其蒸馏为一步生成模型依旧存在困难，因此作者将 DMD 扩展到多步采样场景下。具体而言，其多步采样的做法与 Consistency Models 相同，即去噪、加噪反复交替执行。特别地，在带噪图像上训练时，输入的带噪图像来自于生成器自身的多步采样过程、而非真实图像加噪，这样能弥补 train-test gap，提升效果。</p><p>综上，DMD2 的方法示意图如下：</p><p><img src="dmd2.png" width=100% /></p>]]></content>
+    <content type="html"><![CDATA[<h2 id="introduction">Introduction</h2><p>尽管扩散模型在生成质量、似然估计和训练稳定性上表现出卓越的性能，但其最大的缺点就是采样耗时。为此，许多采样器被提出以加速采样过程，例如 DDIM, Analytic-DPM, PNDM, DPM-Solver 等等，它们着眼于更精确地求解扩散 ODE，例如采用高阶的求解器并充分利用扩散 ODE 的特殊结构。然而，受制于模型本身的误差，此类 training-free 的方法再精确也难以做到 10 步以内的高质量生成。</p><p>随着领域的发展，如今开源/闭源界已经训练了许多高质量的扩散模型，这使得在已有模型的基础上蒸馏一个新的模型成为了不错的方案。所谓蒸馏，即训练一个 student 模型，其一步去噪的效果相当于原 teacher 模型多步去噪的效果。相比优化采样器的方法，基于蒸馏的方法往往能够实现 4 步、2 步甚至 1 步采样，彻底解决扩散模型采样耗时的问题。</p><h2 id="knowledge-distillation">Knowledge Distillation</h2><p><strong>基本思想</strong>   <a href="http://arxiv.org/abs/2101.02388">Knowledge Distillation (KD)</a> 原本来自于 Hinton 等人提出的概念，指让 student 模型学习 teacher 模型输出的分布，使之具有接近甚至超过 teacher 模型的能力。放在扩散模型的语境下，teacher 模型就是预训练的多步生成扩散模型，student 模型就是我们想训练的一步生成模型，因此 KD 的目标就是让 student 模型一步生成与 teacher 模型多步生成相同的结果。</p><p><strong>具体实现</strong>   KD 的实现方式非常简单直接（甚至过于简单直接），即用 teacher 模型通过确定性采样器（例如 DDIM）生成若干「噪声-图像对」作为数据集，学生模型回归这些「噪声-图像对」即可。形式化上，设 <span class="math inline">\(\mathbf F_\text{teacher}(\mathbf x_T)\)</span> 表示 teacher 模型经由多步 DDIM 从 <span class="math inline">\(\mathbf x_T\)</span> 生成的图像，<span class="math inline">\(\mathbf F_\text{student}(\mathbf x_T)\)</span> 表示 student 模型，则损失函数为： <span class="math display">\[\mathcal L_\text{student}=\mathbb E_{\mathbf x_T}\left[\left\Vert\mathbf F_\text{student}(\mathbf x_T)-\mathbf F_\text{teacher}(\mathbf x_T)\right\Vert^2\right]\]</span> <strong>方法评价</strong>   显然，KD 最大的缺点在于用 teacher 模型生成大量数据集的过程非常耗时，甚至可能超过蒸馏 student 模型的训练时间；另外，直接让 student 模型回归「噪声-图像对」过于困难，其生成质量很一般，远远达不到 teacher 模型的水平。尽管如此，后续更先进蒸馏方法（例如 DMD）可以采用 KD 作为正则项或者初始化。</p><h2 id="progressive-distillation">Progressive Distillation</h2><p><strong>基本思想</strong>   既然 KD 直接从噪声回归图像过于困难，那么我们可以把问题拆解开，每次蒸馏只将采样步数缩短到原来的一半，如此进行 <span class="math inline">\(\log_2 N\)</span> 次迭代，就可以把 <span class="math inline">\(N\)</span> 步生成模型蒸馏为一步生成模型。这就是 <a href="https://arxiv.org/abs/2202.00512">Progressive Distillation (PD)</a>.</p><p><img src="pd.png" width=60% /></p><p><strong>具体推导</strong>   假设有一个 teacher 扩散模型 <span class="math inline">\(\mathbf x_\eta(\cdot)\)</span>，我们希望从中蒸馏一个 student 模型 <span class="math inline">\(\mathbf x_\theta(\cdot)\)</span>，使其一步去噪相当于 teacher 模型两步去噪的效果。为此，首先采样 <span class="math inline">\(\mathbf x\sim\mathcal D,\,\mathbf x_t\sim q_{t\vert0}(\mathbf x_t\vert\mathbf x)\)</span>，然后用 teacher 模型实施两步 DDIM 去噪，得： <span class="math display">\[\begin{gather}\mathbf x_{t&#39;}=\alpha_{t&#39;}\mathbf x_\eta(\mathbf x_t)+\frac{\sigma_{t&#39;}}{\sigma_t}(\mathbf x_t-\alpha_t\mathbf x_\eta(\mathbf x_t))\\\mathbf x_{t&#39;&#39;}=\alpha_{t&#39;&#39;}\mathbf x_\eta(\mathbf x_{t&#39;})+\frac{\sigma_{t&#39;&#39;}}{\sigma_{t&#39;}}(\mathbf x_{t&#39;}-\alpha_{t&#39;}\mathbf x_\eta(\mathbf x_{t&#39;}))\end{gather}\]</span> 如此得到三元组 <span class="math inline">\((\mathbf x_t,\mathbf x_{t&#39;},\mathbf x_{t&#39;&#39;})\)</span>. 对于 student 模型，我们希望它一步去噪就能从 <span class="math inline">\(\mathbf x_t\)</span> 得到 <span class="math inline">\(\mathbf x_{t&#39;&#39;}\)</span>，即： <span class="math display">\[\mathbf x_{t&#39;&#39;}=\alpha_{t&#39;&#39;}\mathbf x_\theta(\mathbf x_t)+\frac{\sigma_{t&#39;&#39;}}{\sigma_t}(\mathbf x_t-\alpha_t\mathbf x_\theta(\mathbf x_t))\]</span> 整理得： <span class="math display">\[\mathbf x_\theta(\mathbf x_t)=\frac{\mathbf x_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\mathbf x_t}{\alpha_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\alpha_t}\]</span> 因此右边就是 student 模型的回归目标，故可构造损失函数： <span class="math display">\[\mathcal L(\theta)=\mathbb E_{\mathbf x,\boldsymbol\epsilon,t,t&#39;,t&#39;&#39;}\left[w_t\left\Vert\mathbf x_\theta(\mathbf x_t)-\frac{\mathbf x_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\mathbf x_t}{\alpha_{t&#39;&#39;}-(\sigma_{t&#39;&#39;}/\sigma_t)\alpha_t}\right\Vert^2\right]\]</span> 待 student 模型收敛后就完成了一轮蒸馏。我们选择 <span class="math inline">\(t&#39;,t&#39;&#39;\)</span> 使得每轮蒸馏减少一半的采样步数，那么迭代执行多轮蒸馏即可指数式地减少采样步数。</p><p><strong>方法评价</strong>   实验显示，尽管 PD 的一步生成并不比 KD 好多少，但是其少步（2,4,8 步）生成能够迅速逼近甚至超过多步 teacher 模型，因此具有极高的实用价值。</p><h2 id="guided-diffusion-distillation">Guided Diffusion Distillation</h2><p><strong>方法动机</strong>   Classifier-Free Guidance (CFG) 是提升扩散模型采样质量的重要技术，因此我们希望蒸馏时不仅仅是蒸馏原扩散模型，而是蒸馏施加 CFG 之后的结果。为此，<a href="https://arxiv.org/abs/2210.03142">Guided Diffusion Distillation</a> 一文提出了两阶段的解决方案：首先训练一个多步扩散模型学习 CFG 之后的结果，然后用 Progressive Distillation 将其蒸馏为一步/少步模型。</p><p><strong>具体推导</strong>   在第一阶段中，设有 teacher 模型 <span class="math inline">\(\mathbf x^\text{u}_\theta(\cdot),\,\mathbf x^\text{c}_\theta(\cdot)\)</span>，其中上标 <span class="math inline">\(\text{u},\text{c}\)</span> 分别表示无条件和有条件模型。设 <span class="math inline">\(\omega\)</span> 表示 CFG scale（<span class="math inline">\(\omega=0\)</span> 表示无条件生成，<span class="math inline">\(\omega=1\)</span> 表示有条件无引导生成，<span class="math inline">\(\omega&gt;1\)</span> 表示有引导生成），则施加 CFG 后的模型写作： <span class="math display">\[\mathbf x_\theta^\omega(\mathbf x_t){\;\mathrel{\vcenter{:}}=\;}(1-\omega)\mathbf x_\theta^\text{u}(\mathbf x_t)+\omega\mathbf x_\theta^\text{c}(\mathbf x_t)\]</span> 我们将 CFG scale 作为条件给到 student 模型 <span class="math inline">\(\mathbf x_{\eta_1}(\cdot,\omega)\)</span>，使其拟合施加 CFG 后的结果： <span class="math display">\[\mathcal L(\eta_1)=\mathbb E_{\mathbf x,\boldsymbol\epsilon,t,\omega}\left[w_t\left\Vert\mathbf x_{\eta_1}(\mathbf x_t,\omega)-\mathbf x_\theta^\omega(\mathbf x_t)\right\Vert^2\right]\]</span> 其中 <span class="math inline">\(\omega\)</span> 在一定范围内 <span class="math inline">\([\omega_\min,\omega_\max]\)</span> 采样，使得 student 模型能够拟合不同 CFG scale 下的结果，增加推理时的灵活性。实现上，CFG scale 经由 Fourier embedding 编码，与时间步合并输入给模型；另外，student 模型以 teacher 模型的权重初始化，有利于快速收敛。</p><p>第一阶段结束后，采用 Progressive Distillation 技术将多步扩散模型 <span class="math inline">\(\mathbf x_{\eta_1}(\cdot,\omega)\)</span> 渐进式蒸馏为少步模型 <span class="math inline">\(\mathbf x_{\eta_2}(\cdot,\omega)\)</span> 即可。</p><h2 id="consistency-distillation">Consistency Distillation</h2><p><a href="https://arxiv.org/abs/2303.01469">Consistency Distillation (CD)</a> 是训练 consistency model 的一种方式，详见 <a href="/blog-main/2025/05/05/Consistency-Models/" title="Consistency Models">Consistency Models</a> 一文。</p><h2 id="adversarial-diffusion-distillation">Adversarial Diffusion Distillation</h2><p><strong>方法动机</strong>   对抗训练作为一种通用的数据分布建模方法，非常适合一步/少步生成的需求。然而，从头训练一个大规模 GAN 是臭名昭著的困难与不稳定。不过，把对抗训练作为蒸馏扩散模型的一项辅助损失却是非常不错的选择——一方面，蒸馏损失可以保证训练的稳定性；另一方面，对抗损失可以提高一步生成的分布匹配能力。基于这种思想，<a href="https://stability.ai/research/adversarial-diffusion-distillation">Adversarial Diffusion Distillation (ADD)</a> 将对抗训练融入了扩散模型蒸馏中，在 SDXL 上实现了 1-4 步生成高质量的 T2I 图像。</p><p><img src="add.png" width=50% /></p><p><strong>蒸馏损失</strong>   ADD 的蒸馏损失部分借鉴了 DreamFusion 的 Score Distillation. 设 <span class="math inline">\(\mathbf x_\theta\)</span> 表示一步生成 student 模型，<span class="math inline">\(\mathbf x_\psi\)</span> 表示多步生成 teacher 模型。训练时，student 模型接收真实带噪图像 <span class="math inline">\(\mathbf x_s=\alpha_s\mathbf x_0+\sigma_s\boldsymbol\epsilon\)</span> 并生成干净图像 <span class="math inline">\(\mathbf x_\theta(\mathbf x_s,s)\)</span>，该生成图像被再次加噪至 <span class="math inline">\(\mathbf x_{\theta,t}=\alpha_t\mathbf x_\theta+\sigma_t\boldsymbol\epsilon&#39;\)</span> 并由 teacher 模型去噪得到 <span class="math inline">\(\mathbf x_\psi(\mathbf x_{\theta,t},t)\)</span>，二者计算回归损失： <span class="math display">\[\mathcal L_\text{distill}(\theta)=\mathbb E_{\boldsymbol\epsilon&#39;,t}\left[c(t)d(\mathbf x_{\theta,t},\mathbf x_\psi(\text{sg}[\mathbf x_{\theta,t}],t))\right]\]</span> 其中 <span class="math inline">\(d(\cdot,\cdot)\)</span> 为度量函数，<span class="math inline">\(c(\cdot)\)</span> 为权重。实践中 <span class="math inline">\(s\)</span> 采样自集合 <span class="math inline">\(T_\text{student}=\{\tau_1,\tau_2,\tau_3,\tau_4\}\)</span>，从而使模型支持 1-4 步生成。此外，对于隐空间模型，蒸馏损失既可以施加在 latent 上，也可以施加在 pixel 上，实验发现后者更加稳定。</p><p><strong>对抗损失</strong>   ADD 将 student 模型生成的图像 <span class="math inline">\(\mathbf x_\theta(\mathbf x_s,s)\)</span> 与真实样本给到判别器进行对抗训练。借鉴 StyleGAN-T 的经验，ADD 的判别器由一个冻结的预训练 ViT（如 DINOv2）和若干判别头 <span class="math inline">\(D_{\phi,k}\)</span> 组成，其中第 <span class="math inline">\(k\)</span> 个判别头接在 ViT 的第 <span class="math inline">\(k\)</span> 层特征 <span class="math inline">\(F_k\)</span> 上。对抗损失采用 hinge loss，判别器损失为： <span class="math display">\[\mathcal L_\text{adv}^\text{D}(\phi)=\mathbb E_{\mathbf x_0}\left[\sum_k\max(0,1-D_{\phi,k}(F_k(\mathbf x_0)))+\gamma\text{R1}(\phi)\right]+\mathbb E_{\mathbf x_0,\boldsymbol\epsilon,s}\left[\sum_k\max(0,1+D_{\phi,k}(F_k(\mathbf x_\theta(\mathbf x_s,s))))\right]\]</span> 其中 <span class="math inline">\(\text{R1}(\phi)\)</span> 表示 R1 梯度惩罚项。生成器损失为： <span class="math display">\[\mathcal L_\text{adv}^\text{G}(\theta)=-\mathbb E_{\mathbf x_0,\boldsymbol\epsilon,s}\left[\sum_k D_{\phi,k}(F_k(\hat{\mathbf x}_\theta(\mathbf x_s,s)))\right]\]</span> 蒸馏损失与对抗损失加权构成最终损失： <span class="math display">\[\mathcal L(\theta)=\mathbb E_{\mathbf x_0,\boldsymbol\epsilon,s}\left[\mathcal L_\text{adv}^\text{G}(\theta)+\lambda\mathcal L_\text{distill}(\theta)\right]\]</span> <strong>实验结果</strong>   实验验证 ADD 相比 PD, UFOGen 等过往方法都更好。特别地，在 SDXL 上，4 步蒸馏 student 模型相比 teacher 模型都取得了更好的用户评价，这是因为对抗训练引入了真实数据，因此 student 模型的确可以有比 teacher 模型更高的上限。</p><h2 id="progressive-adversarial-distillation">Progressive Adversarial Distillation</h2><p><strong>方法动机</strong>   PD 采用 MSE 回归，在 8 步以下生成的图片较为模糊；AAD 采用对抗训练，虽然更加清晰，但容易模式坍塌。因此，<a href="http://arxiv.org/abs/2402.13929">Progressive Adversarial Distillation (PAD)</a> 将二者结合起来，实现质量和多样性的平衡。</p><p><strong>对抗训练</strong>   ADD 采用预训练 ViT 作为判别器架构，存在以下不足：(1) 预训练 ViT 只接收像素空间图像，因此对于隐空间模型，必须将生成的 latent 解码到像素空间，增加显存和计算开销；(2) 预训练 ViT 只接收干净图像，因此 student 模型必须预测干净图像而非中间步；(3) 对于其他图像域或模态，可能难以寻找合适的预训练模型。为解决上述问题，PAD 采用扩散模型自身的 UNet encoder 架构作为判别器，从而自然地支持输入中间带噪 latent. 具体而言，设有真实带噪图像 <span class="math inline">\(\mathbf x_t=\alpha_t\mathbf x_0+\sigma_t\boldsymbol\epsilon\)</span>，teacher 模型经过 <span class="math inline">\(n\)</span> 步采样后得 <span class="math inline">\(\mathbf x_{t-ns}\)</span>，student 模型经过 1 步采样后得 <span class="math inline">\(\hat{\mathbf x}_{t-ns}\)</span>，则对抗训练采用 non-saturating loss 判别 <span class="math inline">\(\mathbf x_{t-ns},\hat{\mathbf x}_{t-ns}\)</span> 分别属于 teacher 还是 student： <span class="math display">\[\begin{gather}p=D(\mathbf x_t,\mathbf x_{t-ns},t,t-ns,c)\\\hat p=D(\mathbf x_t,\hat{\mathbf x}_{t-ns},t,t-ns,c)\\\mathcal L_D=-\log p-\log(1-\hat p)\\\mathcal L_G=-\log \hat p\end{gather}\]</span> 作者发现如若 student 模型本身的 capacity 不够，那么这样训练会出现“一个人两个头”的问题。为此，作者在判别器中去掉 <span class="math inline">\(\mathbf x_t\)</span> 的输入，使用 <span class="math inline">\(D&#39;(\mathbf x_{t-ns},t-ns,c)\)</span> 来微调模型。这相当于放松了模型对扩散 ODE 路径的遵从，转而只需要匹配 <span class="math inline">\(t-ns\)</span> 时刻的分布。</p><p><strong>渐进蒸馏</strong>   参考 PD 的渐进蒸馏思想，PAD 采用如下设置：首先只用 MSE 从 128 步蒸馏到 32 步，然后用对抗训练按如下设置减少步数 <span class="math inline">\(32\to8\to4\to2\to1\)</span>，其中每一个阶段都包括判别器含有 <span class="math inline">\(\mathbf x_t\)</span> 的训练和不含 <span class="math inline">\(\mathbf x_t\)</span> 的微调两个步骤。每个阶段的训练均先采用 LoRA 微调，然后将 LoRA 并入主干权重进行全量微调。</p><p><strong>训练技巧</strong>   对于 1 步和 2 步蒸馏，作者采用了额外的技巧来保证训练的稳定性。首先，尽管理论上 1 步和 2 步蒸馏只需要分别在 <span class="math inline">\(\{1000\},\{500,1000\}\)</span> 时间步上训练即可，但作者发现在更多的时间步上训练 <span class="math inline">\(\{250,500,750,1000\}\)</span> 有助于提升训练稳定性。其次，由于判别器初始化自扩散模型 UNet encoder，其对小时间步输入更关注高频细节，判别性不佳；因此，作者在把图像给判别器前会取 <span class="math inline">\(\{10,250,500,750\}\)</span> 时间步进行加噪，从而让判别器能够关注到低频结构。</p><p><strong>实验结果</strong>   在 1,2,4,8 步生成下，PAD 在 SDXL 上相比 LCM、ADD 都取得了更好的结果。</p><h2 id="distribution-matching-distillation">Distribution Matching Distillation</h2><p><strong>基本思想</strong>   前文许多工作（例如 KD, PD, CD 等）的思路都是要求一步 student 模型的起始噪声与终点样本与多步 teacher 模型的相同（样本服从同一条 ODE 轨迹），但事实上，我们只需要一步 student 模型生成的样本在分布层面与多步 teacher 模型的相同即可，这就是 <a href="https://arxiv.org/abs/2311.18828">Distribution Matching Distillation (DMD)</a>.</p><p><strong>分布匹配</strong>   借用 GANs 的术语，我们将一步 student 模型生成的样本称作 fake 样本，多步 teacher 模型生成的样本称作 real 样本，那么我们可以通过最小化二者分布的 reverse KL 散度进行分布匹配： <span class="math display">\[D_\text{KL}(p_\text{fake}\Vert p_\text{real})=\mathbb E_{p_\text{fake}(\mathbf x)}\left[\log\frac{p_\text{fake}(\mathbf x)}{p_\text{real}(\mathbf x)}\right]=\mathbb E_{\mathbf z\sim\mathcal N(\mathbf0,\mathbf I),\mathbf x=G_\theta(\mathbf z)}[\log p_\text{fake}(\mathbf x)-\log p_\text{real}(\mathbf x)]\]</span> 其中 <span class="math inline">\(G_\theta\)</span> 表示我们要训练的一步生成模型。计算对数概率密度一般不现实，但我们只关心上式关于 <span class="math inline">\(\theta\)</span> 的梯度： <span class="math display">\[\nabla_\theta D_\text{KL}(p_\text{fake}\Vert p_\text{real})=\mathbb E_{\mathbf z\sim\mathcal N(\mathbf0,\mathbf I),\mathbf x=G_\theta(\mathbf z)}\left[\left(\mathbf s_\text{fake}(\mathbf x)-\mathbf s_\text{real}(\mathbf x)\right)\frac{\mathrm d\mathbf x}{\mathrm d\theta}\right]\]</span> 其中 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x)=\nabla_{\mathbf x}\log p_\text{real}(\mathbf x),\,\mathbf s_\text{fake}(\mathbf x)=\nabla_{\mathbf x}\log p_\text{fake}(\mathbf x)\)</span> 表示 score function. 直观上，<span class="math inline">\(\mathbf s_\text{real}(\mathbf x)\)</span> 一项让模型生成的样本朝 <span class="math inline">\(p_\text{real}\)</span> 更高的地方移动，而 <span class="math inline">\(-\mathbf s_\text{fake}(\mathbf x)\)</span> 一项让生成样本远离 <span class="math inline">\(p_\text{fake}\)</span> 高的地方，当 fake 样本越来越真时，二者逐渐抵消，模型收敛。这与 Contrastive Divergence 有着异曲同工之妙。</p><p><strong>带噪估计</strong>   欲使用上述梯度训练模型，只需估计 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x)\)</span> 与 <span class="math inline">\(\mathbf s_\text{fake}(\mathbf x)\)</span> 即可。首先，<span class="math inline">\(\mathbf s_\text{real}(\mathbf x)\)</span> 可以由 teacher 模型计算。然而，考虑到 <span class="math inline">\(\mathbf x\)</span> 采样自 <span class="math inline">\(p_\text{fake}\)</span>，teacher 模型无法给出一个准确的估计，因此对其加以噪声扰动 <span class="math inline">\(\mathbf x_t=\alpha_t\mathbf x+\sigma_t\boldsymbol\epsilon\)</span>，并估计扰动后的 score： <span class="math display">\[\mathbf s_\text{real}(\mathbf x_t,t)=-\frac{1}{\sigma_t^2}\left(\mathbf x_t-\alpha_t\mathbf x_\text{teacher}(\mathbf x_t,t)\right)\]</span> 其中 <span class="math inline">\(\mathbf x_\text{teacher}(\mathbf x_t,t)\)</span> 表示 teacher 扩散模型。对于 <span class="math inline">\(\mathbf s_\text{fake}(\mathbf x)\)</span>，由于一步生成模型在不断更新，我们同步学习其 score function： <span class="math display">\[\begin{gather}\mathbf s_\text{fake}(\mathbf x_t,t)=-\frac{1}{\sigma_t^2}\left(\mathbf x_t-\alpha_t\mathbf x_\text{fake}^\phi(\mathbf x_t,t)\right)\\\mathcal L_\text{denoise}(\phi)=\mathbb E_{\mathbf z,\mathbf x,t,\mathbf x_t}\left[\Vert\mathbf x_\text{fake}^\phi(\mathbf x_t,t)-\mathbf x\Vert_2^2\right]\end{gather}\]</span> 其中 <span class="math inline">\(\mathbf x_\text{fake}^\phi(\mathbf x_t,t)\)</span> 是与一步生成模型同步学习的扩散模型。于是，将扰动后的 score 估计代入损失梯度并对 <span class="math inline">\(t\)</span> 取期望，有： <span class="math display">\[\begin{align}\nabla_\theta D_\text{KL}(p_\text{fake}\Vert p_\text{real})&amp;\simeq\mathbb E_{\mathbf z,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm d\theta}\right]\\&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm d\mathbf x_t}{\mathrm dG_\theta(\mathbf z)}\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\&amp;=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\&amp;\simeq\,\mathbb E_{\mathbf z,t,\mathbf x_t}\left[w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t))\frac{\mathrm dG_\theta(\mathbf z)}{\mathrm d\theta}\right]\\\end{align}\]</span> 其中 <span class="math inline">\(w_t\)</span> 是不改变最优解的权重，用于平衡不同时间步下的梯度大小，设置为 <span class="math inline">\(w_t=\frac{\sigma_t^2}{\alpha_t}\frac{CS}{\Vert\boldsymbol\mu_\text{base}(\mathbf x_t,t)-\mathbf x\Vert_1}\)</span>，其中 <span class="math inline">\(C,S\)</span> 分别表示 channels 数量与空间位置数量。我们可以构造如下损失，使其梯度为上式： <span class="math display">\[\mathcal L_\text{KL}(\theta)=\mathbb E_{\mathbf z,t,\mathbf x_t}\left[\frac{1}{2}\Big\Vert G_\theta(\mathbf z)-\text{sg}\big[G_\theta(\mathbf z)-(w_t\alpha_t(\mathbf s_\text{fake}(\mathbf x_t,t)-\mathbf s_\text{real}(\mathbf x_t,t)))\big]\Big\Vert_2^2\right]\\\]</span> <strong>回归正则</strong>   上述分布匹配损失在 <span class="math inline">\(t\)</span> 较大时没有什么问题，但是当 <span class="math inline">\(t\)</span> 接近 0 时，<span class="math inline">\(p_\text{real}(\mathbf x_t,t)\)</span> 接近 0，使得 <span class="math inline">\(\mathbf s_\text{real}(\mathbf x_t,t)\)</span> 的估计误差很大；另外，训练结果容易发生模式坍塌。为了解决这个问题，作者进一步引入了回归损失作为正则项：利用 teacher 模型生成若干「噪声-图像对」构成数据集 <span class="math inline">\(\mathcal D=\{\mathbf z,\mathbf y\}\)</span> 去训练一步生成模型： <span class="math display">\[\mathcal L_\text{reg}(\theta)=\mathbb E_{(\mathbf z,\mathbf y)\sim\mathcal D}\left[\mathcal d_\text{LPIPS}(G_\theta(\mathbf z),\mathbf y)\right]\]</span> 也即上文的 KD. 综上，一步生成模型的总损失为： <span class="math display">\[\mathcal L(\theta)=\mathcal L_\text{KL}(\theta)+\lambda_\text{reg}\mathcal L_\text{reg}(\theta)\]</span> 同时用 <span class="math inline">\(\mathcal L_\text{denoise}(\phi)\)</span> 训练估计 fake 样本 score function 的扩散模型。方法框架图如下：</p><p><img src="dmd.png" width=100% /></p><h2 id="improved-distribution-matching-distillation">Improved Distribution Matching Distillation</h2><p><strong>丢弃回归</strong>   DMD 中作者引入了回归损失来缓解分布匹配带来的不稳定和模式坍塌问题。然而，回归损失需要事先用 teacher 模型生成一批「噪声-图像对」作为数据集，这对于大规模文生图模型而言是相当昂贵的。因此，作者在改进工作 <a href="http://arxiv.org/abs/2405.14867">DMD2</a> 中希望摒弃这个回归损失。但直接丢弃该损失会使得训练不稳定，生成样本的统计量（例如平均亮度）剧烈震荡。作者认为这是由于同步学习的 <span class="math inline">\(\mathbf x_\text{fake}\)</span> 不够精确而导致的。为此，作者借鉴 GANs 中的常用技巧，每更新 5 次 <span class="math inline">\(\mathbf x_\text{fake}\)</span> 才更新 1 次 <span class="math inline">\(G_\theta\)</span>. 实验证明这样做即可稳定训练，且效果与原 DMD 持平。</p><p><strong>引入 GAN</strong>   进一步地，由于 DMD 不使用真实数据，因此其效果的上限永远无法超过 teacher 模型。为此，作者引入了一个额外的 GAN 损失，其中判别器 <span class="math inline">\(D\)</span> 与 fake 扩散模型 <span class="math inline">\(\mathbf x_\text{fake}\)</span> 共享 encoder 网络，在 bottleneck 处引出一个分类头。GAN 采用经典的 non-saturing loss: <span class="math display">\[\mathcal L_\text{GAN}=\mathbb E_{\mathbf x,t,\boldsymbol\epsilon}[\log D(\alpha_t\mathbf x+\sigma_t\boldsymbol\epsilon))]+\mathbb E_{\mathbf z,t,\boldsymbol\epsilon}[-\log D(\alpha_tG_\theta(\mathbf z)+\sigma_t\boldsymbol\epsilon))]\]</span> 相比回归损失，GAN 损失的引入也与 DMD 的分布匹配理念更加贴合。</p><p><strong>多步采样</strong>   对于较大规模的文生图模型，将其蒸馏为一步生成模型依旧存在困难，因此作者将 DMD 扩展到多步采样场景下。具体而言，其多步采样的做法与 Consistency Models 相同，即去噪、加噪反复交替执行。因此只需在带噪图像上训练即可。特别地，输入的带噪图像来自于生成器自身的多步采样过程、而非真实图像加噪，这样能弥补 train-test gap. 综上，DMD2 的方法框架图如下：</p><p><img src="dmd2.png" width=100% /></p>]]></content>
     
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -136,7 +109,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -154,16 +127,16 @@
   
   
   <entry>
-    <title>One/Few-step Flow Models</title>
-    <link href="/blog-main/2025/11/13/One-Few-step-Flow-Models/"/>
-    <url>/blog-main/2025/11/13/One-Few-step-Flow-Models/</url>
+    <title>Flow Map Models</title>
+    <link href="/blog-main/2025/11/13/Flow-Map-Models/"/>
+    <url>/blog-main/2025/11/13/Flow-Map-Models/</url>
     
     <content type="html"><![CDATA[<p>扩散/流模型最明显的短板就是迭代式生成的效率太低，为此人们做出了非常多的努力，大致可以分为以下三类：</p><ul><li><strong>改进采样器</strong>：提出 DDIM, Euler, Heun, DPM-Solver 等一阶或高阶 ODE/SDE 求解器。这类方法的优点在于无需训练，但是很难在 10 步采样以内保持图像质量。</li><li><strong>模型蒸馏</strong>：以预训练扩散模型作为老师，蒸馏一个采样步数更少的学生模型，代表工作包括 Progressive Distillation, Consistency Distillation, Reflow 等。这类方法可以保证几步甚至一步生成的图像质量，但是训练流程麻烦，不是端到端的。</li><li><strong>构建新的模型族</strong>：基于扩散/流模型的理论设计新的模型族，代表工作包括 Consistency Models, Shortcut Models, MeanFlow 等。这类方法可以端到端从头训练，同时支持一步或多步生成，是很有潜力的研究方向。本文主要介绍此类方法。</li></ul><h2 id="flow-matching">Flow Matching</h2><p>首先简要回顾一下 <a href="/blog-main/2024/06/22/Flow-Matching/" title="Flow Matching">Flow Matching</a>. 在训练的每一步中，Flow Matching 从源分布和目标分布中分别采样 <span class="math inline">\(\mathbf x_0,\mathbf x_1\)</span>，然后做线性插值 <span class="math inline">\(\mathbf x_t=(1-t)\mathbf x_0+t\mathbf x_1\)</span>，模型 <span class="math inline">\(\mathbf v_\theta\)</span> 以 <span class="math inline">\(\mathbf x_t\)</span> 为输入，预测速度方向 <span class="math inline">\(\mathbf v_t=\dot{\mathbf x}_t=\mathbf x_1-\mathbf x_0\)</span>，即： <span class="math display">\[\mathcal L^\text{FM}(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),t}\left[\Vert\mathbf v_\theta(\mathbf x_t,t)-(\mathbf x_1-\mathbf x_0)\Vert_2^2\right]\]</span> 考虑某个特定的 <span class="math inline">\(\mathbf x_t\)</span>，它在整个训练过程中可能由不同的 <span class="math inline">\((\mathbf x_0,\mathbf x_1)\)</span> 插值得到，每次回归一个速度方向，于是最终将收敛到这些速度方向的条件期望： <span class="math display">\[\mathbf v_\theta^\ast(\mathbf x_t,t)=\mathbb E[\mathbf v_t\vert\mathbf x_t]\]</span> 训练结束后，模型 <span class="math inline">\(\mathbf v^\ast_\theta(\mathbf x_t,t)\)</span> 给出了空间中的一个速度场，从源分布中的任一点出发，沿该速度场运动就完成了一次采样。形式化地说，采样过程就是求解如下 ODE 的过程： <span class="math display">\[\mathrm d\mathbf x_t=\mathbf v_\theta^\ast(\mathbf x_t,t)\mathrm dt\]</span> 值得注意的是，模型最终学习到的采样轨迹是弯曲的，这导致大步长采样存在较大的离散误差。极端情况下，如果我们做一步采样，那么采样出来的其实是目标分布的平均点： <span class="math display">\[\text{One-step FM Sampling:}\quad\mathbf x_0+\mathbb E[\mathbf v_0\vert\mathbf  x_0]\cdot 1=\mathbb E[\mathbf x_1\vert\mathbf x_0]=\mathbb E[\mathbf x_1]\]</span> <img src="flow-matching.png" width=80% /></p><h2 id="shortcut-models">Shortcut Models</h2><p>Shortcut Models 的核心思想是将采样步长 <span class="math inline">\(d\)</span> 作为条件加入网络，使得网络能够考虑到采样轨迹的曲率，进而给出跨出 <span class="math inline">\(d\)</span> 步长后准确的位置。直观上，Flow Matching 可以解释为学习<strong>瞬时速度</strong>，而 Shortcut Models 意在学习 <span class="math inline">\(d\)</span> 时间内的<strong>平均速度</strong>。若模型得到了充分的学习，那么当 <span class="math inline">\(d=1\)</span> 时，模型就给出了跨越整条采样轨迹的速度方向，从而实现一步采样。</p><p><img src="shortcut.png" width=80% /></p><h3 id="shortcut">Shortcut</h3><p>具体而言，记 <span class="math inline">\(\mathbf s(\mathbf x_t,t,d)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻位于 <span class="math inline">\(\mathbf x_t\)</span> 处且步长为 <span class="math inline">\(d\)</span> 的 shortcut，定义为： <span class="math display">\[\mathbf x_{t+d}=\mathbf x_t+\mathbf s(\mathbf x_t,t,d)d\]</span> 不难发现它具有两条性质：</p><ul><li><p><strong>极限性质</strong>：当步长无限小时，平均速度趋向于瞬时速度，此时 shortcut 就是 Flow Matching 中的速度场： <span class="math display">\[\lim_{d\to 0}\mathbf s(\mathbf x_t,t,d)=\lim_{d\to0}\frac{\mathbf x_{t+d}-\mathbf x_t}{d}=\dot{\mathbf  x}_t\]</span></p></li><li><p><strong>自一致性</strong>：跨一个 <span class="math inline">\(2d\)</span> 步长等价于先跨一个 <span class="math inline">\(d\)</span> 步长、再跨一个 <span class="math inline">\(d\)</span> 步长： <span class="math display">\[\mathbf s(\mathbf x_t,t,2d)=\mathbf s(\mathbf x_t,t,d)/2+\mathbf s(\mathbf x_{t+d},t+d,d)/2\]</span></p></li></ul><p>我们希望训练一个模型 <span class="math inline">\(\mathbf s_\theta(\mathbf x_t,t,d)\)</span> 去近似 shortcut： <span class="math display">\[\mathbf s_\theta(\mathbf x_t,t,d)\xrightarrow{\text{approximate}}\mathbf s(\mathbf x_t,t,d)\]</span> 如此即可实现一步/少步采样。</p><h3 id="training">Training</h3><p>基于 shortcut 的两条性质，设计如下的损失函数： <span class="math display">\[\begin{align}&amp;\mathcal L^\text{SM}(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),(t,d)}\Big[\underbrace{\Vert\mathbf s_\theta(\mathbf x_t,t,0)-(\mathbf x_1-\mathbf x_0)\Vert_2^2}_{\text{Flow Matching}}+\underbrace{\Vert\mathbf s_\theta(\mathbf x_t,t,2d)-\mathbf s_\text{target}\Vert_2^2}_{\text{Self-Consistency}}\Big]\\\text{where}\quad&amp;\mathbf s_\text{target}=\mathbf s_\theta(\mathbf x_t,t,d)/2+s_\theta(~\underbrace{\mathbf x_t+\mathbf s_\theta(\mathbf x_t,t,d)d}_{\mathbf x&#39;_{t+d}}~,t+d,d)/2\end{align}\]</span> 可以看见损失函数由两部分构成，分别对应极限性质和自一致性。直观上，Flow Matching 部分保证在小步长下模型给出的轨迹贴合真实的采样轨迹，而自一致性部分保证模型在大步长下的轨迹逼近小步长下的轨迹。二者联合训练，实现单阶段、端到端的从头训练。</p><p>Shortcut Models 的训练过程可以解释为一个<strong>自蒸馏</strong>的过程：如果我们分阶段训练不同步长，即先训练小步长，再训练大步长，那不就是 Progressive Distillation 吗！从这个角度上说，Shortcut Models 也可以视作 Progressive Distillation 的端到端训练版本。</p><p>虽然理论简单，但是实践中作者引入了不少工程设计：</p><ol type="1"><li><strong>时间离散化</strong>：尽管理论上 <span class="math inline">\(d\)</span> 可以取连续值，但作者只在离散时间步上训练自一致性。具体而言，步长 <span class="math inline">\(d\)</span> 采样自 <span class="math inline">\(\left\{1/128,1/64,\ldots,1/2,1\right\}\)</span>，而时间步 <span class="math inline">\(t\)</span> 取为 <span class="math inline">\(d\)</span> 的倍数。</li><li><strong>批次分比例优化</strong>：对一个 batch 的数据，取其中 <span class="math inline">\(3/4\)</span> 用于训练 Flow Matching，剩下 <span class="math inline">\(1/4\)</span> 用于训练自一致性。由于自一致性的目标 <span class="math inline">\(s_\text{target}\)</span> 包含额外的前向传播，因此训练代价比 Flow Matching 部分更高，设置比例后可以保证整个训练代价比普通的扩散模型训练仅多出 16% 左右。</li><li><strong>提前确定 CFG</strong>：由于自一致性涉及到生成目标 <span class="math inline">\(\mathbf s_\text{target}\)</span>，因此原本不需要在训练时确定的超参数（如 CFG）需要提前确定下来。</li><li><strong>使用 EMA 权重</strong>：同样的道理，生成目标 <span class="math inline">\(\mathbf s_\text{target}\)</span> 时需要用维护的 EMA 模型生成。</li><li><strong>调节 weight decay</strong>：作者发现 weight decay 对训练的稳定性至关重要，这是因为训练早期 <span class="math inline">\(\mathbf s_\text{target}\)</span> 无法给出有效的目标，影响收敛，调节合适的 weight decay 可以缓解不稳定性。</li></ol><p>训练及采样算法如下图所示：</p><p><img src="shortcut-alg.png" width=70% /></p><h2 id="meanflow">MeanFlow</h2><p>Shortcut Models 人为确定离散时间步的做法略显笨拙，而 Kaiming 组的 MeanFlow 则给出了一个更优雅的解决方案。直观上，MeanFlow 可以视为 Shortcut Models 的连续时间版本，它将后者在离散时间步上的一致性约束推广为了连续时间上的微分方程约束。</p><h3 id="average-velocity">Average Velocity</h3><p>MeanFlow 的思想依旧是用一个双时间步模型学习 ODE 轨迹的平均速度。形式化地说，设 <span class="math inline">\(t\in[0,1]\)</span> 表示时间步，<span class="math inline">\(\mathbf x_t\)</span> 为 <span class="math inline">\(t\)</span> 的函数，表示一条轨迹。记 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x_t\)</span> 处的瞬时速度，则从 <span class="math inline">\(r\)</span> 时刻到 <span class="math inline">\(t\)</span> 时刻的平均速度定义为： <span class="math display">\[\mathbf u(\mathbf x_t,r,t){\;\mathrel{\vcenter{:}}=\;}\frac{1}{t-r}\int_r^t\mathbf v(\mathbf x_\tau,\tau)\mathrm d\tau\]</span> 根据该定义，平均速度场自然满足 Shortcut Models 中提到的两条性质：</p><ol type="1"><li><strong>极限性质</strong>：当 <span class="math inline">\(r\to t\)</span> 时，<span class="math inline">\(\mathbf u(\mathbf x_t,r,t)\to\mathbf v(\mathbf x_t,t)\)</span>.</li><li><strong>自一致性</strong>：对任意 <span class="math inline">\(r&lt;s&lt;t\)</span>，有 <span class="math inline">\((t-r)\mathbf u(\mathbf x_t,r,t)=(s-r)\mathbf u(\mathbf x_s,r,s)+(t-s)\mathbf u(\mathbf x_t,s,t)\)</span>.</li></ol><p>我们的目标就是学习一个模型 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,r,t)\)</span> 去近似平均速度： <span class="math display">\[\mathbf u_\theta(\mathbf x_t,r,t)\xrightarrow{\text{approximate}}\mathbf u(\mathbf x_t,r,t)\]</span> 如果可以做到这一点，那么推理时就可以跨任意步长采样了，包括一步采样。</p><h3 id="meanflow-identity">MeanFlow Identity</h3><p>由于平均速度的定义包含积分，我们难以直接回归它。为此，作者巧妙地将积分等式转换为了微分等式。首先移项得： <span class="math display">\[(t-r)\mathbf u(\mathbf x_t,r,t)=\int_r^t\mathbf v(\mathbf x_\tau,\tau)\mathrm d\tau\]</span> 视 <span class="math inline">\(r\)</span> 与 <span class="math inline">\(t\)</span> 无关，两边对 <span class="math inline">\(t\)</span> 求导得： <span class="math display">\[\mathbf u(\mathbf x_t,r,t)+(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\mathbf v(\mathbf x_t,t)\]</span> 整理有： <span class="math display">\[\underbrace{\mathbf u(\mathbf x_t,r,t)}_\text{average vel.}=\underbrace{\mathbf v(\mathbf x_t,t)}_\text{instant. vel.}-(t-r)\underbrace{\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)}_\text{time derivative}\]</span> 称此式为 <strong>MeanFlow Identity</strong>. 其中，对时间求导一项可进一步展开如下： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\partial_1\mathbf u\cdot\frac{\mathrm d\mathbf x_t}{\mathrm dt}+\partial_2\mathbf u\cdot\frac{\mathrm dr}{\mathrm dt}+\partial_3\mathbf u\cdot\frac{\mathrm dt}{\mathrm dt}=\partial_1\mathbf u\cdot\mathbf v(\mathbf x_t,t)+\partial_3\mathbf u\]</span> 若写作矩阵形式，则为： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)=\underbrace{\bigg[\begin{matrix}\partial_1\mathbf u&amp;\partial_2\mathbf u&amp;\partial_3\mathbf u\end{matrix}\bigg]}_{\text{Jacobian of }\mathbf u}\begin{bmatrix}\mathbf v(\mathbf x_t,t)\\0\\1\end{bmatrix}=\texttt{JVP}(\mathbf u,\mathbf v(\mathbf x_t,t))\]</span> 即 <span class="math inline">\(\mathbf u\)</span> 的 Jacobian 矩阵与一个向量的乘积，这可通过深度学习框架 (PyTorch/JAX) 中封装好的 <code>jvp</code> (Jacobian-vector product) 算子高效实现，我们用记号 <span class="math inline">\(\texttt{JVP}(\mathbf u,\mathbf v(\mathbf x_t,t))\)</span> 表示这一操作。</p><p>现在，我们只需训练一个模型 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,r,t)\)</span> 使其满足 MeanFlow Identity 即可。根据 MeanFlow Identity 的形式，自然可以构造如下损失函数： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),r,t}\left[\Vert\mathbf u_\theta(\mathbf x_t,r,t)-\text{sg}(\mathbf u_\text{tgt})\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v(\mathbf x_t,t)-(t-r)\texttt{JVP}(\mathbf u_\theta,\mathbf v(\mathbf x_t,t))\end{align}\]</span> 其中 <span class="math inline">\(\text{sg}(\cdot)\)</span> 是停止梯度操作，防止计算 Jacobian 矩阵后还需对网络二次求导，提升训练效率。由于上述损失函数在计算 <span class="math inline">\(\mathbf u_\text{tgt}\)</span> 时依赖于未知的瞬时速度场 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，作者用单次采样下的条件瞬时速度 <span class="math inline">\(\mathbf v_t=\dot{\mathbf x}_t=\mathbf x_1-\mathbf x_0\)</span> 替代之，得到最终损失函数： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),r,t}\left[\Vert\mathbf u_\theta(\mathbf x_t,r,t)-\text{sg}(\mathbf u_\text{tgt})\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v_t-(t-r)\texttt{JVP}(\mathbf u_\theta,\mathbf v_t)\end{align}\]</span> 综上，MeanFlow 模型的训练算法流程如下：</p><p><img src="meanflow-alg.png" width=40% /></p><p>实践中，L2 度量可以更改为其他度量，作者在论文中主要考虑 <span class="math inline">\(\Vert\Delta\Vert_2^{2\gamma}\)</span> 的形式。由进一步推导可知，该形式等价于给 L2 度量加上自适应权重 <span class="math inline">\(w=1/(\Vert\Delta\Vert_2^2+c)^{p}\)</span>，其中 <span class="math inline">\(p=1-\gamma,\,c&gt;0\)</span>. 实验发现 <span class="math inline">\(p=1\)</span> 是最好的选择。</p><h3 id="guidance">Guidance</h3><p>传统上，CFG 是用在采样过程中的，代价是让推理时延变成了原来的两倍。MeanFlow 作者指出，我们其实可以在训练时就引入 CFG，让模型学习 CFG 后的速度场，即可在保持推理时延的同时享受 CFG 的好处。</p><p>具体而言，施加 CFG 后的速度场为： <span class="math display">\[\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)\]</span> 相应的平均速度场记为 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)\)</span>. 依照上一节的推导，MeanFlow Identity 相应更改为： <span class="math display">\[\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)\]</span> 其中对时间求导一项可进一步展开为： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\mathbf u^\text{cfg}(\mathbf x_t,r,t\vert\mathbf c)=\texttt{JVP}(\mathbf u^\text{cfg},\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c))\]</span> 于是损失函数更改为： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1,\mathbf c),r,t}\left[\left\Vert\mathbf u^\text{cfg}_\theta(\mathbf x_t,r,t\vert\mathbf c)-\text{sg}(\mathbf u_\text{tgt})\right\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)-(t-r)\texttt{JVP}(\mathbf u_\theta^\text{cfg},\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c))\end{align}\]</span> 同样的道理，这里 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span> 是未知的，需要替换为已知的量。注意 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\)</span> 是由两部分 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 线性组合构成的，第一部分依旧用单次采样的速度 <span class="math inline">\(\mathbf v_t=\dot{\mathbf x}_t=\mathbf x_1-\mathbf x_0\)</span> 替代即可，所以问题主要在于第二部分如何处理。针对这一问题，作者敏锐地发现施加 CFG 并不影响无条件速度场： <span class="math display">\[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\varnothing)=\mathbb E_\mathbf c[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)]=\omega\mathbb E_\mathbf c[\mathbf v(\mathbf x_t,t\vert\mathbf c)]+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)=\mathbf v(\mathbf x_t,t\vert\varnothing)\]</span> 又 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\varnothing)\)</span> 也可以写作 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\)</span>，因此 CFG 速度场可以改写作： <span class="math display">\[\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\]</span> 更进一步地，作者还讨论了用 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)\)</span> 和 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\)</span> 按 <span class="math inline">\(\kappa\)</span> 比例混合作为 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 的近似： <span class="math display">\[\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+\kappa\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)+(1-\omega-\kappa)\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\]</span> 由于 <span class="math inline">\(\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)\)</span> 就是 <span class="math inline">\(\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)\)</span>，因此上式其实等价于用 <span class="math inline">\(\omega&#39;=\frac{\omega}{1-\kappa}\)</span> 作为 CFG： <span class="math display">\[\mathbf v^{\text{cfg}}(\mathbf x_t,t\vert\mathbf c)=\frac{\omega}{1-\kappa}\mathbf v(\mathbf x_t,t\vert\mathbf c)+\frac{1-\omega-\kappa}{1-\kappa}\mathbf u^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\]</span> 现在，我们只需用 <span class="math inline">\(\mathbf v_t\)</span> 替代 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\mathbf c)\)</span>、用模型 <span class="math inline">\(\mathbf u_\theta^\text{cfg}\)</span> 替代 <span class="math inline">\(\mathbf u^\text{cfg}\)</span> 即可： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1,\mathbf c),r,t}\left[\left\Vert\mathbf u^\text{cfg}_\theta(\mathbf x_t,r,t\vert\mathbf c)-\text{sg}(\mathbf u_\text{tgt})\right\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\tilde{\mathbf v}_t-(t-r)\texttt{JVP}(\mathbf u_\theta^\text{cfg},\tilde{\mathbf v}_t)\\&amp;\tilde{\mathbf v}_t=\omega\mathbf v_t+\kappa\mathbf u^\text{cfg}_\theta(\mathbf x_t,t,t\vert\mathbf c)+(1-\omega-\kappa)\mathbf u_\theta^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\end{align}\]</span> 为训练无条件模型，在训练过程中以 10% 的概率丢弃条件。</p><h2 id="improved-meanflow-imf">Improved MeanFlow (iMF)</h2><p>MeanFlow 虽然效果不错，但是存在两个问题：1. 其训练目标不是一个标准的回归问题；2. 其训练依赖于预先固定的 CFG，缺乏灵活性。为此作者提出了 improved MeanFlow (iMF).</p><h3 id="reformulation">Reformulation</h3><p>回顾一下 MeanFlow 的训练损失函数： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),r,t}\left[\Vert\mathbf u_\theta(\mathbf x_t,r,t)-\text{sg}(\mathbf u_\text{tgt})\Vert_2^2\right]\\\text{where}\quad&amp;\mathbf u_\text{tgt}=\mathbf v_t-(t-r)\texttt{JVP}(\mathbf u_\theta,\mathbf v_t)\end{align}\]</span> 在计算 JVP 时，我们进行了两种近似：</p><ol type="1"><li>用条件瞬时速度 <span class="math inline">\(\mathbf v_t\)</span> 代替了真实瞬时速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，这引入了较大的方差，影响训练的稳定性；</li><li>用平均速度模型 <span class="math inline">\(\mathbf u_\theta\)</span> 代替了真实平均速度 <span class="math inline">\(\mathbf u(\mathbf x_t,r,t)\)</span>，这使得 MeanFlow 并不是一个标准的回归问题，因为回归目标里包含模型本身。</li></ol><p>事实上，MeanFlow Identity 可以改写为： <span class="math display">\[\mathbf v(\mathbf x_t,t)=\mathbf u(\mathbf x_t,r,t)+(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t)\]</span> 这样式子左侧没有 <span class="math inline">\(\mathbf u\)</span>，可以作为一个标准的回归目标。而 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 正是 Flow Matching 要回归的真实速度场，因此 MeanFlow 本质上可以视为 <span class="math inline">\(\mathbf u_\theta\)</span> 重参数化下的 Flow Matching： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),r,t}\left[\left\Vert V_\theta(\mathbf x_t,\mathbf v_t,r,t)-(\mathbf x_1-\mathbf x_0)\right\Vert_2^2\right]\\\text{where}\quad&amp;V_\theta(\mathbf x_t,\mathbf v_t,r,t)=\mathbf u_\theta(\mathbf x_t,r,t)+(t-r)\texttt{JVP}_\text{sg}(\mathbf u_\theta,\mathbf v_t)\end{align}\]</span> 有趣的是，<span class="math inline">\(V_\theta\)</span> 包含 <span class="math inline">\(\mathbf v_t\)</span> 作为输入，同时目标又是预测 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span>. 这是因为计算 JVP 时需要用到 <span class="math inline">\(\mathbf v_t\)</span>——等等，真的吗？回顾一下，JVP 中的 <span class="math inline">\(\mathbf v_t\)</span> 的作用是替代真实瞬时速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，但我们完全可以用另一个模型 <span class="math inline">\(\mathbf v_\theta\)</span> 来近似 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，而非用 <span class="math inline">\(\mathbf v_t\)</span> 替代。因此，上述损失可以改写作： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1),r,t}\left[\left\Vert V_\theta(\mathbf x_t,r,t)-(\mathbf x_1-\mathbf x_0)\right\Vert_2^2\right]\\\text{where}\quad&amp;V_\theta(\mathbf x_t,r,t)=\mathbf u_\theta(\mathbf x_t,r,t)+(t-r)\texttt{JVP}_\text{sg}(\mathbf u_\theta,\mathbf v_\theta)\end{align}\]</span> 具体而言，<span class="math inline">\(\mathbf v_\theta\)</span> 有两种实现方式：</p><ol type="1"><li>由于当 <span class="math inline">\(r\to t\)</span> 时，<span class="math inline">\(\mathbf u(\mathbf x_t,r,t)\to\mathbf v(\mathbf x_t,t)\)</span>，因此我们可以用 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,t,t)\)</span> 来表示 <span class="math inline">\(\mathbf v_\theta(\mathbf x_t,t)\)</span>；</li><li>给网络新加一个 head 作为 <span class="math inline">\(\mathbf v_\theta\)</span>.</li></ol><p>下图展示了 MF 与 iMF 的区别，以及 iMF 的训练算法（均以第一种实现方式为例）：</p><p><img src="imf.png" width=100% /></p><h3 id="flexible-guidance">Flexible Guidance</h3><p>在 MeanFlow 中，CFG 需要在训练前固定下来，这影响了推理时的灵活性。更重要的是，更强的模型（如更多参数量、更长的训练、更多的推理 NFE）往往需要更小的 CFG. 因此，MeanFlow 中固定 CFG 的做法并不够好。为此，iMF 将 CFG 作为条件给到模型，从而在推理时可以选择不同的 CFG. 事实上，这一做法在扩散蒸馏（如 FLUX schnell）中已有应用。</p><p>具体而言，在 <span class="math inline">\(\omega\)</span> 的 CFG 下真实速度场为： <span class="math display">\[\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega){\;\mathrel{\vcenter{:}}=\;}\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)\]</span> 相应的平均速度场记为 <span class="math inline">\(\mathbf u(\mathbf x_t,r,t\vert\mathbf c,\omega)\)</span>. 则改写后的 MeanFlow Identity 为： <span class="math display">\[\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)=\mathbf u(\mathbf x_t,r,t\vert\mathbf c,\omega)+(t-r)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,r,t\vert\mathbf c,\omega)\]</span> 左侧是我们的回归目标，可以写作： <span class="math display">\[\begin{align}\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+(\omega-1)\big(\mathbf v(\mathbf x_t,t\vert\mathbf c)-\mathbf v(\mathbf x_t,t\vert\varnothing)\big)\\&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+(\omega-1)\left[\frac{1}{\omega}\Big(\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)-(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)\Big)-\mathbf v(\mathbf x_t,t\vert\varnothing)\right]\\&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+\left(1-\frac{1}{\omega}\right)\big(\mathbf v(\mathbf x_t,t\vert\mathbf c,\omega)-\mathbf v(\mathbf x_t,t\vert\varnothing)\big)\\&amp;=\mathbf v(\mathbf x_t,t\vert\mathbf c)+\left(1-\frac{1}{\omega}\right)\big(\mathbf u(\mathbf x_t,t,t\vert\mathbf c,\omega)-\mathbf u(\mathbf x_t,t,t\vert\varnothing)\big)\end{align}\]</span> 基于此，第一部分用单次采样的速度 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span> 替代，第二部分用模型 <span class="math inline">\(\mathbf u_\theta\)</span> 替代 <span class="math inline">\(\mathbf u\)</span>，于是最终损失函数为： <span class="math display">\[\begin{align}&amp;\mathcal L(\theta)=\mathbb E_{(\mathbf x_0,\mathbf x_1,\mathbf c),r,t,\omega}\left[\left\Vert V_\theta(\mathbf x_t,r,t\vert\mathbf c,\omega)-V_\text{tgt}\right\Vert^2_2\right]\\\text{where}\quad&amp;V_\text{tgt}=\mathbf x_1-\mathbf x_0+\left(1-\frac{1}{\omega}\right)\big(\mathbf u_\theta(\mathbf x_t,t,t\vert\mathbf c,\omega)-\mathbf u_\theta(\mathbf x_t,t,t\vert\varnothing)\big)\\&amp;V_\theta(\mathbf x_t,r,t\vert\mathbf c,\omega)=\mathbf u_\theta(\mathbf x_t,r,t\vert\mathbf c,\omega)+(t-r)\texttt{JVP}_\text{sg}(\mathbf u_\theta,\mathbf v_\theta)\end{align}\]</span></p><p>其中 <span class="math inline">\(\mathbf v_\theta(\mathbf x_t,t\vert\mathbf c,\omega)\)</span> 依旧实现为 <span class="math inline">\(\mathbf u_\theta(\mathbf x_t,t,t\vert\mathbf c,\omega)\)</span> 即可，算法流程如下：</p><p><img src="imf-cfg-alg.png" width=40% /></p><p>进一步地，我们还可以将 CFG interval 也作为条件加入模型，即只在 <span class="math inline">\([t_\min,t_\max]\)</span> 时间内施加 CFG. 此时模型的 guidance 条件为 <span class="math inline">\(\Omega=\{\omega,t_\min,t_\max\}\)</span>，而训练过程中计算回归目标时，对于 <span class="math inline">\(t\notin[t_\min,t_\max]\)</span>，设置 <span class="math inline">\(\omega=1\)</span> 即可。</p><h3 id="in-context-conditioning">In-context Conditioning</h3><p>可以看到，iMF 涉及到非常多的条件：双时间步 <span class="math inline">\((r,t)\)</span>、条件 <span class="math inline">\(\mathbf c\)</span>、guidance <span class="math inline">\(\Omega\)</span>. 在传统的 DiT 架构中，这些条件是被全部加起来后通过 adaLN-zero 引入网络的。但是当条件数量多起来后，把它们全部加起来似乎不那么合理了。作者发现，尽管 DiT 中 in-context conditioning 方式（即按 sequence 维度拼接 token）不如 adaLN-zero，但是如果每种条件多复制几个 token，效果还是不错的。这一做法也在 MAGE, JiT 等模型中使用过。更重要的是，DiT 的逐层 adaLN-zero 会消耗非常多的参数，这其实是一个设计缺陷。In-context conditioning 反而节约不少参数量，有利于进一步扩大模型规模。</p><h2 id="soflow">SoFlow</h2><p>MeanFlow 最大的问题是依赖于 JVP 操作，导致训练需要更多的时间和显存。为了解决这个问题，SoFlow 采用一阶导近似绕过了 JVP 操作。</p><h3 id="formulation">Formulation</h3><p>SoFlow 同样是基于双时间步模型，但它不是预测平均速度，而是预测 ODE 的解。具体而言，设 <span class="math inline">\(\mathbf f(\mathbf x_t,t,s)\)</span> 表示已知初值 <span class="math inline">\(\mathbf x_t\)</span> 下，ODE <span class="math inline">\(\mathrm d\mathbf x_s=\mathbf v(\mathbf x_s,s)\mathrm ds\)</span> 的解（换句话说，随着 <span class="math inline">\(s\)</span> 改变，<span class="math inline">\(\mathbf f(\mathbf x_t,t,s)\)</span> 形成该 ODE 的一条轨迹），那么有： <span class="math display">\[\begin{gather}\mathbf f(\mathbf x_t,t,t)=\mathbf x_t\\\partial_3\mathbf f(\mathbf x_t,t,s)=\mathbf v(\mathbf f(\mathbf x_t,t,s),s)\end{gather}\]</span> 等价地，这两个式子可以用如下一个式子描述： <span class="math display">\[\mathbf f(\mathbf x_t,t,s)=\mathbf x_t+\int_t^s\mathbf v(\mathbf f(\mathbf x_t,t,u),u)\mathrm du\]</span> 如果两边同时对 <span class="math inline">\(t\)</span> 求导，可得： <span class="math display">\[\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf v(\mathbf x_t,t)-\mathbf v(\mathbf f(\mathbf x_t,t,t),t)=\mathbf 0\]</span> 我们希望训练一个模型 <span class="math inline">\(\mathbf f_\theta\)</span> 去近似 <span class="math inline">\(\mathbf f\)</span>： <span class="math display">\[\mathbf f_\theta(\mathbf x_t,t,s)\xrightarrow{\text{approximate}}\mathbf f(\mathbf x_t,t,s)\]</span> 那么根据上文描述，只需让 <span class="math inline">\(\mathbf f_\theta\)</span> 满足下述两个条件即可： <span class="math display">\[\begin{gather}\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf x_t\\\partial_1\mathbf f_\theta(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf 0\end{gather}\]</span> <div class="note note-secondary">            <p><strong>附（与 MeanFlow 的联系）</strong>：可以看到，SoFlow 的 <span class="math inline">\(\mathbf f\)</span> 表示从 <span class="math inline">\(t\)</span> 到 <span class="math inline">\(s\)</span> 轨迹的“终点”，而 MeanFlow 的 <span class="math inline">\(\mathbf u\)</span> 表示这一段轨迹的平均速度，因此二者其实有如下关系： <span class="math display">\[\mathbf x_t-\mathbf f(\mathbf x_t,t,s)=(t-s)\mathbf u(\mathbf x_t,s,t)\]</span> 两边同时对 <span class="math inline">\(t\)</span> 求导有： <span class="math display">\[\mathbf v(\mathbf x_t,t)-\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)-\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf u(\mathbf x_t,s,t)+(t-s)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,s,t)\]</span> 回顾 MeanFlow Identity： <span class="math display">\[\mathbf v(\mathbf x_t,t)=\mathbf u(\mathbf x_t,s,t)+(t-s)\frac{\mathrm d}{\mathrm dt}\mathbf u(\mathbf x_t,s,t)\]</span> 联立可知： <span class="math display">\[\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf 0\]</span> 如此我们借助 MeanFlow 的结论推出了同样的约束条件。这也说明了 SoFlow 和 MeanFlow 本质上是一回事，因此我认为本文的重点不在于形式化，而在于如何绕开 JVP 操作，见下一节。</p>          </div></p><h3 id="objectives">Objectives</h3><p><strong>Reparameterization</strong>：首先，作者对模型做了重参数化： <span class="math display">\[\mathbf f_\theta(\mathbf x_t,t,s)=a(t,s)\mathbf x_t+b(t,s)F_\theta(\mathbf x_t,t,s)\]</span> 其中 <span class="math inline">\(F_\theta\)</span> 是真正的网络，系数 <span class="math inline">\(a,b\)</span> 满足 <span class="math inline">\(a(t,t)=1,\,b(t,t)=0\)</span> 以使得边界条件 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf x_t\)</span> 恒成立。作者主要考虑如下两种形式：</p><ul><li>Euler: <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf x_t+(s-t)F_\theta(\mathbf x_t,t,s)\)</span>. 根据上一节的注释，此时 <span class="math inline">\(F_\theta\)</span> 其实就是 MeanFlow 的 <span class="math inline">\(\mathbf u_\theta\)</span>.</li><li>Trigonometric: <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,s)=\cos\left(\frac{\pi}{2}(s-t)\right)\mathbf x_t+\sin\left(\frac{\pi}{2}(s-t)\right)F_\theta(\mathbf x_t,t,s)\)</span>.</li></ul><p><strong>Flow Matching Loss</strong>：当 <span class="math inline">\(s=t\)</span> 时，对任意 <span class="math inline">\(\mathbf x_t\)</span> 都有 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf x_t\)</span> 恒成立，因此： <span class="math display">\[\partial_1\mathbf f_\theta(\mathbf x_t,t,t)=I,\quad\frac{\partial\,\mathbf f_\theta(\mathbf x_t,l,l)}{\partial l}\Big|_{l=t}=\partial_2\mathbf f_\theta(\mathbf x_t,t,t)+\partial_3\mathbf f_\theta(\mathbf x_t,t,t)=\mathbf 0\]</span> 结合约束条件 <span class="math inline">\(\partial_1\mathbf f(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f(\mathbf x_t,t,s)=\mathbf 0\)</span>，可知： <span class="math display">\[\begin{align}\partial_3\mathbf f_\theta(\mathbf x_t,t,t)&amp;=\mathbf v(\mathbf f_\theta(\mathbf x_t,t,t),t)=\mathbf v(\mathbf x_t,t)\\&amp;=\partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta(\mathbf x_t,t,s)+\underbrace{b(t,t)}_0\partial_3F_\theta(\mathbf x_t,t,t)\end{align}\]</span> 这说明我们要训练一个 Flow Matching: <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_1}\left[\left\Vert \partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta(\mathbf x_t,t,t)-\mathbf v(\mathbf x_t,t)\right\Vert^2_2\right]\]</span> 用单次采样速度 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span> 替换未知的真实速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span>，得： <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_1}\left[\left\Vert \partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta(\mathbf x_t,t,t)-(\mathbf x_1-\mathbf x_0)\right\Vert^2_2\right]\]</span> 为与前文保持一致，这里默认为线性插值，实际上作者试了不同的插值方式以及动态权重，详见论文。</p><p><strong>Solution Consistency Loss</strong>：对于 <span class="math inline">\(s&lt;t\)</span>，回顾我们需要满足的约束条件： <span class="math display">\[\partial_1\mathbf f_\theta(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf 0\]</span> 在 MeanFlow 中，这直接实现为 JVP 操作。为了避免 JVP，SoFlow 考虑用<strong>一阶导去近似</strong>真正的导数。具体而言，将 <span class="math inline">\(\mathbf f_\theta(\mathbf x_t,t,s)\)</span> 在 <span class="math inline">\(t=l\)</span> 处做泰勒展开： <span class="math display">\[\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf f_\theta(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)+(t-l)\big(\partial_1\mathbf f_\theta(\mathbf x_t,t,s)\mathbf v(\mathbf x_t,t)+\partial_2\mathbf f_\theta(\mathbf x_t,t,s)\big)+o(t-l)\]</span> 其中 <span class="math inline">\(l\in(s,t)\)</span> 充分接近 <span class="math inline">\(t\)</span>. 丢弃高阶项，代入约束条件得： <span class="math display">\[\frac{\mathbf f_\theta(\mathbf x_t,t,s)-\mathbf f_\theta(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)}{t-l}=\mathbf 0\]</span> 因此我们只需满足： <span class="math display">\[\mathbf f_\theta(\mathbf x_t,t,s)=\mathbf f_\theta(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)\]</span> 据此构造损失函数： <span class="math display">\[\mathcal L_\text{SCM}(\theta)=\mathbb E_{t,l,s,\mathbf x_0,\mathbf x_1}\left[\left\Vert \mathbf f_\theta(\mathbf x_t,t,s)-\mathbf f_{\theta^-}(\mathbf x_t+\mathbf v(\mathbf x_t,t)(l-t),l,s)\right\Vert_2^2\right]\]</span> 其中 <span class="math inline">\(\theta^-\)</span> 表示 stop gradient. 由于真实速度 <span class="math inline">\(\mathbf v(\mathbf x_t,t)\)</span> 是未知的，我们用单次采样的速度 <span class="math inline">\(\mathbf v_t=\mathbf x_1-\mathbf x_0\)</span> 替代之，因此损失函数化作： <span class="math display">\[\mathcal L_\text{SCM}(\theta)=\mathbb E_{t,l,s,\mathbf x_0,\mathbf x_1}\left[\left\Vert \mathbf f_\theta(\mathbf x_t,t,s)-\mathbf f_{\theta^-}(\mathbf x_t+(\mathbf x_1-\mathbf x_0)(l-t),l,s)\right\Vert_2^2\right]\]</span> 该损失可以直观可视化为下图。</p><p><img src="soflow.png" width=60% /></p><div class="note note-secondary">            <p><strong>附（与 Consistency Models 的联系）</strong>：可以看见，如果固定 <span class="math inline">\(s=0\)</span>，则 SoFlow 就变成了 Consistency Models.</p>          </div><h3 id="guidance-1">Guidance</h3><p>SoFlow 对 CFG 的处理和 MeanFlow 是类似的。具体而言，FM 和 SCM 损失都被修改为 CFG 版本： <span class="math display">\[\begin{gather}\mathcal L^\text{cfg}_\text{FM}(\theta)=\mathbb E_{t,\mathbf x_0,\mathbf x_1}\left[\left\Vert \partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_\theta^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)-\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\right\Vert^2_2\right]\\\mathcal L^\text{cfg}_\text{SCM}(\theta)=\mathbb E_{t,l,s,\mathbf x_0,\mathbf x_1}\left[\left\Vert \mathbf f_\theta^\text{cfg}(\mathbf x_t,t,s\vert\mathbf c)-\mathbf f_{\theta^-}^\text{cfg}(\mathbf x_t+\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)(l-t),l,s\vert\mathbf c)\right\Vert_2^2\right]\end{gather}\]</span> 其中真实速度 <span class="math inline">\(\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)=\omega\mathbf v(\mathbf x_t,t\vert\mathbf c)+(1-\omega)\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 未知，且 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 不可由采样近似。同 MeanFlow 类似，我们按比例丢弃条件训练一个无条件模型 <span class="math inline">\(F_\theta^\text{cfg}(\mathbf x_t,t,s\vert\varnothing)\)</span>，则无条件部分 <span class="math inline">\(\mathbf v(\mathbf x_t,t\vert\varnothing)\)</span> 可近似为： <span class="math display">\[\mathbf v(\mathbf x_t,t\vert\varnothing)\approx\mathbf v_\text{uncond}=\partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_{\theta^-}^\text{cfg}(\mathbf x_t,t,t\vert\varnothing)\]</span> 条件部分按正常的采样 <span class="math inline">\(\mathbf v_t\)</span> 近似，则有： <span class="math display">\[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\approx\omega\mathbf v_t+(1-\omega)\mathbf v_\text{uncond}\]</span> 另外，它也可用模型近似为： <span class="math display">\[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\approx\mathbf v_\text{guided}=\partial_2a(t,t)\mathbf x_t+\partial_2b(t,t)F_{\theta^-}^\text{cfg}(\mathbf x_t,t,t\vert\mathbf c)\]</span> 二者相比，前者方差大、偏差小，后者方差小、偏差大，因此我们引入一个权重 <span class="math inline">\(m\)</span> 做方差-偏差 trade-off: <span class="math display">\[\mathbf v^\text{cfg}(\mathbf x_t,t\vert\mathbf c)\approx\mathbf v_\text{mix}=m(\omega\mathbf v_t+(1-\omega)\mathbf v_\text{uncond})+(1-m)\mathbf v_\text{guided}\]</span> 实验的确发现较小的 <span class="math inline">\(m\)</span> (0.25) 降低了方差，有助于模型的训练。</p>]]></content>
     
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -192,7 +165,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -219,7 +192,9 @@
     
     <categories>
       
-      <category>数学</category>
+      <category>Mathematics</category>
+      
+      <category>Stochastic Process</category>
       
     </categories>
     
@@ -244,7 +219,9 @@
     
     <categories>
       
-      <category>数学</category>
+      <category>Mathematics</category>
+      
+      <category>Stochastic Process</category>
       
     </categories>
     
@@ -269,7 +246,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -294,7 +271,9 @@
     
     <categories>
       
-      <category>数学</category>
+      <category>Mathematics</category>
+      
+      <category>Probability and Statistics</category>
       
     </categories>
     
@@ -319,7 +298,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -344,7 +323,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -364,12 +343,12 @@
     <link href="/blog-main/2024/06/22/Flow-Matching/"/>
     <url>/blog-main/2024/06/22/Flow-Matching/</url>
     
-    <content type="html"><![CDATA[<h2 id="连续归一化流">连续归一化流</h2><p>想象 <span class="math inline">\(\mathbb R^d\)</span> 空间中有一系列粒子，在 <span class="math inline">\(t=0\)</span> 时服从分布 <span class="math inline">\(p_0\)</span>，随时间流逝粒子在空间中流动，直至 <span class="math inline">\(t=1\)</span> 时形成分布 <span class="math inline">\(p_1\)</span>. 于是这样的流动过程形成了从分布 <span class="math inline">\(p_0\)</span> 到分布 <span class="math inline">\(p_1\)</span> 的一个转换。如果我们能够为上述流体运动过程建立起模型，并控制 <span class="math inline">\(p_0\)</span> 为某简单易采样分布而 <span class="math inline">\(p_1\)</span> 服从数据分布，那么不就得到一个生成模型了吗？这样的生成模型称作<strong>连续归一化流 (Continuous Normalizing Flows, CNFs)</strong>.</p><h3 id="概率密度路径">概率密度路径</h3><p>粒子在流动的过程中，其概率分布在不断地改变。为描述各个时刻的概率分布，定义<strong>概率密度路径 (probability density path)</strong> 为： <span class="math display">\[p:[0,1]\times \mathbb R^d\to\mathbb R_{&gt;0},\quad(t,\mathbf x)\mapsto p_t(\mathbf x)\]</span> 其中 <span class="math inline">\(p_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处的概率密度。称之为“路径”是因为 <span class="math inline">\(t\mapsto p_t\)</span> 可以视作无限维概率分布空间中的流形上的一条路径。显然，对任意时刻 <span class="math inline">\(t\in[0,1]\)</span>，概率密度 <span class="math inline">\(p_t(\mathbf x)\)</span> 都应满足归一化条件：<span class="math inline">\(\int p_t(\mathbf x)\mathrm d\mathbf x=1\)</span>. 因此，区别于一般的流体，我们称这种模型为归一化流；又由于时间是连续的，因此称为连续归一化流。</p><h3 id="速度场与连续性方程">速度场与连续性方程</h3><p>考虑空间中粒子在各个时刻的瞬时速度，定义<strong>速度场 (velocity field)</strong> 为： <span class="math display">\[\mathbf u:[0,1]\times\mathbb R^d\to\mathbb R^d,\quad (t,\mathbf x)\mapsto \mathbf u_t(\mathbf x)\]</span> 其中 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的运动速度。流体中的粒子沿着速度场 <span class="math inline">\(\mathbf u\)</span> 运动，引起概率密度的变化，因此 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 之间一定存在某种关系，这个关系式称为<strong>连续性方程 (continuity equation)</strong>： <span class="math display">\[\frac{\partial}{\partial t}p_t(\mathbf x)+\nabla\cdot(p_t(\mathbf x)\mathbf u_t(\mathbf x))=0\]</span> 直观上，连续性方程的第一项表示单位时间内 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的增加/减少量，第二项表示单位时间内 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的流出/流入量，显然粒子增加量就是流入量，因此连续性方程成立。熟悉随机微分方程的读者可能会发现，连续性方程其实就是 Fokker-Planck 方程在扩散项为零时的情形。</p><p>值得注意的是，概率密度路径与速度场不是一一对应的关系，不同的速度场可以产生相同的概率密度路径。例如，给 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 加上散度为零的场（无源场），就得到了一个新的速度场，并且连续性方程依旧成立，所以概率密度路径不变。</p><h3 id="流与-push-forward-方程">流与 push-forward 方程</h3><p>粒子沿着速度场运动，得到的轨迹称为<strong>流 (flow)</strong>。具体而言，记流为： <span class="math display">\[\boldsymbol\phi:[0,1]\times\mathbb R^d\to\mathbb R^d,\quad (t,\mathbf x)\mapsto\boldsymbol\phi_t(\mathbf x)\]</span> 其中 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 表示 <span class="math inline">\(0\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 处的粒子在 <span class="math inline">\(t\)</span> 时刻运动到的位置。换句话说，随着 <span class="math inline">\(t\)</span> 从 0 到 1 变化，<span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 形成了从 <span class="math inline">\(\mathbf x\)</span> 位置出发的粒子运动的轨迹。给定一个速度场，流可定义为下述常微分方程的解： <span class="math display">\[\begin{align}\frac{\partial}{\partial t}\boldsymbol\phi_t(\mathbf x)&amp;=\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\\\boldsymbol\phi_0(\mathbf x)&amp;=\mathbf x\end{align}\]</span> 为了看得更清楚，可以对上式左右两边同时从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(t\)</span> 积分： <span class="math display">\[\boldsymbol\phi_t(\mathbf x)-\mathbf x=\int_0^t\mathbf u_s(\boldsymbol\phi_s(\mathbf x))\mathrm ds\]</span> 左边表示从 <span class="math inline">\(\mathbf x\)</span> 出发的粒子在 <span class="math inline">\(t\)</span> 时间内的位移，右边是对速度的积分，自然也是位移。</p><p>根据流 <span class="math inline">\(\boldsymbol\phi\)</span> 的定义，<span class="math inline">\(t\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 位置处的粒子在 <span class="math inline">\(0\)</span> 时刻的出发位置是 <span class="math inline">\(\boldsymbol\phi_t^{-1}(\mathbf x)\)</span>，因此根据随机变量的<strong>变量替换 (change of variables)</strong> 公式，可以知道 <span class="math inline">\(p_t(\mathbf x)\)</span> 与 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 之间有关系： <span class="math display">\[p_t(\mathbf x)=p_0(\boldsymbol\phi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial}{\partial\mathbf x}\boldsymbol\phi_t^{-1}(\mathbf x)\right]\right|\]</span> 该式可简记作 <span class="math inline">\(p_t=[\boldsymbol\phi_t]_\#(p_0)\)</span>，称作 <strong>push-forward 方程</strong>。</p><div class="note note-info">            <p><strong>拓展（瞬时变量替换公式）</strong>：push-forward 方程给出了 <span class="math inline">\(0\)</span> 时刻到 <span class="math inline">\(t\)</span> 时刻概率密度的变化。进一步地，Neural ODE 的作者还给出了描述概率密度变化的微分方程，称作瞬时变量替换公式： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\log p_t(\boldsymbol\phi_t(\mathbf x))+\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=0\]</span> 推导过程：计算 <span class="math inline">\(p_t(\boldsymbol\phi_t(\mathbf x))\)</span> 对 <span class="math inline">\(t\)</span> 的全导数： <span class="math display">\[\begin{align}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))&amp;=\left.\frac{\partial}{\partial t}p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\left.\nabla p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)},\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-\left.\nabla\cdot(p_t(\mathbf y)\mathbf u_t(\mathbf y))\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-\big[p_t(\mathbf y)(\nabla\cdot\mathbf u_t(\mathbf y))+\langle\nabla p_t(\mathbf y),\mathbf u_t(\mathbf y)\rangle\big]\Big|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))-\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\right\rangle+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\partial \boldsymbol\phi_t(\mathbf x)}{\partial t}\right\rangle\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))\end{align}\]</span> 其中第二行是代入了连续性方程，第三行是将散度展开，最后一行是根据流的定义有 <span class="math inline">\(\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=\frac{\partial}{\partial t}\boldsymbol\phi_t(\mathbf x)\)</span>. 于是我们有： <span class="math display">\[\frac{\mathrm d}{\mathrm d t}\log p_t(\boldsymbol\phi_t(\mathbf x))=\frac{1}{p_t(\boldsymbol\phi_t(\mathbf x))}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))=-\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\]</span> 这就得到了瞬时变量替换公式。</p>          </div><p>综上所述，概率密度路径、速度场和流之间的关系可表示为下图：</p><p><img src="relation.png" width=50% /></p><p>现在，为了构建生成模型，我们只需要构建速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，使得对应的概率密度路径 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足 <span class="math inline">\(p_0\)</span> 为某简单分布且 <span class="math inline">\(p_1\)</span> 为数据分布即可，这就是 flow matching 要完成的事。</p><h2 id="flow-matching">Flow Matching</h2><h3 id="原始损失函数">原始损失函数</h3><p>设 <span class="math inline">\(p_t(\mathbf x)\)</span> 是一概率密度路径，满足 <span class="math inline">\(p_0\)</span> 为某简单分布（例如标准正态分布）且 <span class="math inline">\(p_1\)</span> 为数据分布，<span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 为对应的未知速度场。Flow matching 使用神经网络构建速度场 <span class="math inline">\(\mathbf v_{t}^{\theta}(\mathbf x)\)</span> 去近似 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，损失函数为： <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x)\Vert^2\right]\]</span> 然而式中真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 是未知的，因此我们无法直接使用 <span class="math inline">\(\mathcal L_\text{FM}\)</span>​ 训练，怎么办呢？聪明的读者可能已经发现了，这里遇到的问题与 score matching 一模一样，其中速度场直接对标 score function，所以把 score matching 的解决方法搬过来即可。借鉴 denoising score matching，我们每次针对单个样本去近似条件速度场，其中样本从数据集中采样，这样均摊下来就是在近似无条件的真实速度场了。</p><h3 id="条件速度场">条件速度场</h3><p>具体而言，给定某特定样本 <span class="math inline">\(\mathbf x_1\)</span>，称 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 为<strong>条件概率路径 (conditional probability path)</strong>。那么，边缘概率路径可以通过条件概率路径对所有样本求期望得到： <span class="math display">\[p_t(\mathbf x)=\int p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1=\mathbb E_{q(\mathbf x_1)}[p_t(\mathbf x\vert\mathbf x_1)]\]</span> 设上述条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 可以由<strong>条件速度场 (conditional velocity field)</strong> <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 得到（即二者满足连续性方程），那么可以推得，速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 应有如下关系： <span class="math display">\[\mathbf u_t(\mathbf x)=\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\mathbf u_t(\mathbf x\vert\mathbf x_1)]\]</span> <div class="note note-secondary">            <p>证明：我们只需要证明基于上面的方式定义的 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足连续性方程即可。直接代入： <span class="math display">\[\begin{align}\frac{\partial p_t(\mathbf x)}{\partial t}&amp;=\int\left(\frac{\partial}{\partial t}p_t(\mathbf x\vert\mathbf x_1)\right)q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\int\nabla\cdot (p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1))q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\nabla\cdot\left(\int p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1) \mathrm d\mathbf x_1\right)\\&amp;=-\nabla\cdot (p_t(\mathbf x)\mathbf u_t(\mathbf x))\end{align}\]</span> 证毕。</p>          </div></p><div class="note note-info">            <p>注释：熟悉 score matching 的读者应该知道，对 score function 也有类似的关系式： <span class="math display">\[\nabla\log p_t(\mathbf x)=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\nabla\log p_t(\mathbf x\vert\mathbf x_1)]\]</span></p>          </div><h3 id="cfm-损失函数">CFM 损失函数</h3><p>基于条件概率路径和条件速度场，原始的 flow matching 损失函数可以改写作如下 conditional flow matching 损失函数： <span class="math display">\[\mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\]</span> 可以证明 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 与 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 只差与 <span class="math inline">\(\theta\)</span> 无关的常数，因此对优化问题而言是等价的。推导思路其实与 score matching 到 denoising score matching 如出一辙。</p><div class="note note-secondary">            <p>证明：将 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 中的平方打开： <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)\Vert^2\right]+\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf u_t(\mathbf x)\Vert^2\right]-2\mathbb E_{t,p_t(\mathbf x)}\left[\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x)\right\rangle\right]\]</span> 第一项保留，第二项与 <span class="math inline">\(\theta\)</span>​ 无关扔掉，第三项做如下变形： <span class="math display">\[\begin{align}\mathbb E_{p_t(\mathbf x)}\left[\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x)\right\rangle\right]&amp;=\int p_t(\mathbf x)\left\langle\mathbf v_t^\theta(\mathbf x),\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1\right\rangle\mathrm d\mathbf x\\&amp;=\int\left\langle\mathbf v_t^\theta(\mathbf x),\int \mathbf u_t(\mathbf x\vert\mathbf x_1)p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1\right\rangle\mathrm d\mathbf x\\&amp;=\iint\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1\mathrm d\mathbf x\\&amp;=\mathbb E_{q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle\right]\end{align}\]</span> 加上第一项得： <span class="math display">\[\mathcal L&#39;_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)\Vert^2-2\left\langle\mathbf v_t^\theta(\mathbf x),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle\right]\]</span> 看起来不太好看，配个方就得到了 CFM 损失函数： <span class="math display">\[\mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\]</span></p>          </div><p>现在，只要我们设计一个可解的条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span>，就可以基于 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 训练了。</p><h2 id="条件速度场的设计">条件速度场的设计</h2><h3 id="一般高斯形式">一般高斯形式</h3><p>我们从条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span>​ 入手，考虑高斯分布形式： <span class="math display">\[p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)\]</span> 其中 <span class="math inline">\(\boldsymbol\mu:[0,1]\times \mathbb R^d\to\mathbb R^d\)</span> 为与时间步有关的均值，<span class="math inline">\(\sigma:[0,1]\times\mathbb R^d\to\mathbb R_{&gt;0}\)</span> 为与时间步有关的标准差，并且规定：</p><ul><li>当 <span class="math inline">\(t=0\)</span> 时，应有 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，即与 <span class="math inline">\(\mathbf x_1\)</span> 无关的标准高斯分布；</li><li>当 <span class="math inline">\(t=1\)</span> 时，应有 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_\min^2\mathbf I\right)\)</span>，其中 <span class="math inline">\(\sigma_\min\)</span> 充分小，使其大约是在 <span class="math inline">\(\mathbf x_1\)</span> 处的确定性分布。</li></ul><p>直接找到对应上述条件概率路径的条件速度场是比较困难的，但是我们可以先找到对应的以 <span class="math inline">\(\mathbf x_1\)</span> 为条件的流 <span class="math inline">\(\boldsymbol\psi\)</span>： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=\sigma_t(\mathbf x_1)\mathbf x+\boldsymbol\mu_t(\mathbf x_1)\]</span> 可以验证上述形式的条件流 <span class="math inline">\(\boldsymbol\psi_t\)</span> 与条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 的确满足变量替换公式： <span class="math display">\[\begin{align}p_0(\boldsymbol\psi_t^{-1}(\mathbf x)\vert\mathbf x_1)\left|\det\left[\frac{\partial\boldsymbol\psi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|&amp;=p(\boldsymbol\psi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial\boldsymbol\psi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|\\&amp;=\mathcal N\left(\frac{\mathbf x-\boldsymbol\mu_t(\mathbf x_1)}{\sigma_t(\mathbf x_1)};\mathbf0,\mathbf I\right)\left|\frac{1}{\sigma_t^d(\mathbf x_1)}\right|\\&amp;=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)\\&amp;=p_t(\mathbf x\vert\mathbf x_1)\end{align}\]</span> 换句话说，只要取 <span class="math inline">\(\mathbf x_0\sim p(\mathbf x_0)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，那么就有 <span class="math inline">\(\boldsymbol\psi_t(\mathbf x_0)\sim p_t(\mathbf x\vert\mathbf x_1)\)</span>.</p><p>有了条件流，就可以找到对应的条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 了。根据流的定义有： <span class="math display">\[\frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf x)=\mathbf u_t(\boldsymbol\psi_t(\mathbf x)\vert\mathbf x_1)\]</span> 因此条件速度场为： <span class="math display">\[\begin{align}\mathbf u_t(\mathbf x\vert\mathbf x_1)&amp;=\left.\frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\psi_t^{-1}(\mathbf x)}\\&amp;=\sigma_t&#39;(\mathbf x_1)\boldsymbol\psi_t^{-1}(\mathbf x)+\boldsymbol\mu_t&#39;(\mathbf x_1)\\&amp;=\frac{\sigma_t&#39;(\mathbf x_1)}{\sigma_t(\mathbf x_1)}(\mathbf x-\boldsymbol\mu_t(\mathbf x_1))+\boldsymbol\mu_t&#39;(\mathbf x_1)\end{align}\]</span> 其中 <span class="math inline">\(\boldsymbol\mu_t&#39;,\sigma_t&#39;\)</span> 分别表示 <span class="math inline">\(\boldsymbol\mu_t,\sigma_t\)</span> 对时间 <span class="math inline">\(t\)</span> 的导函数。</p><p>为了计算损失函数，用条件流 <span class="math inline">\(\boldsymbol\psi_t(\mathbf x_0)\)</span> 重参数化 <span class="math inline">\(\mathbf x\)</span>，则损失函数可改写作： <span class="math display">\[\begin{align}\mathcal L_\text{CFM}(\theta)&amp;=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}^{\theta}(\mathbf x)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\\&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\mathbf u_t(\boldsymbol\psi_t(\mathbf x_0)\vert\mathbf x_1)\Vert^2\right]\\&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\left\Vert\mathbf v_{t}^{\theta}(\boldsymbol\psi_t(\mathbf x_0))-\frac{\partial}{\partial t}\boldsymbol\psi_t(\mathbf x_0)\right\Vert^2\right]\end{align}\]</span> 这就是 flow matching 最终用于训练的损失函数形式。</p><p>特别地，当 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x)\)</span> 与 <span class="math inline">\(\sigma_t(\mathbf x)\)</span> 取特殊形式时，我们可以还原出经典的扩散模型，还可以得到比扩散路径更优的最优传输路径。</p><h3 id="特殊情形经典扩散">特殊情形：经典扩散</h3><p>考虑 VE diffusion： <span class="math display">\[p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_{1-t}^2\mathbf I\right)\]</span> 这对应着 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sigma_{1-t}\)</span> 的情形。根据上一小节的结论，此时条件速度场为： <span class="math display">\[\mathbf u_t(\mathbf x\vert\mathbf x_1)=-\frac{\sigma_{1-t}&#39;}{\sigma_{1-t}}(\mathbf x-\mathbf x_1)\]</span> 相应的条件流为： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=\sigma_{1-t}\mathbf x+\mathbf x_1\]</span> 考虑 VP diffusion： <span class="math display">\[p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\alpha_{1-t}\mathbf x_1,(1-\alpha_{1-t}^2)\mathbf I\right)\]</span> 这对应着 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\alpha_{1-t}\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sqrt{1-\alpha_{1-t}^2}\)</span>​ 的情形。根据上一小节的结论，此时条件速度场为： <span class="math display">\[\mathbf u_t(\mathbf x\vert\mathbf x_1)=-\frac{\alpha&#39;_{1-t}}{1-\alpha^2_{1-t}}(\alpha_{1-t}\mathbf x-\mathbf x_1)\]</span> 相应的条件流为： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=\sqrt{1-\alpha_{1-t}^2}\mathbf x+\alpha_{1-t}\mathbf x_1\]</span> 可以看见，VE diffusion 或 VP diffusion 的条件流对时间 <span class="math inline">\(t\)</span> 不是线性关系，也就是说它们的轨迹会拐弯。</p><h3 id="特殊情形最优传输">特殊情形：最优传输</h3><p>相比经典的扩散路径，一个更合适的路径是将 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x),\,\sigma_t(\mathbf x)\)</span> 都设置为 <span class="math inline">\(t\)</span> 的线性变换： <span class="math display">\[\boldsymbol\mu_t(\mathbf x_1)=t\mathbf x_1,\quad \sigma_t(\mathbf x)=1-(1-\sigma_\min)t\]</span> 这样得到的条件速度场为： <span class="math display">\[\mathbf u(\mathbf x\vert\mathbf x_1)=\frac{\mathbf x_1-(1-\sigma_\min)\mathbf x}{1-(1-\sigma_\min)t}\]</span> 相应的条件流为： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=(1-(1-\sigma_\min)t)\mathbf x+t\mathbf x_1\]</span> 该条件流事实上是两个高斯分布 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)\)</span>​ 和 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)\)</span>​ 之间的最优传输 displacement map. 直观上，该轨迹是一个均匀直线运动，如下图所示：</p><p><img src="traj.png" width=30% /></p><p>需要强调的是，“直线”路径只对于给定 <span class="math inline">\(\mathbf x_1\)</span> 的条件下成立，在真正生成数据时粒子依旧走的是曲线路径。</p><h2 id="总结">总结</h2><p>Flow matching 看起来蛮复杂，但其实它的基础理论搭建在连续归一化流上，而训练的核心技巧也与 denoising score matching 如出一辙。相比传统 diffusion 模型，flow matching 的亮点在于：</p><ol type="1"><li>不要求源分布必须是高斯分布，从而可以用来学习两个分布之间的转换；</li><li>提出了基于最优传输的新的扩散路径，据称比传统的 VP 和 VE 路径更适合采样。</li></ol><h2 id="参考资料">参考资料</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. <em>arXiv preprint arXiv:2210.02747</em> (2022). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:3" class="footnote-text"><span>Tor Fjelde, Emile Mathieu, Vincent Dutordoir. AN INTRODUCTION TO FLOW MATCHING. https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
+    <content type="html"><![CDATA[<h2 id="连续归一化流">连续归一化流</h2><p>想象 <span class="math inline">\(\mathbb R^d\)</span> 空间中有一系列粒子，在 <span class="math inline">\(t=0\)</span> 时服从分布 <span class="math inline">\(p_0\)</span>，随时间流逝粒子在空间中流动，直至 <span class="math inline">\(t=1\)</span> 时形成分布 <span class="math inline">\(p_1\)</span>. 于是这样的流动过程形成了从分布 <span class="math inline">\(p_0\)</span> 到分布 <span class="math inline">\(p_1\)</span> 的一个转换。如果我们能够为上述流体运动过程建立起模型，并控制 <span class="math inline">\(p_0\)</span> 为某简单易采样分布而 <span class="math inline">\(p_1\)</span> 服从数据分布，那么不就得到一个生成模型了吗？这样的生成模型称作<strong>连续归一化流 (Continuous Normalizing Flows, CNFs)</strong>.</p><h3 id="概率密度路径">概率密度路径</h3><p>粒子在流动的过程中，其概率分布在不断地改变。为描述各个时刻的概率分布，定义<strong>概率密度路径 (probability density path)</strong> 为： <span class="math display">\[p:[0,1]\times \mathbb R^d\to\mathbb R_{&gt;0},\quad(t,\mathbf x)\mapsto p_t(\mathbf x)\]</span> 其中 <span class="math inline">\(p_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处的概率密度。称之为“路径”是因为 <span class="math inline">\(t\mapsto p_t\)</span> 可以视作无限维概率分布空间中的流形上的一条路径。显然，对任意时刻 <span class="math inline">\(t\in[0,1]\)</span>，概率密度 <span class="math inline">\(p_t(\mathbf x)\)</span> 都应满足归一化条件：<span class="math inline">\(\int p_t(\mathbf x)\mathrm d\mathbf x=1\)</span>. 因此，区别于一般的流体，我们称这种模型为归一化流；又由于时间是连续的，因此称为连续归一化流。</p><h3 id="速度场与连续性方程">速度场与连续性方程</h3><p>考虑空间中粒子在各个时刻的瞬时速度，定义<strong>速度场 (velocity field)</strong> 为： <span class="math display">\[\mathbf u:[0,1]\times\mathbb R^d\to\mathbb R^d,\quad (t,\mathbf x)\mapsto \mathbf u_t(\mathbf x)\]</span> 其中 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 表示 <span class="math inline">\(t\)</span> 时刻 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的运动速度。流体中的粒子沿着速度场 <span class="math inline">\(\mathbf u\)</span> 运动，引起概率密度的变化，因此 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 之间一定存在某种关系，这个关系式称为<strong>连续性方程 (continuity equation)</strong>： <span class="math display">\[\frac{\partial}{\partial t}p_t(\mathbf x)+\nabla\cdot(p_t(\mathbf x)\mathbf u_t(\mathbf x))=0\]</span> 直观上，连续性方程的第一项表示单位时间内 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的增加/减少量，第二项表示单位时间内 <span class="math inline">\(\mathbf x\)</span> 位置处粒子的流出/流入量，由于粒子增加量就是流入量，因此连续性方程成立。熟悉随机微分方程的读者可能会发现，连续性方程其实就是 Fokker-Planck 方程在扩散项为零时的情形。</p><p>值得注意的是，概率密度路径与速度场不是一一对应的关系，不同的速度场可以产生相同的概率密度路径。例如，给 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 加上散度为零的场（无源场），就得到了一个新的速度场，并且连续性方程依旧成立，所以概率密度路径不变。</p><h3 id="流与-push-forward-方程">流与 push-forward 方程</h3><p>粒子沿着速度场运动，得到的轨迹称为<strong>流 (flow)</strong>。具体而言，定义流为： <span class="math display">\[\boldsymbol\phi:[0,1]\times\mathbb R^d\to\mathbb R^d,\quad (t,\mathbf x)\mapsto\boldsymbol\phi_t(\mathbf x)\]</span> 其中 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 表示 <span class="math inline">\(0\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 处的粒子在 <span class="math inline">\(t\)</span> 时刻运动到的位置。换句话说，随着 <span class="math inline">\(t\)</span> 从 0 到 1 变化，<span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 形成了从 <span class="math inline">\(\mathbf x\)</span> 位置出发的粒子运动的轨迹。给定速度场 <span class="math inline">\(\mathbf u\)</span>，流由下述常微分方程给出： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\boldsymbol\phi_t(\mathbf x)=\mathbf u_t(\boldsymbol\phi_t(\mathbf x)),\quad\boldsymbol\phi_0(\mathbf x)=\mathbf x\]</span> 为了看得更清楚，对上式左右两边同时从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(t\)</span> 积分得 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)-\mathbf x=\int_0^t\mathbf u_s(\boldsymbol\phi_s(\mathbf x))\mathrm ds\)</span>，左边表示从 <span class="math inline">\(\mathbf x\)</span> 出发的粒子在 <span class="math inline">\(t\)</span> 时间内的位移，右边是对速度的积分，自然也是位移。</p><p>根据流 <span class="math inline">\(\boldsymbol\phi\)</span> 的定义，<span class="math inline">\(t\)</span> 时刻位于 <span class="math inline">\(\mathbf x\)</span> 位置处的粒子在 <span class="math inline">\(0\)</span> 时刻的出发位置是 <span class="math inline">\(\boldsymbol\phi_t^{-1}(\mathbf x)\)</span>，因此根据随机变量的<strong>变量替换 (change of variables)</strong> 公式，可以知道 <span class="math inline">\(p_t(\mathbf x)\)</span> 与 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 之间有关系： <span class="math display">\[p_t(\mathbf x)=p_0(\boldsymbol\phi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial}{\partial\mathbf x}\boldsymbol\phi_t^{-1}(\mathbf x)\right]\right|\]</span> 该式可简记作 <span class="math inline">\(p_t=[\boldsymbol\phi_t]_\#(p_0)\)</span>​，称作 <strong>push-forward 方程</strong>。</p><p>综上所述，概率密度路径 <span class="math inline">\(p_t(\mathbf x)\)</span>、速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 和流 <span class="math inline">\(\boldsymbol\phi_t(\mathbf x)\)</span> 之间的关系可表示为下图：</p><p><img src="relation.png" width=50% /></p><h3 id="拓展瞬时变量替换公式">拓展：瞬时变量替换公式</h3><p>Push-forward 方程给出了 <span class="math inline">\(0\)</span> 时刻到 <span class="math inline">\(t\)</span> 时刻概率密度的变化。进一步地，Neural ODE 的作者还给出了描述 <span class="math inline">\(t\)</span> 时刻概率密度瞬时变化的微分方程，称作<strong>瞬时变量替换公式 (instantaneous change of variables)</strong>： <span class="math display">\[\frac{\mathrm d}{\mathrm dt}\log p_t(\boldsymbol\phi_t(\mathbf x))+\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))=0\]</span> <div class="note note-secondary">            <p>推导：计算 <span class="math inline">\(p_t(\boldsymbol\phi_t(\mathbf x))\)</span> 对 <span class="math inline">\(t\)</span> 的全导数： <span class="math display">\[\begin{align}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))&amp;=\left.\frac{\partial}{\partial t}p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\left.\nabla p_t(\mathbf y)\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)},\frac{\mathrm d\boldsymbol\phi_t(\mathbf x)}{\mathrm dt}\right\rangle\\&amp;=-\left.\nabla\cdot(p_t(\mathbf y)\mathbf u_t(\mathbf y))\right|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\mathrm d\boldsymbol\phi_t(\mathbf x)}{\mathrm dt}\right\rangle\\&amp;=-\big[p_t(\mathbf y)(\nabla\cdot\mathbf u_t(\mathbf y))+\langle\nabla p_t(\mathbf y),\mathbf u_t(\mathbf y)\rangle\big]\Big|_{\mathbf y=\boldsymbol\phi_t(\mathbf x)}+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\mathrm d\boldsymbol\phi_t(\mathbf x)}{\mathrm dt}\right\rangle\\\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))-\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\right\rangle+\left\langle\nabla p_t(\boldsymbol\phi_t(\mathbf x)),\frac{\mathrm d\boldsymbol\phi_t(\mathbf x)}{\mathrm dt}\right\rangle\\&amp;=-p_t(\boldsymbol\phi_t(\mathbf x))(\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x)))\end{align}\]</span> 其中第二行是代入了连续性方程，第三行是将散度展开，最后一行是代入流的定义。于是： <span class="math display">\[\frac{\mathrm d}{\mathrm d t}\log p_t(\boldsymbol\phi_t(\mathbf x))=\frac{1}{p_t(\boldsymbol\phi_t(\mathbf x))}\frac{\mathrm d}{\mathrm dt}p_t(\boldsymbol\phi_t(\mathbf x))=-\nabla\cdot\mathbf u_t(\boldsymbol\phi_t(\mathbf x))\]</span> 这就得到了瞬时变量替换公式。</p>          </div></p><h2 id="flow-matching">Flow Matching</h2><p>设 <span class="math inline">\(p_t(\mathbf x)\)</span> 是一概率密度路径，满足 <span class="math inline">\(p_0\)</span> 为某简单分布（例如标准正态分布）且 <span class="math inline">\(p_1\)</span> 为数据分布。设 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 为能导出该概率密度路径的速度场。Flow matching 使用神经网络构建速度场 <span class="math inline">\(\mathbf v_{t}(\mathbf x;\theta)\)</span> 去近似真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span>，损失函数为： <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}(\mathbf x;\theta)-\mathbf u_t(\mathbf x)\Vert^2\right]\]</span> 然而式中真实速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 是未知的，因此我们无法直接使用上式训练网络。如果读者对 score matching 比较熟悉的话，会发现这里遇到的问题与 score matching 非常类似，而解决方案也是类似的：在每一轮迭代中，网络只去近似给定单个样本条件下的条件速度场，经过多轮迭代均摊后网络即可收敛到无条件的真实速度场。</p><h3 id="条件概率路径与条件速度场">条件概率路径与条件速度场</h3><p>具体而言，给定某特定样本 <span class="math inline">\(\mathbf x_1\)</span>，定义<strong>条件概率路径</strong>为 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span>，则边缘概率路径为所有条件概率路径的期望： <span class="math display">\[p_t(\mathbf x)=\int p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1=\mathbb E_{q(\mathbf x_1)}[p_t(\mathbf x\vert\mathbf x_1)]\]</span> 又设上述条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 可以由<strong>条件速度场</strong> <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 得到（即二者满足连续性方程），那么可以推得，边缘速度场 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与条件速度场 <span class="math inline">\(\mathbf u_t(\mathbf x\vert\mathbf x_1)\)</span> 应有如下关系： <span class="math display">\[\mathbf u_t(\mathbf x)=\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1=\mathbb E_{p(\mathbf x_1\vert\mathbf x)}[\mathbf u_t(\mathbf x\vert\mathbf x_1)]\]</span> <div class="note note-secondary">            <p>证明：我们只需要证明基于上面的方式定义的 <span class="math inline">\(\mathbf u_t(\mathbf x)\)</span> 与 <span class="math inline">\(p_t(\mathbf x)\)</span> 满足连续性方程即可。直接代入： <span class="math display">\[\begin{align}\frac{\partial p_t(\mathbf x)}{\partial t}&amp;=\int\left(\frac{\partial}{\partial t}p_t(\mathbf x\vert\mathbf x_1)\right)q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\int\nabla\cdot (p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1))q(\mathbf x_1)\mathrm d\mathbf x_1\\&amp;=-\nabla\cdot\left(\int p_t(\mathbf x\vert\mathbf x_1)\mathbf u_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1) \mathrm d\mathbf x_1\right)\\&amp;=-\nabla\cdot (p_t(\mathbf x)\mathbf u_t(\mathbf x))\end{align}\]</span> 证毕。</p>          </div></p><h3 id="cfm-损失函数">CFM 损失函数</h3><p>基于条件概率路径和条件速度场，原始的 flow matching 损失函数可以改写作如下 conditional flow matching 损失函数： <span class="math display">\[\mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}(\mathbf x;\theta)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\]</span> 可以证明 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 与 <span class="math inline">\(\mathcal L_\text{CFM}\)</span> 只差与 <span class="math inline">\(\theta\)</span> 无关的常数，因此对优化问题而言是等价的。</p><div class="note note-secondary">            <p>证明：将 <span class="math inline">\(\mathcal L_\text{FM}\)</span> 中的平方打开： <span class="math display">\[\mathcal L_\text{FM}(\theta)=\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf v_{t}(\mathbf x;\theta)\Vert^2\right]+\mathbb E_{t,p_t(\mathbf x)}\left[\Vert\mathbf u_t(\mathbf x)\Vert^2\right]-2\mathbb E_{t,p_t(\mathbf x)}\left[\left\langle\mathbf v_t(\mathbf x;\theta),\mathbf u_t(\mathbf x)\right\rangle\right]\]</span> 第一项保留，第二项与 <span class="math inline">\(\theta\)</span>​ 无关扔掉，第三项做如下变形： <span class="math display">\[\begin{align}\mathbb E_{p_t(\mathbf x)}\left[\left\langle\mathbf v_t(\mathbf x;\theta),\mathbf u_t(\mathbf x)\right\rangle\right]&amp;=\int p_t(\mathbf x)\left\langle\mathbf v_t(\mathbf x;\theta),\int \mathbf u_t(\mathbf x\vert\mathbf x_1)\frac{p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)}{p_t(\mathbf x)}\mathrm d\mathbf x_1\right\rangle\mathrm d\mathbf x\\&amp;=\int\left\langle\mathbf v_t(\mathbf x;\theta),\int \mathbf u_t(\mathbf x\vert\mathbf x_1)p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1\right\rangle\mathrm d\mathbf x\\&amp;=\iint\left\langle\mathbf v_t(\mathbf x;\theta),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle p_t(\mathbf x\vert\mathbf x_1)q(\mathbf x_1)\mathrm d\mathbf x_1\mathrm d\mathbf x\\&amp;=\mathbb E_{q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\left\langle\mathbf v_t(\mathbf x;\theta),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle\right]\end{align}\]</span> 加上第一项得： <span class="math display">\[\mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}(\mathbf x;\theta)\Vert^2-2\left\langle\mathbf v_t(\mathbf x;\theta),\mathbf u_t(\mathbf x\vert\mathbf x_1)\right\rangle\right]\]</span> 形式不太好看，我们配个方将其写成 MSE，就得到了 CFM 损失函数： <span class="math display">\[\mathcal L_\text{CFM}(\theta)=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}(\mathbf x;\theta)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\]</span></p>          </div><h2 id="gaussian-flow-matching">Gaussian Flow Matching</h2><p>前文讲得都是抽象的理论，本节研究一种具体的实例化。考虑高斯分布形式的条件概率路径： <span class="math display">\[p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)\]</span> 其中 <span class="math inline">\(\boldsymbol\mu:[0,1]\times \mathbb R^d\to\mathbb R^d\)</span> 为与时间步有关的均值，<span class="math inline">\(\sigma:[0,1]\times\mathbb R^d\to\mathbb R_{&gt;0}\)</span> 为与时间步有关的标准差，并且规定：</p><ul><li>当 <span class="math inline">\(t=0\)</span> 时，应有 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)=\mathcal N(\mathbf x;\mathbf0,\mathbf I)\)</span>，即与 <span class="math inline">\(\mathbf x_1\)</span> 无关的标准高斯分布；</li><li>当 <span class="math inline">\(t=1\)</span> 时，应有 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_\min^2\mathbf I\right)\)</span>，其中 <span class="math inline">\(\sigma_\min\)</span> 充分小，使其大约是在 <span class="math inline">\(\mathbf x_1\)</span> 处的确定性分布。</li></ul><p>直观上，当 <span class="math inline">\(t\)</span> 从 <span class="math inline">\(0\)</span> 到 <span class="math inline">\(1\)</span> 变化时，我们定义了一个从标准高斯到集中于 <span class="math inline">\(\mathbf x_1\)</span> 处的高斯的分布变化过程。有无数种流都可以产生这样的分布变化过程，我们选取最为简单的一种： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=\sigma_t(\mathbf x_1)\mathbf x+\boldsymbol\mu_t(\mathbf x_1)\]</span> 可以验证上述形式的条件流 <span class="math inline">\(\boldsymbol\psi_t\)</span> 与条件概率路径 <span class="math inline">\(p_t(\mathbf x\vert\mathbf x_1)\)</span> 的确满足变量替换公式： <span class="math display">\[\begin{align}p_0(\boldsymbol\psi_t^{-1}(\mathbf x)\vert\mathbf x_1)\left|\det\left[\frac{\partial\boldsymbol\psi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|&amp;=p(\boldsymbol\psi_t^{-1}(\mathbf x))\left|\det\left[\frac{\partial\boldsymbol\psi_t^{-1}}{\partial\mathbf x}(\mathbf x)\right]\right|\\&amp;=\mathcal N\left(\frac{\mathbf x-\boldsymbol\mu_t(\mathbf x_1)}{\sigma_t(\mathbf x_1)};\mathbf0,\mathbf I\right)\left|\frac{1}{\sigma_t^d(\mathbf x_1)}\right|\\&amp;=\mathcal N\left(\mathbf x;\boldsymbol\mu_t(\mathbf x_1),\sigma_t^2(\mathbf x_1)\mathbf I\right)\\&amp;=p_t(\mathbf x\vert\mathbf x_1)\end{align}\]</span> 用条件流重参数化 <span class="math inline">\(\mathbf x\)</span>，可得损失函数为： <span class="math display">\[\begin{align}\mathcal L_\text{CFM}(\theta)&amp;=\mathbb E_{t,q(\mathbf x_1),p_t(\mathbf x\vert\mathbf x_1)}\left[\Vert\mathbf v_{t}(\mathbf x;\theta)-\mathbf u_t(\mathbf x\vert\mathbf x_1)\Vert^2\right]\\&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\Vert\mathbf v_{t}(\boldsymbol\psi_t(\mathbf x_0);\theta)-\mathbf u_t(\boldsymbol\psi_t(\mathbf x_0)\vert\mathbf x_1)\Vert^2\right]\\&amp;=\mathbb E_{t,q(\mathbf x_1),p(\mathbf x_0)}\left[\left\Vert\mathbf v_{t}(\boldsymbol\psi_t(\mathbf x_0);\theta)-\frac{\mathrm d}{\mathrm dt}\boldsymbol\psi_t(\mathbf x_0)\right\Vert^2\right]\end{align}\]</span> 这就是 flow matching 最终用于训练的损失函数形式。下面我们考察两种特殊情形。</p><h3 id="特殊情形经典扩散">特殊情形：经典扩散</h3><p>若取 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sigma_{1-t}\)</span>，则得到了 VE diffusion 的加噪过程： <span class="math display">\[p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\mathbf x_1,\sigma_{1-t}^2\mathbf I\right)\]</span> 此时条件流为： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=\sigma_{1-t}\mathbf x+\mathbf x_1\]</span> 若取 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x_1)=\alpha_{1-t}\mathbf x_1,\,\sigma_t(\mathbf x_1)=\sqrt{1-\alpha_{1-t}^2}\)</span>，则得到了 VP diffusion 的加噪过程： <span class="math display">\[p_t(\mathbf x\vert\mathbf x_1)=\mathcal N\left(\mathbf x;\alpha_{1-t}\mathbf x_1,(1-\alpha_{1-t}^2)\mathbf I\right)\]</span> 此时条件流为： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=\sqrt{1-\alpha_{1-t}^2}\mathbf x+\alpha_{1-t}\mathbf x_1\]</span> 可以看见，VE diffusion 或 VP diffusion 的条件流对时间 <span class="math inline">\(t\)</span> 不是线性关系，也就是说它们的轨迹会拐弯。</p><h3 id="特殊情形最优传输">特殊情形：最优传输</h3><p>相比经典的扩散路径，一个更合适的路径是将 <span class="math inline">\(\boldsymbol\mu_t(\mathbf x),\,\sigma_t(\mathbf x)\)</span> 都设置为 <span class="math inline">\(t\)</span> 的线性变换： <span class="math display">\[\boldsymbol\mu_t(\mathbf x_1)=t\mathbf x_1,\quad \sigma_t(\mathbf x)=1-(1-\sigma_\min)t\]</span> 这样得到的条件流为： <span class="math display">\[\boldsymbol\psi_t(\mathbf x)=(1-(1-\sigma_\min)t)\mathbf x+t\mathbf x_1\]</span> 该条件流事实上是两个高斯分布 <span class="math inline">\(p_0(\mathbf x\vert\mathbf x_1)\)</span>​ 和 <span class="math inline">\(p_1(\mathbf x\vert\mathbf x_1)\)</span>​ 之间的最优传输 displacement map. 直观上，该轨迹是一个匀速直线运动，如下图所示：</p><p><img src="traj.png" width=30% /></p><p>需要强调的是，“直线”路径只对于给定 <span class="math inline">\(\mathbf x_1\)</span> 的条件下的条件流成立，在真正生成数据时粒子的“边缘流”依旧是曲线轨迹。</p><h2 id="参考资料">参考资料</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Lipman, Yaron, Ricky TQ Chen, Heli Ben-Hamu, Maximilian Nickel, and Matt Le. Flow matching for generative modeling. <em>arXiv preprint arXiv:2210.02747</em> (2022). <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>Chen, Ricky TQ, Yulia Rubanova, Jesse Bettencourt, and David K. Duvenaud. Neural ordinary differential equations. <em>Advances in neural information processing systems</em> 31 (2018). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:3" class="footnote-text"><span>Tor Fjelde, Emile Mathieu, Vincent Dutordoir. AN INTRODUCTION TO FLOW MATCHING. <a href="https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html" class="uri">https://mlg.eng.cam.ac.uk/blog/2024/01/20/flow-matching.html</a> <a href="#fnref:3" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
     
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -398,7 +377,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -427,16 +406,16 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
       
     </categories>
     
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>linear algebra</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -454,7 +433,7 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
       
     </categories>
     
@@ -479,7 +458,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -506,7 +485,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -531,9 +510,9 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Mathematics</category>
       
-      <category>数学</category>
+      <category>Probability and Statistics</category>
       
     </categories>
     
@@ -639,7 +618,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -664,7 +643,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Normalizing Flows</category>
       
@@ -691,7 +670,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -716,18 +695,16 @@
     
     <categories>
       
-      <category>机器学习</category>
-      
-      <category>数学</category>
+      <category>Machine Learning</category>
       
     </categories>
     
     
     <tags>
       
-      <tag>machine learning</tag>
-      
       <tag>linear algebra</tag>
+      
+      <tag>machine learning</tag>
       
     </tags>
     
@@ -745,7 +722,9 @@
     
     <categories>
       
-      <category>数学</category>
+      <category>Mathematics</category>
+      
+      <category>Optimization</category>
       
     </categories>
     
@@ -764,7 +743,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -793,7 +772,9 @@
     
     <categories>
       
-      <category>数学</category>
+      <category>Mathematics</category>
+      
+      <category>Probability and Statistics</category>
       
     </categories>
     
@@ -818,7 +799,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -843,7 +824,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -870,9 +851,7 @@
     
     <categories>
       
-      <category>数学</category>
-      
-      <category>图像处理</category>
+      <category>Image Processing</category>
       
     </categories>
     
@@ -899,9 +878,7 @@
     
     <categories>
       
-      <category>数学</category>
-      
-      <category>图像处理</category>
+      <category>Image Processing</category>
       
     </categories>
     
@@ -928,9 +905,7 @@
     
     <categories>
       
-      <category>数学</category>
-      
-      <category>图像处理</category>
+      <category>Image Processing</category>
       
     </categories>
     
@@ -957,7 +932,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -982,9 +957,7 @@
     
     <categories>
       
-      <category>数学</category>
-      
-      <category>图像处理</category>
+      <category>Image Processing</category>
       
     </categories>
     
@@ -1065,7 +1038,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>GANs</category>
       
@@ -1096,7 +1069,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -1115,7 +1088,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1142,7 +1115,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1169,7 +1142,9 @@
     
     <categories>
       
-      <category>AIGC</category>
+      <category>Computer Vision</category>
+      
+      <category>Text-to-Image Generation</category>
       
     </categories>
     
@@ -1198,7 +1173,9 @@
     
     <categories>
       
-      <category>AIGC</category>
+      <category>Computer Vision</category>
+      
+      <category>Text-to-Image Generation</category>
       
     </categories>
     
@@ -1227,7 +1204,9 @@
     
     <categories>
       
-      <category>AIGC</category>
+      <category>Computer Vision</category>
+      
+      <category>Text-to-Image Generation</category>
       
     </categories>
     
@@ -1256,7 +1235,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>GANs</category>
       
@@ -1283,7 +1262,9 @@
     
     <categories>
       
-      <category>AIGC</category>
+      <category>Computer Vision</category>
+      
+      <category>Text-to-Image Generation</category>
       
     </categories>
     
@@ -1337,9 +1318,9 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Mathematics</category>
       
-      <category>数学</category>
+      <category>Functional Analysis</category>
       
     </categories>
     
@@ -1391,7 +1372,11 @@
     
     <categories>
       
-      <category>计算机视觉</category>
+      <category>Generative Models</category>
+      
+      <category>Diffusion Models</category>
+      
+      <category>Autoregressive Models</category>
       
     </categories>
     
@@ -1416,7 +1401,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1443,7 +1428,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1470,7 +1455,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1497,7 +1482,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1524,7 +1509,9 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
+      
+      <category>Infra</category>
       
     </categories>
     
@@ -1551,7 +1538,9 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
+      
+      <category>Infra</category>
       
     </categories>
     
@@ -1578,7 +1567,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1605,7 +1594,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1632,7 +1621,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>Diffusion Models</category>
       
@@ -1659,7 +1648,7 @@
     
     <categories>
       
-      <category>生成模型</category>
+      <category>Generative Models</category>
       
       <category>VAEs</category>
       
@@ -1686,7 +1675,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -1711,7 +1700,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -1736,7 +1725,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -1761,7 +1750,9 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
+      
+      <category>Infra</category>
       
     </categories>
     
@@ -1815,7 +1806,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -1840,7 +1831,7 @@
     
     <categories>
       
-      <category>深度学习</category>
+      <category>Deep Learning</category>
       
     </categories>
     
@@ -1975,7 +1966,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -2054,7 +2045,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -2079,7 +2070,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     
@@ -2104,7 +2095,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
     </categories>
     
@@ -2129,7 +2120,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2150,7 +2141,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2171,7 +2162,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2192,7 +2183,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2213,7 +2204,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2234,7 +2225,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2255,7 +2246,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2276,7 +2267,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2297,7 +2288,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2318,7 +2309,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
       <category>xv6-lab</category>
       
@@ -2339,7 +2330,7 @@
     
     <categories>
       
-      <category>计算机视觉</category>
+      <category>Computer Vision</category>
       
       <category>Image Inpainting</category>
       
@@ -2348,9 +2339,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2368,7 +2359,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
     </categories>
     
@@ -2393,7 +2384,7 @@
     
     <categories>
       
-      <category>随笔</category>
+      <category>Writing</category>
       
     </categories>
     
@@ -2412,7 +2403,7 @@
     
     <categories>
       
-      <category>操作系统</category>
+      <category>Operating System</category>
       
     </categories>
     
@@ -2428,16 +2419,16 @@
   
   
   <entry>
-    <title>什么是数据集的分布</title>
-    <link href="/blog-main/2021/08/25/%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%88%86%E5%B8%83/"/>
-    <url>/blog-main/2021/08/25/%E4%BB%80%E4%B9%88%E6%98%AF%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%88%86%E5%B8%83/</url>
+    <title>What is Data Distribution?</title>
+    <link href="/blog-main/2021/08/25/What-is-Data-Distribution/"/>
+    <url>/blog-main/2021/08/25/What-is-Data-Distribution/</url>
     
     <content type="html"><![CDATA[<p>最近看 GAN 相关的论文，总出现「分布」这个词，什么「数据集的分布 <span class="math inline">\(p_\text{data}(x)\)</span>」<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., ... &amp; Bengio, Y. (2014). Generative adversarial nets. *Advances in neural information processing systems*, *27*.">[1]</span></a></sup> 啦、「目标域 <span class="math inline">\(Y\)</span> 的分布」<sup id="fnref:2" class="footnote-ref"><a href="#fn:2" rel="footnote"><span class="hint--top hint--rounded" aria-label="Zhu, J. Y., Park, T., Isola, P., &amp; Efros, A. A. (2017). Unpaired image-to-image translation using cycle-consistent adversarial networks. In *Proceedings of the IEEE international conference on computer vision* (pp. 2223-2232).">[2]</span></a></sup> 啦～所以对于 CV 而言，究竟什么叫做「分布」呢？</p><p>在概率论中我们都学过概率分布，最能体现概率分布的就是分布列 <span class="math inline">\(p_X(x)\)</span>（对于离散随机变量）或概率密度函数 <span class="math inline">\(f_X(x)\)</span>（对于连续随机变量）或累积分布函数 <span class="math inline">\(F_X(x)\)</span>（离散、连续都适用）了。我们当年先学习一元随机变量，然后过渡到二元随机变量，于是出现了联合分布 <span class="math inline">\(p_{X,Y}(x,y)\)</span>、边缘分布 <span class="math inline">\(p_X(x)\)</span> 等。如果我们进一步扩展，设 <span class="math inline">\(X\)</span> 是一个<strong>随机向量</strong>，那么 <span class="math inline">\(p_X(x)\)</span> 可以是这个随机向量的概率分布，也可以理解为 <span class="math inline">\(X\)</span> 各个分量的联合分布。</p><p>这么看来，当我们说到「分布」的时候，似乎指的是一个 <span class="math inline">\(\mathbb R^n\to \mathbb R\)</span> 的函数，从输入的随机向量映射到一个正实数值，这当然没错，不过这个函数不是很直观。为此，我们可以在脑海中想象一个 <span class="math inline">\(\mathbb R^n\)</span> 空间，在这个空间里撒点，概率大的地方点密集一些，概率小的地方点稀疏一些～嗯不错，现在脑海里就有了一个非常直观的画面了。</p><p><img src="distribution1.png" style="zoom:30%;" /></p><p>Okay，现在我们在 CV 领域，更准确来讲是 GAN 的领域细想一下这个问题。GAN 解决一个什么问题？在 GAN 的论文<sup id="fnref:1" class="footnote-ref"><a href="#fn:1" rel="footnote"><span class="hint--top hint--rounded" aria-label="Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., ... &amp; Bengio, Y. (2014). Generative adversarial nets. *Advances in neural information processing systems*, *27*.">[1]</span></a></sup> 中已经说的很明白了：让生成网络 <span class="math inline">\(G\)</span> 的输出分布和数据集的分布相同。为了训练 <span class="math inline">\(G\)</span>，我们引入一个判别网络 <span class="math inline">\(D\)</span> 来判断 <span class="math inline">\(G\)</span> 的输出分布究竟和数据集的分布是否相同，通过损失将梯度一路传回 <span class="math inline">\(G\)</span> 达到训练的效果。那么什么叫做数据集的分布呢？</p><p>想象一个“图像空间”，它可以是 <span class="math inline">\(32\times32\)</span> 维、每一维在 <span class="math inline">\(256^3\)</span> 中取值的离散空间（也即是把 <span class="math inline">\(32\times 32\)</span> 的图像压扁成向量视作输入）；也可以是 <span class="math inline">\(100\)</span> 维随机向量在经过复杂的非线性变换后得到的空间（也即是 GAN 中 <span class="math inline">\(G\)</span> 网络的输出空间）……总之，在这样的空间里，大部分图像都是没有意义的噪声图像，就像老电视机屏幕的雪花一样，没有哪个图像数据集会收录这样的噪声；反过来想，一个数据集收录的所有图像，就在这个空间中占据了一些小地方，想象在这些地方撒了一些密集的点，这就是所谓数据集的分布了。</p><p>那什么是某种「域」的分布呢？「域」这东西蛮悬的，基本靠上下文猜作者是啥意思。如果我想把猫变成狗，我可以说我的 GAN 从猫这个域映射到了狗这个域；我让一个垮着脸的人笑了起来，我说微笑的脸是一个域。反正域类似一个子空间，这里面的图像有某种共同特征，比如猫域里都是猫。域的分布就是说，猫域在整个图像空间里占据了一小小块特定的位置：</p><p><img src="distribution2.png" style="zoom:30%;" /></p><p>就酱！</p><h2 id="参考资料">参考资料</h2><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span>Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., ... &amp; Bengio, Y. (2014). Generative adversarial nets. <em>Advances in neural information processing systems</em>, <em>27</em>. <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li><li><span id="fn:2" class="footnote-text"><span>Zhu, J. Y., Park, T., Isola, P., &amp; Efros, A. A. (2017). Unpaired image-to-image translation using cycle-consistent adversarial networks. In <em>Proceedings of the IEEE international conference on computer vision</em> (pp. 2223-2232). <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span></li></ol></div></section>]]></content>
     
     
     <categories>
       
-      <category>计算机视觉</category>
+      <category>Deep Learning</category>
       
     </categories>
     
@@ -2445,8 +2436,6 @@
     <tags>
       
       <tag>deep learning</tag>
-      
-      <tag>computer vision</tag>
       
     </tags>
     
@@ -2464,7 +2453,7 @@
     
     <categories>
       
-      <category>机器学习</category>
+      <category>Machine Learning</category>
       
     </categories>
     
@@ -2480,18 +2469,18 @@
   
   
   <entry>
-    <title>什么是图像</title>
-    <link href="/blog-main/2021/07/03/%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E5%83%8F/"/>
-    <url>/blog-main/2021/07/03/%E4%BB%80%E4%B9%88%E6%98%AF%E5%9B%BE%E5%83%8F/</url>
+    <title>What are Images?</title>
+    <link href="/blog-main/2021/07/03/What-are-Images/"/>
+    <url>/blog-main/2021/07/03/What-are-Images/</url>
     
     <content type="html"><![CDATA[<h2 id="像素坐标">像素坐标</h2><p>一张图片是一个高 <span class="math inline">\(H\)</span>、宽 <span class="math inline">\(W\)</span> 的像素矩阵，其大小简称作 <span class="math inline">\(W\times H\)</span>。</p><p>在图片上建立坐标系，是以<strong>左上角</strong>为原点，<span class="math inline">\(x\)</span> 轴正半轴向<strong>右</strong>延伸、<span class="math inline">\(y\)</span> 轴正半轴向<strong>下</strong>延伸，如图所示：</p><p><img src="coord.png" alt="图源：https://interfacelift.com/wallpaper/details/3852/red_demons.html" style="zoom:40%;" /></p><p>图像上一个像素点的坐标就是指某像素点在上述坐标系中的坐标，如下图所示，图片大小 <span class="math inline">\(5120\times 2880\)</span>，狐狸耳朵尖的坐标是 <span class="math inline">\((1206,948)\)</span>。</p><p>在目标检测任务中，经常与检测框打交道。检测框一般有两种表示方式：<span class="math inline">\((x_\min,y_\min,x_\max,y_\max)\)</span> 和 <span class="math inline">\((x_\min,y_\min,w,h)\)</span>，均是相对上述坐标系而言的，例如下图中，检测框的两种表示方式分别是 <span class="math inline">\((3444,435,4771,2332)\)</span> 和 <span class="math inline">\((3444,435,1327,1897)\)</span>。</p><p><img src="coord2.png" alt="图源：https://interfacelift.com/wallpaper/details/3852/red_demons.html" style="zoom:40%;" /></p><h2 id="图像的加载">图像的加载</h2><h3 id="概述">概述</h3><p>众所周知，一张图片就是一个像素矩阵，且对于 RGB 格式而言，每个像素点都有 3 个值：R、G、B，它们的取值范围都是 <span class="math inline">\([0,255]\)</span>，分别可以用 1 个字节存储。因而，一个高 <span class="math inline">\(H\)</span> 宽 <span class="math inline">\(W\)</span> 通道数 <span class="math inline">\(C\)</span> 的图片，就需要 <span class="math inline">\(C\times H\times W\)</span> 个字节表示出来。这个 <span class="math inline">\(CHW\)</span> 矩阵通常就是我们神经网络的输入。</p><p>但是在磁盘上，一张图片的存在形式并不一定是这个 <span class="math inline">\(CHW\)</span> 矩阵，而是被编码（encode）成了各种格式，例如 <code>jpeg</code>、<code>png</code>、<code>bmp</code> 等等。<code>jpeg</code> 和 <code>png</code> 都是会压缩图片的，所以它们实际占的存储空间会比 <span class="math inline">\(C\times H\times W\)</span> 小。从被编码的格式恢复到 <span class="math inline">\(CHW\)</span> 矩阵的过程称作解码（decode）。</p><p>举个例子，这张图是图像处理领域最经典的图了：</p><figure><img src="lena.jpeg" alt="lena.jpeg" /><figcaption aria-hidden="true">lena.jpeg</figcaption></figure><p>查看图片信息，可以看到它的尺寸是 <span class="math inline">\(200\times 200\)</span>，色彩空间是 <span class="math inline">\(\text{RGB}\)</span>，那么它解码之后应占用 <span class="math inline">\(200\times200\times3=120\text{KB}\)</span> 的空间，但它在磁盘上只占用了 <span class="math inline">\(11\text{KB}\)</span>；类似地，这张图片的 png 格式占用磁盘空间为 <span class="math inline">\(91\text{KB}\)</span>。</p><h3 id="torchvision.io"><code>torchvision.io</code></h3><p><code>torchvision.io</code>（<a href="https://pytorch.org/vision/stable/io.html#image">文档</a>）提供了许多图片加载和存储的函数，它们的作用就是让我们能够对图像编码、解码以及对图像文件读写。我画了一个图直观理解：</p><p><img src="torchvision.png" alt="" style="zoom:40%;" /></p><p>注意到文档里 <code>decode_jpeg</code> 有一个与众不同的参数：</p><blockquote><p><strong>device</strong> (<em>str</em> <em>or</em> <em>torch.device</em>) – The device on which the decoded image will be stored. If a cuda device is specified, the image will be decoded with <a href="https://developer.nvidia.com/nvjpeg">nvjpeg</a>. This is only supported for CUDA version &gt;= 10.1</p></blockquote><p><code>nvjpeg</code> 是 nvidia 的 gpu 上加速 jpeg 图像解码、编码和转码的库。所以我们在写 <code>DataSet</code> 时用这个库，可能会加快数据的读取，因而加快训练。</p><h3 id="实验">实验</h3><p>用几个常用的库：<code>cv2</code>、<code>matplotlib.pylot</code>、<code>PIL</code>、<code>skimage</code> 和 <code>torchvision.io</code>，读取图像文件为矩阵形式。</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs python">st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = cv2.imread(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tcv2&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = plt.imread(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tplt&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = np.array(Image.<span class="hljs-built_in">open</span>(paths[i]))<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tPIL&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = skimage.io.imread(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\tskimage&#x27;</span>)<br><br>st_time = time.time()<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>):<br>    img = torchvision.io.read_image(paths[i])<br><span class="hljs-built_in">print</span>(time.time() - st_time, <span class="hljs-string">&#x27;\ttorchvision&#x27;</span>)<br></code></pre></td></tr></table></figure><p>本地（cpu）运行结果如下：</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">1</span>.<span class="hljs-number">4684679508209229</span> cv2<br><span class="hljs-attribute">2</span>.<span class="hljs-number">0799291133880615</span> plt<br><span class="hljs-attribute">2</span>.<span class="hljs-number">2181248664855957</span> PIL<br><span class="hljs-attribute">2</span>.<span class="hljs-number">2203478813171387</span> skimage<br><span class="hljs-attribute">1</span>.<span class="hljs-number">4794716835021973</span> torchvision<br></code></pre></td></tr></table></figure><p>可以看到，<code>plt</code>、<code>PIL</code> 和 <code>skimage</code> 落后 <code>cv2</code> 和 <code>torchvision</code> 很多，而后两者之间 <code>cv2</code> 略胜一筹。我反复运行了多次均是类似的结果。</p><p>有趣的是，这段代码在服务器上的运行结果是：</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">1</span>.<span class="hljs-number">348557472229004</span> cv2<br><span class="hljs-attribute">1</span>.<span class="hljs-number">6608097553253174</span> plt<br><span class="hljs-attribute">1</span>.<span class="hljs-number">7273526191711426</span> PIL<br><span class="hljs-attribute">1</span>.<span class="hljs-number">660323143005371</span> skimage<br><span class="hljs-attribute">0</span>.<span class="hljs-number">5512754917144775</span> torchvision<br></code></pre></td></tr></table></figure><p><code>torchvision</code> 完胜其他方式。</p>]]></content>
     
     
     <categories>
       
-      <category>计算机视觉</category>
+      <category>Computer Vision</category>
       
-      <category>图像处理</category>
+      <category>Image Processing</category>
       
     </categories>
     
@@ -2525,9 +2514,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2545,7 +2534,7 @@
     
     <categories>
       
-      <category>随笔</category>
+      <category>Writing</category>
       
     </categories>
     
@@ -2573,9 +2562,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2602,9 +2591,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2631,9 +2620,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2660,9 +2649,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2689,9 +2678,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2718,9 +2707,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2747,9 +2736,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -2776,9 +2765,9 @@
     
     <tags>
       
-      <tag>deep learning</tag>
-      
       <tag>computer vision</tag>
+      
+      <tag>deep learning</tag>
       
     </tags>
     
@@ -3306,7 +3295,9 @@
     
     <categories>
       
-      <category>数学</category>
+      <category>Mathematics</category>
+      
+      <category>Number Theory</category>
       
     </categories>
     
@@ -3409,7 +3400,7 @@
     
     <categories>
       
-      <category>随笔</category>
+      <category>Writing</category>
       
     </categories>
     
@@ -3428,7 +3419,7 @@
     
     <categories>
       
-      <category>技术栈</category>
+      <category>Tech Stack</category>
       
     </categories>
     

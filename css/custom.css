@@ -1,0 +1,5 @@
+.markdown-body p > img,
+.markdown-body p > a > img {
+  box-shadow: unset;
+  border-radius: 0px;
+}
