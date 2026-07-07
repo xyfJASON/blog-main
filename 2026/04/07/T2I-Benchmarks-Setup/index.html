@@ -19,24 +19,24 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文记录可直接 follow 不报错的常用 benchmark 环境安装指南。 GenEval 官方仓库 af4902f｜重要参考 issue#12 环境设置 1、创建 conda 环境： 12conda create -n geneval -y python&#x3D;3.8.10conda activate geneval 2、安装 torch 依赖： 1pip install torch&#x3D;&#x3D;2.1.2">
+    <meta name="description" content="本文记录可直接 follow 不报错的常用文生图模型 benchmark 安装指南。 GenEval 论文｜官方仓库 af4902f｜重要参考 issue#12 环境设置 1、创建 conda 环境： 12conda create -n geneval -y python&#x3D;3.8.10conda activate geneval 2、安装 torch 依赖： 1pip install torch&#x3D;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Benchmark Environment Setup">
-<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/04/07/Benchmark-Environment-Setup/index.html">
+<meta property="og:title" content="T2I Benchmarks Setup">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/04/07/T2I-Benchmarks-Setup/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="本文记录可直接 follow 不报错的常用 benchmark 环境安装指南。 GenEval 官方仓库 af4902f｜重要参考 issue#12 环境设置 1、创建 conda 环境： 12conda create -n geneval -y python&#x3D;3.8.10conda activate geneval 2、安装 torch 依赖： 1pip install torch&#x3D;&#x3D;2.1.2">
+<meta property="og:description" content="本文记录可直接 follow 不报错的常用文生图模型 benchmark 安装指南。 GenEval 论文｜官方仓库 af4902f｜重要参考 issue#12 环境设置 1、创建 conda 环境： 12conda create -n geneval -y python&#x3D;3.8.10conda activate geneval 2、安装 torch 依赖： 1pip install torch&#x3D;">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/benchmark.jpg">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/t2i-benchmark.jpg">
 <meta property="article:published_time" content="2026-04-07T07:53:40.000Z">
-<meta property="article:modified_time" content="2026-07-06T10:07:26.547Z">
+<meta property="article:modified_time" content="2026-07-07T02:26:42.312Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="deep learning">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/benchmark.jpg">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/t2i-benchmark.jpg">
   
   
   
-  <title>Benchmark Environment Setup - xyfJASON</title>
+  <title>T2I Benchmarks Setup - xyfJASON</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -252,13 +252,13 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/blog-main/gallery/cover/benchmark.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/blog-main/gallery/cover/t2i-benchmark.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Benchmark Environment Setup"></span>
+            <span id="subtitle" data-typed-text="T2I Benchmarks Setup"></span>
           
         </div>
 
@@ -281,7 +281,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          762 字
+          808 字
         
       </span>
     
@@ -329,14 +329,14 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Benchmark Environment Setup</h1>
+            <h1 id="seo-header">T2I Benchmarks Setup</h1>
             
             
               <div class="markdown-body">
                 
-                <p>本文记录<strong>可直接 follow 不报错</strong>的常用 benchmark 环境安装指南。</p>
+                <p>本文记录<strong>可直接 follow 不报错</strong>的常用文生图模型 benchmark 安装指南。</p>
 <h2 id="geneval">GenEval</h2>
-<p><a target="_blank" rel="noopener" href="https://github.com/djghosh13/geneval/tree/af4902f24d3ca90ebbb446dd9891a59e0f82725f">官方仓库 af4902f</a>｜<a target="_blank" rel="noopener" href="https://github.com/djghosh13/geneval/issues/12">重要参考 issue#12</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2310.11513">论文</a>｜<a target="_blank" rel="noopener" href="https://github.com/djghosh13/geneval/tree/af4902f24d3ca90ebbb446dd9891a59e0f82725f">官方仓库 af4902f</a>｜<a target="_blank" rel="noopener" href="https://github.com/djghosh13/geneval/issues/12">重要参考 issue#12</a></p>
 <h3 id="环境设置">环境设置</h3>
 <p>1、创建 <code>conda</code> 环境：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">conda create -n geneval -y python=3.8.10<br>conda activate geneval<br></code></pre></td></tr></table></figure>
@@ -362,7 +362,7 @@
 <p>6、获取最终得分：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python evaluation/summary_scores.py &quot;&lt;RESULTS_FOLDER&gt;/results.jsonl&quot;<br></code></pre></td></tr></table></figure>
 <h2 id="dpg-bench">DPG-Bench</h2>
-<p><a target="_blank" rel="noopener" href="https://github.com/TencentQQGYLab/ELLA/tree/3c228f1dc6c4d3cad0a47493816151a419f14db3">官方仓库 3c228f1</a>｜<a target="_blank" rel="noopener" href="https://github.com/TencentQQGYLab/ELLA/issues/65">重要参考 issue#65</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2403.05135">论文</a>｜<a target="_blank" rel="noopener" href="https://github.com/TencentQQGYLab/ELLA/tree/3c228f1dc6c4d3cad0a47493816151a419f14db3">官方仓库 3c228f1</a>｜<a target="_blank" rel="noopener" href="https://github.com/TencentQQGYLab/ELLA/issues/65">重要参考 issue#65</a></p>
 <h3 id="环境设置-1">环境设置</h3>
 <p>1、创建 <code>conda</code> 环境：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">conda create -n dpg python=3.13 -y<br>conda activate dpg<br></code></pre></td></tr></table></figure>
@@ -380,24 +380,24 @@
 <p>2、下载 mPLUG VQA 模型，直接在终端开启一个 Python 交互界面执行以下代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> modelscope.pipelines <span class="hljs-keyword">import</span> pipeline<br><span class="hljs-keyword">from</span> modelscope.utils.constant <span class="hljs-keyword">import</span> Tasks<br>ckpt = <span class="hljs-string">&quot;damo/mplug_visual-question-answering_coco_large_en&quot;</span><br>pipeline(Tasks.visual_question_answering, model=ckpt, device=<span class="hljs-string">&quot;cpu&quot;</span>)<br></code></pre></td></tr></table></figure>
 <p>3、生成图像：对仓库中 <code>./dpg_bench/prompts</code> 内的每个 prompt，生成 4 张图并按 2x2 格子拼成一张大图，图像文件名应与 prompt 的 <code>txt</code> 文件名相同。</p>
-<p>4、运行评测：</p>
+<p>4、运行评测（<code>N</code> 为 GPU 数量）：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">PROCESSES=N bash dpg_bench/dist_eval.sh $YOUR_IMAGE_PATH $RESOLUTION<br></code></pre></td></tr></table></figure>
 <h2 id="hpsv2">HPSv2</h2>
-<p><a target="_blank" rel="noopener" href="https://github.com/tgxs002/HPSv2/tree/866735ecaae999fa714bd9edfa05aa2672669ee3">官方仓库 866735e</a></p>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2306.09341">论文</a>｜<a target="_blank" rel="noopener" href="https://github.com/tgxs002/HPSv2/tree/866735ecaae999fa714bd9edfa05aa2672669ee3">官方仓库 866735e</a>｜<a target="_blank" rel="noopener" href="https://github.com/tgxs002/HPSv2/issues/30">重要参考 issue#30</a></p>
 <h3 id="环境设置-2">环境设置</h3>
 <p>1、创建 <code>conda</code> 环境：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">conda create -n hpsv2 python=3.10 -y<br>conda activate hpsv2<br></code></pre></td></tr></table></figure>
 <p>2、安装 <code>torch</code> 依赖（官方没有明确版本，其他版本可能也可以）：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124<br></code></pre></td></tr></table></figure>
-<p>3、安装 <code>hpsv2</code> 库：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install hpsv2<br></code></pre></td></tr></table></figure>
+<p>3、安装 <code>hpsv2x</code> 库（这是官方 <code>hpsv2</code> 库的修正版本，修正了 BPE 文件缺失问题）：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install hpsv2x==1.2.0<br></code></pre></td></tr></table></figure>
 <h3 id="运行测试-2">运行测试</h3>
 <p>1、下载测试 prompt：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">hf download zhwang/HPDv2 --include &quot;benchmark/*.json&quot; --repo-type dataset<br></code></pre></td></tr></table></figure>
 <p>2、生成图像：通过 <code>hpsv2</code> 库获取所有 prompt，按照 <code>image_path/style/idx.jpg</code> 的格式存储，参考代码如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> hpsv2<br><br><span class="hljs-comment"># Get benchmark prompts (&lt;style&gt; = all, anime, concept-art, paintings, photo)</span><br>all_prompts = hpsv2.benchmark_prompts(<span class="hljs-string">&quot;all&quot;</span>)<br><br><span class="hljs-comment"># Iterate over the benchmark prompts to generate images</span><br><span class="hljs-keyword">for</span> style, prompts <span class="hljs-keyword">in</span> all_prompts.items():<br>    <span class="hljs-keyword">for</span> idx, prompt <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(prompts):<br>        image = TextToImageModel(prompt)<br>        <span class="hljs-comment"># TextToImageModel is the model you want to evaluate</span><br>        image.save(os.path.join(<span class="hljs-string">&quot;&lt;image_path&gt;&quot;</span>, style, <span class="hljs-string">f&quot;<span class="hljs-subst">&#123;idx:05d&#125;</span>.jpg&quot;</span>))<br>        <span class="hljs-comment"># &lt;image_path&gt; is the folder path to store generated images, as the input of hpsv2.evaluate().</span><br></code></pre></td></tr></table></figure>
 <p>3、运行评测：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> hpsv2<br><br><span class="hljs-comment"># &lt;image_path&gt; is the same as &lt;image_path&gt; in the prevoius part.</span><br><span class="hljs-comment"># &lt;hps_version&gt; is the version of HPS model, it can be v2 or v2.1. Default to v2.</span><br>hpsv2.evaluate(<span class="hljs-string">&quot;&lt;images_path&gt;&quot;</span>, hps_version=<span class="hljs-string">&quot;&lt;hps_version&gt;&quot;</span>) <br></code></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> hpsv2<br><br><span class="hljs-comment"># &lt;image_path&gt; is the same as &lt;image_path&gt; in the prevoius part.</span><br><span class="hljs-comment"># &lt;hps_version&gt; is the version of HPS model, it can be v2.0 or v2.1.</span><br>hpsv2.evaluate(<span class="hljs-string">&quot;&lt;images_path&gt;&quot;</span>, hps_version=<span class="hljs-string">&quot;&lt;hps_version&gt;&quot;</span>) <br></code></pre></td></tr></table></figure>
 
                 
               </div>
@@ -443,8 +443,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Benchmark Environment Setup</div>
-      <div>https://xyfjason.github.io/blog-main/2026/04/07/Benchmark-Environment-Setup/</div>
+      <div>T2I Benchmarks Setup</div>
+      <div>https://xyfjason.github.io/blog-main/2026/04/07/T2I-Benchmarks-Setup/</div>
     </div>
     <div class="license-meta">
       
