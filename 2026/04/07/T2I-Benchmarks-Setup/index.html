@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/t2i-benchmark.jpg">
 <meta property="article:published_time" content="2026-04-07T07:53:40.000Z">
-<meta property="article:modified_time" content="2026-07-07T02:26:42.312Z">
+<meta property="article:modified_time" content="2026-07-11T02:20:45.864Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="deep learning">
 <meta name="twitter:card" content="summary_large_image">
@@ -281,7 +281,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          808 字
+          971 字
         
       </span>
     
@@ -292,7 +292,7 @@
         
         
         
-          7 分钟
+          9 分钟
         
       </span>
     
@@ -355,8 +355,8 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">./evaluation/download_models.sh ./object_detector<br></code></pre></td></tr></table></figure>
 <p>3、下载 CLIP ViT-L/14，直接在终端开启一个 Python 交互界面执行以下代码：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> open_clip<br>open_clip.create_model_and_transforms(<span class="hljs-string">&quot;ViT-L-14&quot;</span>, pretrained=<span class="hljs-string">&quot;openai&quot;</span>, device=<span class="hljs-string">&quot;cpu&quot;</span>)<br></code></pre></td></tr></table></figure>
-<p>4、生成图像：从 <code>./prompts/evaluation_metadata.jsonl</code> 中逐行读取 prompt，生成 4 张图像，并按以下格式存储，其中 <code>metadata.jsonl</code> 包含上述 prompt 文件的对应行</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs text">&lt;IMAGE_FOLDER&gt;/<br>    00000/<br>        metadata.jsonl<br>        samples/<br>            0000.png<br>            0001.png<br>            0002.png<br>            0003.png<br>    00001/<br>        ...<br></code></pre></td></tr></table></figure>
+<p>4、生成图像：从 <code>./prompts/evaluation_metadata.jsonl</code> 中逐行读取 prompt，生成 4 张图像，并按以下格式存储，其中 <code>metadata.jsonl</code> 包含上述 prompt 文件的对应行：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs text">&lt;IMAGE_FOLDER&gt;<br>├── 00000<br>│   ├── metadata.jsonl<br>│   └── samples<br>│       ├── 0000.png<br>│       ├── 0001.png<br>│       ├── 0002.png<br>│       └── 0003.png<br>├── 00001<br>│   └── ...<br>└── ...<br></code></pre></td></tr></table></figure>
 <p>5、运行评测：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python evaluation/evaluate_images.py &quot;&lt;IMAGE_FOLDER&gt;&quot; --outfile &quot;&lt;RESULTS_FOLDER&gt;/results.jsonl&quot; --model-path ./object_detector<br></code></pre></td></tr></table></figure>
 <p>6、获取最终得分：</p>
@@ -398,6 +398,17 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> hpsv2<br><br><span class="hljs-comment"># Get benchmark prompts (&lt;style&gt; = all, anime, concept-art, paintings, photo)</span><br>all_prompts = hpsv2.benchmark_prompts(<span class="hljs-string">&quot;all&quot;</span>)<br><br><span class="hljs-comment"># Iterate over the benchmark prompts to generate images</span><br><span class="hljs-keyword">for</span> style, prompts <span class="hljs-keyword">in</span> all_prompts.items():<br>    <span class="hljs-keyword">for</span> idx, prompt <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(prompts):<br>        image = TextToImageModel(prompt)<br>        <span class="hljs-comment"># TextToImageModel is the model you want to evaluate</span><br>        image.save(os.path.join(<span class="hljs-string">&quot;&lt;image_path&gt;&quot;</span>, style, <span class="hljs-string">f&quot;<span class="hljs-subst">&#123;idx:05d&#125;</span>.jpg&quot;</span>))<br>        <span class="hljs-comment"># &lt;image_path&gt; is the folder path to store generated images, as the input of hpsv2.evaluate().</span><br></code></pre></td></tr></table></figure>
 <p>3、运行评测：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> hpsv2<br><br><span class="hljs-comment"># &lt;image_path&gt; is the same as &lt;image_path&gt; in the prevoius part.</span><br><span class="hljs-comment"># &lt;hps_version&gt; is the version of HPS model, it can be v2.0 or v2.1.</span><br>hpsv2.evaluate(<span class="hljs-string">&quot;&lt;images_path&gt;&quot;</span>, hps_version=<span class="hljs-string">&quot;&lt;hps_version&gt;&quot;</span>) <br></code></pre></td></tr></table></figure>
+<h2 id="imagereward">ImageReward</h2>
+<p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2304.05977">论文</a>｜<a target="_blank" rel="noopener" href="https://github.com/zai-org/ImageReward/tree/78f8051059b34fef8e0032ccb40561c23a2ddbbb">官方仓库 78f8051</a></p>
+<h3 id="环境设置-3">环境设置</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell">pip install &quot;timm&gt;=0.6.13&quot;<br>pip install &quot;transformers&gt;=4.27.4&quot;<br>pip install &quot;datasets==4.0.0&quot;<br>pip install &quot;fairscale&gt;=0.4.13&quot;<br>pip install &quot;huggingface_hub&gt;=0.13.4&quot;<br>pip install &quot;clip @ git+https://github.com/openai/CLIP.git&quot;<br></code></pre></td></tr></table></figure>
+<h3 id="运行测试-3">运行测试</h3>
+<p>1、Clone 仓库：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">git clone https://github.com/zai-org/ImageReward.git<br>cd ImageReward<br></code></pre></td></tr></table></figure>
+<p>2、从 <code>benchmark/benchmark-prompts.json</code> 中逐行读取 prompt，生成 10 张图像，并按以下格式存储：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs text">&lt;IMG_DIR&gt;<br>└──&lt;MODEL_NAME&gt;<br>   ├──000246-0117_0.png<br>   ├──...<br>   ├──000246-0117_9.png<br>   ├──000304-0153_0.png<br>   ├──...<br>   ├──000304-0153_9.png<br>   └──...<br></code></pre></td></tr></table></figure>
+<p>3、运行评测，其中 <code>&lt;RESULT_DIR&gt;</code> 指保存评测结果的目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">python test-benchmark.py --benchmark ImageReward-v1.0 --img_dir &lt;IMG_DIR&gt; --model &lt;MODEL_NAME&gt; --result_dir &lt;RESULT_DIR&gt;<br></code></pre></td></tr></table></figure>
 
                 
               </div>
