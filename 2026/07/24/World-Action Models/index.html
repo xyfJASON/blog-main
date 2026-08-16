@@ -1,0 +1,866 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/blog-main/logo/myfavicon.png">
+  <link rel="icon" href="/blog-main/logo/myfavicon.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="xyfJASON">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收当前观测 \(\mathbf o_t\) 或历史观测 \(\mathbf o_{0:t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="World-Action Models">
+<meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/07/24/World-Action%20Models/index.html">
+<meta property="og:site_name" content="xyfJASON">
+<meta property="og:description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收当前观测 \(\mathbf o_t\) 或历史观测 \(\mathbf o_{0:t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chu">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/wam.jpg">
+<meta property="article:published_time" content="2026-07-24T03:24:34.000Z">
+<meta property="article:modified_time" content="2026-08-16T04:44:30.751Z">
+<meta property="article:author" content="xyfJASON">
+<meta property="article:tag" content="embodied-ai">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://xyfjason.github.io/blog-main/gallery/cover/wam.jpg">
+  
+  
+  
+  <title>World-Action Models - xyfJASON</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/blog-main/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/blog-main/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/blog-main/css/highlight-dark.css" />
+  
+
+
+
+  
+<link rel="stylesheet" href="/blog-main/css/custom.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"xyfjason.github.io","root":"/blog-main/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/logo/imageloading.png","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null},"woyaola":null,"cnzz":null},"search_path":"/blog-main/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/blog-main/js/utils.js" ></script>
+  <script  src="/blog-main/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 60vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/blog-main/">
+      <strong>xyfJASON</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/blog-main/links/" target="_self">
+                <i class="iconfont icon-friends"></i>
+                <span>友链</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" target="_self" href="javascript:;" role="button"
+                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="iconfont icon-link-fill"></i>
+                <span>链接</span>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/homepage" target="_self">
+                    
+                    <span>学术主页</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-xcpc" target="_self">
+                    
+                    <span>博客 (ICPC/CCPC)</span>
+                  </a>
+                
+                  
+                  
+                  
+                  <a class="dropdown-item" href="https://xyfjason.github.io/blog-oi" target="_self">
+                    
+                    <span>博客 (OI)</span>
+                  </a>
+                
+              </div>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/blog-main/gallery/cover/wam.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="World-Action Models"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2026-07-24 11:24" pubdate>
+          2026年7月24日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          986 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          9 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">World-Action Models</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本文记录若干经典 WAM 论文。</p>
+<h2 id="introduction">Introduction</h2>
+<p>WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收当前观测 <span class="math inline">\(\mathbf o_t\)</span> 或历史观测 <span class="math inline">\(\mathbf o_{0:t}\)</span>、当前机器人状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(\mathbf o_{t:t+H}\)</span>.</p>
+<h2 id="gr-1">GR-1</h2>
+<p>TODO</p>
+<h2 id="uwm"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2504.02792">UWM</a></h2>
+<p><strong>核心思想</strong>   大规模视频数据包含丰富的环境和行为，但是缺乏动作标注，因此无法用于模仿学习。为了利用上视频数据，UWM 提出视频和动作联合去噪的思路，二者的扩散时间步独立采样。于是，通过控制时间步，模型可以灵活表示：</p>
+<ol type="1">
+<li>forward dynamics <span class="math inline">\(p(o&#39;\vert o,a)\)</span>；</li>
+<li>inverse dynamics <span class="math inline">\(p(a\vert o,o&#39;)\)</span>；</li>
+<li>policy <span class="math inline">\(p(a\vert o)\)</span>；</li>
+<li>video generator <span class="math inline">\(p(o&#39;\vert o)\)</span>.</li>
+</ol>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-56dff383" role="button" aria-expanded="false" aria-controls="collapse-56dff383">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-56dff383">
+        <div class="fold-content">
+          <p><img src="uwm.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
+<h2 id="mimic-video">Mimic-Video</h2>
+<p>TODO</p>
+<h2 id="cosmos-policy"><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2601.16163">Cosmos Policy</a></h2>
+<p><strong>方法概述</strong>   利用 Cosmos-Predict2-2B 视频生成模型的时空先验，将其微调为机器人策略模型，输入当前观测、状态和指令，预测动作、未来状态、未来图像和价值函数。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-0aa7410d" role="button" aria-expanded="false" aria-controls="collapse-0aa7410d">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-0aa7410d">
+        <div class="fold-content">
+          <p><img src="cosmos-policy.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+        </div>
+      </div>
+    </div>
+<p><strong>模型架构</strong>   Cosmos Policy 不更改模型架构，将多视角观测、机器人状态和 action chunk 都编码为 latent frame 插入视频序列。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-aa983a0c" role="button" aria-expanded="false" aria-controls="collapse-aa983a0c">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-aa983a0c">
+        <div class="fold-content">
+          <p><img src="cosmos-policy-arch.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+        </div>
+      </div>
+    </div>
+<p><strong>训练方法</strong>   通过更换不同的 conditioning，模型可以学习策略模型、世界模型或价值模型。具体而言，在单步训练采样的一个 batch 中，50% 的数据用于训练策略模型 <span class="math inline">\(p(a,s&#39;,V(s&#39;)\vert s)\)</span>，25% 的数据用于训练世界模型 <span class="math inline">\(p(s&#39;,V(s&#39;)\vert s,a)\)</span>，25% 的数据用于训练价值模型 <span class="math inline">\(p(V(s&#39;)\vert s,a,s&#39;)\)</span>.</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-503e0c95" role="button" aria-expanded="false" aria-controls="collapse-503e0c95">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-503e0c95">
+        <div class="fold-content">
+          <p><img src="cosmos-policy-training.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+        </div>
+      </div>
+    </div>
+<p><strong>规划 (planning)</strong>   由于 Cosmos Policy 学习了世界模型和价值函数，因此部署时可以 best-of-N 选择执行价值最高的动作。具体地，作者将模型部署后收集一批 rollout 数据，在 rollout 数据上以 10%:45%:45% 的比重训练策略模型、世界模型、价值函数，则新模型用作 planning model，原模型用作 policy model. 推理时，从 policy model 中采样 <span class="math inline">\(N\)</span> 个动作，对每种动作用 planning model 预测 3 个未来状态和 5 个价值函数，通过 majority mean 得到该动作的得分，最后选取得分最高的动作执行。</p>
+<h2 id="lingbot-va"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2601.21998">LingBot-VA</a></h2>
+<p>TODO</p>
+<h2 id="dreamzero"><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2602.15922">DreamZero</a></h2>
+<p><strong>核心思想</strong>   DreamZero 的作者认为，尽管 VLA 可以泛化到新的文本指令和新的操作物体上，但是难以泛化到新环境和新动作上；而 WAM 基于的视频生成模型有非常多不同动作的先验，因此可以对新环境和新动作有更好的泛化性。DreamZero 的核心贡献/发现包括以下三个方面：</p>
+<ul>
+<li>数据：多样、异构数据比重复数据更重要；</li>
+<li>泛化性：WAM 可在新环境新任务上实现 zero-shot 泛化，也可以高效微调到新任务上；</li>
+<li>跨本体迁移：DreamZero 可将其他机器人或人类的操作视频（无动作标注）迁移到当前机器人上。</li>
+</ul>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-152e9739" role="button" aria-expanded="false" aria-controls="collapse-152e9739">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-152e9739">
+        <div class="fold-content">
+          <p><img src="dreamzero-overview.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+        </div>
+      </div>
+    </div>
+<p><strong>问题描述</strong>   WAM 联合预测视频和动作，本质上可分解为视频生成模型和逆动力学模型： <span class="math display">\[
+\underbrace{\pi_\theta(\mathbf o_{t:t+H},\mathbf a_{t:t+H}\vert\mathbf o_{0:t},\mathbf c,\mathbf q_t)}_\text{WAM}=\underbrace{\pi_\theta(\mathbf o_{t:t+H}\vert\mathbf o_{0:t},\mathbf c,\mathbf q_t)}_\text{Video Model}\underbrace{\pi_\theta(\mathbf a_{t:t+H}\vert\mathbf o_{0:t+H},\mathbf q_t)}_\text{IDM}
+\]</span> WAM 通过联合预测将视频生成模型和逆动力学模型整合成了一个端到端模型。</p>
+<p><strong>模型架构</strong>   DreamZero 基于 Wan2.1-I2V-14B-480P 构建，视频和动作均以 flow matching 的方式学习，采用 teacher-forcing chunk-wise AR 的方式训练，通过 attention mask 使得当前带噪 chunk 只能看到历史干净 chunks.</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-7a7c24b6" role="button" aria-expanded="false" aria-controls="collapse-7a7c24b6">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-7a7c24b6">
+        <div class="fold-content">
+          <p><img src="dreamzero.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+        </div>
+      </div>
+    </div>
+<h2 id="fast-wam"><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2603.16666">Fast-WAM</a></h2>
+<p>TODO</p>
+<h2 id="pi_0.7"><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2604.15483"><span class="math inline">\(\pi_{0.7}\)</span></a></h2>
+<p>TODO</p>
+<h2 id="lingbot-va-2.0"><a target="_blank" rel="noopener" href="https://technology.robbyant.com/lingbot-va-v2">LingBot-VA 2.0</a></h2>
+<p>TODO</p>
+<h2 id="references">References</h2>
+<section class="footnotes">
+<div class="footnote-list">
+<ol>
+<li>
+<span id="fn:1" class="footnote-text"><span>Moritz Reuss. Pretrained to Imagine, Fine-Tuned to Act: The Rise of World-Action Models. <a target="_blank" rel="noopener" href="https://developer.nvidia.com/blog/pretrained-to-imagine-fine-tuned-to-act-the-rise-of-world-action-models/" class="uri">https://developer.nvidia.com/blog/pretrained-to-imagine-fine-tuned-to-act-the-rise-of-world-action-models/</a> <a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+<li>
+<span id="fn:2" class="footnote-text"><span>Wang et.al. World Action Models: The Next Frontier in Embodied AI. <a target="_blank" rel="noopener" href="https://openmoss.ai/Awesome-WAM/" class="uri">https://openmoss.ai/Awesome-WAM/</a> <a href="#fnref:2" rev="footnote" class="footnote-backref"> ↩︎</a></span></span>
+</li>
+</ol>
+</div>
+</section>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/blog-main/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/blog-main/tags/embodied-ai/" class="print-no-link">#embodied-ai</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>World-Action Models</div>
+      <div>https://xyfjason.github.io/blog-main/2026/07/24/World-Action Models/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>xyfJASON</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2026年7月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/blog-main/2026/07/23/Vision-Language-Action-Models/" title="Vision-Language-Action Models">
+                        <span class="hidden-mobile">Vision-Language-Action Models</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/blog-main/js/events.js" ></script>
+<script  src="/blog-main/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/blog-main/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  
+      <script>
+        if (!window.MathJax) {
+          window.MathJax = {
+            tex    : {
+              inlineMath: { '[+]': [['$', '$']] }
+            },
+            loader : {
+              load: ['ui/lazy']
+            },
+            options: {
+              renderActions: {
+                insertedScript: [200, () => {
+                  document.querySelectorAll('mjx-container').forEach(node => {
+                    let target = node.parentNode;
+                    if (target.nodeName.toLowerCase() === 'li') {
+                      target.parentNode.classList.add('has-jax');
+                    }
+                  });
+                }, '', false]
+              }
+            }
+          };
+        } else {
+          MathJax.startup.document.state(0);
+          MathJax.texReset();
+          MathJax.typeset();
+          MathJax.typesetPromise();
+        }
+
+        Fluid.events.registerRefreshCallback(function() {
+          if ('MathJax' in window && MathJax.startup.document && typeof MathJax.startup.document.state === 'function') {
+            MathJax.startup.document.state(0);
+            MathJax.texReset();
+            MathJax.typeset();
+            MathJax.typesetPromise();
+          }
+        });
+      </script>
+    
+
+  <script  src="https://lib.baomitu.com/mathjax/3.2.2/es5/tex-mml-chtml.js" ></script>
+
+  <script  src="/blog-main/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/blog-main/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
