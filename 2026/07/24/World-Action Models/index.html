@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收当前观测 \(\mathbf o_t\) 或历史观测 \(\mathbf o_{0:t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chu">
+    <meta name="description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_">
 <meta property="og:type" content="article">
 <meta property="og:title" content="World-Action Models">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/07/24/World-Action%20Models/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收当前观测 \(\mathbf o_t\) 或历史观测 \(\mathbf o_{0:t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chu">
+<meta property="og:description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/wam.jpg">
 <meta property="article:published_time" content="2026-07-24T03:24:34.000Z">
-<meta property="article:modified_time" content="2026-08-21T10:47:17.319Z">
+<meta property="article:modified_time" content="2026-08-22T09:16:02.181Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="embodied-ai">
 <meta name="twitter:card" content="summary_large_image">
@@ -281,7 +281,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          1.8k 字
+          2.3k 字
         
       </span>
     
@@ -292,7 +292,7 @@
         
         
         
-          15 分钟
+          20 分钟
         
       </span>
     
@@ -336,12 +336,45 @@
                 
                 <p>本文记录若干经典 WAM 论文。</p>
 <h2 id="introduction">Introduction</h2>
-<p>WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收当前观测 <span class="math inline">\(\mathbf o_t\)</span> 或历史观测 <span class="math inline">\(\mathbf o_{0:t}\)</span>、当前机器人状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(\mathbf o_{t+1:t+1+H}\)</span>.</p>
+<p>WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收历史观测 <span class="math inline">\(\mathbf o_{\leq t}\)</span>、当前机器人状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(\mathbf o_{t+1:t+1+H}\)</span>.</p>
 <p><span class="math display">\[
-\max_{\theta}~\mathbb E_{(\mathbf a_{t:t+H},\mathbf o_{t:t+H+1},\mathbf q_t,\mathbf c)\sim\mathcal D}\left[\log \pi_\theta(\mathbf a_{t:t+H},\mathbf o_{t+1:t+1+H}\vert\mathbf o_t,\mathbf q_t,\mathbf c)\right]
+\max_{\theta}~\mathbb E_{(\mathbf a_{t:t+H},\mathbf o_{0:t+1+H},\mathbf q_t,\mathbf c)\sim\mathcal D}\left[\log \pi_\theta(\mathbf a_{t:t+H},\mathbf o_{t+1:t+1+H}\vert\mathbf o_{\leq t},\mathbf q_t,\mathbf c)\right]
 \]</span></p>
-<h2 id="gr-1">GR-1</h2>
-<p>TODO</p>
+<h2 id="gr-1"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2312.13139">GR-1</a></h2>
+<p><strong>方法概览</strong>   先在大规模视频数据上预训练，然后在机器人数据上微调，同时预测动作和视频。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-32837c48" role="button" aria-expanded="false" aria-controls="collapse-32837c48">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-32837c48">
+        <div class="fold-content">
+          <p><img src="gr-1-overview.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
+<p><strong>模型架构</strong>   模型由编码器、主体和解码器三部分构成。</p>
+<ol type="1">
+<li><p>编码器：GR-1 采用 CLIP 编码文本，MAE 作为视觉编码器；动作为 6D 姿态加 1 个二元夹爪，由 MLP 编码。</p></li>
+<li><p>模型主体：采用因果自回归架构，视频预训练和机器人微调的 token 序列分别为</p>
+<ul>
+<li>Pretraining: <span class="math inline">\((l,\mathbf o_{t-h},\texttt{[OBS]},\ldots,l,\mathbf o_{t},\texttt{[OBS]})\)</span></li>
+<li>Finetuning: <span class="math inline">\((l,\mathbf s_{t-h},\mathbf o_{t-h},\texttt{[OBS]},\texttt{[ACT]},\ldots,l,\mathbf s_t,\mathbf o_{t},\texttt{[OBS]},\texttt{[ACT]})\)</span></li>
+</ul>
+<p>每个 token 可以关注到其之前的除了 <span class="math inline">\(\texttt{[OBS]}\)</span> 和 <span class="math inline">\(\texttt{[ACT]}\)</span> 以外的所有其他 token.</p></li>
+<li><p>解码器：视频由一个 Transformer decoder 接收 <span class="math inline">\(\texttt{[OBS]}\)</span> 和 mask token 输出，采用 MSE 损失；动作由 MLP 解码，连续姿态采用 Smooth-L1 损失，二元夹爪采用交叉熵损失。</p></li>
+</ol>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-29b201dd" role="button" aria-expanded="false" aria-controls="collapse-29b201dd">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-29b201dd">
+        <div class="fold-content">
+          <p><img src="gr-1-arch.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
 <h2 id="uwm"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2504.02792">UWM</a></h2>
 <p><strong>核心思想</strong>   大规模视频数据包含丰富的环境和行为，但是缺乏动作标注，因此无法用于模仿学习。为了利用上视频数据，UWM 提出视频和动作联合去噪的思路，二者的扩散时间步独立采样。于是，通过控制时间步，模型可以灵活表示：</p>
 <ol type="1">
@@ -506,6 +539,26 @@
         </div>
       </div>
     </div>
+<h2 id="world-guidance"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2602.22010">World Guidance</a></h2>
+<p><strong>核心思想</strong>   已有 WAM 预测的视频包含很多与动作无关的冗余信息，因此 WoG 希望从未来视频中提取一个紧凑又包含足够信息的低维表征，用于指导动作生成。为了让提取的表征只关注对动作生成有帮助的信息，WoG 将其作为条件纳入机器人动作的训练中，让模型自己去学习这样的表征；随后冻结提取该表示编码器，模型就像正常的 WAM 一样联合预测动作和表示即可。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-1787a42c" role="button" aria-expanded="false" aria-controls="collapse-1787a42c">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-1787a42c">
+        <div class="fold-content">
+          <p><img src="wog-overview.jpg" srcset="/blog-main/logo/imageloading.png" lazyload /></p>
+        </div>
+      </div>
+    </div>
+<p><strong>训练细节</strong>   </p>
+<ol type="1">
+<li>模型架构：WoG 以 Prismatic VLM 为 backbone，视觉编码器为 DINOv2 + Wan VAE，表征通过 Q-Former 提取。</li>
+<li>阶段一：提取的表征通过 cross attention 注入 action head，对动作按照 flow matching 训练。</li>
+<li>阶段二：冻结表征提取器，让 VLM 联合预测动作和表征，其中动作采用 flow matching，表征采用 cosine similarity.</li>
+</ol>
+<p><strong>数据利用</strong>   WoG 可以利用有标注视频和无标注的人类操作视频。对后者，WoG 只在阶段二训练其表征预测部分。</p>
 <h2 id="fast-wam"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2603.16666">Fast-WAM</a></h2>
 <p><strong>核心思想</strong>   已有 WAM 在训练和推理时均预测未来视频。Fast-WAM 认为，视频预测的主要作用是在训练时优化模型的内部表征，在推理时完全可以舍弃而不过分损失性能，从而加快推理速度。</p>
 <p><strong>框架对比</strong>   图 (A) 为联合预测视频和动作；图 (B) 为先预测视频，再预测动作；图 (C) 为本文方法，先预测动作，再预测视频，从而推理时可以跳过视频预测步骤。</p>
@@ -532,10 +585,14 @@
         </div>
       </div>
     </div>
-<h2 id="pi_0.7"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2604.15483"><span class="math inline">\(\pi_{0.7}\)</span></a></h2>
-<p>TODO</p>
 <h2 id="lingbot-va-2.0"><a target="_blank" rel="noopener" href="https://technology.robbyant.com/lingbot-va-v2">LingBot-VA 2.0</a></h2>
-<p>TODO</p>
+<p><strong>核心改进</strong>   在 LingBot-VA 的基础上有 4 点改进：</p>
+<ol type="1">
+<li>引入 semantic visual-action tokenizer，而非采用 VAE</li>
+<li>从头进行因果预训练，避免适配双向模型时产生灾难性遗忘</li>
+<li>引入 sparse MOE 架构</li>
+<li>增强异步推理机制</li>
+</ol>
 <h2 id="references">References</h2>
 <section class="footnotes">
 <div class="footnote-list">
