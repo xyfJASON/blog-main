@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文记录若干经典 VLA 论文。 Introduction VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 \(\mathbf o_t\)、当前机器人自身状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_{t:t">
+    <meta name="description" content="本文记录若干经典 VLA 论文。 Introduction VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 \(o_t\)、当前机器人自身状态 \(q_t\) 和文本指令 \(c\) 作为输入，输出机器人一个 chunk 的动作 \(a_{t+1:t+k}\). 其中，当前观测可包括多个视角的图像 \(I_t">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Vision-Language-Action Models">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/07/23/Vision-Language-Action-Models/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="本文记录若干经典 VLA 论文。 Introduction VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 \(\mathbf o_t\)、当前机器人自身状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_{t:t">
+<meta property="og:description" content="本文记录若干经典 VLA 论文。 Introduction VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 \(o_t\)、当前机器人自身状态 \(q_t\) 和文本指令 \(c\) 作为输入，输出机器人一个 chunk 的动作 \(a_{t+1:t+k}\). 其中，当前观测可包括多个视角的图像 \(I_t">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/vla.jpg">
 <meta property="article:published_time" content="2026-07-23T03:30:38.000Z">
-<meta property="article:modified_time" content="2026-08-21T11:17:53.230Z">
+<meta property="article:modified_time" content="2026-08-27T08:51:30.320Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="embodied-ai">
 <meta name="twitter:card" content="summary_large_image">
@@ -336,9 +336,9 @@
                 
                 <p>本文记录若干经典 VLA 论文。</p>
 <h2 id="introduction">Introduction</h2>
-<p>VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 <span class="math inline">\(\mathbf o_t\)</span>、当前机器人自身状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>. 其中，当前观测可包括多个视角的图像 <span class="math inline">\(\mathbf I_t^1,\ldots,\mathbf I_t^n\)</span>. VLA 的训练采用模仿学习：给定包含「状态-动作」对的数据集 <span class="math inline">\(\mathcal D\)</span>，最大化动作的对数似然： <span class="math display">\[
-\max_\theta~\mathbb E_{(\mathbf a_{t:t+H},\mathbf o_t,\mathbf q_t,\mathbf c)\sim\mathcal D}\left[\log \pi_\theta(\mathbf a_{t:t+H}\vert\mathbf o_t,\mathbf q_t,\mathbf c)\right]
-\]</span> 例如，离散化动作可采用 cross-entropy 损失分类，连续动作则可采用 diffusion/flow 建模。</p>
+<p>VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 <span class="math inline">\(o_t\)</span>、当前机器人自身状态 <span class="math inline">\(q_t\)</span> 和文本指令 <span class="math inline">\(c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(a_{t+1:t+k}\)</span>. 其中，当前观测可包括多个视角的图像 <span class="math inline">\(I_t^1,\ldots,I_t^n\)</span>. VLA 的训练采用行为克隆：给定包含「状态-动作」对的数据集 <span class="math inline">\(\mathcal D\)</span>，最大化动作的对数似然： <span class="math display">\[
+\max_\theta~\mathbb E_{(a_{t:t+H},o_t,q_t,c)\sim\mathcal D}\left[\log \pi_\theta(a_{t:t+H}\vert o_t,q_t,c)\right]
+\]</span> 例如，离散化动作可采用 cross-entropy 损失分类，连续动作则可直接回归或采用 diffusion/flow 建模。</p>
 <h2 id="rt-2"><a target="_blank" rel="noopener" href="http://arxiv.org/abs/2307.15818">RT-2</a></h2>
 <p><strong>核心思想</strong>   首次提出 VLA 的概念，旨在将大规模预训练 VLM 中已有的识别和推理能力带到具身任务中。</p>
 <p><strong>整体框架</strong>   RT-2 将动作转化为 token 后与 VLM 任务混合训练 (co-fine-tuning).</p>

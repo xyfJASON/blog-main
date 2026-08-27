@@ -297,7 +297,7 @@
       
       <a class="index-excerpt " href="/blog-main/2026/07/24/World-Action%20Models/" target="_self">
         <div>
-          本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的
+          本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(o_{0:t}\)、当前机器人状态 \(q_t\) 和文本指令 \(c\) 作为输入，输出机器人一个 chunk 的动作 \(a_{t+1:t+k}\)，同时预测该 ch
         </div>
       </a>
 
@@ -364,7 +364,7 @@
       
       <a class="index-excerpt " href="/blog-main/2026/07/23/Vision-Language-Action-Models/" target="_self">
         <div>
-          本文记录若干经典 VLA 论文。 Introduction VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 \(\mathbf o_t\)、当前机器人自身状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_{t:t
+          本文记录若干经典 VLA 论文。 Introduction VLA (Vision-Language-Action Model) 指基于预训练 VLM 构建的通用具身基座模型。VLA 接收当前观测 \(o_t\)、当前机器人自身状态 \(q_t\) 和文本指令 \(c\) 作为输入，输出机器人一个 chunk 的动作 \(a_{t+1:t+k}\). 其中，当前观测可包括多个视角的图像 \(I_t
         </div>
       </a>
 

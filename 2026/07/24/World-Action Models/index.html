@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的">
+    <meta name="description" content="本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(o_{0:t}\)、当前机器人状态 \(q_t\) 和文本指令 \(c\) 作为输入，输出机器人一个 chunk 的动作 \(a_{t+1:t+k}\)，同时预测该 ch">
 <meta property="og:type" content="article">
 <meta property="og:title" content="World-Action Models">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/07/24/World-Action%20Models/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的">
+<meta property="og:description" content="本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(o_{0:t}\)、当前机器人状态 \(q_t\) 和文本指令 \(c\) 作为输入，输出机器人一个 chunk 的动作 \(a_{t+1:t+k}\)，同时预测该 ch">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/wam.jpg">
 <meta property="article:published_time" content="2026-07-24T03:24:34.000Z">
-<meta property="article:modified_time" content="2026-08-27T03:38:33.013Z">
+<meta property="article:modified_time" content="2026-08-27T08:49:23.565Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="embodied-ai">
 <meta name="twitter:card" content="summary_large_image">
@@ -336,14 +336,14 @@
                 
                 <p>本文记录若干 WAM 论文（2023.12~2026.05）。</p>
 <h2 id="introduction">Introduction</h2>
-<p>WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 <span class="math inline">\(\mathbf o_{\leq t}\)</span>、当前机器人状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(\mathbf o_{t+1:t+1+H}\)</span>. <span class="math display">\[
-\max_{\theta}~\mathbb E_{(\mathbf a_{t:t+H},\mathbf o_{0:t+1+H},\mathbf q_t,\mathbf c)\sim\mathcal D}\left[\log \pi_\theta(\mathbf a_{t:t+H},\mathbf o_{t+1:t+1+H}\vert\mathbf o_{\leq t},\mathbf q_t,\mathbf c)\right]
+<p>WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 <span class="math inline">\(o_{0:t}\)</span>、当前机器人状态 <span class="math inline">\(q_t\)</span> 和文本指令 <span class="math inline">\(c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(a_{t+1:t+k}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(o_{t+1:t+k}\)</span>. <span class="math display">\[
+\max_{\theta}~\mathbb E_{(a_{t+1:t+k},o_{0:t+1},q_t,c)\sim\mathcal D}\left[\log \pi_\theta(a_{t+1:t+k},o_{t+1:t+k}\vert o_{0:t},q_t,c)\right]
 \]</span></p>
 <p>动作和未来观测的联合分布可以进行多种分解：</p>
 <ul>
-<li>分解 1 (IDM + Video Gen)：<span class="math inline">\(\pi_\theta(\mathbf a,\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)=\pi_\theta(\mathbf a\vert\mathbf o&#39;,\mathbf o,\mathbf q,\mathbf c)\pi_\theta(\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)\)</span></li>
-<li>分解 2 (World Model + Policy)：<span class="math inline">\(\pi_\theta(\mathbf a,\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)=\pi_\theta(\mathbf o&#39;\vert\mathbf a,\mathbf o,\mathbf q,\mathbf c)\pi_\theta(\mathbf a\vert\mathbf o,\mathbf q,\mathbf c)\)</span></li>
-<li>独立性假设：<span class="math inline">\(\pi_\theta(\mathbf a,\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)=\pi_\theta(\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)\pi_\theta(\mathbf a\vert\mathbf o,\mathbf q,\mathbf c)\)</span></li>
+<li>分解 1 (IDM + Video Gen)：<span class="math inline">\(\pi_\theta(a,o&#39;\vert o,q,c)=\pi_\theta(a\vert o&#39;,o,q,c)\pi_\theta(o&#39;\vert o,q,c)\)</span></li>
+<li>分解 2 (World Model + Policy)：<span class="math inline">\(\pi_\theta(a,o&#39;\vert o,q,c)=\pi_\theta(o&#39;\vert a,o,q,c)\pi_\theta(a\vert o,q,c)\)</span></li>
+<li>独立性假设：<span class="math inline">\(\pi_\theta(a,o&#39;\vert o,q,c)=\pi_\theta(o&#39;\vert o,q,c)\pi_\theta(a\vert o,q,c)\)</span></li>
 </ul>
 <p>本文涉及的方法可按分解方式做如下分类（难以准确分类，仅供大致参考）：</p>
 <table>
@@ -641,7 +641,7 @@
       </div>
     </div>
 <p><strong>问题描述</strong>   WAM 联合预测视频和动作，本质上可分解为视频生成模型和逆动力学模型： <span class="math display">\[
-\underbrace{\pi_\theta(\mathbf o_{t:t+H},\mathbf a_{t:t+H}\vert\mathbf o_{0:t},\mathbf c,\mathbf q_t)}_\text{WAM}=\underbrace{\pi_\theta(\mathbf o_{t:t+H}\vert\mathbf o_{0:t},\mathbf c,\mathbf q_t)}_\text{Video Model}\underbrace{\pi_\theta(\mathbf a_{t:t+H}\vert\mathbf o_{0:t+H},\mathbf q_t)}_\text{IDM}
+\underbrace{\pi_\theta(o_{t:t+H},a_{t:t+H}\vert o_{0:t},c,q_t)}_\text{WAM}=\underbrace{\pi_\theta(o_{t:t+H}\vert o_{0:t},c,q_t)}_\text{Video Model}\underbrace{\pi_\theta(a_{t:t+H}\vert o_{0:t+H},q_t)}_\text{IDM}
 \]</span> WAM 通过联合预测将视频生成模型和逆动力学模型整合成了一个端到端模型。</p>
 <p><strong>模型架构</strong>   DreamZero 基于 Wan2.1-I2V-14B-480P 构建，视频和动作均以 flow matching 的方式学习，采用 teacher-forcing chunk-wise AR 的方式训练，通过 attention mask 使得当前带噪 chunk 只能看到历史干净 chunks.</p>
 
