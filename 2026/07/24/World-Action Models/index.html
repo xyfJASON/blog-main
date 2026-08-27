@@ -19,16 +19,16 @@
   <meta name="author" content="xyfJASON">
   <meta name="keywords" content="">
   
-    <meta name="description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_">
+    <meta name="description" content="本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="World-Action Models">
 <meta property="og:url" content="https://xyfjason.github.io/blog-main/2026/07/24/World-Action%20Models/index.html">
 <meta property="og:site_name" content="xyfJASON">
-<meta property="og:description" content="本文记录若干经典 WAM 论文。 Introduction WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的动作 \(\mathbf a_">
+<meta property="og:description" content="本文记录若干 WAM 论文（2023.12~2026.05）。 Introduction WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 \(\mathbf o_{\leq t}\)、当前机器人状态 \(\mathbf q_t\) 和文本指令 \(\mathbf c\) 作为输入，输出机器人一个 chunk 的">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/wam.jpg">
 <meta property="article:published_time" content="2026-07-24T03:24:34.000Z">
-<meta property="article:modified_time" content="2026-08-22T09:16:02.181Z">
+<meta property="article:modified_time" content="2026-08-27T03:38:33.013Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="embodied-ai">
 <meta name="twitter:card" content="summary_large_image">
@@ -281,7 +281,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          2.3k 字
+          3.3k 字
         
       </span>
     
@@ -292,7 +292,7 @@
         
         
         
-          20 分钟
+          28 分钟
         
       </span>
     
@@ -334,12 +334,48 @@
             
               <div class="markdown-body">
                 
-                <p>本文记录若干经典 WAM 论文。</p>
+                <p>本文记录若干 WAM 论文（2023.12~2026.05）。</p>
 <h2 id="introduction">Introduction</h2>
-<p>WAM (World-Action Model) 指基于预训练视频生成模型（视频世界模型）构建的通用具身基座模型。WAM 接收历史观测 <span class="math inline">\(\mathbf o_{\leq t}\)</span>、当前机器人状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(\mathbf o_{t+1:t+1+H}\)</span>.</p>
-<p><span class="math display">\[
+<p>WAM (World-Action Model) 指同时预测动作和未来观测的模型，一般基于预训练视频生成模型构建。WAM 接收历史观测 <span class="math inline">\(\mathbf o_{\leq t}\)</span>、当前机器人状态 <span class="math inline">\(\mathbf q_t\)</span> 和文本指令 <span class="math inline">\(\mathbf c\)</span> 作为输入，输出机器人一个 chunk 的动作 <span class="math inline">\(\mathbf a_{t:t+H}\)</span>，同时预测该 chunk 内的观测视频 <span class="math inline">\(\mathbf o_{t+1:t+1+H}\)</span>. <span class="math display">\[
 \max_{\theta}~\mathbb E_{(\mathbf a_{t:t+H},\mathbf o_{0:t+1+H},\mathbf q_t,\mathbf c)\sim\mathcal D}\left[\log \pi_\theta(\mathbf a_{t:t+H},\mathbf o_{t+1:t+1+H}\vert\mathbf o_{\leq t},\mathbf q_t,\mathbf c)\right]
 \]</span></p>
+<p>动作和未来观测的联合分布可以进行多种分解：</p>
+<ul>
+<li>分解 1 (IDM + Video Gen)：<span class="math inline">\(\pi_\theta(\mathbf a,\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)=\pi_\theta(\mathbf a\vert\mathbf o&#39;,\mathbf o,\mathbf q,\mathbf c)\pi_\theta(\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)\)</span></li>
+<li>分解 2 (World Model + Policy)：<span class="math inline">\(\pi_\theta(\mathbf a,\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)=\pi_\theta(\mathbf o&#39;\vert\mathbf a,\mathbf o,\mathbf q,\mathbf c)\pi_\theta(\mathbf a\vert\mathbf o,\mathbf q,\mathbf c)\)</span></li>
+<li>独立性假设：<span class="math inline">\(\pi_\theta(\mathbf a,\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)=\pi_\theta(\mathbf o&#39;\vert\mathbf o,\mathbf q,\mathbf c)\pi_\theta(\mathbf a\vert\mathbf o,\mathbf q,\mathbf c)\)</span></li>
+</ul>
+<p>本文涉及的方法可按分解方式做如下分类（难以准确分类，仅供大致参考）：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>分解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GR-1, Cosmos Policy, Dream Zero</td>
+<td>联合</td>
+</tr>
+<tr>
+<td>mimic-video, LingBot-VA</td>
+<td>分解 1</td>
+</tr>
+<tr>
+<td>WorldVLA</td>
+<td>分解 2</td>
+</tr>
+<tr>
+<td>UVA, UWM, Motus</td>
+<td>联合 + 分解 1 + 分解 2</td>
+</tr>
+<tr>
+<td>Fast-WAM</td>
+<td>独立性假设</td>
+</tr>
+</tbody>
+</table>
 <h2 id="gr-1"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2312.13139">GR-1</a></h2>
 <p><strong>方法概览</strong>   先在大规模视频数据上预训练，然后在机器人数据上微调，同时预测动作和视频。</p>
 
@@ -375,14 +411,33 @@
         </div>
       </div>
     </div>
+<h2 id="uva"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2503.00200">UVA</a></h2>
+<p><strong>核心思想</strong>   联合学习动作和视频的表征，再用轻量扩散头分别解耦预测。通过 masked training，模型可以同时学习：1) policy; 2) video model; 3) forward dynamics; 4) inverse dynamics; 5) policy+planner.</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-5e3ee664" role="button" aria-expanded="false" aria-controls="collapse-5e3ee664">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-5e3ee664">
+        <div class="fold-content">
+          <p><img src="uva.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
+<p><strong>模型架构</strong>   对时刻 <span class="math inline">\(t\)</span>，将历史观测 <span class="math inline">\(O_{t-h+1}\)</span>、历史动作 <span class="math inline">\(A_{t-h}\)</span> 和施加随机 mask 的未来观测 <span class="math inline">\(O_{t+1}\)</span> 均表示为 <span class="math inline">\(N\)</span> 个 tokens 沿 channel 维度拼接起来，最后将各时刻的拼接结果再按序列维度拼接起来，送给一个 Transformer. Transformer 输出的 latent 将分别通过 video diffusion head 和 action diffusion head 预测未来观测和未来动作。注意「随机 mask +预测未来观测」构成了一个类似 MAE 的学习方式。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-e22ac6b1" role="button" aria-expanded="false" aria-controls="collapse-e22ac6b1">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-e22ac6b1">
+        <div class="fold-content">
+          <p><img src="uva-arch.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
 <h2 id="uwm"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2504.02792">UWM</a></h2>
-<p><strong>核心思想</strong>   大规模视频数据包含丰富的环境和行为，但是缺乏动作标注，因此无法用于模仿学习。为了利用上视频数据，UWM 提出视频和动作联合去噪的思路，二者的扩散时间步独立采样。于是，通过控制时间步，模型可以灵活表示：</p>
-<ol type="1">
-<li>forward dynamics <span class="math inline">\(p(o&#39;\vert o,a)\)</span>；</li>
-<li>inverse dynamics <span class="math inline">\(p(a\vert o,o&#39;)\)</span>；</li>
-<li>policy <span class="math inline">\(p(a\vert o)\)</span>；</li>
-<li>video generator <span class="math inline">\(p(o&#39;\vert o)\)</span>.</li>
-</ol>
+<p><strong>核心思想</strong>   大规模视频数据包含丰富的环境和行为，但是缺乏动作标注，因此无法用于模仿学习。为了利用上视频数据，UWM 提出视频和动作联合去噪的思路，二者的扩散时间步独立采样。于是，通过控制时间步，模型可以灵活表示：1) forward dynamics <span class="math inline">\(p(o&#39;\vert o,a)\)</span>; 2) inverse dynamics <span class="math inline">\(p(a\vert o,o&#39;)\)</span>; 3) policy <span class="math inline">\(p(a\vert o)\)</span>; 4) video generator <span class="math inline">\(p(o&#39;\vert o)\)</span>.</p>
 
     <div class="fold">
       <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-56dff383" role="button" aria-expanded="false" aria-controls="collapse-56dff383">
@@ -391,6 +446,37 @@
       <div class="fold-collapse collapse" id="collapse-56dff383">
         <div class="fold-content">
           <p><img src="uwm.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
+<h2 id="worldvla"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2506.21539">WorldVLA</a></h2>
+<p><strong>核心思想</strong>   将 VLA 和 world model 结合起来，使 WorldVLA 可完成图像理解、图像生成、动作理解和动作生成任务。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-aee03ab8" role="button" aria-expanded="false" aria-controls="collapse-aee03ab8">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-aee03ab8">
+        <div class="fold-content">
+          <p><img src="worldvla.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
+<p><strong>方法概览</strong>   WorldVLA 将图像、文本和动作均转化为离散 token 进行自回归建模，其 token 序列为：</p>
+<ul>
+<li>Action Modeling: <span class="math inline">\(\small\texttt{[BOS]}\texttt{\{text\}}\underbrace{\texttt{[BOI]}\texttt{\{image\}}\cdots\texttt{\{image\}}\texttt{[EOI]}}_{\times M}\texttt{[EOS]}\overbrace{\underbrace{\texttt{[BOA]}\texttt{\{action\}}\cdots\texttt{\{action\}}\texttt{[EOA]}}_{\times K}\texttt{[EOS]}}^{\mathcal L_\text{action}}\)</span></li>
+<li>World Modeling: <span class="math inline">\(\small\texttt{[BOS]}\texttt{\{text\}}\underbrace{\texttt{[BOI]}\texttt{\{image\}}\texttt{[EOI]}\texttt{[BOA]}\texttt{\{action\}}\texttt{[EOA]}\texttt{[EOS]}\overbrace{\texttt{[BOI]}\texttt{\{image\}}\texttt{[EOI]}\texttt{[EOS]}}^{\mathcal L_\text{world}}}_{\times N}\)</span></li>
+</ul>
+<p>其中 action modeling 学习策略模型，根据文本指令和图像观测预测动作；world modeling 学习世界模型，根据文本指令、当前观测和当前动作生成下一时刻观测。</p>
+<p>特别地，作者发现预测动作的误差累积很严重，因此为动作生成特别设计了 attention mask，使得当前动作只能看到文本和观测，不能看到之前的动作。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-85c3bfc2" role="button" aria-expanded="false" aria-controls="collapse-85c3bfc2">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-85c3bfc2">
+        <div class="fold-content">
+          <p><img src="worldvla-overview.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
         </div>
       </div>
     </div>
@@ -410,6 +496,36 @@
     </div>
 <p><strong>推理方式</strong>   为提高推理效率，视频帧只进行部分去噪，带噪视频的表征直接被用于预测动作。特别地，即便不对视频进行去噪，也可以达到不错的性能，实现实时推理。</p>
 <p><strong>训练方式</strong>   第一阶段在机器人视频上用 LoRA 微调视频生成模型，进行域适配；第二阶段从头训练 action decoder，视频和动作的扩散时间步独立采样。</p>
+<h2 id="motus"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2512.13030">Motus</a></h2>
+<p><strong>核心思想</strong>   与 UVA 和 UWM 类似，Motus 也希望在一个模型中统一 5 种任务：1) VLA: <span class="math inline">\(p(a_{t+1:t+k}\vert o_t,l)\)</span>; 2) WM: <span class="math inline">\(p(o_{t+1:t+k}\vert o_t,a_{t+1:t+k})\)</span>; 3) IDM: <span class="math inline">\(p(a_{t+1:t+k}\vert o_{t:t+k})\)</span>; 4) VGM: <span class="math inline">\(p(o_{t+1:t+k}\vert o_t,l)\)</span>; 5) Video-Action Joint Prediction (WAM): <span class="math inline">\(p(o_{t+1:t+k},a_{t+1:t+k}\vert o_t,l)\)</span>. 不过 UVA 和 UWM 都是早期从头训练的工作，缺乏现代 VLA/WAM 的两个要素：VLM 或视频生成模型中的先验知识，和大规模异质数据预训练。因此，Motus 可以视为现代版的 UVA/UWM.</p>
+<p><strong>模型架构</strong>   Motus 采用三流 MoT 架构，视频和动作的扩散时间步独立采样。另外，考虑到视频的冗余性，视频采样率低于动作采样率。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-f2b09041" role="button" aria-expanded="false" aria-controls="collapse-f2b09041">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-f2b09041">
+        <div class="fold-content">
+          <p><img src="motus-arch.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+        </div>
+      </div>
+    </div>
+<p><strong>动作表示</strong>   为了利用上大规模无标注视频数据，基于光流学习了一个 autoencoder，则其 latent 可以作为任意视频的 latent action 标注。训练中 90% 的数据无动作标注，用作重构；10% 的数据有动作标注，提供弱监督。</p>
+
+    <div class="fold">
+      <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-338ac2a5" role="button" aria-expanded="false" aria-controls="collapse-338ac2a5">
+        <div class="fold-arrow">▶</div>图示
+      </div>
+      <div class="fold-collapse collapse" id="collapse-338ac2a5">
+        <div class="fold-content">
+          <p><img src="motus-latent-action.jpg" srcset="/blog-main/logo/imageloading.png" lazyload width=20% /></p>
+        </div>
+      </div>
+    </div>
+<p><strong>训练策略</strong>   Motus 采用三阶段训练：1）视频预训练；2）latent action 预训练；3）具身微调。</p>
+<p>1）视频预训练。用机器人和人类操作数据微调视频生成模型。</p>
+<p>2）latent action 预训练。加入 latent action 标注的数据训练整个模型。</p>
+<p>3）具身微调。对特定目标机器人做微调。</p>
 <h2 id="cosmos-policy"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2601.16163">Cosmos Policy</a></h2>
 <p><strong>方法概述</strong>   利用 Cosmos-Predict2-2B 视频生成模型的时空先验，将其微调为机器人策略模型，输入当前观测、状态和指令，预测动作、未来状态、未来图像和价值函数。</p>
 
@@ -540,7 +656,7 @@
       </div>
     </div>
 <h2 id="world-guidance"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2602.22010">World Guidance</a></h2>
-<p><strong>核心思想</strong>   已有 WAM 预测的视频包含很多与动作无关的冗余信息，因此 WoG 希望从未来视频中提取一个紧凑又包含足够信息的低维表征，用于指导动作生成。为了让提取的表征只关注对动作生成有帮助的信息，WoG 将其作为条件纳入机器人动作的训练中，让模型自己去学习这样的表征；随后冻结提取该表示编码器，模型就像正常的 WAM 一样联合预测动作和表示即可。</p>
+<p><strong>核心思想</strong>   考虑到视频包含很多与动作无关的冗余信息，因此现有 WAM 的联合预测未来视频和动作的范式并不本质。WoG 希望从未来视频中提取一个紧凑又包含未来动作信息的低维表征，用于指导动作生成。为了让提取的表征只关注对动作生成有帮助的信息，WoG 将其作为条件纳入机器人动作的训练中，让模型自己去学习这样的表征；随后冻结提取该表征的编码器，模型联合预测未来动作和表征即可。</p>
 
     <div class="fold">
       <div class="fold-title fold-secondary collapsed" data-toggle="collapse" href="#collapse-1787a42c" role="button" aria-expanded="false" aria-controls="collapse-1787a42c">
@@ -585,6 +701,7 @@
         </div>
       </div>
     </div>
+<h2 id="being-h0.7"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2605.00078">Being-H0.7</a></h2>
 <h2 id="lingbot-va-2.0"><a target="_blank" rel="noopener" href="https://technology.robbyant.com/lingbot-va-v2">LingBot-VA 2.0</a></h2>
 <p><strong>核心改进</strong>   在 LingBot-VA 的基础上有 4 点改进：</p>
 <ol type="1">
