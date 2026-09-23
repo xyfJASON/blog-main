@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/ar-diffusion.jpg">
 <meta property="article:published_time" content="2026-09-01T03:06:00.000Z">
-<meta property="article:modified_time" content="2026-09-06T04:29:19.669Z">
+<meta property="article:modified_time" content="2026-09-09T07:21:24.076Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="diffusion">
 <meta property="article:tag" content="video-generation">
@@ -282,7 +282,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          5.7k 字
+          5.9k 字
         
       </span>
     
@@ -293,7 +293,7 @@
         
         
         
-          48 分钟
+          50 分钟
         
       </span>
     
@@ -462,6 +462,9 @@ p_\theta(\mathbf x^{1:N})=p(\mathbf x^1)\prod_{i=2}^Np(\mathbf x^i\vert\mathbf x
 <p><strong>简要介绍</strong>   回顾在 Self Forcing 中，为了减少计算开销，梯度传播被限制在了每帧的最后一个去噪步的计算上，且帧与帧之间 detach 了。这样做模型虽然能够学习如何读取自身生成的历史帧，却无法学习如何更好地写入帧。为了解决这个问题，Self Gradient Forcing (SGF) 提出 two-pass 训练策略。作者发现尽管 SGF 只在 5s 短视频上训练，却能很好地外插到分钟级的长视频而不降低质量，这是 Self Forcing 不能做到的。</p>
 <p><strong>Two-pass 等价视角</strong>   Self Forcing 的训练流程等价于如下的 two-pass 视角：pass-1 在全程 no-grad 下 rollout 一段干净视频，同时记录下每帧的最后一个去噪步的带噪帧，不保留 KV-cache；pass-2 将带噪帧拼接在生成的干净帧后，重新复现去噪的计算，从而得到梯度——这与 checkpointing 的思想非常类似。Self Forcing 的 detach 操作等价于在重新计算梯度时，只对带噪帧开启梯度；而 SGF 只需做一个简单的改动，即在重计算时对干净和带噪帧都开启梯度，那么就可以让梯度顺利传播到干净帧的 KV 计算上。</p>
 <p><img src="self-gradient-forcing.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
+<h2 id="cmd"><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2608.13391">CMD</a></h2>
+<p><strong>研究动机</strong>   过往工作（CausVid, Self Forcing, Causal Forcing 等）在最后阶段均采取 asymmetric DMD 设置，采用双向教师模型计算因果学生模型生成的一整段视频的 score. 但如果仅关注生成视频的某一帧，那么教师评判该帧的 score 的时候能看见未来帧，但学生模型不能看见未来帧，从而造成了 mismatch. 换句话说，asymmetric DMD 只能匹配一整段视频的分布，而不是任意前缀片段的分布。为了解决这个问题，Context-Matched Distillation (CMD) 提出应该用因果教师模型做 DMD 蒸馏。</p>
+<p><img src="cmd.jpg" srcset="/blog-main/logo/imageloading.png" lazyload/></p>
 
                 
               </div>

@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://xyfjason.github.io/blog-main/gallery/cover/camera.jpg">
 <meta property="article:published_time" content="2026-06-19T05:44:35.000Z">
-<meta property="article:modified_time" content="2026-08-13T10:02:47.349Z">
+<meta property="article:modified_time" content="2026-09-23T09:55:03.153Z">
 <meta property="article:author" content="xyfJASON">
 <meta property="article:tag" content="computer-vision">
 <meta name="twitter:card" content="summary_large_image">
@@ -380,7 +380,7 @@ n=xN_x+c_x,\quad m=-yN_y+c_y
 \]</span> 其中由于旋转矩阵是正交矩阵，所以 <span class="math inline">\(\mathbf R^{-1}=\mathbf R^\mathsf T\)</span>. 写作矩阵形式，则为： <span class="math display">\[
 \bar{\mathbf P}_\text{w}=\underbrace{\begin{bmatrix}\mathbf R^\mathsf T&amp;\mathbf c\\\mathbf 0^\mathsf T&amp;1\end{bmatrix}}_{\bar{\mathbf E}^{-1}}\bar{\mathbf P}_\text{c}=\bar{\mathbf E}^{-1}\bar{\mathbf P}_\text{c}
 \]</span> <strong>坐标系变换（世界→像素）</strong>   结合上文中所有的坐标变换关系，可知直接由世界坐标到像素坐标的变换为： <span class="math display">\[
-\bar{\mathbf q}\sim\mathbf K(\mathbf R\mathbf P_\text{w}+\mathbf t)=\mathbf K\mathbf R(\mathbf P_\text{w}-\mathbf c)=\bar{\mathbf K}\bar{\mathbf E}\bar{\mathbf P}_\text{w}
+\bar{\mathbf q}\sim\bar{\mathbf K}\bar{\mathbf P}_\text{c}=\bar{\mathbf K}\bar{\mathbf E}\bar{\mathbf P}_\text{w}=\mathbf K\mathbf E\bar{\mathbf P}_\text{w}
 \]</span> 其中 <span class="math inline">\(\mathbf K\)</span> 或 <span class="math inline">\(\bar{\mathbf K}\)</span> 为相机内参，<span class="math inline">\(\mathbf E\)</span> 或 <span class="math inline">\(\bar{\mathbf E}\)</span> 为相机外参。</p>
 <h2 id="other-parameters">Other Parameters</h2>
 <p><strong>视场角 (FOV)</strong>   FOV 表示相机能捕捉的视野范围，与焦距和图像长宽有关。下图是针孔相机模型的俯视和侧视图。由图容易知道 <span class="math inline">\(x,y\)</span> 方向上的 FOV 分别为： <span class="math display">\[
