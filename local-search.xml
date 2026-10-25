@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>Agent Harness &amp; RSI</title>
+    <link href="/blog-main/2026/10/10/Agent-Harness-RSI/"/>
+    <url>/blog-main/2026/10/10/Agent-Harness-RSI/</url>
+    
+    <content type="html"><![CDATA[<h2 id="harness">Harness</h2><p><strong><a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Effective harnesses for long-running agents</a> (2025.11.26)</strong> ⭐️</p><ul><li><strong>作者</strong>：Anthropic (by Justin Young)</li><li><strong>意义</strong>：第一篇明确采用术语 Harness 的博文。</li><li><strong>介绍</strong>：文章指出，long-running agents 的核心难题是跨 context window 持续推进工作：仅靠 compaction 容易留下半成品或过早宣告完成。文章提出两阶段 harness：initializer agent 建立功能清单、启动脚本、进度日志和 Git 基线；coding agent 每轮读取记录、检查已有功能，再逐项实现需求，通过端到端测试后更新状态并提交代码。</li></ul><p><strong><a href="https://mitchellh.com/writing/my-ai-adoption-journey">My AI Adoption Journey</a> (2026.02.05)</strong></p><ul><li><strong>作者</strong>：Mitchell Hashimoto</li><li><strong>意义</strong>：Harness Engineering 术语的起源。</li></ul><p><strong><a href="https://openai.com/index/harness-engineering/">Harness engineering: leveraging Codex in an agent-first world</a> (2026.02.11)</strong> ⭐️</p><ul><li><strong>作者</strong>：OpenAI (by Ryan Lopopolo)</li><li><strong>意义</strong>：让 Harness Engineering 为社区所熟知。</li><li><strong>介绍</strong>：文章以 OpenAI 团队完全由 Codex 编写代码的产品实验为例，说明 harness engineering 的核心是由人类定义目标、设计环境和反馈机制，让 agents 执行开发。具体做法包括将知识与计划版本化存入代码仓库，用简短的 AGENTS.md 引导检索，让 agents 能访问 UI、日志和指标，并通过自动测试、linters、架构约束和持续清理保障质量、控制技术债。工程师的重心因此转向构建 agents 能理解、验证和自主推进工作的系统；这种自治依赖配套投入，长期可维护性仍待验证。</li></ul><p><strong><a href="https://www.langchain.com/blog/the-anatomy-of-an-agent-harness">The Anatomy of an Agent Harness</a> (2026.03.10)</strong> ⭐️</p><ul><li><strong>作者</strong>：LangChain (by Vivek Trivedy)</li><li><strong>意义</strong>：明确 Harness 的定义，提出 "Agent = Model + Harness".</li><li><strong>介绍</strong>：Harness 是模型之外的一切，包括 system prompts、tools、bundled infra 和 orchestration logic 等，赋予模型持久状态、执行能力与反馈循环。其设计应从期望行为出发：用 filesystem 和 git 保存跨 session 进度，用 bash、sandbox 和测试工具执行与验证工作，用 memory、search、compaction 和 skills 管理知识与 context，再通过规划和持续执行机制支撑长期自主任务。作者强调，模型与 harness 会共同演进；即使模型能力增强，合适的环境、工具和验证机制仍然重要。</li></ul><p><strong><a href="https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents">Skill Issue: Harness Engineering for Coding Agents</a> (2026.03.12)</strong></p><ul><li><strong>作者</strong>：HumanLayer (by Kyle)</li><li><strong>介绍</strong>：文章将 harness engineering 视为 context engineering 的子集，强调通过配置和反馈机制提升 coding agents 的可靠性：保持 AGENTS.md 简洁，用 skills 按需加载知识、MCP 提供必要工具、sub-agents 隔离中间噪声，再通过 hooks、测试和类型检查约束行为、验证结果。验证成功时保持静默，失败时反馈错误，可以减少 context 膨胀。作者主张从简单配置起步，围绕实际失败持续迭代，并以更快交付高质量代码作为衡量 harness 优化的标准。</li></ul><p><strong><a href="https://www.anthropic.com/engineering/harness-design-long-running-apps">Harness design for long-running application development</a> (2026.03.24)</strong> ⭐️</p><ul><li><strong>作者</strong>：Anthropic (by Prithvi Rajasekaran)</li><li><strong>介绍</strong>：第一篇 Anthropic 博文的后续跟进，面向自主完整应用开发，引入 planner-generator-evaluator 架构：planner 将简短需求展开为产品规格，generator 实现功能，独立 evaluator 依据明确标准和浏览器实测反馈问题，推动迭代。这种分工缓解了模型自评偏乐观和功能遗漏的问题，提升了设计质量与可用性，也增加了时间和成本。作者强调，应随模型升级逐项检验 harness，移除不再必要的任务拆分和上下文管理，并根据任务难度决定独立评估是否值得投入。</li></ul><p><strong><a href="https://addyosmani.com/blog/agent-harness-engineering/">Agent Harness Engineering</a> (2026.04.19)</strong></p><ul><li><strong>作者</strong>：Addy Osmani</li><li><strong>介绍</strong>：整合各家观点的一篇综述。文章将 agent = model + harness，主张把提示、工具、context 管理、hooks 和验证反馈作为持续维护的工程系统。核心方法是从目标行为反推配置，将真实失败转化为规则与自动检查，并通过精简指令、持久状态和独立评估提升可靠性。随着模型升级，应移除不再必要的机制，为更复杂任务补充新的支持；Harness-as-a-Service 则让开发者复用现成 runtime，将精力集中于具体领域的工具和流程设计。</li></ul><p><strong><a href="https://blog.dailydoseofds.com/p/the-anatomy-of-an-agent-harness">The Anatomy of an Agent Harness</a> (2026.04.07)</strong></p><ul><li><strong>作者</strong>：Avi Chawla</li><li><strong>介绍</strong>：独立深度解读。文章将 agent harness 比作 LLM 的操作系统，梳理编排循环、工具、memory、context 管理、状态持久化、错误恢复、安全约束和验证等 11 项组件，说明可靠的自主行为来自这些机制的协作。设计时应把 context 视为稀缺资源，按需暴露工具，通过 checkpoint 保持任务连续性，并用测试或独立评估形成纠错反馈。作者主张先充分发挥单 agent 的能力，再按需要增加复杂度；随着模型进步，逐步简化 harness，同时保留执行、状态管理和验证等基础职责。</li></ul><h2 id="rsi">RSI</h2><p><strong><a href="https://www.anthropic.com/institute/recursive-self-improvement">When AI builds itself</a> (2026.05)</strong></p><ul><li><strong>作者</strong>：Anthropic</li></ul><p><strong><a href="https://jamesm.blog/ai/recursive-self-improvement/">Recursive Self-Improvement: Can AI Bootstrap Its Own Intelligence?</a> (2026.06.04)</strong></p><ul><li><strong>作者</strong>：jamesm.blog</li></ul><p><strong><a href="https://www.cs.ubc.ca/~reacher/blog/rsi/">RSI: A Conditional Theory, Not an Achieved Milestone</a> (2026.07.02)</strong></p><ul><li><strong>作者</strong>：Yuxuan Zhang</li></ul><p><strong><a href="https://lilianweng.github.io/posts/2026-07-04-harness/">Harness Engineering for Self-Improvement</a> (2026.07.04)</strong></p><ul><li><strong>作者</strong>：Lilian Weng</li><li><strong>介绍</strong>：RSI 相关论文的系统综述。</li></ul><p><strong><a href="https://ccsnow127.github.io/blog/2026/everything-is-a-file-including-the-agent/">Everything Is a File, Including the Agent</a> (2026.08.21)</strong></p><ul><li><strong>作者</strong>：CiCi Y. Cheng</li></ul>]]></content>
+    
+    
+    <categories>
+      
+      <category>学习笔记</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>agent</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Autoregressive Video Diffusion Models</title>
     <link href="/blog-main/2026/09/01/Autoregressive-Video-Diffusion-Models/"/>
     <url>/blog-main/2026/09/01/Autoregressive-Video-Diffusion-Models/</url>
